@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="jfiles" default="all" xmlns:ivy="antlib:org.apache.ivy.ant">
+
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value="build" />
+	<property name="lib.dir" value="lib" />
+	<property name="tools.dir" value="tools" />
+	<property name="dist.dir" value="dist" />
+	<property name="classes.dir" value="${build.dir}/classes" />
+
+	<path id="build.lib.path">
+		<fileset dir="${lib.dir}" includes="*.jar" />
+	</path>
+	<path id="tools.lib.path">
+		<fileset dir="${tools.dir}" includes="*.jar" />
+	</path>
+	<path id="runtime.classpath">
+		<pathelement location="${dist.dir}"/>
+		<pathelement path="${build.lib.path}/"/>
+	</path>
+
+	<!--
+	In order to use the Ivy tasks, it is necessary for Ant to be able to find
+	the Ivy jar.	If you install the Ivy plugin for your IDE, then the Ivy
+	instance in your IDE will handle resolving the necessary dependencies.	If
+	you want to be able to run the Ant tasks from the command line, you ned to
+	make sure to install the ivy.jar in your ${ANT_HOME}/lib directory so that
+	Ant can find it.
+
+	Instructions for installing Apache Ivy can be obtained here:
+
+	For use with command-line Ant: http://ant.apache.org/ivy/download.cgi
+	For use with an IDE: http://ant.apache.org/ivy/ivyde/download.cgi
+	-->
+
+	<!--
+	This location is set to that Ant is able to locate the ivy.jar on systems
+	(like Linux) that use a package manager but do not install every .jar into
+	the system classpath by default (or that don't have a system classpath).
+	If the ivy.jar is in ${ANT_HOME}/lib, then it will be found there first
+	and this path will be ignored.	If this path does not exist on your system
+	its declaration here will have no effect.
+	-->
+	<path id="ivy.jar.path">
+		<pathelement location="/usr/share/java/ivy.jar" />
+	</path>
+
+	<!-- ******************** -->
+	<!-- Declare the Ivy task -->
+	<!-- ******************** -->
+	<taskdef resource="org/apache/ivy/ant/antlib.xml"
+		uri="antlib:org.apache.ivy.ant"
+		classpathref="ivy.jar.path" />
+
+	<target name="init"
+		depends="resolve"
+		description="Initialize the build environment">
+
+		<taskdef name="checkstyle"
+			classname="com.puppycrawl.tools.checkstyle.ant.CheckstyleAntTask"
+			classpathref="tools.lib.path" />
+		<taskdef name="findbugs"
+			classname="edu.umd.cs.findbugs.anttask.FindBugsTask"
+			classpathref="tools.lib.path" />
+
+	</target>
+
+	<target name="resolve"
+		description="Retrieve dependencies with Ivy">
+
+		<ivy:configure />
+		<ivy:resolve />
+		<ivy:retrieve type="jar,bundle"
+			pattern="[conf]/[artifact]-[revision].[ext]" />
+
+	</target>
+
+	<target name="all"
+		depends="clean, init, build, test"
+		description="Execute the clean, init, build, and test targets" />
+
+	<target name="build"
+		depends="build-java, build-jar"
+		description="Compile the code">
+	</target>
+
+	<target name="build-java"
+		depends="init"
+		description="Compile the code">
+
+		<mkdir dir="${classes.dir}" />
+
+		<javac srcdir="src"
+			classpathref="build.lib.path"
+			destdir="${classes.dir}"
+			includeantruntime="false"
+			debug="on"
+			deprecation="on">
+
+			<classpath>
+				<pathelement path="tools.lib.path" />
+			</classpath>
+			<compilerarg value="-Xlint:all" />
+			<compilerarg value="-Xlint:-path" />
+			<compilerarg value="-Werror" />
+
+		</javac>
+
+		<copy todir="build">
+			<fileset dir="src">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+
+	</target>
+
+	<target name="build-jar"
+		depends="build-java"
+		description="Pack the class files into a JAR">
+
+		<mkdir dir="${dist.dir}"/>
+
+		<jar destfile="${dist.dir}/${ant.project.name}.jar"
+			basedir="${classes.dir}"/>
+
+	</target>
+
+	<target name="clean"
+		description="Remove compiled artifacts and clean up work files">
+
+		<delete dir="${lib.dir}" quiet="true" />
+		<delete dir="${tools.dir}" quiet="true" />
+		<delete dir="${build.dir}" quiet="true" />
+		<delete dir="${dist.dir}" quiet="true" />
+
+	</target>
+
+	<target name="test"
+		depends="init, build, checkstyle, findbugs"
+		description="Run tests on the code" />
+
+	<target name="checkstyle"
+		depends="init"
+		description="Runs CheckStyle; fails if violations are found">
+
+		<mkdir dir="${build.dir}/checkstyle" />
+
+		<checkstyle config="${basedir}/.checkstyle.xml">
+			<fileset dir="${src.dir}" includes="**/*.java" />
+			<formatter type="plain" />
+			<formatter type="xml"
+				toFile="${build.dir}/checkstyle/${ant.project.name}.xml" />
+		</checkstyle>
+
+		<fileset id="cs-violations" dir="${build.dir}/checkstyle">
+			<patternset>
+				<include name="*.xml" />
+			</patternset>
+			<contains text="&lt;error" />
+		</fileset>
+
+		<fail message="CheckStyle violation found!">
+			<condition>
+				<resourcecount when="greater" count="0" refid="cs-violations" />
+			</condition>
+		</fail>
+
+	</target>
+
+	<target name="findbugs"
+		depends="build-java"
+		description="Runs FindBugs over the code; fails if bugs are found">
+
+		<mkdir dir="${build.dir}/findbugs" />
+
+		<pathconvert property="tools.lib.prop" refid="tools.lib.path" />
+
+		<findbugs classpath="${tools.lib.prop}"
+			reportLevel="low"
+			effort="max"
+			failOnError="true"
+			warningsProperty="findbugs-warning"
+			output="html"
+			outputFile="${build.dir}/findbugs/${ant.project.name}.html">
+
+			<sourcePath>
+				<fileSet dir="${src.dir}">
+					<include name="**/*.java" />
+				</fileSet>
+			</sourcePath>
+			<auxClasspath>
+				<fileSet dir="${lib.dir}">
+					<include name="**/*.jar" />
+				</fileSet>
+			</auxClasspath>
+			<class location="${classes.dir}" />
+
+		</findbugs>
+
+		<fail if="findbugs-warning" message="FindBugs has found bugs!" />
+	</target>
+
+	<target name="run-client-gui"
+		depends="build-jar"
+		description="Executes the JFiles client GUI application">
+
+		<java classname="edu.wright.cs.jfiles.client.JFilesGui"
+			classpathref="runtime.classpath"
+			fork="true"
+			failonerror="true"/>
+
+	</target>
+
+	<target name="run-client-text"
+		depends="build-jar"
+		description="Executes the JFiles client text-mode application">
+
+		<java classname="edu.wright.cs.jfiles.client.JFilesClient"
+			classpathref="runtime.classpath"
+			fork="true"
+			failonerror="true"/>
+
+	</target>
+
+	<target name="run-server"
+		depends="build-jar"
+		description="Executes the JFiles server application">
+
+		<java classname="edu.wright.cs.jfiles.server.JFilesServer"
+			classpathref="runtime.classpath"
+			fork="true"
+			failonerror="true"/>
+
+	</target>
+
+</project>

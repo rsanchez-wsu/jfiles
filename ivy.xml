@@ -1,0 +1,20 @@
+<ivy-module version="2.0">
+	<info organisation="edu.wright" module="JFiles">
+		<ivyauthor name="WSU CEG3120 Students"/>
+	</info>
+	<configurations>
+		<conf name="lib" description="Libraries used at compile/runtime"/>
+		<conf name="tools" description="Libraries used during development/unit testing"/>
+	</configurations>
+	<dependencies>
+
+		<!-- Compile/runtime dependencies (needed to build and run the application) -->
+		<dependency org="org.apache.derby" name="derby" rev="10.11.1.1" conf="lib->default"/>
+
+		<!-- Compile-only dependencies (needed to build the application and run tests) -->
+		<dependency org="junit" name="junit" rev="4.6" conf="tools->default"/>
+		<dependency org="com.google.code.findbugs" name="findbugs" rev="3.0.1" conf="tools->default"/>
+		<dependency org="com.puppycrawl.tools" name="checkstyle" rev="6.11.2" conf="tools->default"/>
+
+	</dependencies>
+</ivy-module>

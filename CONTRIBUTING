@@ -1,0 +1,9 @@
+PLEASE READ THIS FILE COMPLETELY BEFORE DOING ANY DEVELOPMENT ON THIS CODE.
+
+ 1. Carefully read the COPYING and LICENSE files and ensure you understand.
+ 2. Read the README file.
+ 3. Add your name to the AUTHORS file.
+ 4. Prior to pushing any commit(s) on master, ensure that the code builds
+    completely and that the tests pass: `ant clean test`
+ 5. Monitor the Travis CI dashboard for build status
+ 

@@ -1,0 +1,8 @@
+language: java
+install: ant resolve
+
+jdk:
+	- oraclejdk8
+
+script: ant all
+
