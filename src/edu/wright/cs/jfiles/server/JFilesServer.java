@@ -32,6 +32,8 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * The main class of the JFiles server application.
@@ -41,6 +43,7 @@ import java.nio.file.Paths;
  */
 public class JFilesServer implements Runnable {
 
+	final static Logger logger = LogManager.getLogger(JFilesServer.class);
 	private static final int PORT = 9786;
 	private final ServerSocket serverSocket;
 	private static final String UTF_8 = "UTF-8";
@@ -58,8 +61,9 @@ public class JFilesServer implements Runnable {
 	public void run() {
 		String dir = System.getProperty("user.dir");
 		try (Socket server = serverSocket.accept()) {
-			System.out.println("Received connection from"
-					+ server.getRemoteSocketAddress());
+			//System.out.println("Received connection from"
+					//+ server.getRemoteSocketAddress());
+			logger.info("Received connection from "+server.getRemoteSocketAddress());
 			InputStreamReader isr =
 					new InputStreamReader(server.getInputStream(), UTF_8);
 			BufferedReader in = new BufferedReader(isr);
@@ -75,12 +79,14 @@ public class JFilesServer implements Runnable {
 					}
 				}
 			} else {
-				out.write("ERROR: Unknown command!\n");
+				//out.write("ERROR: Unknown command!\n");
+				logger.error("Unknown command");
 			}
 			out.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("Some error occured", e);
 		}
 	}
 
