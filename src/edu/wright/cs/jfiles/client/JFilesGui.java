@@ -28,7 +28,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 /**
- * The main class of the JFiles client GUI application.  This is a JavaFX
+ * The main class of the JFiles client GUI application. This is a JavaFX
  * application.
  * 
  * @author Roberto C. Sánchez &lt;roberto.sanchez@wright.edu&gt;
@@ -77,7 +77,8 @@ public class JFilesGui extends Application {
 	/**
 	 * The main entry point to the program.
 	 * 
-	 * @param args The command-line arguments
+	 * @param args
+	 *            The command-line arguments
 	 */
 	public static void main(String[] args) {
 		System.out.println("Starting the GUI");

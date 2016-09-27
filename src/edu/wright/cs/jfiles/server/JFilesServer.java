@@ -48,7 +48,8 @@ public class JFilesServer implements Runnable {
 	/**
 	 * Handles allocating resources needed for the server.
 	 * 
-	 * @throws IOException If there is a problem binding to the socket
+	 * @throws IOException
+	 *             If there is a problem binding to the socket
 	 */
 	public JFilesServer() throws IOException {
 		serverSocket = new ServerSocket(PORT);
@@ -58,45 +59,47 @@ public class JFilesServer implements Runnable {
 	public void run() {
 		String dir = System.getProperty("user.dir");
 		try (Socket server = serverSocket.accept()) {
-			System.out.println("Received connection from"
-					+ server.getRemoteSocketAddress());
-			InputStreamReader isr =
-					new InputStreamReader(server.getInputStream(), UTF_8);
+			System.out.println("Received connection from" + server.getRemoteSocketAddress());
+			InputStreamReader isr = new InputStreamReader(server.getInputStream(), UTF_8);
 			BufferedReader in = new BufferedReader(isr);
-			String cmd = in.readLine();
-			OutputStreamWriter osw =
-					new OutputStreamWriter(server.getOutputStream(), UTF_8);
-			BufferedWriter out = new BufferedWriter(osw);
-			String[] baseCMD = cmd.split(" ");
-			if ("LIST".equalsIgnoreCase(baseCMD[0])) {
-				try (DirectoryStream<Path> directoryStream =
-						Files.newDirectoryStream(Paths.get(dir))) {
-					for (Path path : directoryStream) {
-						out.write(path.toString() + "\n");
-					}
+			String cmd;
+			while (null != (cmd = in.readLine())) {
+				if ("".equals(cmd)) {
+					break;
 				}
-			
-			}
-			// start Search block 
-			if("FIND".equalsIgnoreCase(baseCMD[0])){
-				
-				try (DirectoryStream<Path> directoryStream =
-						Files.newDirectoryStream(Paths.get(dir))) {
-					for (Path path : directoryStream) {
-						//out.write(path.toString() + "\n");
-						if(path.toString().contains(baseCMD[1])){
+				OutputStreamWriter osw = new OutputStreamWriter(server.getOutputStream(), UTF_8);
+
+				BufferedWriter out = new BufferedWriter(osw);
+				String[] baseCommand = cmd.split(" ");
+				if ("LIST".equalsIgnoreCase(baseCommand[0])) {
+					try (DirectoryStream<Path> directoryStream = Files
+							.newDirectoryStream(Paths.get(dir))) {
+						for (Path path : directoryStream) {
 							out.write(path.toString() + "\n");
 						}
-							
+					}
+
+				}
+				// start Search block
+				if ("FIND".equalsIgnoreCase(baseCommand[0])) {
+
+					try (DirectoryStream<Path> directoryStream = Files
+							.newDirectoryStream(Paths.get(dir))) {
+						for (Path path : directoryStream) {
+							// out.write(path.toString() + "\n");
+							if (path.toString().contains(baseCommand[1])) {
+								out.write(path.toString() + "\n");
+							}
+
 						}
 					}
-				
+
+				} else { // End search block
+					out.write("ERROR: Unknown command!\n");
+				}
+				out.flush();
 			}
-			//End search block
-			else {
-				out.write("ERROR: Unknown command!\n");
-			}
-			out.flush();
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -106,7 +109,8 @@ public class JFilesServer implements Runnable {
 	/**
 	 * The main entry point to the program.
 	 * 
-	 * @param args The command-line arguments
+	 * @param args
+	 *            The command-line arguments
 	 */
 	public static void main(String[] args) {
 		System.out.println("Starting the server");
