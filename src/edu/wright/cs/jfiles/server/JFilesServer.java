@@ -67,14 +67,33 @@ public class JFilesServer implements Runnable {
 			OutputStreamWriter osw =
 					new OutputStreamWriter(server.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
-			if ("LIST".equalsIgnoreCase(cmd)) {
+			String[] baseCMD = cmd.split(" ");
+			if ("LIST".equalsIgnoreCase(baseCMD[0])) {
 				try (DirectoryStream<Path> directoryStream =
 						Files.newDirectoryStream(Paths.get(dir))) {
 					for (Path path : directoryStream) {
 						out.write(path.toString() + "\n");
 					}
 				}
-			} else {
+			
+			}
+			// start Search block 
+			if("FIND".equalsIgnoreCase(baseCMD[0])){
+				
+				try (DirectoryStream<Path> directoryStream =
+						Files.newDirectoryStream(Paths.get(dir))) {
+					for (Path path : directoryStream) {
+						//out.write(path.toString() + "\n");
+						if(path.toString().contains(baseCMD[1])){
+							out.write(path.toString() + "\n");
+						}
+							
+						}
+					}
+				
+			}
+			//End search block
+			else {
 				out.write("ERROR: Unknown command!\n");
 			}
 			out.flush();
