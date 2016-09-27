@@ -79,7 +79,7 @@ public class JFilesClient implements Runnable {
 	 * @param args The command-line arguments
 	 */
 	public static void main(String[] args) {
-		System.out.println("Starting the server");
+		System.out.println("Starting the client");
 		JFilesClient jf = new JFilesClient();
 		Thread thread = new Thread(jf);
 		thread.start();
