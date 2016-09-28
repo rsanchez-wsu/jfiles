@@ -55,7 +55,7 @@ public class JFilesClient implements Runnable {
 			OutputStreamWriter osw =
 					new OutputStreamWriter(socket.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
-			out.write("LIST\n");
+			out.write("FILE\n");
 			out.flush();
 			InputStreamReader isr =
 					new InputStreamReader(socket.getInputStream(), UTF_8);

@@ -23,6 +23,7 @@ package edu.wright.cs.jfiles.server;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -57,6 +58,7 @@ public class JFilesServer implements Runnable {
 	@Override
 	public void run() {
 		String dir = System.getProperty("user.dir");
+		FileOutputStream fos = null;
 		try (Socket server = serverSocket.accept()) {
 			System.out.println("Received connection from"
 					+ server.getRemoteSocketAddress());
@@ -74,6 +76,13 @@ public class JFilesServer implements Runnable {
 						out.write(path.toString() + "\n");
 					}
 				}
+			} else if ("FILE".equalsIgnoreCase(cmd)) {
+				String sample = "This is a placeholder for testing.";
+				String workingDir = System.getProperty("user.dir");
+				String filepath = workingDir + "//demo.txt";
+				fos = new FileOutputStream(filepath);
+				fos.write(sample.getBytes("UTF-8"));
+				fos.close();
 			} else {
 				out.write("ERROR: Unknown command!\n");
 			}
@@ -81,6 +90,15 @@ public class JFilesServer implements Runnable {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			if (fos != null) {
+				try {
+					fos.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
