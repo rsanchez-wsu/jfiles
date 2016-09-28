@@ -21,6 +21,9 @@
 
 package edu.wright.cs.jfiles.server;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -32,8 +35,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
+
 
 /**
  * The main class of the JFiles server application.
@@ -43,7 +45,7 @@ import org.apache.logging.log4j.LogManager;
  */
 public class JFilesServer implements Runnable {
 
-	final static Logger logger = LogManager.getLogger(JFilesServer.class);
+	static final Logger logger = LogManager.getLogger(JFilesServer.class);
 	private static final int PORT = 9786;
 	private final ServerSocket serverSocket;
 	private static final String UTF_8 = "UTF-8";
@@ -51,7 +53,8 @@ public class JFilesServer implements Runnable {
 	/**
 	 * Handles allocating resources needed for the server.
 	 * 
-	 * @throws IOException If there is a problem binding to the socket
+	 * @throws IOException
+	 *             If there is a problem binding to the socket
 	 */
 	public JFilesServer() throws IOException {
 		serverSocket = new ServerSocket(PORT);
@@ -61,31 +64,29 @@ public class JFilesServer implements Runnable {
 	public void run() {
 		String dir = System.getProperty("user.dir");
 		try (Socket server = serverSocket.accept()) {
-			//System.out.println("Received connection from"
-					//+ server.getRemoteSocketAddress());
-			logger.info("Received connection from "+server.getRemoteSocketAddress());
-			InputStreamReader isr =
-					new InputStreamReader(server.getInputStream(), UTF_8);
+			// System.out.println("Received connection from"
+			// + server.getRemoteSocketAddress());
+			logger.info("Received connection from " + server.getRemoteSocketAddress());
+			InputStreamReader isr = new InputStreamReader(server.getInputStream(), UTF_8);
 			BufferedReader in = new BufferedReader(isr);
 			String cmd = in.readLine();
-			OutputStreamWriter osw =
-					new OutputStreamWriter(server.getOutputStream(), UTF_8);
+			OutputStreamWriter osw = new OutputStreamWriter(server.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
 			if ("LIST".equalsIgnoreCase(cmd)) {
-				try (DirectoryStream<Path> directoryStream =
-						Files.newDirectoryStream(Paths.get(dir))) {
+				try (DirectoryStream<Path> directoryStream
+						= Files.newDirectoryStream(Paths.get(dir))) {
 					for (Path path : directoryStream) {
 						out.write(path.toString() + "\n");
 					}
 				}
 			} else {
-				//out.write("ERROR: Unknown command!\n");
+				// out.write("ERROR: Unknown command!\n");
 				logger.error("Unknown command");
 			}
 			out.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			//e.printStackTrace();
+			// e.printStackTrace();
 			logger.error("Some error occured", e);
 		}
 	}
@@ -93,7 +94,8 @@ public class JFilesServer implements Runnable {
 	/**
 	 * The main entry point to the program.
 	 * 
-	 * @param args The command-line arguments
+	 * @param args
+	 *            The command-line arguments
 	 */
 	public static void main(String[] args) {
 		System.out.println("Starting the server");
