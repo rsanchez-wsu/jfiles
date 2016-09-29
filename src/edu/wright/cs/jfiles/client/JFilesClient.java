@@ -21,13 +21,17 @@
 
 package edu.wright.cs.jfiles.client;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Scanner;
 
 /**
  * The main class of the JFiles client application.
@@ -40,29 +44,61 @@ public class JFilesClient implements Runnable {
 	private String host = "localhost";
 	private int port = 9786;
 	private static final String UTF_8 = "UTF-8";
-
+	private FileOutputStream fos = null;
+	private BufferedOutputStream bos = null;
+	private static final String received = "demo.txt";
+	private static final int size = 1000000000;
 	/**
 	 * Handles allocating resources needed for the client.
 	 * 
 	 * @throws IOException If there is a problem binding to the socket
 	 */
+	
 	public JFilesClient() {
 	}
 
 	@Override
 	public void run() {
-		try (Socket socket = new Socket(host, port)) {
+		try (Socket socket = new Socket(host, port)) {	
+			Scanner kb = new Scanner(System.in, "UTF-8");
+			int current = 0;
+			int bytesRead;
+			InputStream is = null;
 			OutputStreamWriter osw =
 					new OutputStreamWriter(socket.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
-			out.write("FILE\n");
+			System.out.println("Send a command to the server.");
+			System.out.println("FILE to receive file");
+			System.out.println("LIST to receive server directory");
+			String usrcmd = kb.nextLine();
+			kb.close();
+			out.write(usrcmd + "/n");
 			out.flush();
 			InputStreamReader isr =
 					new InputStreamReader(socket.getInputStream(), UTF_8);
 			BufferedReader in = new BufferedReader(isr);
 			String line;
-			while ((line = in.readLine()) != null) {
-				System.out.println(line);
+			if ("LIST".equals(usrcmd)) {
+				while ((line = in.readLine()) != null) {
+					System.out.println(line);
+				}
+			} else if ("FILE".equals(usrcmd)) {		
+				is = socket.getInputStream();
+				fos = new FileOutputStream(received);
+				bos = new BufferedOutputStream(fos);
+				byte [] bytearray = new byte [size];
+				bytesRead = is.read(bytearray, 0, bytearray.length);
+				current = bytesRead;
+				do {
+					bytesRead = is.read(bytearray, current, bytearray.length
+							- current);
+					if (bytesRead >= 0) {
+						current += bytesRead;
+					}
+				} while (bytesRead > -1);
+				bos.write(bytearray, 0, current);
+				bos.flush();
+				System.out.println(received + " downloaded.");
 			}
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
@@ -70,6 +106,23 @@ public class JFilesClient implements Runnable {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			if (fos != null) {
+				try {
+					fos.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (bos != null) {
+				try {
+					bos.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
