@@ -62,7 +62,7 @@ public class JFilesClient implements Runnable {
 			String line;
 			while ((line = in.readLine()) != null) {
 				System.out.println(line);
-			}
+			} 
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
