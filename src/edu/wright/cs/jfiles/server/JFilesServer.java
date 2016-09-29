@@ -49,6 +49,25 @@ public class JFilesServer implements Runnable {
 	private static final int PORT = 9786;
 	private final ServerSocket serverSocket;
 	private static final String UTF_8 = "UTF-8";
+	
+	/**
+	 * The main entry point to the program.
+	 * 
+	 * @param args
+	 *            The command-line arguments
+	 */
+	public static void main(String[] args) {
+		try {
+			init();
+			logger.error("Starting the server");
+			JFilesServer jf = new JFilesServer();
+			Thread thread = new Thread(jf);
+			thread.start();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * Handles allocating resources needed for the server.
@@ -58,6 +77,13 @@ public class JFilesServer implements Runnable {
 	 */
 	public JFilesServer() throws IOException {
 		serverSocket = new ServerSocket(PORT);
+	}
+	
+	/**
+	 * Handles any/all configuration work needed for the server to run.
+	 */
+	private static void init(){
+		
 	}
 
 	@Override
@@ -88,24 +114,6 @@ public class JFilesServer implements Runnable {
 			// TODO Auto-generated catch block
 			// e.printStackTrace();
 			logger.error("Some error occured", e);
-		}
-	}
-
-	/**
-	 * The main entry point to the program.
-	 * 
-	 * @param args
-	 *            The command-line arguments
-	 */
-	public static void main(String[] args) {
-		System.out.println("Starting the server");
-		try {
-			JFilesServer jf = new JFilesServer();
-			Thread thread = new Thread(jf);
-			thread.start();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 
