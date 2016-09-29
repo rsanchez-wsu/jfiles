@@ -24,7 +24,7 @@
 	In order to use the Ivy tasks, it is necessary for Ant to be able to find
 	the Ivy jar.	If you install the Ivy plugin for your IDE, then the Ivy
 	instance in your IDE will handle resolving the necessary dependencies.	If
-	you want to be able to run the Ant tasks from the command line, you ned to
+	you want to be able to run the Ant tasks from the command line, you need to
 	make sure to install the ivy.jar in your ${ANT_HOME}/lib directory so that
 	Ant can find it.
 
