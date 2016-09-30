@@ -59,7 +59,7 @@ public class JFilesServer implements Runnable {
 	public static void main(String[] args) {
 		try {
 			init();
-			logger.error("Starting the server");
+			logger.info("Starting the server");
 			JFilesServer jf = new JFilesServer();
 			Thread thread = new Thread(jf);
 			thread.start();
