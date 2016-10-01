@@ -24,6 +24,7 @@ package edu.wright.cs.jfiles.client;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,6 +32,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 
 /**
@@ -53,7 +56,7 @@ public class JFilesClient implements Runnable {
 	 * 
 	 * @throws IOException If there is a problem binding to the socket
 	 */
-	
+
 	public JFilesClient() {
 	}
 
@@ -131,11 +134,44 @@ public class JFilesClient implements Runnable {
 	 * 
 	 * @param args The command-line arguments
 	 */
+
 	public static void main(String[] args) {
 		System.out.println("Starting the server");
-		JFilesClient jf = new JFilesClient();
-		Thread thread = new Thread(jf);
-		thread.start();
+		//JFilesClient jf = new JFilesClient();
+
+		/*
+		 * This is for personal testing will not be used in actual program
+		 */
+		try {
+			String datafile = "AUTHORS";
+
+			MessageDigest checkFile = MessageDigest.getInstance("MD5");
+			@SuppressWarnings("resource")
+			FileInputStream fileSent = new FileInputStream(datafile);
+			//Creating a byte array so we can read the bytes of the file in chunks
+			byte[] chunkOfBytes = new byte[1024];
+			//used as the place holder for the array
+			int startPoint = 0;
+
+			while ((startPoint = fileSent.read(chunkOfBytes)) != -1) {
+				checkFile.update(chunkOfBytes, 0, startPoint);
+			}
+			//the finalized checksum
+			byte[] checksum = checkFile.digest();
+			System.out.print("Digest(in bytes):: ");
+			for (int i = 0; i < checksum.length - 1 ; i++) {
+				System.out.print(checksum[i] );
+			}
+			System.out.println();
+
+		} catch ( IOException e) {
+			e.printStackTrace();
+		} catch ( NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+
+		//Thread thread = new Thread(jf);
+		//thread.start();
 	}
 
 }
