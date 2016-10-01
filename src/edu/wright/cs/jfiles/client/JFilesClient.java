@@ -70,7 +70,7 @@ public class JFilesClient implements Runnable {
 			System.out.println("Send a command to the server.");
 			System.out.println("FILE to receive file");
 			System.out.println("LIST to receive server directory");
-			String usrcmd = kb.nextLine();
+			String usrcmd = kb.next();
 			kb.close();
 			out.write(usrcmd + "/n");
 			out.flush();
@@ -82,13 +82,19 @@ public class JFilesClient implements Runnable {
 				while ((line = in.readLine()) != null) {
 					System.out.println(line);
 				}
-			} else if ("FILE".equals(usrcmd)) {		
+			} else if ("FILE".equals(usrcmd)) {
+				//open up an input stream to receive the file
 				is = socket.getInputStream();
+				//open up file output stream
 				fos = new FileOutputStream(received);
 				bos = new BufferedOutputStream(fos);
+				//byte array to contain file bytes
 				byte [] bytearray = new byte [size];
 				bytesRead = is.read(bytearray, 0, bytearray.length);
+				//current keeps track of how many bytes have been read
+				//out of total bytes in file
 				current = bytesRead;
+				//read bytes from file until there are no more
 				do {
 					bytesRead = is.read(bytearray, current, bytearray.length
 							- current);
@@ -96,6 +102,7 @@ public class JFilesClient implements Runnable {
 						current += bytesRead;
 					}
 				} while (bytesRead > -1);
+				//write the bytes to the delivered file.
 				bos.write(bytearray, 0, current);
 				bos.flush();
 				System.out.println(received + " downloaded.");

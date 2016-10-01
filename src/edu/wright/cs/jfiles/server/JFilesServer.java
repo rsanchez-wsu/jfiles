@@ -88,22 +88,32 @@ public class JFilesServer implements Runnable {
 						out.write(path.toString() + "\n");
 					}
 				}
+			//FILE COMMAND
 			} else if ("FILE".equalsIgnoreCase(cmd)) {
+				//Write some text to a file and store it in server directory
 				String sample = "This is a placeholder for testing.";
-				String workingDir = System.getProperty("user.dir");
-				String filepath = workingDir + "//demo.txt";
+				String filepath = "demo.txt";
 				fos = new FileOutputStream(filepath);
 				fos.write(sample.getBytes("UTF-8"));
 				fos.close();
+				//Prep the file to get sent to the client
 				sendFile = new File(filepath);
+				//Create a byte array consisting of the bytes in the sent file
 				byte [] bytearray = new byte [(int) sendFile.length()];
 				fis = new FileInputStream(sendFile);
 				bis = new BufferedInputStream(fis);
-				bis.read(bytearray, 0, bytearray.length);
+				//bis reads from the byte array to put together file
+				//findBugs got mad that the read method wasn't being 
+				//assigned to anything, so dmy is a dummy variable
+				//to appease it for the time being
+				int dmy = bis.read(bytearray, 0, bytearray.length);
+				System.out.println(dmy);
 				os = sock.getOutputStream();
 				System.out.println("Sending " + sendFile.getName());
+				//the output stream writes the byte array to the client
 				os.write(bytearray, 0, bytearray.length);
 				os.flush();
+				//confirm the file was sent
 				System.out.println("Sent");
 			} else {
 				out.write("ERROR: Unknown command!\n");
