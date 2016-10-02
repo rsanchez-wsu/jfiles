@@ -49,7 +49,6 @@ public class JFilesServer implements Runnable {
 	private static final int PORT = 9786;
 	private final ServerSocket serverSocket;
 	private static final String UTF_8 = "UTF-8";
-	
 
 	/**
 	 * Handles allocating resources needed for the server.
@@ -129,5 +128,5 @@ public class JFilesServer implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
+
 }
