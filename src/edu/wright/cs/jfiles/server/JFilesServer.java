@@ -21,6 +21,9 @@
 
 package edu.wright.cs.jfiles.server;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -33,6 +36,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+
 /**
  * The main class of the JFiles server application.
  * 
@@ -41,16 +45,23 @@ import java.nio.file.Paths;
  */
 public class JFilesServer implements Runnable {
 
+	static final Logger logger = LogManager.getLogger(JFilesServer.class);
 	private static final int PORT = 9786;
 	private final ServerSocket serverSocket;
 	private static final String UTF_8 = "UTF-8";
-
+	
 	/**
-	 * Handles allocating resources needed for the server.
+	 * The main entry point to the program.
 	 * 
+<<<<<<< HEAD
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
+=======
+	 * @param args
+	 *            The command-line arguments
+>>>>>>> refs/remotes/origin/team2
 	 */
+<<<<<<< HEAD
 	public JFilesServer() throws IOException {
 		serverSocket = new ServerSocket(PORT);
 	}
@@ -100,6 +111,15 @@ public class JFilesServer implements Runnable {
 				out.flush();
 			}
 
+=======
+	public static void main(String[] args) {
+		try {
+			init();
+			logger.info("Starting the server");
+			JFilesServer jf = new JFilesServer();
+			Thread thread = new Thread(jf);
+			thread.start();
+>>>>>>> refs/remotes/origin/team2
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -107,20 +127,55 @@ public class JFilesServer implements Runnable {
 	}
 
 	/**
-	 * The main entry point to the program.
+	 * Handles allocating resources needed for the server.
 	 * 
+<<<<<<< HEAD
 	 * @param args
 	 *            The command-line arguments
+=======
+	 * @throws IOException
+	 *             If there is a problem binding to the socket
+>>>>>>> refs/remotes/origin/team2
 	 */
-	public static void main(String[] args) {
-		System.out.println("Starting the server");
-		try {
-			JFilesServer jf = new JFilesServer();
-			Thread thread = new Thread(jf);
-			thread.start();
+	public JFilesServer() throws IOException {
+		serverSocket = new ServerSocket(PORT);
+	}
+	
+	/**
+	 * Handles any/all configuration work needed for the server to run.
+	 */
+	private static void init(){
+		
+	}
+
+	@Override
+	public void run() {
+		String dir = System.getProperty("user.dir");
+		try (Socket server = serverSocket.accept()) {
+			// System.out.println("Received connection from"
+			// + server.getRemoteSocketAddress());
+			logger.info("Received connection from " + server.getRemoteSocketAddress());
+			InputStreamReader isr = new InputStreamReader(server.getInputStream(), UTF_8);
+			BufferedReader in = new BufferedReader(isr);
+			String cmd = in.readLine();
+			OutputStreamWriter osw = new OutputStreamWriter(server.getOutputStream(), UTF_8);
+			BufferedWriter out = new BufferedWriter(osw);
+			if ("LIST".equalsIgnoreCase(cmd)) {
+				try (DirectoryStream<Path> directoryStream
+						= Files.newDirectoryStream(Paths.get(dir))) {
+					for (Path path : directoryStream) {
+						out.write(path.toString() + "\n");
+					}
+				}
+			} else {
+				// out.write("ERROR: Unknown command!\n");
+				logger.error("Unknown command");
+			}
+			out.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// e.printStackTrace();
+			logger.error("Some error occured", e);
 		}
 	}
 
