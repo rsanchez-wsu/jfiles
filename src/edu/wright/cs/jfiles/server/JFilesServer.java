@@ -50,18 +50,13 @@ public class JFilesServer implements Runnable {
 	private final ServerSocket serverSocket;
 	private static final String UTF_8 = "UTF-8";
 	
+
 	/**
-	 * The main entry point to the program.
+	 * Handles allocating resources needed for the server.
 	 * 
-<<<<<<< HEAD
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
-=======
-	 * @param args
-	 *            The command-line arguments
->>>>>>> refs/remotes/origin/team2
 	 */
-<<<<<<< HEAD
 	public JFilesServer() throws IOException {
 		serverSocket = new ServerSocket(PORT);
 	}
@@ -70,7 +65,7 @@ public class JFilesServer implements Runnable {
 	public void run() {
 		String dir = System.getProperty("user.dir");
 		try (Socket server = serverSocket.accept()) {
-			System.out.println("Received connection from" + server.getRemoteSocketAddress());
+			logger.info("Received connection from" + server.getRemoteSocketAddress());
 			InputStreamReader isr = new InputStreamReader(server.getInputStream(), UTF_8);
 			BufferedReader in = new BufferedReader(isr);
 			String cmd;
@@ -106,77 +101,33 @@ public class JFilesServer implements Runnable {
 					}
 
 				} else { // End search block
-					out.write("ERROR: Unknown command!\n");
+					logger.error("Unknown commad");
 				}
 				out.flush();
 			}
+		} catch (IOException e) {
+			//TODO AUto-generated catch block
+			//e.printStackTrace();
+			logger.error("Some error occured", e);
+		}
+	}
 
-=======
+	/**
+	 * The main entry point to the program.
+	 * 
+	 * @throws IOException
+	 *             If there is a problem binding to the socket
+	 */
 	public static void main(String[] args) {
 		try {
-			init();
 			logger.info("Starting the server");
 			JFilesServer jf = new JFilesServer();
 			Thread thread = new Thread(jf);
 			thread.start();
->>>>>>> refs/remotes/origin/team2
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
-	/**
-	 * Handles allocating resources needed for the server.
-	 * 
-<<<<<<< HEAD
-	 * @param args
-	 *            The command-line arguments
-=======
-	 * @throws IOException
-	 *             If there is a problem binding to the socket
->>>>>>> refs/remotes/origin/team2
-	 */
-	public JFilesServer() throws IOException {
-		serverSocket = new ServerSocket(PORT);
-	}
 	
-	/**
-	 * Handles any/all configuration work needed for the server to run.
-	 */
-	private static void init(){
-		
-	}
-
-	@Override
-	public void run() {
-		String dir = System.getProperty("user.dir");
-		try (Socket server = serverSocket.accept()) {
-			// System.out.println("Received connection from"
-			// + server.getRemoteSocketAddress());
-			logger.info("Received connection from " + server.getRemoteSocketAddress());
-			InputStreamReader isr = new InputStreamReader(server.getInputStream(), UTF_8);
-			BufferedReader in = new BufferedReader(isr);
-			String cmd = in.readLine();
-			OutputStreamWriter osw = new OutputStreamWriter(server.getOutputStream(), UTF_8);
-			BufferedWriter out = new BufferedWriter(osw);
-			if ("LIST".equalsIgnoreCase(cmd)) {
-				try (DirectoryStream<Path> directoryStream
-						= Files.newDirectoryStream(Paths.get(dir))) {
-					for (Path path : directoryStream) {
-						out.write(path.toString() + "\n");
-					}
-				}
-			} else {
-				// out.write("ERROR: Unknown command!\n");
-				logger.error("Unknown command");
-			}
-			out.flush();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			// e.printStackTrace();
-			logger.error("Some error occured", e);
-		}
-	}
-
 }
