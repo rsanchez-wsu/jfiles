@@ -17,8 +17,8 @@
 		<dependency org="com.puppycrawl.tools" name="checkstyle" rev="6.11.2" conf="tools->default"/>
 		
 		<!-- Dependencies for Log4J Framework -->
-		<dependency org="org.apache.logging.log4j" name="log4j-api" rev="2.6.2" />
-		<dependency org="org.apache.logging.log4j" name="log4j-core" rev="2.6.2" />
+		<dependency org="org.apache.logging.log4j" name="log4j-api" rev="2.6.2" conf="lib->*"/>
+		<dependency org="org.apache.logging.log4j" name="log4j-core" rev="2.6.2" conf="lib->*"/>
 
 	</dependencies>
 </ivy-module>
