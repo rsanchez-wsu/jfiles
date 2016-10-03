@@ -65,7 +65,19 @@ public class JFilesClient implements Runnable {
 			BufferedReader in = new BufferedReader(isr);
 			String line;
 			while ((line = in.readLine()) != null) {
-				System.out.println(line);
+				//Splits the user input into an array of words separated by spaces
+				String[] words = line.split(" ");
+				//switch statement for which command was entered
+				switch (words[0]) {
+				case "FILE": 
+					fileCommand(words);
+					break;
+				
+				default: 
+					System.out.println("Not a valid command");
+					break;
+				
+				}
 			}
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
@@ -75,7 +87,36 @@ public class JFilesClient implements Runnable {
 			e.printStackTrace();
 		} 
 	}
+		
 
+		/** 
+		 * Method for the FILE command.
+		 * Downloads a file from the server and compares checksums to verify file.
+		 * 
+		 * @param words an array of words given by the user as a command
+		 */
+	public void fileCommand(String[] words) {
+		try {
+			//get name of the file user wishes to receive
+			//String fileName = words[1];
+			//get location of the file if not in root
+			if (words[2] != null) {
+				//String fileLocation = words[2];
+			}
+			
+			//send fileName and fileLocation to the server
+			//receive file back from server
+			//create a new file with the same name plus "-copy" on the end
+			//write the byte stream from server to the new file
+			//compare the checksums of both files
+			//output "completed" if the checksums are the same and an error if not
+	
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+		
 	/**
 	 * The main entry point to the program.
 	 * 
