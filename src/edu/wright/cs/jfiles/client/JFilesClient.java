@@ -21,13 +21,12 @@
 
 package edu.wright.cs.jfiles.client;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Scanner;
 
 /**
  * The main class of the JFiles client application.
@@ -51,33 +50,41 @@ public class JFilesClient implements Runnable {
 
 	@Override
 	public void run() {
-		try (Socket socket = new Socket(host, port)) {	
+		try (Socket socket = new Socket(host, port)) {
+			/*
 			OutputStreamWriter osw =
 					new OutputStreamWriter(socket.getOutputStream(), UTF_8);
-			BufferedWriter out = new BufferedWriter(osw);
+					*/
+			//BufferedWriter out = new BufferedWriter(osw);
 			System.out.println("Send a command to the server.");
 			System.out.println("FILE to receive file");
 			System.out.println("LIST to receive server directory");
-			out.write("FILE\n");
-			out.flush();
+			//out.write("FILE\n");
+			//out.flush();
+			/*
 			InputStreamReader isr =
 					new InputStreamReader(socket.getInputStream(), UTF_8);
-			BufferedReader in = new BufferedReader(isr);
-			String line;
-			while ((line = in.readLine()) != null) {
-				//Splits the user input into an array of words separated by spaces
-				String[] words = line.split(" ");
-				//switch statement for which command was entered
-				switch (words[0]) {
-				case "FILE": 
-					fileCommand(words);
-					break;
+					*/
+			//BufferedReader in = new BufferedReader(isr);
+			//Get user input
+			@SuppressWarnings("resource")
+			//Eclipse complained that kb wasn't being used. Not sure why.
+			//kb input is used on the line after it is initialized
+			//Overrode resource leak warning for now
+			Scanner kb = new Scanner(System.in, UTF_8);
+			String line = kb.nextLine();
+			//Splits the user input into an array of words separated by spaces
+			String[] words = line.split(" ");
+			//switch statement for which command was entered
+			switch (words[0]) {
+			case "FILE": 
+				fileCommand(words, socket);
+				break;
 				
-				default: 
-					System.out.println("Not a valid command");
-					break;
+			default: 
+				System.out.println("Not a valid command");
+				break;
 				
-				}
 			}
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
@@ -94,24 +101,32 @@ public class JFilesClient implements Runnable {
 		 * Downloads a file from the server and compares checksums to verify file.
 		 * 
 		 * @param words an array of words given by the user as a command
+		 * @param sock an active Socket object connected to server
 		 */
-	public void fileCommand(String[] words) {
+	public void fileCommand(String[] words, Socket sock) {
 		try {
 			//get name of the file user wishes to receive
-			//String fileName = words[1];
+			String fileName = words[1];
 			//get location of the file if not in root
+			String fileLocation = null;
 			if (words[2] != null) {
-				//String fileLocation = words[2];
+				fileLocation = words[2];
 			}
-			
 			//send fileName and fileLocation to the server
+			OutputStreamWriter osw = 
+					new OutputStreamWriter(sock.getOutputStream(), UTF_8);
+			BufferedWriter out = new BufferedWriter(osw);
+			//server needs filename and location, so combine fileName and
+			//fileLocation into one string
+			String toServer = fileName + " " + fileLocation;
+			out.write(toServer);
 			//receive file back from server
 			//create a new file with the same name plus "-copy" on the end
 			//write the byte stream from server to the new file
 			//compare the checksums of both files
 			//output "completed" if the checksums are the same and an error if not
 	
-		} catch (Exception e) {
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
