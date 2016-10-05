@@ -26,6 +26,9 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -35,7 +38,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
+import java.util.Properties;
 
 /**
  * The main class of the JFiles server application.
@@ -46,15 +49,49 @@ import java.nio.file.Paths;
 public class JFilesServer implements Runnable {
 
 	static final Logger logger = LogManager.getLogger(JFilesServer.class);
-	private static final int PORT = 9786;
+	private static int PORT;
 	private final ServerSocket serverSocket;
 	private static final String UTF_8 = "UTF-8";
 
 	/**
 	 * Handles allocating resources needed for the server.
+	 * @throws FileNotFoundException 
 	 * 
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
+	 */
+	
+	private static void init() throws IOException {
+		Properties prop = new Properties();
+		FileInputStream fis = null;
+		File file = new File("serverConfig.xml");
+		
+		try {
+			//Reads xmlfile into prop object as key value pairs
+			fis = new FileInputStream(file);
+			prop.loadFromXML(fis);
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				if (fis != null) {
+					fis.close();
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		//Add setters here. First value is the key name and second is the default value.
+		PORT = Integer.parseInt(prop.getProperty("Port","9786"));
+		logger.info("Config set to port " + PORT);
+	}
+	
+	/**
+	 * This is a Javadoc comment to statisfy Checkstyle.
+	 * @throws IOException When bad things happen
 	 */
 	public JFilesServer() throws IOException {
 		serverSocket = new ServerSocket(PORT);
@@ -119,6 +156,7 @@ public class JFilesServer implements Runnable {
 	 */
 	public static void main(String[] args) {
 		try {
+			init();
 			logger.info("Starting the server");
 			JFilesServer jf = new JFilesServer();
 			Thread thread = new Thread(jf);
