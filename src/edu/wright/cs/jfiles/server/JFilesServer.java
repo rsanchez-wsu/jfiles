@@ -65,7 +65,7 @@ public class JFilesServer implements Runnable {
 		Properties prop = new Properties();
 		FileInputStream fis = null;
 		File file = new File("serverConfig.xml");
-		file.getPath();
+		
 		
 		try {
 			//Reads xmlfile into prop object as key value pairs
