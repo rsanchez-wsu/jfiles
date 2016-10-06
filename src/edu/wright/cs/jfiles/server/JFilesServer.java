@@ -44,7 +44,7 @@ import java.util.Locale;
  * @author Roberto C. Sánchez &lt;roberto.sanchez@wright.edu&gt;
  *
  */
-public class JFilesServer implements Runnable {
+public class JFilesServer implements Runnable  {
 
 	static final Logger logger = LogManager.getLogger(JFilesServer.class);
 	private static final int PORT = 9786;
@@ -70,13 +70,14 @@ public class JFilesServer implements Runnable {
 			InputStreamReader isr = new InputStreamReader(server.getInputStream(), UTF_8);
 			BufferedReader in = new BufferedReader(isr);
 			String cmd;
+			OutputStreamWriter osw = new OutputStreamWriter(server.getOutputStream(), UTF_8);
+
+			BufferedWriter out = new BufferedWriter(osw);
 			while (null != (cmd = in.readLine())) {
 				if ("".equals(cmd)) {
 					break;
 				}
-				OutputStreamWriter osw = new OutputStreamWriter(server.getOutputStream(), UTF_8);
 
-				BufferedWriter out = new BufferedWriter(osw);
 				String[] baseCommand = cmd.split(" ");
 				
 				switch (baseCommand[0].toUpperCase(Locale.ENGLISH)) {
