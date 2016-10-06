@@ -58,12 +58,14 @@ public class JFilesClient implements Runnable {
 			OutputStreamWriter osw = new OutputStreamWriter(socket.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
 			System.out.println("Send a command to the server.");
-			//System.out.println("FILE to receive file");
+			System.out.println("FIND to search directory for file");
 			System.out.println("LIST to receive server directory");
+			System.out.print("#");
 			String usrcmd = kb.nextLine();
 			kb.close();
 			out.write(usrcmd + "\n");
-			//out.write("LIST\n");
+			
+			
 			out.flush();
 			InputStreamReader isr = new InputStreamReader(socket.getInputStream(), UTF_8);
 			BufferedReader in = new BufferedReader(isr);
