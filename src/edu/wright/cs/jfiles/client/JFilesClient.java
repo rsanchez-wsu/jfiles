@@ -24,6 +24,7 @@ package edu.wright.cs.jfiles.client;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -89,6 +90,31 @@ public class JFilesClient implements Runnable {
 				is = socket.getInputStream();
 				fos = new FileOutputStream(received);
 				bos = new BufferedOutputStream(fos);
+				
+				//this is temp info on CheckSum
+				/*
+					File datafile = new File("AUTHORS");
+
+					MessageDigest checkFile = MessageDigest.getInstance("MD5");
+					@SuppressWarnings("resource")
+					FileInputStream fileSent = new FileInputStream(datafile);
+					//Creating a byte array so we can read the bytes of the file in chunks
+					byte[] chunkOfBytes = new byte[(int) datafile.length()];
+					//used as the place holder for the array
+					int startPoint = 0;
+
+					while ((startPoint = fileSent.read(chunkOfBytes)) != -1) {
+						checkFile.update(chunkOfBytes, 0, startPoint);
+					}
+					//the finalized checksum
+					byte[] checksum = checkFile.digest();
+					System.out.print("Digest(in bytes):: ");
+					for (int i = 0; i < checksum.length - 1 ; i++) {
+						System.out.print(checksum[i] );
+					}
+					System.out.println();
+				*/
+				
 				byte [] bytearray = new byte [size];
 				bytesRead = is.read(bytearray, 0, bytearray.length);
 				current = bytesRead;
@@ -108,6 +134,8 @@ public class JFilesClient implements Runnable {
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch ( NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		} finally {
 			if (fos != null) {
@@ -137,41 +165,10 @@ public class JFilesClient implements Runnable {
 
 	public static void main(String[] args) {
 		System.out.println("Starting the server");
-		//JFilesClient jf = new JFilesClient();
+		JFilesClient jf = new JFilesClient();
 
-		/*
-		 * This is for personal testing will not be used in actual program
-		 */
-		try {
-			String datafile = "AUTHORS";
-
-			MessageDigest checkFile = MessageDigest.getInstance("MD5");
-			@SuppressWarnings("resource")
-			FileInputStream fileSent = new FileInputStream(datafile);
-			//Creating a byte array so we can read the bytes of the file in chunks
-			byte[] chunkOfBytes = new byte[1024];
-			//used as the place holder for the array
-			int startPoint = 0;
-
-			while ((startPoint = fileSent.read(chunkOfBytes)) != -1) {
-				checkFile.update(chunkOfBytes, 0, startPoint);
-			}
-			//the finalized checksum
-			byte[] checksum = checkFile.digest();
-			System.out.print("Digest(in bytes):: ");
-			for (int i = 0; i < checksum.length - 1 ; i++) {
-				System.out.print(checksum[i] );
-			}
-			System.out.println();
-
-		} catch ( IOException e) {
-			e.printStackTrace();
-		} catch ( NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-
-		//Thread thread = new Thread(jf);
-		//thread.start();
+		Thread thread = new Thread(jf);
+		thread.start();
 	}
 
 }
