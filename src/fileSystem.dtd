@@ -1,0 +1,15 @@
+<!DOCTYPE fileSystem [
+	<!ELEMENT fileSystem(currentPath,directory*,file*,link*,other*)>
+	<!ELEMENT currentPath(#PCDATA)>
+	<!ELEMENT directory(name,lastModifiedTime,lastAccessTime,creationTime,size)>
+	<!ELEMENT file(name,lastModifiedTime,lastAccessTime,creationTime,size)>
+	<!ELEMENT link(name,lastModifiedTime,lastAccessTime,creationTime,size)>
+	<!ELEMENT other(name,lastModifiedTime,lastAccessTime,creationTime,size)>
+	<!ELEMENT name(#PCDATA)>
+	<!ELEMENT lastModifiedTime(#PCDATA)>
+	<!ELEMENT lastAccessTime(#PCDATA)>
+	<!ELEMENT creationTime(#PCDATA)>
+	<!ELEMENT size(#PCDATA)>
+	<!ATTLIST currentPath system CDATA (POSIX,DOS)>
+	<!ATTLIST size unit CDATA (bit,byte,kilobyte,megabyte,gigabyte,terabyte)>
+]
