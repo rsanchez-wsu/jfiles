@@ -142,7 +142,7 @@ public class JFilesServer implements Runnable {
 				out.flush();
 			}
 		} catch (IOException e) {
-			//TODO AUto-generated catch block
+			//TODO Auto-generated catch block
 			//e.printStackTrace();
 			logger.error("Some error occured", e);
 		}
