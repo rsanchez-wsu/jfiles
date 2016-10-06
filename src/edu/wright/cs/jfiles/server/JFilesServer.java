@@ -21,22 +21,13 @@
 
 package edu.wright.cs.jfiles.server;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * The main class of the JFiles server application.
@@ -61,14 +52,9 @@ public class JFilesServer implements Runnable {
 
 	@Override
 	public void run() {
-		String dir = System.getProperty("user.dir");
+		//String dir = System.getProperty("user.dir");
 		//These were added to implement File command
-		FileInputStream fis = null;
-		FileOutputStream fos = null;
-		BufferedInputStream bis = null;
-		OutputStream os = null;
-		File sendFile = null;
-		Socket sock = null;
+		//FileOutputStream fos = null;
 		//------------------------------------------
 		try (Socket server = serverSocket.accept()) {
 			System.out.println("Received connection from"
@@ -80,7 +66,15 @@ public class JFilesServer implements Runnable {
 			OutputStreamWriter osw =
 					new OutputStreamWriter(server.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
-			sock = serverSocket.accept();
+			//sock = serverSocket.accept();
+			if (cmd != null) {
+				String [] words = cmd.split(" ");
+				String fileName = words[0]; 
+				String fileLocation = words[1];
+				System.out.println("Received " + fileName + " at " 
+						+ fileLocation);
+			}
+			/*
 			if ("LIST".equalsIgnoreCase(cmd)) {
 				try (DirectoryStream<Path> directoryStream =
 						Files.newDirectoryStream(Paths.get(dir))) {
@@ -88,31 +82,46 @@ public class JFilesServer implements Runnable {
 						out.write(path.toString() + "\n");
 					}
 				}
+			//FILE COMMAND
 			} else if ("FILE".equalsIgnoreCase(cmd)) {
+				//Write some text to a file and store it in server directory
 				String sample = "This is a placeholder for testing.";
-				String workingDir = System.getProperty("user.dir");
-				String filepath = workingDir + "//demo.txt";
+				String filepath = "demo.txt";
 				fos = new FileOutputStream(filepath);
 				fos.write(sample.getBytes("UTF-8"));
 				fos.close();
+				//For now, we just need the server to be able to write to 
+				//a file. File-sending code below this is commented out.
+				
+				//Prep the file to get sent to the client
 				sendFile = new File(filepath);
+				//Create a byte array consisting of the bytes in the sent file
 				byte [] bytearray = new byte [(int) sendFile.length()];
 				fis = new FileInputStream(sendFile);
 				bis = new BufferedInputStream(fis);
-				bis.read(bytearray, 0, bytearray.length);
+				//bis reads from the byte array to put together file
+				//findBugs got mad that the read method wasn't being 
+				//assigned to anything, so dmy is a dummy variable
+				//to appease it for the time being
+				int dmy = bis.read(bytearray, 0, bytearray.length);
+				System.out.println(dmy);
 				os = sock.getOutputStream();
 				System.out.println("Sending " + sendFile.getName());
+				//the output stream writes the byte array to the client
 				os.write(bytearray, 0, bytearray.length);
 				os.flush();
+				//confirm the file was sent
 				System.out.println("Sent");
+				
 			} else {
 				out.write("ERROR: Unknown command!\n");
 			}
+			*/
 			out.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally {
+		} /*finally {
 			if (fos != null) {
 				try {
 					fos.close();
@@ -121,32 +130,8 @@ public class JFilesServer implements Runnable {
 					e.printStackTrace();
 				}
 			}
-			if (os != null) {
-				try {
-					os.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if (sock != null) {
-				try {
-					sock.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if (bis != null) {
-				try {
-					bis.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-	}
+		}*/
+	} 	
 
 	/**
 	 * The main entry point to the program.

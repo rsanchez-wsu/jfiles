@@ -21,15 +21,11 @@
 
 package edu.wright.cs.jfiles.client;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -48,10 +44,6 @@ public class JFilesClient implements Runnable {
 	private String host = "localhost";
 	private int port = 9786;
 	private static final String UTF_8 = "UTF-8";
-	private FileOutputStream fos = null;
-	private BufferedOutputStream bos = null;
-	private static final String received = "demo.txt";
-	private static final int size = 1000000000;
 	/**
 	 * Handles allocating resources needed for the client.
 	 * 
@@ -63,34 +55,21 @@ public class JFilesClient implements Runnable {
 
 	@Override
 	public void run() {
-		try (Socket socket = new Socket(host, port)) {	
-			Scanner kb = new Scanner(System.in, "UTF-8");
-			int current = 0;
-			int bytesRead;
-			InputStream is = null;
+		try (Socket socket = new Socket(host, port)) {
+			/*
 			OutputStreamWriter osw =
 					new OutputStreamWriter(socket.getOutputStream(), UTF_8);
-			BufferedWriter out = new BufferedWriter(osw);
+					*/
+			//BufferedWriter out = new BufferedWriter(osw);
 			System.out.println("Send a command to the server.");
 			System.out.println("FILE to receive file");
 			System.out.println("LIST to receive server directory");
-			String usrcmd = kb.nextLine();
-			kb.close();
-			out.write(usrcmd + "/n");
-			out.flush();
+			//out.write("FILE\n");
+			//out.flush();
+			/*
 			InputStreamReader isr =
 					new InputStreamReader(socket.getInputStream(), UTF_8);
-			BufferedReader in = new BufferedReader(isr);
-			String line;
-			if ("LIST".equals(usrcmd)) {
-				while ((line = in.readLine()) != null) {
-					System.out.println(line);
-				}
-			} else if ("FILE".equals(usrcmd)) {		
-				is = socket.getInputStream();
-				fos = new FileOutputStream(received);
-				bos = new BufferedOutputStream(fos);
-				
+
 				//this is temp info on CheckSum
 				/*
 					File datafile = new File("AUTHORS");
@@ -114,20 +93,26 @@ public class JFilesClient implements Runnable {
 					}
 					System.out.println();
 				*/
+			//BufferedReader in = new BufferedReader(isr);
+			//Get user input
+			@SuppressWarnings("resource")
+			//Eclipse complained that kb wasn't being used. Not sure why.
+			//kb input is used on the line after it is initialized
+			//Overrode resource leak warning for now
+			Scanner kb = new Scanner(System.in, UTF_8);
+			String line = kb.nextLine();
+			//Splits the user input into an array of words separated by spaces
+			String[] words = line.split(" ");
+			//switch statement for which command was entered
+			switch (words[0]) {
+			case "FILE": 
+				fileCommand(words, socket);
+				break;
 				
-				byte [] bytearray = new byte [size];
-				bytesRead = is.read(bytearray, 0, bytearray.length);
-				current = bytesRead;
-				do {
-					bytesRead = is.read(bytearray, current, bytearray.length
-							- current);
-					if (bytesRead >= 0) {
-						current += bytesRead;
-					}
-				} while (bytesRead > -1);
-				bos.write(bytearray, 0, current);
-				bos.flush();
-				System.out.println(received + " downloaded.");
+			default: 
+				System.out.println("Not a valid command");
+				break;
+				
 			}
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
@@ -135,28 +120,48 @@ public class JFilesClient implements Runnable {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch ( NoSuchAlgorithmException e) {
+		}// catch ( NoSuchAlgorithmException e) {
+			//e.printStackTrace();
+		//} 
+	}
+		
+
+		/** 
+		 * Method for the FILE command.
+		 * Downloads a file from the server and compares checksums to verify file.
+		 * 
+		 * @param words an array of words given by the user as a command
+		 * @param sock an active Socket object connected to server
+		 */
+	public void fileCommand(String[] words, Socket sock) {
+		try {
+			//get name of the file user wishes to receive
+			String fileName = words[1];
+			//get location of the file if not in root
+			String fileLocation = null;
+			if (words[2] != null) {
+				fileLocation = words[2];
+			}
+			//send fileName and fileLocation to the server
+			OutputStreamWriter osw = 
+					new OutputStreamWriter(sock.getOutputStream(), UTF_8);
+			BufferedWriter out = new BufferedWriter(osw);
+			//server needs filename and location, so combine fileName and
+			//fileLocation into one string
+			String toServer = fileName + " " + fileLocation;
+			out.write(toServer);
+			//receive file back from server
+			//create a new file with the same name plus "-copy" on the end
+			//write the byte stream from server to the new file
+			//compare the checksums of both files
+			//output "completed" if the checksums are the same and an error if not
+	
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally {
-			if (fos != null) {
-				try {
-					fos.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if (bos != null) {
-				try {
-					bos.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
 		}
 	}
-
+		
 	/**
 	 * The main entry point to the program.
 	 * 
