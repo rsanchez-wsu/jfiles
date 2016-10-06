@@ -22,15 +22,10 @@
 package edu.wright.cs.jfiles.client;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 
 /**
@@ -120,7 +115,7 @@ public class JFilesClient implements Runnable {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}// catch ( NoSuchAlgorithmException e) {
+		} // catch ( NoSuchAlgorithmException e) {
 			//e.printStackTrace();
 		//} 
 	}
@@ -148,7 +143,7 @@ public class JFilesClient implements Runnable {
 			BufferedWriter out = new BufferedWriter(osw);
 			//server needs filename and location, so combine fileName and
 			//fileLocation into one string
-			String toServer = fileName + " " + fileLocation;
+			String toServer = words[0] + " " + fileName + " " + fileLocation;
 			out.write(toServer);
 			//receive file back from server
 			//create a new file with the same name plus "-copy" on the end

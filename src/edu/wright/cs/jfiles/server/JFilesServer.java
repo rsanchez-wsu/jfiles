@@ -21,10 +21,14 @@
 
 package edu.wright.cs.jfiles.server;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -54,7 +58,10 @@ public class JFilesServer implements Runnable {
 	public void run() {
 		//String dir = System.getProperty("user.dir");
 		//These were added to implement File command
+		BufferedInputStream bis = null;
 		//FileOutputStream fos = null;
+		Socket sock = null;
+		OutputStream os = null;
 		//------------------------------------------
 		try (Socket server = serverSocket.accept()) {
 			System.out.println("Received connection from"
@@ -66,13 +73,37 @@ public class JFilesServer implements Runnable {
 			OutputStreamWriter osw =
 					new OutputStreamWriter(server.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
-			//sock = serverSocket.accept();
 			if (cmd != null) {
 				String [] words = cmd.split(" ");
-				String fileName = words[0]; 
-				String fileLocation = words[1];
-				System.out.println("Received " + fileName + " at " 
-						+ fileLocation);
+				String cmdName = words[0]; 
+				switch (cmdName) {
+				case "FILE":
+					String fileName = words[1];
+					String fileLocation = words[2];
+					System.out.println("Client wants " + fileName + " at " 
+							+ fileLocation);
+					File sendFile = new File(fileLocation);
+					sock = serverSocket.accept();
+					byte [] byteArray = new byte [(int) sendFile.length()];
+					bis = new BufferedInputStream(
+							new FileInputStream(sendFile));
+					//findBugs gets mad that bis.read() isn't assigned
+					//to a variable, so plchlder is used until
+					//a better solution is found.
+					int plchlder = bis.read(byteArray, 0, byteArray.length);
+					System.out.println(plchlder);
+					os = sock.getOutputStream();
+					os.write(byteArray, 0, byteArray.length);
+					os.flush();
+					break;
+				
+				case "LIST":
+					break;
+				
+				default:
+					System.out.println("Invalid Command.");
+					break;
+				}
 			}
 			/*
 			if ("LIST".equalsIgnoreCase(cmd)) {
@@ -121,16 +152,32 @@ public class JFilesServer implements Runnable {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} /*finally {
-			if (fos != null) {
+		} finally {
+			if (sock != null) {
 				try {
-					fos.close();
+					sock.close();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
-		}*/
+			if (bis != null) {
+				try {
+					bis.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (os != null) {
+				try {
+					os.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 	} 	
 
 	/**

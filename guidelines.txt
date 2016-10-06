@@ -1,0 +1,13 @@
+1. Thoroughly comment on your code.
+2. Try to avoid "sequential issuing" because it affects how much multiple members can get done at a time.
+3. Commit messages should be meaningful/explanatory
+4. Run ant clean test on code before pushing it
+5. Keep up to date with what other teams are doing to avoid duplicates
+6. If you couldn't solve a problem, note what still needs to be done with code.
+7. Always reference the issue in your commit.
+8. Commit early, commit often - keep your team up to date with what you're adding.
+9. Document new methods on team wiki.
+10. Show up to class to discuss state of project with team.
+11. Issue descriptions should be detailed.
+12. Make multiple smaller issues rather than a few large ones.
+13. Watch out for buses. Doubly so if they're being driven by Roberto. Triply so if your name is Joshua.
