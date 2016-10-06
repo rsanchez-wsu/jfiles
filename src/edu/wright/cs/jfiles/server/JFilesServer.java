@@ -35,6 +35,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
 
 
 /**
@@ -63,6 +64,7 @@ public class JFilesServer implements Runnable {
 	@Override
 	public void run() {
 		String dir = System.getProperty("user.dir");
+		Locale.setDefault(new Locale("English"));
 		try (Socket server = serverSocket.accept()) {
 			logger.info("Received connection from" + server.getRemoteSocketAddress());
 			InputStreamReader isr = new InputStreamReader(server.getInputStream(), UTF_8);
@@ -76,32 +78,21 @@ public class JFilesServer implements Runnable {
 
 				BufferedWriter out = new BufferedWriter(osw);
 				String[] baseCommand = cmd.split(" ");
-				if ("LIST".equalsIgnoreCase(baseCommand[0])) {
-					try (DirectoryStream<Path> directoryStream = Files
-							.newDirectoryStream(Paths.get(dir))) {
-						for (Path path : directoryStream) {
-							out.write(path.toString() + "\n");
-						}
-					}
-
+				
+				switch (baseCommand[0].toUpperCase(Locale.ENGLISH)) {
+				case "LIST":
+					listCmd(dir,out);
+					break;
+				case "FIND":
+					findCmd(dir,out,baseCommand[1]);
+					break;
+				case "File":
+					
+					break;	 
+				default:
+					System.out.println("Invalid Command");
 				}
-				// start Search block
-				if ("FIND".equalsIgnoreCase(baseCommand[0])) {
-
-					try (DirectoryStream<Path> directoryStream = Files
-							.newDirectoryStream(Paths.get(dir))) {
-						for (Path path : directoryStream) {
-							// out.write(path.toString() + "\n");
-							if (path.toString().contains(baseCommand[1])) {
-								out.write(path.toString() + "\n");
-							}
-
-						}
-					}
-
-				} else { // End search block
-					logger.error("Unknown commad");
-				}
+				
 				out.flush();
 			}
 		} catch (IOException e) {
@@ -109,6 +100,50 @@ public class JFilesServer implements Runnable {
 			//e.printStackTrace();
 			logger.error("Some error occured", e);
 		}
+	}
+	/** List Command function.
+	 * Method for the list command
+	 * 
+	 * @throws IOException
+	 *             If there is a problem binding to the socket
+	 */
+	void listCmd(String dir, BufferedWriter out ) {
+		try (DirectoryStream<Path> directoryStream = Files
+				.newDirectoryStream(Paths.get(dir))) {
+			for (Path path : directoryStream) {
+				out.write(path.toString() + "\n");
+			}
+		} 
+		catch (IOException e) {
+			//TODO AUto-generated catch block
+			//e.printStackTrace();
+			logger.error("Some error occured", e);
+		}
+
+		
+	}
+	/** Find Command function.
+	 * Method for the find command
+	 * 
+	 * @throws IOException
+	 *             If there is a problem binding to the socket
+	 */
+	void findCmd(String dir, BufferedWriter out, String searchTerm) {
+		try (DirectoryStream<Path> directoryStream = Files
+				.newDirectoryStream(Paths.get(dir))) {
+			for (Path path : directoryStream) {
+				if (path.toString().contains(searchTerm)) {
+					out.write(path.toString() + "\n");
+				}
+			}
+		} 
+		catch (IOException e) {
+			//TODO AUto-generated catch block
+			//e.printStackTrace();
+			logger.error("Some error occured", e);
+		}
+
+		
 	}
 
 	/**
