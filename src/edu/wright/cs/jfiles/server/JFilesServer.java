@@ -88,7 +88,17 @@ public class JFilesServer implements Runnable {
 					break;
 				case "File":
 					
-					break;	 
+					break;
+				case "EXIT":
+					
+					try {
+						out.close();
+						in.close();
+						serverSocket.close();
+					} catch (IOException ex) {
+						System.out.println("Error closing the socket and streams");
+					}
+					break;
 				default:
 					System.out.println("Invalid Command");
 				}
