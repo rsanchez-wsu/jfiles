@@ -52,7 +52,16 @@ public class JFile  implements Cloneable  {
 	protected JFile(File file) {
 		this.file = file;
 	}
-
+	
+	/**
+	 * Stores the file as given by the string.
+	 * 
+	 * @param path Path to wanted file.
+	 */
+	protected JFile(String path) {
+		this.file = new File(path);
+	}
+	
 	/**
 	 * Deletes JFile's File contents.
 	 * 
@@ -237,5 +246,13 @@ public class JFile  implements Cloneable  {
 		 * if (System.getProperty("os.name").contains("Windows")) {
 		 * System.out.println(Files.getFileExtension(file.getName())); }
 		 */
+	}
+	
+	/**
+	 * Gets the raw size of the current file.
+	 * @return A long that represents the raw size of the file.
+	 */
+	protected long getFileSize() {
+		return file.length();
 	}
 }
