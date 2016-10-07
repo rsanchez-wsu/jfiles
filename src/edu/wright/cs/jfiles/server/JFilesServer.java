@@ -23,10 +23,9 @@ package edu.wright.cs.jfiles.server;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
-import org.w3c.dom.DocumentType;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -43,6 +42,14 @@ import java.nio.file.Paths;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 /**
  * The main class of the JFiles server application.
@@ -68,30 +75,56 @@ public class JFilesServer implements Runnable {
 	}
 	
 	/**
-	 * Method that creates an XML file.
+	 * Creates an XML file.
+	 * @throws TransformerFactoryConfigurationError error in configuration
+	 * @throws TransformerException error in configuration
 	 */
-	private Document createXml() {
+	private void createXml() throws TransformerFactoryConfigurationError, 
+					TransformerException {
 		Document doc = null;
 		try {
-			// Create document
+			// Create new XML document
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			factory.setNamespaceAware(true);
 			DocumentBuilder builder;
 			builder = factory.newDocumentBuilder();
 			doc = builder.newDocument();
-			//Create doc type
-			DOMImplementation domImpl = doc.getImplementation();
-			DocumentType doctype = domImpl.createDocumentType("fileSystem", null, "fileSystem.dtd");
-			doc.appendChild(doctype);
-			// Add root element
-			Element rootElement = doc.createElement("fileSystem");
-			doc.appendChild(rootElement);
-			return doc;
+			
+			// Add elements to new document
+			Element root = doc.createElement("fileSystem");
+			doc.appendChild(root);
+			Node dir = createNode(doc,"directory");
+			dir.appendChild(createNode(doc,"file"));
+			root.appendChild(dir);
+			
+			//Output XML to console
+			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			DOMSource source = new DOMSource(doc);
+			StreamResult console = new StreamResult(System.out);
+			transformer.transform(source, console);
+			
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return doc;
+			logger.error("An error occurred while configuring the parser");
+			logger.error(e.getStackTrace());
+		} catch (TransformerConfigurationException e) {
+			logger.error("An error occurred while configuring the transformer");
+			logger.error(e.getStackTrace());
+		} catch (TransformerFactoryConfigurationError e) {
+			logger.error("An error occurred while configuring the transformer factory");
+			logger.error(e.getStackTrace());
 		}
-		
+	}
+	
+	/**
+	 * Create an xml node.
+	 * @param doc document to create node for
+	 * @param name name of node that should be created
+	 * @return returns a Node element
+	 */
+	private Node createNode(Document doc, String name) {
+		Element node = doc.createElement(name);
+		return node;
 	}
 
 	@Override
@@ -155,11 +188,18 @@ public class JFilesServer implements Runnable {
 		try {
 			logger.info("Starting the server");
 			JFilesServer jf = new JFilesServer();
-			System.out.println(jf.createXml());
+			try {
+				jf.createXml();
+			} catch (TransformerFactoryConfigurationError e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (TransformerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			//Thread thread = new Thread(jf);
 			//thread.start();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
