@@ -23,6 +23,10 @@ package edu.wright.cs.jfiles.server;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentType;
+import org.w3c.dom.Element;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -36,6 +40,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * The main class of the JFiles server application.
@@ -58,6 +65,33 @@ public class JFilesServer implements Runnable {
 	 */
 	public JFilesServer() throws IOException {
 		serverSocket = new ServerSocket(PORT);
+	}
+	
+	/**
+	 * Method that creates an XML file.
+	 */
+	private Document createXml() {
+		Document doc = null;
+		try {
+			// Create document
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder;
+			builder = factory.newDocumentBuilder();
+			doc = builder.newDocument();
+			//Create doc type
+			DOMImplementation domImpl = doc.getImplementation();
+			DocumentType doctype = domImpl.createDocumentType("fileSystem", null, "fileSystem.dtd");
+			doc.appendChild(doctype);
+			// Add root element
+			Element rootElement = doc.createElement("fileSystem");
+			doc.appendChild(rootElement);
+			return doc;
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return doc;
+		}
+		
 	}
 
 	@Override
@@ -121,8 +155,9 @@ public class JFilesServer implements Runnable {
 		try {
 			logger.info("Starting the server");
 			JFilesServer jf = new JFilesServer();
-			Thread thread = new Thread(jf);
-			thread.start();
+			System.out.println(jf.createXml());
+			//Thread thread = new Thread(jf);
+			//thread.start();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
