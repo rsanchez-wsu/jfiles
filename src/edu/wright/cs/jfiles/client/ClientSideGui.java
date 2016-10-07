@@ -22,8 +22,14 @@
 package edu.wright.cs.jfiles.client;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 /**
@@ -47,19 +53,40 @@ public class ClientSideGui extends Application {
 
 		// Pane Creation
 		BorderPane basePane = new BorderPane();
-		
-		//Scene Creation. Put the basePane on the scene.
-		Scene scene = new Scene(basePane, 1200, 600);//Width, Height 
+		basePane.setStyle("-fx-background-color: LIGHTGREY;");
+		// Sets basePane's color
 
-		/*
-		 * //Adding Nodes to the basePane
-		 * basePane.getChildren().add(background);
-		 */
+		// Create MenuBar on window Top
+		MenuBar headderMenuBar = new MenuBar();
+		// headderMenuBar.prefWidthProperty().bind(primaryStage.widthProperty());
+		// Line not needed because it is already set as default
+		basePane.setTop(headderMenuBar);
+
+		// Create File menu with open and close items
+		Menu fileMenu = new Menu("File");// Creates Menu Name
+		MenuItem openMenuItem = new MenuItem("Open");// Creates Menu Item
+		MenuItem closeMenuItem = new MenuItem("Close");
+
+		// Add Menu Items and a Separator to File Menu. Separate Close option
+		// for visual distinction.
+		fileMenu.getItems().addAll(openMenuItem, new SeparatorMenuItem(), closeMenuItem);
+
+		closeMenuItem.setOnAction(actionEvent -> Platform.exit());
+		// Exits the window if clicked
+
+		// Add the menu to the menu bar
+		headderMenuBar.getMenus().addAll(fileMenu);
+
+		// Scene Creation. Put the basePane on the scene.
+		Scene scene = new Scene(basePane, 1200, 600, Color.WHITE);
+		// addedPain, Width, Height, backgroundColor
+		// scene color is buried under the basePane and is not currently visible
 
 		// Manipulating the primaryStage or "window"
-		primaryStage.setTitle("JFiles");//Sets the title on the window itself
-		primaryStage.setScene(scene);//Adds the scene to the stage. Takes up the whole window.
-		primaryStage.setResizable(true);//User Resizing Allowed
+		primaryStage.setTitle("JFiles");// Sets the title on the window itself
+		primaryStage.setScene(scene);// Adds the scene to the stage. Takes up
+										// the whole window.
+		primaryStage.setResizable(true);// User Resizing Allowed
 		primaryStage.show();// Displays the start Stage and its contents.
 
 	} // end start method
@@ -73,9 +100,9 @@ public class ClientSideGui extends Application {
 	 * 
 	 */
 	public static void main(String[] args) {
-		
+
 		System.out.println("Launching Client Main GUI Window.");
-		launch(args);//Launches the GUI
+		launch(args);// Launches the GUI
 	} // end of method Main
 
 } // end ClientSideGUI class
