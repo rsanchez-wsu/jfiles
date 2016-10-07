@@ -37,14 +37,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
 
-
 /**
  * The main class of the JFiles server application.
  * 
  * @author Roberto C. Sánchez &lt;roberto.sanchez@wright.edu&gt;
  *
  */
-public class JFilesServer implements Runnable  {
+public class JFilesServer implements Runnable {
 
 	static final Logger logger = LogManager.getLogger(JFilesServer.class);
 	private static final int PORT = 9786;
@@ -79,19 +78,18 @@ public class JFilesServer implements Runnable  {
 				}
 
 				String[] baseCommand = cmd.split(" ");
-				
+
 				switch (baseCommand[0].toUpperCase(Locale.ENGLISH)) {
 				case "LIST":
-					listCmd(dir,out);
+					listCmd(dir, out);
 					break;
 				case "FIND":
-					findCmd(dir,out,baseCommand[1]);
+					findCmd(dir, out, baseCommand[1].toLowerCase(Locale.ENGLISH));
 					break;
 				case "File":
-					
+
 					break;
 				case "EXIT":
-					
 					try {
 						out.close();
 						in.close();
@@ -103,58 +101,56 @@ public class JFilesServer implements Runnable  {
 				default:
 					System.out.println("Invalid Command");
 				}
-				
+
 				out.flush();
 			}
 		} catch (IOException e) {
-			//TODO AUto-generated catch block
-			//e.printStackTrace();
+			// TODO AUto-generated catch block
+			// e.printStackTrace();
 			logger.error("Some error occured", e);
 		}
 	}
-	/** List Command function.
-	 * Method for the list command
+
+	/**
+	 * List Command function. Method for the list command.
 	 * 
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	void listCmd(String dir, BufferedWriter out ) {
-		try (DirectoryStream<Path> directoryStream = Files
-				.newDirectoryStream(Paths.get(dir))) {
+	void listCmd(String dir, BufferedWriter out) {
+		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir))) {
 			for (Path path : directoryStream) {
 				out.write(path.toString() + "\n");
 			}
-		} 
-		catch (IOException e) {
-			//TODO AUto-generated catch block
-			//e.printStackTrace();
+		} catch (IOException e) {
+			// TODO AUto-generated catch block
+			// e.printStackTrace();
 			logger.error("Some error occured", e);
 		}
-
-		
 	}
-	/** Find Command function.
-	 * Method for the find command
+
+	/**
+	 * Find Command function. Method for the find command.
 	 * 
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
 	void findCmd(String dir, BufferedWriter out, String searchTerm) {
-		try (DirectoryStream<Path> directoryStream = Files
-				.newDirectoryStream(Paths.get(dir))) {
+		int findCount = 0;
+		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir))) {
 			for (Path path : directoryStream) {
-				if (path.toString().contains(searchTerm)) {
+				if (path.toString().toLowerCase(Locale.ENGLISH).contains(searchTerm)) {
 					out.write(path.toString() + "\n");
+					findCount++;
 				}
 			}
-		} 
-		catch (IOException e) {
-			//TODO AUto-generated catch block
-			//e.printStackTrace();
+			System.out.println("Found " + findCount + " file(s) that contains \"" 
+					+ searchTerm + "\"\n");
+		} catch (IOException e) {
+			// TODO AUto-generated catch block
+			// e.printStackTrace();
 			logger.error("Some error occured", e);
 		}
-
-		
 	}
 
 	/**
