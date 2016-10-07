@@ -41,8 +41,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-<<<<<<< HEAD
-
+import java.util.Properties;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -54,9 +53,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-=======
-import java.util.Properties;
->>>>>>> refs/heads/team2-dev
 
 /**
  * The main class of the JFiles server application.
@@ -73,7 +69,6 @@ public class JFilesServer implements Runnable {
 
 	/**
 	 * Handles allocating resources needed for the server.
-	 * @throws FileNotFoundException 
 	 * 
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
@@ -82,7 +77,7 @@ public class JFilesServer implements Runnable {
 	private static void init() throws IOException {
 		Properties prop = new Properties();
 		FileInputStream fis = null;
-		File file = new File("serverConfig.xml");
+		File file = new File("src/edu/wright/cs/jfiles/server/serverConfig.xml");
 		
 		
 		try {
@@ -91,16 +86,10 @@ public class JFilesServer implements Runnable {
 			prop.loadFromXML(fis);
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("IOException occured when trying to access the server config", e);
 		} finally {
-			try {
-				if (fis != null) {
-					fis.close();
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if (fis != null) {
+				fis.close();
 			}
 		}
 		//Add setters here. First value is the key name and second is the default value.
@@ -147,14 +136,11 @@ public class JFilesServer implements Runnable {
 			transformer.transform(source, console);
 			
 		} catch (ParserConfigurationException e) {
-			logger.error("An error occurred while configuring the parser");
-			logger.error(e.getStackTrace());
+			logger.error("An error occurred while configuring the parser",e);
 		} catch (TransformerConfigurationException e) {
-			logger.error("An error occurred while configuring the transformer");
-			logger.error(e.getStackTrace());
+			logger.error("An error occurred while configuring the transformer", e);
 		} catch (TransformerFactoryConfigurationError e) {
-			logger.error("An error occurred while configuring the transformer factory");
-			logger.error(e.getStackTrace());
+			logger.error("An error occurred while configuring the transformer factory",e);
 		}
 	}
 	
