@@ -35,6 +35,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
 
 
 /**
@@ -43,7 +44,7 @@ import java.nio.file.Paths;
  * @author Roberto C. Sánchez &lt;roberto.sanchez@wright.edu&gt;
  *
  */
-public class JFilesServer implements Runnable {
+public class JFilesServer implements Runnable  {
 
 	static final Logger logger = LogManager.getLogger(JFilesServer.class);
 	private static final int PORT = 9786;
@@ -63,45 +64,46 @@ public class JFilesServer implements Runnable {
 	@Override
 	public void run() {
 		String dir = System.getProperty("user.dir");
+		Locale.setDefault(new Locale("English"));
 		try (Socket server = serverSocket.accept()) {
 			logger.info("Received connection from" + server.getRemoteSocketAddress());
 			InputStreamReader isr = new InputStreamReader(server.getInputStream(), UTF_8);
 			BufferedReader in = new BufferedReader(isr);
 			String cmd;
+			OutputStreamWriter osw = new OutputStreamWriter(server.getOutputStream(), UTF_8);
+
+			BufferedWriter out = new BufferedWriter(osw);
 			while (null != (cmd = in.readLine())) {
 				if ("".equals(cmd)) {
 					break;
 				}
-				OutputStreamWriter osw = new OutputStreamWriter(server.getOutputStream(), UTF_8);
 
-				BufferedWriter out = new BufferedWriter(osw);
 				String[] baseCommand = cmd.split(" ");
-				if ("LIST".equalsIgnoreCase(baseCommand[0])) {
-					try (DirectoryStream<Path> directoryStream = Files
-							.newDirectoryStream(Paths.get(dir))) {
-						for (Path path : directoryStream) {
-							out.write(path.toString() + "\n");
-						}
+				
+				switch (baseCommand[0].toUpperCase(Locale.ENGLISH)) {
+				case "LIST":
+					listCmd(dir,out);
+					break;
+				case "FIND":
+					findCmd(dir,out,baseCommand[1]);
+					break;
+				case "File":
+					
+					break;
+				case "EXIT":
+					
+					try {
+						out.close();
+						in.close();
+						serverSocket.close();
+					} catch (IOException ex) {
+						System.out.println("Error closing the socket and streams");
 					}
-
+					break;
+				default:
+					System.out.println("Invalid Command");
 				}
-				// start Search block
-				if ("FIND".equalsIgnoreCase(baseCommand[0])) {
-
-					try (DirectoryStream<Path> directoryStream = Files
-							.newDirectoryStream(Paths.get(dir))) {
-						for (Path path : directoryStream) {
-							// out.write(path.toString() + "\n");
-							if (path.toString().contains(baseCommand[1])) {
-								out.write(path.toString() + "\n");
-							}
-
-						}
-					}
-
-				} else { // End search block
-					logger.error("Unknown commad");
-				}
+				
 				out.flush();
 			}
 		} catch (IOException e) {
@@ -109,6 +111,50 @@ public class JFilesServer implements Runnable {
 			//e.printStackTrace();
 			logger.error("Some error occured", e);
 		}
+	}
+	/** List Command function.
+	 * Method for the list command
+	 * 
+	 * @throws IOException
+	 *             If there is a problem binding to the socket
+	 */
+	void listCmd(String dir, BufferedWriter out ) {
+		try (DirectoryStream<Path> directoryStream = Files
+				.newDirectoryStream(Paths.get(dir))) {
+			for (Path path : directoryStream) {
+				out.write(path.toString() + "\n");
+			}
+		} 
+		catch (IOException e) {
+			//TODO AUto-generated catch block
+			//e.printStackTrace();
+			logger.error("Some error occured", e);
+		}
+
+		
+	}
+	/** Find Command function.
+	 * Method for the find command
+	 * 
+	 * @throws IOException
+	 *             If there is a problem binding to the socket
+	 */
+	void findCmd(String dir, BufferedWriter out, String searchTerm) {
+		try (DirectoryStream<Path> directoryStream = Files
+				.newDirectoryStream(Paths.get(dir))) {
+			for (Path path : directoryStream) {
+				if (path.toString().contains(searchTerm)) {
+					out.write(path.toString() + "\n");
+				}
+			}
+		} 
+		catch (IOException e) {
+			//TODO AUto-generated catch block
+			//e.printStackTrace();
+			logger.error("Some error occured", e);
+		}
+
+		
 	}
 
 	/**
