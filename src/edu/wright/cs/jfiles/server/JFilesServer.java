@@ -122,7 +122,7 @@ public class JFilesServer implements Runnable  {
 		try (DirectoryStream<Path> directoryStream = Files
 				.newDirectoryStream(Paths.get(dir))) {
 			for (Path path : directoryStream) {
-				out.write(path.toString() + "\n");
+				out.write(path.toString() + System.getProperty("line.separator"));
 			}
 		} 
 		catch (IOException e) {
@@ -144,7 +144,7 @@ public class JFilesServer implements Runnable  {
 				.newDirectoryStream(Paths.get(dir))) {
 			for (Path path : directoryStream) {
 				if (path.toString().contains(searchTerm)) {
-					out.write(path.toString() + "\n");
+					out.write(path.toString() + System.getProperty("line.separator"));
 				}
 			}
 		} 
