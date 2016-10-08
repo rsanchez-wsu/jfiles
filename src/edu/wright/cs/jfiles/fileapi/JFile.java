@@ -32,7 +32,7 @@ import java.util.ArrayList;
  * @author Team 5
  *
  */
-public class JFile  implements Cloneable  {
+public class JFile implements Cloneable {
 
 	private File file;
 	private ArrayList<Tag> tagList = new ArrayList<>();
@@ -52,21 +52,35 @@ public class JFile  implements Cloneable  {
 	protected JFile(File file) {
 		this.file = file;
 	}
-	
+
+	/**
+	 * Stores the given file and the arraylist of tags associated with the file.
+	 * 
+	 * @param file
+	 *            The file being stored in the JFile object.
+	 * @param tags
+	 *            The tags associated with the file.
+	 */
+	protected JFile(File file, ArrayList<Tag> tags) {
+		this.file = file;
+		this.tagList = tags;
+	}
+
 	/**
 	 * Stores the file as given by the string.
 	 * 
-	 * @param path Path to wanted file.
+	 * @param path
+	 *            Path to wanted file.
 	 */
 	protected JFile(String path) {
 		this.file = new File(path);
 	}
-	
+
 	/**
 	 * Deletes JFile's File contents.
 	 * 
 	 */
-	protected void deleteContents() /* throws IOException */{
+	protected void deleteContents() /* throws IOException */ {
 
 		/*
 		 * if (file.canWrite() == false) { return false; } fOut = new
@@ -89,8 +103,7 @@ public class JFile  implements Cloneable  {
 			return false;
 		}
 
-		file.renameTo(new File(file.getParent() + name));
-		return true;
+		return file.renameTo(new File(file.getParent() + name));
 
 	}
 
@@ -247,12 +260,20 @@ public class JFile  implements Cloneable  {
 		 * System.out.println(Files.getFileExtension(file.getName())); }
 		 */
 	}
-	
+
 	/**
 	 * Gets the raw size of the current file.
+	 * 
 	 * @return A long that represents the raw size of the file.
 	 */
 	protected long getFileSize() {
 		return file.length();
+	}
+
+	/**
+	 * Clone method used to clone the JFile object.
+	 */
+	protected Object clone() {
+		return new JFile(this.file, this.tagList);
 	}
 }
