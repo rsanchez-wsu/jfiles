@@ -44,7 +44,8 @@ public class JFilesClient implements Runnable {
 	/**
 	 * Handles allocating resources needed for the client.
 	 * 
-	 * @throws IOException If there is a problem binding to the socket
+	 * @throws IOException
+	 *             If there is a problem binding to the socket
 	 */
 	public JFilesClient() {
 	}
@@ -52,13 +53,11 @@ public class JFilesClient implements Runnable {
 	@Override
 	public void run() {
 		try (Socket socket = new Socket(host, port)) {
-			OutputStreamWriter osw =
-					new OutputStreamWriter(socket.getOutputStream(), UTF_8);
+			OutputStreamWriter osw = new OutputStreamWriter(socket.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
 			out.write("LIST\n");
 			out.flush();
-			InputStreamReader isr =
-					new InputStreamReader(socket.getInputStream(), UTF_8);
+			InputStreamReader isr = new InputStreamReader(socket.getInputStream(), UTF_8);
 			BufferedReader in = new BufferedReader(isr);
 			String line;
 			while ((line = in.readLine()) != null) {
@@ -76,10 +75,11 @@ public class JFilesClient implements Runnable {
 	/**
 	 * The main entry point to the program.
 	 * 
-	 * @param args The command-line arguments
+	 * @param args
+	 *            The command-line arguments
 	 */
 	public static void main(String[] args) {
-		System.out.println("Starting the server");
+		System.out.println("Starting the client");
 		JFilesClient jf = new JFilesClient();
 		Thread thread = new Thread(jf);
 		thread.start();
