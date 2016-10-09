@@ -134,7 +134,8 @@ public class JFilesClient implements Runnable {
 			String fileName = words[1];
 			//get location of the file if not in root
 			String fileLocation = null;
-			if (words[2] != null) {
+		
+			if (words.length > 2) {
 				fileLocation = words[2];
 			}
 			//send fileName and fileLocation to the server
@@ -150,6 +151,9 @@ public class JFilesClient implements Runnable {
 			//write the byte stream from server to the new file
 			//compare the checksums of both files
 			//output "completed" if the checksums are the same and an error if not
+			
+			//printout indication of success
+			System.out.println("Transmission Sent");
 	
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
