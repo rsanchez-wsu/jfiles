@@ -105,7 +105,7 @@ public class JFileManager {
 	 * I will work on this later.
 	 * 
 	 * Though the clone method is used, I am not happy until its exact
-	 * functionality is defined in JFile.
+	 * functionality is defined in JFile...
 	 */
 
 	/**
