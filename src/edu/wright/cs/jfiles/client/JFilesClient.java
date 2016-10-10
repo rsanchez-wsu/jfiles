@@ -22,10 +22,15 @@
 package edu.wright.cs.jfiles.client;
 
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 
 /**
@@ -159,6 +164,81 @@ public class JFilesClient implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	/** 
+	 * Method for producing a Checksum.
+	 * Takes in a file type and converts it into an MD5 
+	 * standard checksum which is returned in the form of a byte array.
+	 * 
+	 * @param file the file to be digested into a checksum
+	 * @return a byte array containing the processed file
+	 */
+	public byte[] getChecksum(File file) {
+		byte[] checksum = null;
+		FileInputStream fileSent = null;
+		
+		try {
+			MessageDigest checkFile = MessageDigest.getInstance("MD5");
+			//@SuppressWarnings("resource")
+			fileSent = new FileInputStream(file);
+			// Creating a byte array so we can read the bytes of the file in
+			// chunks
+			byte[] chunkOfBytes = new byte[(int) file.length()];
+			// used as the place holder for the array
+			int startPoint = 0;
+
+			while ((startPoint = fileSent.read(chunkOfBytes)) != -1) {
+				checkFile.update(chunkOfBytes, 0, startPoint);
+			}
+			// the finalized checksum
+			checksum = checkFile.digest();
+			System.out.print("Digest(in bytes):: ");
+			for (int i = 0; i < checksum.length - 1; i++) {
+				System.out.print(checksum[i]);
+			}
+			System.out.println();
+
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (fileSent != null) {
+				try {
+					fileSent.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return checksum;
+	}
+	
+	/** 
+	 * Method for comparing checksums.
+	 * Takes two byte arrays containing checksum data and returns true if 
+	 * they are the same and false if they are not.
+	 * 
+	 * @param first a byte array containing the first file's checksum
+	 * @param second a byte array containing the second file's checksum
+	 * @return returns a boolean of true or false based on how they compare
+	 */
+	public boolean isSame(byte[] first, byte[] second) {
+		boolean same = true;
+		if (first.length != second.length) {
+			same = false;
+		}
+		for (int i = 0; same && i < first.length; i++) {
+			if (first[i] != second[i]) {
+				same = false;
+			}
+		}
+		
+		return same;
 	}
 		
 	/**
