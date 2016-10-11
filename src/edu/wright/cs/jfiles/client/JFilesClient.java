@@ -175,6 +175,7 @@ public class JFilesClient implements Runnable {
 	 * @return a byte array containing the processed file
 	 */
 	public byte[] getChecksum(File file) {
+		//Initialize some variables
 		byte[] checksum = null;
 		FileInputStream fileSent = null;
 		
@@ -228,10 +229,14 @@ public class JFilesClient implements Runnable {
 	 * @return returns a boolean of true or false based on how they compare
 	 */
 	public boolean isSame(byte[] first, byte[] second) {
+		//Initialize the boolean value
 		boolean same = true;
+		//If the lengths of the arrays are not the same then they are obviously different
+		//and the boolean can be changes to false before the for loop.
 		if (first.length != second.length) {
 			same = false;
 		}
+		//a shorted circuited AND allows the boolean value to control the for loop
 		for (int i = 0; same && i < first.length; i++) {
 			if (first[i] != second[i]) {
 				same = false;
