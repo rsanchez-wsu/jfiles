@@ -26,6 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -42,59 +43,66 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 
 /**
- * Gui class file that makes a panel with buttons on it. 
+ * Gui class file that makes a panel with buttons on it.
  */
 public class Gui {
 
 	/**
 	 * Main class of GUI.
-	 * @param args The command line argument
-	 * @throws ParserConfigurationException 
-	 * @throws IOException 
-	 * @throws SAXException 
+	 * 
+	 * @param args
+	 *            The command line argument
 	 */
-	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
+	public static void main(String[] args)
+			throws ParserConfigurationException, SAXException, IOException {
 		// Creates the frame
 		JFrame frame = new JFrame();
 		// Sets size of frame
 		frame.setSize(450, 350);
 		// Where buttons will be place (rows, columns)
 		frame.setLayout(new GridLayout(2, 5));
-		
-		/*
-		 * Some initial testing for parsing XML for file names and types. Uses fake data for now, assuming this will come later.
-		 * Simply logs file name + extension from XML string to console for now.
-		 */
-		//String containing fake XML for parsing testing (output from server issue #17 from milestone 1)
-	    String testXML = "<?xml version=\"1.0\"?><item><name>Test</name><ext>.txt</ext><type>file</type></item>";
-	    
-	    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	    DocumentBuilder builder = factory.newDocumentBuilder();
-	    Document doc = builder.parse(new InputSource(new StringReader(testXML)));
-	    
-	    NodeList nodes = doc.getElementsByTagName("item");
-	    
-	    for(int i = 0; i < nodes.getLength(); i++){
-	    	Node nNode = nodes.item(i);
-	    	
-	    	Element eElement = (Element) nNode;
-	    	
-	    	System.out.println(eElement.getElementsByTagName("name").item(0).getTextContent() + eElement.getElementsByTagName("ext").item(0).getTextContent());
-	    	
-	    }
 
-		for (int i = 0; i < 10; i++) {
+		/*
+		 * Some initial testing for parsing XML for file names and types. Uses
+		 * fake data for now, assuming this will come later. Simply logs file
+		 * name + extension from XML string to console for now.
+		 */
+		
+		// String containing fake XML for parsing testing (output from server
+		// issue #17)
+		String testXml = "<?xml version=\"1.0\"?>" + "<items>"
+				+ "<item><name>Test</name><ext>.txt</ext><type>file</type></item>"
+				+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>" + "</items>";
+
+		ArrayList<String> items = new ArrayList<String>();
+
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		Document doc = builder.parse(new InputSource(new StringReader(testXml)));
+
+		NodeList nodes = doc.getElementsByTagName("item");
+
+		for (int i = 0; i < nodes.getLength(); i++) {
+			Node newNode = nodes.item(i);
+
+			Element newElement = (Element) newNode;
+
+			items.add(newElement.getElementsByTagName("name").item(0).getTextContent()
+					+ newElement.getElementsByTagName("ext").item(0).getTextContent());
+		}
+
+		for (int i = 0; i < items.size(); i++) {
 			JButton thebutton = new JButton();
-			thebutton.setText("Button: " + i);
+			thebutton.setText(items.get(i));
 			thebutton.addActionListener(new ActionListener() {
-				//This creates the event for when the button is clicked
+				// This creates the event for when the button is clicked
 				public void actionPerformed(ActionEvent error) {
 					System.out.println("You clicked a button");
 				}
 			});
-			//Sets size of the button
+			// Sets size of the button
 			thebutton.setSize(10, 10);
-			//Puts the button on the frame
+			// Puts the button on the frame
 			frame.add(thebutton);
 		}
 		frame.setVisible(true);
