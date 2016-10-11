@@ -26,6 +26,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -58,10 +59,6 @@ public class JFilesServer implements Runnable {
 	public void run() {
 		//String dir = System.getProperty("user.dir");
 		//These were added to implement File command
-		BufferedInputStream bis = null;
-		//FileOutputStream fos = null;
-		Socket sock = null;
-		OutputStream os = null;
 		//------------------------------------------
 		try (Socket server = serverSocket.accept()) {
 			System.out.println("Received connection from"
@@ -82,19 +79,7 @@ public class JFilesServer implements Runnable {
 					String fileLocation = words[2];
 					System.out.println("Client wants " + fileName + " at " 
 							+ fileLocation);
-					File sendFile = new File(fileLocation);
-					sock = serverSocket.accept();
-					byte [] byteArray = new byte [(int) sendFile.length()];
-					bis = new BufferedInputStream(
-							new FileInputStream(sendFile));
-					//findBugs gets mad that bis.read() isn't assigned
-					//to a variable, so plchlder is used until
-					//a better solution is found.
-					int plchlder = bis.read(byteArray, 0, byteArray.length);
-					System.out.println(plchlder);
-					os = sock.getOutputStream();
-					os.write(byteArray, 0, byteArray.length);
-					os.flush();
+					
 					break;
 				
 				case "LIST":
@@ -105,50 +90,39 @@ public class JFilesServer implements Runnable {
 					break;
 				}
 			}
-			/*
-			if ("LIST".equalsIgnoreCase(cmd)) {
-				try (DirectoryStream<Path> directoryStream =
-						Files.newDirectoryStream(Paths.get(dir))) {
-					for (Path path : directoryStream) {
-						out.write(path.toString() + "\n");
-					}
-				}
-			//FILE COMMAND
-			} else if ("FILE".equalsIgnoreCase(cmd)) {
-				//Write some text to a file and store it in server directory
-				String sample = "This is a placeholder for testing.";
-				String filepath = "demo.txt";
-				fos = new FileOutputStream(filepath);
-				fos.write(sample.getBytes("UTF-8"));
-				fos.close();
-				//For now, we just need the server to be able to write to 
-				//a file. File-sending code below this is commented out.
-				
-				//Prep the file to get sent to the client
-				sendFile = new File(filepath);
-				//Create a byte array consisting of the bytes in the sent file
-				byte [] bytearray = new byte [(int) sendFile.length()];
-				fis = new FileInputStream(sendFile);
-				bis = new BufferedInputStream(fis);
-				//bis reads from the byte array to put together file
-				//findBugs got mad that the read method wasn't being 
-				//assigned to anything, so dmy is a dummy variable
-				//to appease it for the time being
-				int dmy = bis.read(bytearray, 0, bytearray.length);
-				System.out.println(dmy);
-				os = sock.getOutputStream();
-				System.out.println("Sending " + sendFile.getName());
-				//the output stream writes the byte array to the client
-				os.write(bytearray, 0, bytearray.length);
-				os.flush();
-				//confirm the file was sent
-				System.out.println("Sent");
-				
-			} else {
-				out.write("ERROR: Unknown command!\n");
-			}
-			*/
 			out.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+	}
+	
+	/**
+	 * When FILE command is received from client, server calls this method
+	 * to handle file transfer.
+	 * @param filelocation the location of the desired file
+	 * @param servsock the socket where the server connection resides
+	 */
+	public void sendFile(String filelocation, ServerSocket servsock) {
+		Socket sock = null;
+		BufferedInputStream bis = null;
+		OutputStream os = null;
+		try {
+			File sendFile = new File(filelocation);
+			sock = serverSocket.accept();
+			byte [] byteArray = new byte [(int) sendFile.length()];
+			bis = new BufferedInputStream(
+					new FileInputStream(sendFile));
+			//findBugs gets mad that bis.read() isn't assigned
+			//to a variable, so plchlder is used until
+			//a better solution is found.
+			int plchlder = bis.read(byteArray, 0, byteArray.length);
+			System.out.println(plchlder);
+			os = sock.getOutputStream();
+			os.write(byteArray, 0, byteArray.length);
+			os.flush();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -178,8 +152,8 @@ public class JFilesServer implements Runnable {
 				}
 			}
 		}
-	} 	
-
+	}
+	
 	/**
 	 * The main entry point to the program.
 	 * 
