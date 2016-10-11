@@ -144,8 +144,8 @@ public class JFilesServer implements Runnable {
 					findCount++;
 				}
 			}
-			System.out.println("Found " + findCount + " file(s) that contains \"" 
-					+ searchTerm + "\"\n");
+			System.out.println(
+					"Found " + findCount + " file(s) that contains \"" + searchTerm + "\"\n");
 		} catch (IOException e) {
 			// TODO AUto-generated catch block
 			// e.printStackTrace();
