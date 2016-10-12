@@ -21,6 +21,10 @@
 
 package edu.wright.cs.jfiles.fileapi;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+
 /**
  * <p>
  * This is the class that provides functionality for managing JFile objects.
@@ -65,6 +69,8 @@ package edu.wright.cs.jfiles.fileapi;
  *
  */
 public class JFileManager {
+	
+	static final Logger logger = LogManager.getLogger(JFileManager.class.getName());
 
 	// This is suppressed until we build in the functionality for this field.
 	// This will most likely be when we make the paste() method functional.
@@ -95,8 +101,14 @@ public class JFileManager {
 	 *            The files being cut.
 	 */
 	public void cut(JFile[] files) {
+		logger.info("Copying Files");
 		copy(files);
+		logger.info("Copy of " + files + "Successful");
+		logger.error("Error Copying Files"); // If error occurs
+		logger.info("Deleting Contents");
 		delete(files);
+		logger.info("Delete of " + files + " Successful");
+		logger.error("Error Deleting Files"); // If error occurs
 	}
 
 	/*
@@ -116,7 +128,10 @@ public class JFileManager {
 	 * 
 	 */
 	public void copy(JFile[] files) {
+		logger.info("Copying");
 		clipboard = files.clone();
+		logger.info("Copy of " + files + " Successful");
+		logger.error("Error Copying Files");
 	}
 
 	/*
@@ -132,6 +147,10 @@ public class JFileManager {
 	 *            The name of the directory being pasted to.
 	 */
 	public void paste(String dirName) {
+		
+		logger.info("Pasting File");
+		logger.info("Successful Past of " + dirName);
+		logger.error("Error Pasting");
 
 	}
 
@@ -155,6 +174,10 @@ public class JFileManager {
 	 *            The directory the files are being duplicated to.
 	 */
 	private void paste(JFile[] files, String dirName) {
+		
+		logger.info("Moving File");
+		logger.info("File Moved to " + dirName);
+		logger.error("Error Moving File");
 
 	}
 
@@ -171,6 +194,10 @@ public class JFileManager {
 	 * 
 	 */
 	public void delete(JFile[] files) {
+		
+		logger.info("Deleting File");
+		logger.info("Successful Delete of " + files);
+		logger.error("Error Deleting");
 
 	}
 
@@ -209,8 +236,13 @@ public class JFileManager {
 	 *            The name of the directory where files will be moved to.
 	 */
 	public void move(JFile[] files, String dirName) {
+		logger.info("Moving Files");
 		paste(files, dirName);
+		logger.info("Files Moved");
+		logger.info("Deleting Files");
 		delete(files);
+		logger.info("Files Deleted");
+		logger.error("Error Moving Files");
 	}
 
 	/*
@@ -226,6 +258,9 @@ public class JFileManager {
 	 * 
 	 */
 	public void rename(String oldName, String newName) {
+		logger.info("Renaming File");
+		logger.info("Renamed " + oldName + " to " + newName);
+		logger.error("Error Renaming File");
 
 	}
 
@@ -242,6 +277,9 @@ public class JFileManager {
 	 * 
 	 */
 	public void open(String file) {
+		logger.info("Opening File");
+		logger.info(file + "opened");
+		logger.error("Error Opening " + file);
 
 	}
 
@@ -258,6 +296,9 @@ public class JFileManager {
 	 */
 
 	public void openWith(String name/* , Application app */) {
+		logger.info("Opening File");
+		logger.info("Opened " + name + "With (insert app)");
+		logger.error("Error Opening with " + "(insert app)");
 
 	}
 
@@ -279,6 +320,9 @@ public class JFileManager {
 	 * 
 	 */
 	public void getDetails(String name) {
+		logger.info("Requesting Details");
+		logger.info(name + " Acknowledged and Sent Details");
+		logger.error("Error Senging Details");
 
 	}
 
@@ -291,6 +335,9 @@ public class JFileManager {
 	 * 
 	 */
 	public void getType() {
+		logger.info("Requesting file type");
+		logger.info("Acknowledged and Sent Type");
+		logger.error("Error Requesting Type");
 
 	}
 }
