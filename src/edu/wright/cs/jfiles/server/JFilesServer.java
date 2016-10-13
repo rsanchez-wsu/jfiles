@@ -43,16 +43,26 @@ import java.net.Socket;
 public class JFilesServer implements Runnable {
 
 	private static final int PORT = 9786;
-	private final ServerSocket serverSocket;
+	private static ServerSocket serverSocket;
 	private static final String UTF_8 = "UTF-8";
+	private Socket socket;
+	
+	static {
+		try {
+			serverSocket = new ServerSocket(PORT);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * Handles allocating resources needed for the server.
 	 * 
 	 * @throws IOException If there is a problem binding to the socket
 	 */
-	public JFilesServer() throws IOException {
-		serverSocket = new ServerSocket(PORT);
+	public JFilesServer(Socket sock) {
+		socket = sock;
 	}
 
 	@Override
@@ -60,15 +70,15 @@ public class JFilesServer implements Runnable {
 		//String dir = System.getProperty("user.dir");
 		//These were added to implement File command
 		//------------------------------------------
-		try (Socket server = serverSocket.accept()) {
+		try {
 			System.out.println("Received connection from"
-					+ server.getRemoteSocketAddress());
+					+ socket.getRemoteSocketAddress());
 			InputStreamReader isr =
-					new InputStreamReader(server.getInputStream(), UTF_8);
+					new InputStreamReader(socket.getInputStream(), UTF_8);
 			BufferedReader in = new BufferedReader(isr);
 			String cmd = in.readLine();
 			OutputStreamWriter osw =
-					new OutputStreamWriter(server.getOutputStream(), UTF_8);
+					new OutputStreamWriter(socket.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
 			if (cmd != null) {
 				String [] words = cmd.split(" ");
@@ -103,13 +113,13 @@ public class JFilesServer implements Runnable {
 	 * @param filelocation the location of the desired file
 	 * @param servsock the socket where the server connection resides
 	 */
-	public void sendFile(String filelocation, ServerSocket servsock) {
-		Socket sock = null;
+	public void sendFile(String filelocation, Socket servsock) {
+		//Currently this closes the socket used by the server requiring
+		//the client to reconnect or open a new socket
 		BufferedInputStream bis = null;
 		OutputStream os = null;
 		try {
 			File sendFile = new File(filelocation);
-			sock = serverSocket.accept();
 			byte [] byteArray = new byte [(int) sendFile.length()];
 			bis = new BufferedInputStream(
 					new FileInputStream(sendFile));
@@ -118,7 +128,7 @@ public class JFilesServer implements Runnable {
 			//a better solution is found.
 			int plchlder = bis.read(byteArray, 0, byteArray.length);
 			System.out.println(plchlder);
-			os = sock.getOutputStream();
+			os = servsock.getOutputStream();
 			os.write(byteArray, 0, byteArray.length);
 			os.flush();
 		} catch (FileNotFoundException e) {
@@ -127,9 +137,9 @@ public class JFilesServer implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
-			if (sock != null) {
+			if (servsock != null) {
 				try {
-					sock.close();
+					servsock.close();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -161,13 +171,33 @@ public class JFilesServer implements Runnable {
 	 */
 	public static void main(String[] args) {
 		System.out.println("Starting the server");
-		try {
-			JFilesServer jf = new JFilesServer();
-			Thread thread = new Thread(jf);
-			thread.start();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		//Counts how many Threads there are
+		int numThrds = 1;
+		//A while loop that currently runs forever that will constantly obtain
+		//new connections and passing them to new threads.
+		//Recycles variable names
+		while (true) {
+			System.out.println("Preparing thread " + numThrds);
+			System.out.println("Waiting for connection...");
+			try {
+				//Obtain a Socket object
+				Socket sock = serverSocket.accept();
+				//Passes socket object to new server object
+				JFilesServer jf = new JFilesServer(sock);
+				//Create and start a new Thread object with server object
+				Thread thread = new Thread(jf);
+				thread.start();
+				//Sleep the main thread so that status messages remain organized
+				Thread.sleep(100);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//Iterates the numThrds variable by 1
+			numThrds++;
 		}
 	}
 
