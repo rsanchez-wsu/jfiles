@@ -89,6 +89,7 @@ public class JFilesServer implements Runnable {
 					String fileLocation = words[2];
 					System.out.println("Client wants " + fileName + " at " 
 							+ fileLocation);
+					socket.close();
 					
 					break;
 				

@@ -150,7 +150,10 @@ public class JFilesClient implements Runnable {
 			//server needs filename and location, so combine fileName and
 			//fileLocation into one string
 			String toServer = words[0] + " " + fileName + " " + fileLocation;
-			out.write(toServer);
+			out.write(toServer, 0, toServer.length());
+			//Without calling this method the server will receive null when
+			//readLine() is called.
+			out.flush();
 			//receive file back from server
 			//create a new file with the same name plus "-copy" on the end
 			//write the byte stream from server to the new file
