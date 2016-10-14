@@ -86,8 +86,9 @@ public class JFilesServer implements Runnable {
 				case "FIND":
 					findCmd(dir, out, baseCommand[1].toLowerCase(Locale.ENGLISH));
 					break;
-				case "File":
-
+				case "FINDR":
+					recursiveFindCmd(dir, out, baseCommand[1].toLowerCase(Locale.ENGLISH));
+				case "FILE":
 					break;
 				case "EXIT":
 					try {
@@ -130,27 +131,51 @@ public class JFilesServer implements Runnable {
 	}
 
 	/**
-	 * Find Command function. Method for the find command.
+	 * Find Command function. Method for the find command. Writes results found within current directory.
+	 * Search supports glob patterns
 	 * 
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
 	void findCmd(String dir, BufferedWriter out, String searchTerm) {
 		int findCount = 0;
-		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir))) {
+		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir), searchTerm)) {
 			for (Path path : directoryStream) {
-				if (path.toString().toLowerCase(Locale.ENGLISH).contains(searchTerm)) {
+				//if (path.toString().toLowerCase(Locale.ENGLISH).contains(searchTerm)) {
 					out.write(path.toString() + "\n");
 					findCount++;
-				}
+				//}
 			}
 			System.out.println(
-					"Found " + findCount + " file(s) that contains \"" + searchTerm + "\"\n");
+					"Found " + findCount + " file(s) in " + dir + " that contains \"" + searchTerm + "\"\n");
 		} catch (IOException e) {
 			// TODO AUto-generated catch block
 			// e.printStackTrace();
 			logger.error("Some error occured", e);
 		}
+	}
+
+	/**
+	 * Recursive find Command function. Method for the recursive option of the find command.
+	 * Calls itself if a child directory is found, otherwise calls findCmd to get results from
+	 * current directory.
+	 * 
+	 * @throws IOException
+	 *             If there is a problem binding to the socket
+	 */
+	void recursiveFindCmd(String dir, BufferedWriter out, String searchTerm) {
+		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir))) {
+			for (Path path : directoryStream) {
+				if (path.toFile().isDirectory()) {
+					recursiveFindCmd(path.toString(), out, searchTerm);
+				}
+			}
+		} catch (IOException e) {
+			// TODO AUto-generated catch block
+			// e.printStackTrace();
+			logger.error("Some error occured", e);
+		}
+		findCmd(dir, out, searchTerm);
 	}
 
 	/**
