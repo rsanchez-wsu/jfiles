@@ -24,3 +24,4 @@
 2016-06-06 17:06:15.571 [main] INFO  edu.wright.cs.jfiles.server.JFilesServer - Starting the server
 2016-07-06 17:07:26.618 [main] INFO  edu.wright.cs.jfiles.server.JFilesServer - Config set to port 9786
 2016-07-06 17:07:26.619 [main] INFO  edu.wright.cs.jfiles.server.JFilesServer - Starting the server
+2016-43-14 11:43:45.643 [main] INFO  edu.wright.cs.jfiles.server.JFilesServer - No config file found. Using default values.

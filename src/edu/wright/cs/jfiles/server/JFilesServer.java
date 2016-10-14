@@ -64,6 +64,7 @@ public class JFilesServer implements Runnable {
 
 	static final Logger logger = LogManager.getLogger(JFilesServer.class);
 	private static int PORT;
+	private static int MAXTHREADS;
 	private final ServerSocket serverSocket;
 	private static final String UTF_8 = "UTF-8";
 
@@ -77,24 +78,51 @@ public class JFilesServer implements Runnable {
 	private static void init() throws IOException {
 		Properties prop = new Properties();
 		FileInputStream fis = null;
-		File file = new File("src/edu/wright/cs/jfiles/server/serverConfig.xml");
+		File config = null;	
 		
+		//Array of strings containing possible paths to check for config files
+		String[] configPaths = {"$HOME/.jfiles/serverConfig.xml",
+				"/usr/local/etc/jfiles/serverConfig.xml",
+				"/opt/etc/jfiles/serverConfig.xml",
+				"/etc/jfiles/serverConfig.xml",
+				"%PROGRAMFILES%/jFiles/etc/serverConfig.xml",
+				"%APPDATA%/jFiles/etc/serverConfig.xml"};
 		
-		try {
-			//Reads xmlfile into prop object as key value pairs
-			fis = new FileInputStream(file);
-			prop.loadFromXML(fis);
-			
-		} catch (IOException e) {
-			logger.error("IOException occured when trying to access the server config", e);
-		} finally {
-			if (fis != null) {
-				fis.close();
+		//Checking location(s) for the config file);
+		for (int i = 0; i < configPaths.length; i++) {
+			if (new File(configPaths[i]).exists()) {
+				config = new File(configPaths[i]);
+				break;
 			}
 		}
+		
+		//Output location where the config file was found. Otherwise warn and use defaults.
+		if (config == null) {		
+			logger.info("No config file found. Using default values.");
+		} else {
+			logger.info("Config file found in " + config.getPath());
+			//Read file
+			try {
+				//Reads xmlfile into prop object as key value pairs
+				fis = new FileInputStream(config);
+				prop.loadFromXML(fis);			
+			} catch (IOException e) {
+				logger.error("IOException occured when trying to access the server config", e);
+			} finally {
+				if (fis != null) {
+					fis.close();
+				}
+			}
+		}
+	
 		//Add setters here. First value is the key name and second is the default value.
+		//Default values are require as they are used if the config file cannot be found OR if
+		// the config file doesn't contain the key.
 		PORT = Integer.parseInt(prop.getProperty("Port","9786"));
 		logger.info("Config set to port " + PORT);
+		
+		MAXTHREADS = Integer.parseInt(prop.getProperty("maxThreads","10"));
+		logger.info("Config set max threads to " + MAXTHREADS);		
 	}
 	
 	/**

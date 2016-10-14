@@ -3,17 +3,5 @@
 <properties>
 	<comment>Properties go here</comment>
 	<entry key="port">9786</entry>
+	<entry key="maxThreads">10</entry>
 </properties>
-
-
-
-
-
-
-
-
-
-
-
-
-
