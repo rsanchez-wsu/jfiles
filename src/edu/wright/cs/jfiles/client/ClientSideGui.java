@@ -89,7 +89,7 @@ public class ClientSideGui extends Application {
 		primaryStage.setResizable(true);// User Resizing Allowed
 		primaryStage.show();// Displays the start Stage and its contents.
 
-	} // end start method
+	}
 
 	/**
 	 * Main method. This method is where the program starts in this class. It
@@ -103,6 +103,6 @@ public class ClientSideGui extends Application {
 
 		System.out.println("Launching Client Main GUI Window.");
 		launch(args);// Launches the GUI
-	} // end of method Main
+	}
 
-} // end ClientSideGUI class
+}
