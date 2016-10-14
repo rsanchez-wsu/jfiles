@@ -53,26 +53,29 @@ public class ClientSideGui extends Application {
 
 		// Pane Creation
 		BorderPane basePane = new BorderPane();
-		basePane.setStyle("-fx-background-color: LIGHTGREY;");
 		// Sets basePane's color
+		basePane.setStyle("-fx-background-color: LIGHTGREY;");
 
 		// Create MenuBar on window Top
 		MenuBar headderMenuBar = new MenuBar();
-		// headderMenuBar.prefWidthProperty().bind(primaryStage.widthProperty());
 		// Line not needed because it is already set as default
+		// headderMenuBar.prefWidthProperty().bind(primaryStage.widthProperty());
 		basePane.setTop(headderMenuBar);
 
 		// Create File menu with open and close items
-		Menu fileMenu = new Menu("File");// Creates Menu Name
-		MenuItem openMenuItem = new MenuItem("Open");// Creates Menu Item
+		// Creates Menu Name
+		Menu fileMenu = new Menu("File");
+		// Creates Menu Items
+		MenuItem openMenuItem = new MenuItem("Open");
 		MenuItem closeMenuItem = new MenuItem("Close");
 
 		// Add Menu Items and a Separator to File Menu. Separate Close option
 		// for visual distinction.
 		fileMenu.getItems().addAll(openMenuItem, new SeparatorMenuItem(), closeMenuItem);
-
-		closeMenuItem.setOnAction(actionEvent -> Platform.exit());
+		
 		// Exits the window if clicked
+		closeMenuItem.setOnAction(actionEvent -> Platform.exit());
+		
 
 		// Add the menu to the menu bar
 		headderMenuBar.getMenus().addAll(fileMenu);
@@ -83,11 +86,14 @@ public class ClientSideGui extends Application {
 		// scene color is buried under the basePane and is not currently visible
 
 		// Manipulating the primaryStage or "window"
-		primaryStage.setTitle("JFiles");// Sets the title on the window itself
-		primaryStage.setScene(scene);// Adds the scene to the stage. Takes up
-										// the whole window.
-		primaryStage.setResizable(true);// User Resizing Allowed
-		primaryStage.show();// Displays the start Stage and its contents.
+		// Sets the title on the window itself
+		primaryStage.setTitle("JFiles");
+		// Adds the scene to the stage. Takes up the whole window.
+		primaryStage.setScene(scene);
+		// User Resizing Allowed
+		primaryStage.setResizable(true);
+		// Displays the start Stage and its contents.
+		primaryStage.show();
 
 	}
 
@@ -102,7 +108,8 @@ public class ClientSideGui extends Application {
 	public static void main(String[] args) {
 
 		System.out.println("Launching Client Main GUI Window.");
-		launch(args);// Launches the GUI
+		// Launches the GUI
+		launch(args);
 	}
 
 }
