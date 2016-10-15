@@ -21,13 +21,13 @@
 
 package edu.wright.cs.jfiles.client;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -104,11 +104,11 @@ public class JFilesClient implements Runnable {
 			Scanner kb = new Scanner(System.in, UTF_8);
 			String line = kb.nextLine();
 			//Splits the user input into an array of words separated by spaces
-			String[] words = line.split(" ");
 			//switch statement for which command was entered
-			switch (words[0]) {
+			switch (line.trim()) {
+			
 			case "FILE": 
-				fileCommand(words, socket);
+				fileCommand("FILE", socket);
 				break;
 				
 			default: 
@@ -135,62 +135,24 @@ public class JFilesClient implements Runnable {
 		 * @param words an array of words given by the user as a command
 		 * @param sock an active Socket object connected to server
 		 */
-	public void fileCommand(String[] words, Socket sock) {
-		FileOutputStream fos = null;
-		InputStream in = null;
+	public void fileCommand(String file, Socket sock) {
 		try {
-			//get name of the file user wishes to receive
-			String fileName = words[1];
-			//get location of the file if not in root
-			String fileLocation = null;
-		
-			if (words.length > 2) {
-				fileLocation = words[2];
-			}
-			//send fileName and fileLocation to the server
-			OutputStreamWriter osw = 
-					new OutputStreamWriter(sock.getOutputStream(), UTF_8);
+			OutputStreamWriter osw = new OutputStreamWriter(sock.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
-			//server needs filename and location, so combine fileName and
-			//fileLocation into one string
-			String toServer = words[0] + " " + fileName + " " + fileLocation;
-			out.write(toServer, 0, toServer.length());
-			//Without calling this method the server will receive null when
-			//readLine() is called.
+			out.write("FILE");
 			out.flush();
-			//receive file back from server
-			in = sock.getInputStream();
-			//create a new file with the same name plus "-copy" on the end
-			File newFile = new File(fileName + "-copy");
-			fos = new FileOutputStream(newFile);
-			//write the byte stream from server to the new file
-			byte [] buffer = new byte [1024];
-			fos.write(buffer, 0, buffer.length);
-			//compare the checksums of both files
-			//output "completed" if the checksums are the same and an error if not
-			//printout indication of success
-			System.out.println("Transmission Sent");
-	
+			InputStreamReader isr = new InputStreamReader(sock.getInputStream(), UTF_8);
+			BufferedReader in = new BufferedReader(isr);
+			String line;
+			
+			while ((line = in.readLine()) != null) {
+				System.out.println(line);
+			}
+			in.close();
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally {
-			if (fos != null) {
-				try {
-					fos.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
 		}
 	}
 	
