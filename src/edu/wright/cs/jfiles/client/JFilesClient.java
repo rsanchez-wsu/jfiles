@@ -26,6 +26,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -108,7 +109,7 @@ public class JFilesClient implements Runnable {
 			switch (line.trim()) {
 			
 			case "FILE": 
-				fileCommand("FILE", socket);
+				fileCommand(line, socket);
 				break;
 				
 			default: 
@@ -132,23 +133,25 @@ public class JFilesClient implements Runnable {
 		 * Method for the FILE command.
 		 * Downloads a file from the server and compares checksums to verify file.
 		 * 
-		 * @param words an array of words given by the user as a command
+		 * @param file name of file that needs to be sent
 		 * @param sock an active Socket object connected to server
 		 */
 	public void fileCommand(String file, Socket sock) {
 		try {
 			OutputStreamWriter osw = new OutputStreamWriter(sock.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
-			out.write("FILE");
+			out.write(file + "\n" );
 			out.flush();
 			InputStreamReader isr = new InputStreamReader(sock.getInputStream(), UTF_8);
-			BufferedReader in = new BufferedReader(isr);
-			String line;
+			BufferedReader br = new BufferedReader(isr);
 			
-			while ((line = in.readLine()) != null) {
+			BufferedWriter bw = new BufferedWriter(new FileWriter("AUTHORS-COPY"));
+			String line;
+			while ((line = br.readLine()) != null) {
 				System.out.println(line);
+				bw.write(line + "\n" );
 			}
-			in.close();
+			bw.close();
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

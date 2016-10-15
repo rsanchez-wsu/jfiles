@@ -109,7 +109,7 @@ public class JFilesServer implements Runnable {
 
 			while ((line = br.readLine()) != null) {
 				System.out.println(line);
-				out.write(line);
+				out.write(line + "\n") ;
 			}
 			out.flush();
 
@@ -143,11 +143,8 @@ public class JFilesServer implements Runnable {
 				Thread thread = new Thread(jf);
 				thread.start();
 				//Sleep the main thread so that status messages remain organized
-				Thread.sleep(100);
+				//Thread.sleep(2);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
