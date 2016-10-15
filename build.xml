@@ -16,15 +16,15 @@
 		<fileset dir="${tools.dir}" includes="*.jar" />
 	</path>
 	<path id="runtime.classpath">
-		<pathelement location="${dist.dir}"/>
-		<pathelement path="${build.lib.path}/"/>
+		<fileset dir="${dist.dir}" includes="*.jar" />
+		<fileset dir="${lib.dir}" includes="*.jar" />
 	</path>
 
 	<!--
 	In order to use the Ivy tasks, it is necessary for Ant to be able to find
-	the Ivy jar.	If you install the Ivy plugin for your IDE, then the Ivy
-	instance in your IDE will handle resolving the necessary dependencies.	If
-	you want to be able to run the Ant tasks from the command line, you ned to
+	the Ivy jar.  If you install the Ivy plugin for your IDE, then the Ivy
+	instance in your IDE will handle resolving the necessary dependencies.  If
+	you want to be able to run the Ant tasks from the command line, you need to
 	make sure to install the ivy.jar in your ${ANT_HOME}/lib directory so that
 	Ant can find it.
 
@@ -39,7 +39,7 @@
 	(like Linux) that use a package manager but do not install every .jar into
 	the system classpath by default (or that don't have a system classpath).
 	If the ivy.jar is in ${ANT_HOME}/lib, then it will be found there first
-	and this path will be ignored.	If this path does not exist on your system
+	and this path will be ignored.  If this path does not exist on your system
 	its declaration here will have no effect.
 	-->
 	<path id="ivy.jar.path">
@@ -98,9 +98,6 @@
 			debug="on"
 			deprecation="on">
 
-			<classpath>
-				<pathelement path="tools.lib.path" />
-			</classpath>
 			<compilerarg value="-Xlint:all" />
 			<compilerarg value="-Xlint:-path" />
 			<compilerarg value="-Werror" />

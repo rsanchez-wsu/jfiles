@@ -21,6 +21,9 @@
 
 package edu.wright.cs.jfiles.server;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -30,6 +33,7 @@ import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+
 /**
  * The main class of the JFiles server application.
  * 
@@ -38,6 +42,7 @@ import java.net.Socket;
  */
 public class JFilesServer implements Runnable {
 
+	static final Logger logger = LogManager.getLogger(JFilesServer.class);
 	private static final int PORT = 9786;
 	private static ServerSocket serverSocket;
 	private static final String UTF_8 = "UTF-8";
@@ -47,8 +52,9 @@ public class JFilesServer implements Runnable {
 		try {
 			serverSocket = new ServerSocket(PORT);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//TODO AUto-generated catch block
+			//e.printStackTrace();
+			logger.error("Some error occured", e);
 		}
 	}
 
@@ -121,9 +127,11 @@ public class JFilesServer implements Runnable {
 	/**
 	 * The main entry point to the program.
 	 * 
-	 * @param args The command-line arguments
+	 * @throws IOException
+	 *             If there is a problem binding to the socket
 	 */
 	public static void main(String[] args) {
+
 		System.out.println("Starting the server");
 		//Counts how many Threads there are
 		int numThrds = 1;
