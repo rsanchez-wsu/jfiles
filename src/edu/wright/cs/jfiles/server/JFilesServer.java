@@ -21,15 +21,11 @@
 
 package edu.wright.cs.jfiles.server;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -71,25 +67,15 @@ public class JFilesServer implements Runnable {
 		//These were added to implement File command
 		//------------------------------------------
 		try {
-			System.out.println("Received connection from"
-					+ socket.getRemoteSocketAddress());
-			InputStreamReader isr =
-					new InputStreamReader(socket.getInputStream(), UTF_8);
+			System.out.println("Received connection from" + socket.getRemoteSocketAddress());
+			InputStreamReader isr = new InputStreamReader(socket.getInputStream(), UTF_8);
 			BufferedReader in = new BufferedReader(isr);
 			String cmd = in.readLine();
-			OutputStreamWriter osw =
-					new OutputStreamWriter(socket.getOutputStream(), UTF_8);
-			BufferedWriter out = new BufferedWriter(osw);
+			
 			if (cmd != null) {
-				String [] words = cmd.split(" ");
-				String cmdName = words[0]; 
-				switch (cmdName) {
+				switch (cmd) {
 				case "FILE":
-					String fileName = words[1];
-					String fileLocation = words[2];
-					System.out.println("Client wants " + fileName + " at " 
-							+ fileLocation);
-					sendFile(fileLocation, socket);
+					sendFile("AUTHORS",socket);
 					socket.close();	
 					break;
 				
@@ -101,7 +87,6 @@ public class JFilesServer implements Runnable {
 					break;
 				}
 			}
-			out.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -111,58 +96,27 @@ public class JFilesServer implements Runnable {
 	/**
 	 * When FILE command is received from client, server calls this method
 	 * to handle file transfer.
-	 * @param filelocation the location of the desired file
+	 * 
 	 * @param servsock the socket where the server connection resides
 	 */
-	public void sendFile(String filelocation, Socket servsock) {
-		//Currently this closes the socket used by the server requiring
-		//the client to reconnect or open a new socket
-		BufferedInputStream bis = null;
-		OutputStream os = null;
-		try {
-			File sendFile = new File(filelocation);
-			byte [] byteArray = new byte [(int) sendFile.length()];
-			bis = new BufferedInputStream(
-					new FileInputStream(sendFile));
-			//findBugs gets mad that bis.read() isn't assigned
-			//to a variable, so plchlder is used until
-			//a better solution is found.
-			int plchlder = bis.read(byteArray, 0, byteArray.length);
-			System.out.println(plchlder);
-			os = servsock.getOutputStream();
-			os.write(byteArray, 0, byteArray.length);
-			os.flush();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+	public void sendFile(String file, Socket servsock) {
+	
+		
+		try (BufferedReader br = new BufferedReader(new FileReader("AUTHORS"))) {
+			OutputStreamWriter osw = new OutputStreamWriter(servsock.getOutputStream(), UTF_8);
+			BufferedWriter out = new BufferedWriter(osw);
+			String line;
+
+			while ((line = br.readLine()) != null) {
+				System.out.println(line);
+				out.write(line);
+			}
+			out.flush();
+
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally {
-			if (servsock != null) {
-				try {
-					servsock.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if (bis != null) {
-				try {
-					bis.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if (os != null) {
-				try {
-					os.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
 		}
+		
 	}
 	
 	/**
