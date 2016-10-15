@@ -67,7 +67,6 @@ public class JFilesServer implements Runnable {
 		//These were added to implement File command
 		//------------------------------------------
 		try {
-			System.out.println("Received connection from" + socket.getRemoteSocketAddress());
 			InputStreamReader isr = new InputStreamReader(socket.getInputStream(), UTF_8);
 			BufferedReader in = new BufferedReader(isr);
 			String cmd = in.readLine();
@@ -144,6 +143,8 @@ public class JFilesServer implements Runnable {
 				thread.start();
 				//Sleep the main thread so that status messages remain organized
 				//Thread.sleep(2);
+				System.out.println("Received connection from" 
+						+ sock.getRemoteSocketAddress());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
