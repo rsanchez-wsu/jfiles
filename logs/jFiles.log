@@ -1,0 +1,10 @@
+2016-50-16 14:50:24.163 [main] ERROR edu.wright.cs.jfiles.server.JFilesServer - Some error occured
+java.net.BindException: Address already in use: JVM_Bind
+	at java.net.DualStackPlainSocketImpl.bind0(Native Method) ~[?:1.8.0_101]
+	at java.net.DualStackPlainSocketImpl.socketBind(Unknown Source) ~[?:1.8.0_101]
+	at java.net.AbstractPlainSocketImpl.bind(Unknown Source) ~[?:1.8.0_101]
+	at java.net.PlainSocketImpl.bind(Unknown Source) ~[?:1.8.0_101]
+	at java.net.ServerSocket.bind(Unknown Source) ~[?:1.8.0_101]
+	at java.net.ServerSocket.<init>(Unknown Source) ~[?:1.8.0_101]
+	at java.net.ServerSocket.<init>(Unknown Source) ~[?:1.8.0_101]
+	at edu.wright.cs.jfiles.server.JFilesServer.<clinit>(JFilesServer.java:54) [bin/:?]

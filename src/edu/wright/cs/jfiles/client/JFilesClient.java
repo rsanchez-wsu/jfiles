@@ -26,7 +26,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -105,13 +105,16 @@ public class JFilesClient implements Runnable {
 			//kb input is used on the line after it is initialized
 			//Overrode resource leak warning for now
 			Scanner kb = new Scanner(System.in, UTF_8);
+			//Enter input in format:
+			//command (space) argument
 			String line = kb.nextLine();
 			//Splits the user input into an array of words separated by spaces
 			//switch statement for which command was entered
-			switch (line.trim()) {
+			String [] cmdary = line.split(" ");
+			switch (cmdary [0]) {
 			
 			case "FILE": 
-				fileCommand(line, socket);
+				fileCommand(cmdary [1], socket);
 				break;
 				
 			default: 
@@ -139,15 +142,22 @@ public class JFilesClient implements Runnable {
 		 * @param sock an active Socket object connected to server
 		 */
 	public void fileCommand(String file, Socket sock) {
+		BufferedWriter bw = null;
 		try {
 			OutputStreamWriter osw = new OutputStreamWriter(sock.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
-			out.write(file + "\n" );
+			out.write("FILE " + file + "\n" );
 			out.flush();
 			InputStreamReader isr = new InputStreamReader(sock.getInputStream(), UTF_8);
 			BufferedReader br = new BufferedReader(isr);
-			
-			BufferedWriter bw = new BufferedWriter(new FileWriter("AUTHORS-COPY"));
+			//Remove .txt from end of filename. Probably better way of doing this.
+			int index = 0;
+			while (file.charAt(index) != 46) {
+				index++;
+			}
+			String newFile = file.substring(0, index) + "-copy.txt";
+			bw = new BufferedWriter(new OutputStreamWriter(
+					new FileOutputStream(newFile), "UTF-8"));
 			String line;
 			while ((line = br.readLine()) != null) {
 				System.out.println(line);
@@ -158,6 +168,15 @@ public class JFilesClient implements Runnable {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			if (bw != null) {
+				try {
+					bw.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	

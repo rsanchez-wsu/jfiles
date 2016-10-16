@@ -26,7 +26,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -75,12 +75,12 @@ public class JFilesServer implements Runnable {
 		try {
 			InputStreamReader isr = new InputStreamReader(socket.getInputStream(), UTF_8);
 			BufferedReader in = new BufferedReader(isr);
-			String cmd = in.readLine();
-			
+			String cmd = in.readLine();	
 			if (cmd != null) {
-				switch (cmd) {
+				String [] cmdary = cmd.split(" ");
+				switch (cmdary [0]) {
 				case "FILE":
-					sendFile("AUTHORS",socket);
+					sendFile(cmdary [1],socket);
 					socket.close();	
 					break;
 				
@@ -107,14 +107,15 @@ public class JFilesServer implements Runnable {
 	public void sendFile(String file, Socket servsock) {
 	
 		
-		try (BufferedReader br = new BufferedReader(new FileReader("AUTHORS"))) {
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(
+				new FileInputStream(file), "UTF-8"))) {
 			OutputStreamWriter osw = new OutputStreamWriter(servsock.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
 			String line;
 
 			while ((line = br.readLine()) != null) {
 				System.out.println(line);
-				out.write(line + "\n") ;
+				out.write(line + "\n");
 			}
 			out.flush();
 
