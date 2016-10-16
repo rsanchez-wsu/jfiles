@@ -26,7 +26,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 
-
 /**
  * <p>
  * This is the class that provides functionality for managing JFile objects.
@@ -65,15 +64,40 @@ import java.util.Arrays;
  * method just provides functions to unify different APIs.
  * </p>
  * 
+ * 
+ * 
  * @author <b>Team 5:</b>
  * @author John Wintersohle II
  *         <<a href="mailto:Dorkatron199@aol.com">Dorkatron199@aol.com</a>>
  *
  */
 public class JFileManager {
-	
+
+	/**
+	 * <p>
+	 * The logger for the JFileManager class. This object records all actions
+	 * done by this class. This can be done either through info or error
+	 * logging.
+	 * </p>
+	 * 
+	 * <p>
+	 * Logging generally follows this process:
+	 * </p>
+	 * 
+	 * <ol>
+	 * <b>
+	 * <li>Startup log</b> (before try block) <b>
+	 * <li>Try Block Starts</b> <b>
+	 * <li>Complete log</b> (in try block) <b>
+	 * <li>Catch Block Starts</b> <b>
+	 * <li>Error log</b> (in catch block)
+	 * </ol>
+	 * 
+	 * @see Logger
+	 * @see LogManager
+	 */
 	static final Logger logger = LogManager.getLogger(JFileManager.class.getName());
-	
+
 	// This is suppressed until we build in the functionality for this field.
 	// This will most likely be when we make the paste() method functional.
 	/**
@@ -149,9 +173,9 @@ public class JFileManager {
 	 *            The name of the directory being pasted to.
 	 */
 	public void paste(String dirName) {
-		
+
 		logger.info("Pasting File");
-		logger.info("Successful Past of " + dirName);
+		logger.info("Successful Paste of " + dirName);
 		logger.error("Error Pasting");
 
 	}
@@ -176,7 +200,7 @@ public class JFileManager {
 	 *            The directory the files are being duplicated to.
 	 */
 	private void paste(JFile[] files, String dirName) {
-		
+
 		logger.info("Moving File");
 		logger.info("File Moved to " + dirName);
 		logger.error("Error Moving File");
@@ -196,7 +220,7 @@ public class JFileManager {
 	 * 
 	 */
 	public void delete(JFile[] files) {
-		
+
 		logger.info("Deleting File");
 		logger.info("Successful Delete of " + Arrays.toString(files));
 		logger.error("Error Deleting");
@@ -279,6 +303,32 @@ public class JFileManager {
 	 * 
 	 */
 	public void open(JFile file) {
+
+		/*
+		 * Notes on how to do this:
+		 **********************************************************************
+		 * The ProcessBuilder should be able to get this method functioning. The
+		 * command(string[] args) takes in an OS command and its arguments and
+		 * acts accordingly. It is, however, system-dependent, so it will
+		 * function differently for different OSs, so we will have to create a
+		 * selection statement for different OSs. This has already been done.
+		 * 
+		 * How exactly this works will have to be investigated. If it
+		 * effectively put a command into the command line, we need to figure
+		 * out how different operating systems open files via the command line.
+		 * This may mean getting help from Brand will be wise. If it isn't like
+		 * that, then we need to find out how this works.
+		 * 
+		 * If nothing else, this gives us a starting point to do research. And
+		 * after looking into it a bit, it seems like we will have a bit of
+		 * research and tinkering to do.
+		 * 
+		 * - John Wintersohle
+		 * 
+		 * (This comment is temporary and will be removed when this issue is
+		 * solved.)
+		 */
+
 		if (System.getProperty("os.name").contains("Windows")) {
 			// Open the file in a way compatible to Windows.
 		} else if (System.getProperty("os.name").contains("Macintosh")) {
@@ -288,7 +338,7 @@ public class JFileManager {
 		} else {
 			// ??? Error maybe?
 		}
-		
+
 		logger.info("Opening File");
 		logger.info(file + "opened");
 		logger.error("Error Opening " + file);
@@ -307,6 +357,8 @@ public class JFileManager {
 	 */
 
 	public void openWith(String name/* , Application app */) {
+		// See open(JFile file) for details.
+
 		if (System.getProperty("os.name").contains("Windows")) {
 			// Open the file in a way compatible to Windows.
 		} else if (System.getProperty("os.name").contains("Macintosh")) {
@@ -316,7 +368,7 @@ public class JFileManager {
 		} else {
 			// ??? Error maybe?
 		}
-		
+
 		logger.info("Opening File");
 		logger.info("Opened " + name + "With (insert app)");
 		logger.error("Error Opening with " + "(insert app)");
