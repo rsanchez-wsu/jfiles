@@ -241,8 +241,16 @@ public class JFileManager {
 	 *            The file being opened.
 	 * 
 	 */
-	public void open(String file) {
-
+	public void open(JFile file) {
+		if (System.getProperty("os.name").contains("Windows")) {
+			// Open the file in a way compatible to Windows.
+		} else if (System.getProperty("os.name").contains("Macintosh")) {
+			// Open the file in a way compatible to Macintosh.
+		} else if (System.getProperty("os.name").contains("Linux")) {
+			// Open the file in a way compatible to Linux.
+		} else {
+			// ??? Error maybe?
+		}
 	}
 
 	/*
@@ -258,7 +266,15 @@ public class JFileManager {
 	 */
 
 	public void openWith(String name/* , Application app */) {
-
+		if (System.getProperty("os.name").contains("Windows")) {
+			// Open the file in a way compatible to Windows.
+		} else if (System.getProperty("os.name").contains("Macintosh")) {
+			// Open the file in a way compatible to Macintosh.
+		} else if (System.getProperty("os.name").contains("Linux")) {
+			// Open the file in a way compatible to Linux.
+		} else {
+			// ??? Error maybe?
+		}
 	}
 
 	/*
