@@ -24,6 +24,9 @@ package edu.wright.cs.jfiles.fileapi;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Arrays;
+
+
 /**
  * <p>
  * This is the class that provides functionality for managing JFile objects.
@@ -102,11 +105,11 @@ public class JFileManager {
 	public void cut(JFile[] files) {
 		logger.info("Copying Files");
 		copy(files);
-		logger.info("Copy of " + files + "Successful");
+		logger.info("Copy of " + Arrays.toString(files) + "Successful");
 		logger.error("Error Copying Files"); // If error occurs
 		logger.info("Deleting Contents");
 		delete(files);
-		logger.info("Delete of " + files + " Successful");
+		logger.info("Delete of " + Arrays.toString(files) + " Successful");
 		logger.error("Error Deleting Files"); // If error occurs
 	}
 
@@ -129,7 +132,7 @@ public class JFileManager {
 	public void copy(JFile[] files) {
 		logger.info("Copying");
 		clipboard = files.clone();
-		logger.info("Copy of " + files + " Successful");
+		logger.info("Copy of " + Arrays.toString(files) + " Successful");
 		logger.error("Error Copying Files");
 	}
 
@@ -195,7 +198,7 @@ public class JFileManager {
 	public void delete(JFile[] files) {
 		
 		logger.info("Deleting File");
-		logger.info("Successful Delete of " + files);
+		logger.info("Successful Delete of " + Arrays.toString(files));
 		logger.error("Error Deleting");
 
 	}

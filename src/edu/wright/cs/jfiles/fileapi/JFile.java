@@ -21,10 +21,11 @@
 
 package edu.wright.cs.jfiles.fileapi;
 
-import java.io.File;
-import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.io.File;
+import java.util.ArrayList;
 
 /**
  * This is the Class of holding and managing the actual content of files. It is
