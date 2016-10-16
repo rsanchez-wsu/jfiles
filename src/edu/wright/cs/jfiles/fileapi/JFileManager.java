@@ -127,14 +127,17 @@ public class JFileManager {
 	 *            The files being cut.
 	 */
 	public void cut(JFile[] files) {
-		logger.info("Copying Files");
-		copy(files);
-		logger.info("Copy of " + Arrays.toString(files) + "Successful");
-		logger.error("Error Copying Files"); // If error occurs
-		logger.info("Deleting Contents");
-		delete(files);
-		logger.info("Delete of " + Arrays.toString(files) + " Successful");
-		logger.error("Error Deleting Files"); // If error occurs
+		// Since the copy and delete methods already document themselves,
+		// I changed this documentation to only reflect the cut method.
+		logger.info("Cut Started");
+		try {
+			copy(files);
+			delete(files);
+			logger.info("Successfully Cut " + Arrays.toString(files));
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Error Cutting Files");
+		}
 	}
 
 	/*
@@ -155,9 +158,13 @@ public class JFileManager {
 	 */
 	public void copy(JFile[] files) {
 		logger.info("Copying");
-		clipboard = files.clone();
-		logger.info("Copy of " + Arrays.toString(files) + " Successful");
-		logger.error("Error Copying Files");
+		try {
+			clipboard = files.clone();
+			logger.info("Copy of " + Arrays.toString(files) + " Successful");
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Error Copying Files.");
+		}
 	}
 
 	/*
@@ -173,10 +180,13 @@ public class JFileManager {
 	 *            The name of the directory being pasted to.
 	 */
 	public void paste(String dirName) {
-
 		logger.info("Pasting File");
-		logger.info("Successful Paste of " + dirName);
-		logger.error("Error Pasting");
+		try {
+			logger.info("Successful Paste of " + dirName);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Error pasting files.");
+		}
 
 	}
 
@@ -200,10 +210,14 @@ public class JFileManager {
 	 *            The directory the files are being duplicated to.
 	 */
 	private void paste(JFile[] files, String dirName) {
-
-		logger.info("Moving File");
-		logger.info("File Moved to " + dirName);
-		logger.error("Error Moving File");
+		// Updated logging strings to better document method.
+		logger.info("Copying Files.");
+		try {
+			logger.info(Arrays.toString(files) + " Moved to " + dirName + " Successfully");
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Error Moving Files");
+		}
 
 	}
 
@@ -220,10 +234,13 @@ public class JFileManager {
 	 * 
 	 */
 	public void delete(JFile[] files) {
-
 		logger.info("Deleting File");
-		logger.info("Successful Delete of " + Arrays.toString(files));
-		logger.error("Error Deleting");
+		try {
+			logger.info("Successfully Deleted " + Arrays.toString(files));
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Error Deleting");
+		}
 
 	}
 
@@ -263,12 +280,14 @@ public class JFileManager {
 	 */
 	public void move(JFile[] files, String dirName) {
 		logger.info("Moving Files");
-		paste(files, dirName);
-		logger.info("Files Moved");
-		logger.info("Deleting Files");
-		delete(files);
-		logger.info("Files Deleted");
-		logger.error("Error Moving Files");
+		try {
+			paste(files, dirName);
+			delete(files);
+			logger.info(Arrays.toString(files) + " Successfully Moved to " + dirName);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Error Moving Files");
+		}
 	}
 
 	/*
@@ -285,8 +304,12 @@ public class JFileManager {
 	 */
 	public void rename(String oldName, String newName) {
 		logger.info("Renaming File");
-		logger.info("Renamed " + oldName + " to " + newName);
-		logger.error("Error Renaming File");
+		try {
+			logger.info("Renamed " + oldName + " to " + newName);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Error Renaming File");
+		}
 
 	}
 
@@ -298,11 +321,11 @@ public class JFileManager {
 	 * associated with this kind of file. How this is determined will be
 	 * different for each operating system.
 	 * 
-	 * @param file
+	 * @param name
 	 *            The file being opened.
 	 * 
 	 */
-	public void open(JFile file) {
+	public void open(String name) {
 
 		/*
 		 * Notes on how to do this:
@@ -329,19 +352,23 @@ public class JFileManager {
 		 * solved.)
 		 */
 
-		if (System.getProperty("os.name").contains("Windows")) {
-			// Open the file in a way compatible to Windows.
-		} else if (System.getProperty("os.name").contains("Macintosh")) {
-			// Open the file in a way compatible to Macintosh.
-		} else if (System.getProperty("os.name").contains("Linux")) {
-			// Open the file in a way compatible to Linux.
-		} else {
-			// ??? Error maybe?
-		}
-
 		logger.info("Opening File");
-		logger.info(file + "opened");
-		logger.error("Error Opening " + file);
+		try {
+
+			if (System.getProperty("os.name").contains("Windows")) {
+				// Open the file in a way compatible to Windows.
+			} else if (System.getProperty("os.name").contains("Macintosh")) {
+				// Open the file in a way compatible to Macintosh.
+			} else if (System.getProperty("os.name").contains("Linux")) {
+				// Open the file in a way compatible to Linux.
+			} else {
+				// ??? Error maybe?
+			}
+			logger.info("Opened " + name + " With " /*application name*/);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Error Opening the File");
+		}
 	}
 
 	/*
@@ -359,19 +386,23 @@ public class JFileManager {
 	public void openWith(String name/* , Application app */) {
 		// See open(JFile file) for details.
 
-		if (System.getProperty("os.name").contains("Windows")) {
-			// Open the file in a way compatible to Windows.
-		} else if (System.getProperty("os.name").contains("Macintosh")) {
-			// Open the file in a way compatible to Macintosh.
-		} else if (System.getProperty("os.name").contains("Linux")) {
-			// Open the file in a way compatible to Linux.
-		} else {
-			// ??? Error maybe?
-		}
-
 		logger.info("Opening File");
-		logger.info("Opened " + name + "With (insert app)");
-		logger.error("Error Opening with " + "(insert app)");
+		try {
+
+			if (System.getProperty("os.name").contains("Windows")) {
+				// Open the file in a way compatible to Windows.
+			} else if (System.getProperty("os.name").contains("Macintosh")) {
+				// Open the file in a way compatible to Macintosh.
+			} else if (System.getProperty("os.name").contains("Linux")) {
+				// Open the file in a way compatible to Linux.
+			} else {
+				// ??? Error maybe?
+			}
+			logger.info("Opened " + name + " With " /*application name*/);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Error Opening File");
+		}
 	}
 
 	/*
@@ -393,9 +424,12 @@ public class JFileManager {
 	 */
 	public void getDetails(String name) {
 		logger.info("Requesting Details");
-		logger.info(name + " Acknowledged and Sent Details");
-		logger.error("Error Senging Details");
-
+		try {
+			logger.info(name + " Acknowledged and Sent Details");
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Error Senging Details");
+		}
 	}
 
 	// We may not use this or put this method's functionality in the getDetails
@@ -406,10 +440,14 @@ public class JFileManager {
 	 * change depending on which OS the user is using.
 	 * 
 	 */
-	public void getType() {
+	public void getType(String name) {
 		logger.info("Requesting file type");
-		logger.info("Acknowledged and Sent Type");
-		logger.error("Error Requesting Type");
+		try {
+			logger.info("Acknowledged and Sent " + name + "'s Type");
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Error Requesting Type");
+		}
 
 	}
 }
