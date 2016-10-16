@@ -21,8 +21,6 @@
 
 package edu.wright.cs.jfiles.client;
 
-import edu.wright.cs.jfiles.server.JFilesServer;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

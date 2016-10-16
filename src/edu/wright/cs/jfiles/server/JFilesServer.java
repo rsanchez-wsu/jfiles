@@ -2,8 +2,8 @@
  * Copyright (C) 2016 - WSU CEG3120 Students
  * 
  * Roberto C. Sánchez <roberto.sanchez@wright.edu>
+ * Matthew T. Trippel <trippel.3@wright.edu>
  * 
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -23,15 +23,11 @@ package edu.wright.cs.jfiles.server;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -42,17 +38,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 /**
  * The main class of the JFiles server application.
@@ -133,55 +120,8 @@ public class JFilesServer implements Runnable {
 		serverSocket = new ServerSocket(PORT);
 	}
 	
-	/**
-	 * Creates an XML file.
-	 * @throws TransformerFactoryConfigurationError error in configuration
-	 * @throws TransformerException error in configuration
-	 */
-	private void createXml() throws TransformerFactoryConfigurationError, 
-					TransformerException {
-		Document doc = null;
-		try {
-			// Create new XML document
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			factory.setNamespaceAware(true);
-			DocumentBuilder builder;
-			builder = factory.newDocumentBuilder();
-			doc = builder.newDocument();
-			
-			// Add elements to new document
-			Element root = doc.createElement("fileSystem");
-			doc.appendChild(root);
-			Node dir = createNode(doc,"directory");
-			dir.appendChild(createNode(doc,"file"));
-			root.appendChild(dir);
-			
-			//Output XML to console
-			Transformer transformer = TransformerFactory.newInstance().newTransformer();
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			DOMSource source = new DOMSource(doc);
-			StreamResult console = new StreamResult(System.out);
-			transformer.transform(source, console);
-			
-		} catch (ParserConfigurationException e) {
-			logger.error("An error occurred while configuring the parser",e);
-		} catch (TransformerConfigurationException e) {
-			logger.error("An error occurred while configuring the transformer", e);
-		} catch (TransformerFactoryConfigurationError e) {
-			logger.error("An error occurred while configuring the transformer factory",e);
-		}
-	}
 	
-	/**
-	 * Create an xml node.
-	 * @param doc document to create node for
-	 * @param name name of node that should be created
-	 * @return returns a Node element
-	 */
-	private Node createNode(Document doc, String name) {
-		Element node = doc.createElement(name);
-		return node;
-	}
+
 
 	@Override
 	public void run() {
@@ -244,9 +184,9 @@ public class JFilesServer implements Runnable {
 		try {
 			init();
 			logger.info("Starting the server");
-			JFilesServer jf = new JFilesServer();
+			XmlHandler handler = new XmlHandler(logger);
 			try {
-				jf.createXml();
+				handler.createXml("fileSystem");
 			} catch (TransformerFactoryConfigurationError e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
