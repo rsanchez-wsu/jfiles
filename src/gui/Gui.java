@@ -21,6 +21,14 @@
 
 package gui;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,17 +38,11 @@ import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
 
 /**
  * Gui class file that makes a panel with buttons on it.
@@ -90,6 +92,12 @@ public class Gui {
 			items.add(newElement.getElementsByTagName("name").item(0).getTextContent()
 					+ newElement.getElementsByTagName("ext").item(0).getTextContent());
 		}
+		
+		//This creates a box with appendable text that can be scrolled through.
+		//It is initialized here so that when clicking a button it can be edited
+		JTextArea consoleOutput = new JTextArea();
+		JScrollPane scrollPane = new JScrollPane(consoleOutput);
+		consoleOutput.setEditable(false);
 
 		for (int i = 0; i < items.size(); i++) {
 			JButton thebutton = new JButton();
@@ -97,14 +105,16 @@ public class Gui {
 			thebutton.addActionListener(new ActionListener() {
 				// This creates the event for when the button is clicked
 				public void actionPerformed(ActionEvent error) {
-					System.out.println("You clicked a button");
+					
+					consoleOutput.append("You clicked a button");
+					consoleOutput.append("\n");
 				}
 			});
-			// Sets size of the button
-			thebutton.setSize(10, 10);
 			// Puts the button on the frame
 			frame.add(thebutton);
 		}
+		//Puts console  output area on frame after buttons
+		frame.add(scrollPane);
 		frame.setVisible(true);
 	}
 }
