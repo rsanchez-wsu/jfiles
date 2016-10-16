@@ -69,8 +69,7 @@ public class JFilesServer implements Runnable {
 		try {
 			serverSocket = new ServerSocket(PORT);
 		} catch (IOException e) {
-			//e.printStackTrace();
-			logger.error("Some error occured", e);
+			logger.error("Some error occurred", e);
 		}
 	}
 
@@ -134,9 +133,7 @@ public class JFilesServer implements Runnable {
 	 * @throws IOException When bad things happen
 	 */
 	public JFilesServer(Socket sock) throws IOException {
-		serverSocket = new ServerSocket(PORT);
-		//using sock so I can make a commit
-		sock.getChannel();
+		socket = sock;
 	}
 
 	/**
@@ -216,7 +213,7 @@ public class JFilesServer implements Runnable {
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Some error occurred", e);
 		} 
 	}
 
@@ -241,8 +238,7 @@ public class JFilesServer implements Runnable {
 			out.flush();
 
 		} catch (IOException e) {
-			//e.printStackTrace();
-			logger.error("Some error occured", e);
+			logger.error("Some error occurred", e);
 		}
 
 	}
@@ -264,7 +260,9 @@ public class JFilesServer implements Runnable {
 			//Recycles variable names
 			while (true) {
 				System.out.println("Preparing thread " + numThrds);
+				logger.info("Preparing thread " + numThrds);
 				System.out.println("Waiting for connection...");
+				logger.info("Waiting for connection...");
 				//Obtain a Socket object
 				Socket sock = serverSocket.accept();
 				//Passes socket object to new server object
@@ -272,9 +270,9 @@ public class JFilesServer implements Runnable {
 				try {
 					jf.createXml();
 				} catch (TransformerFactoryConfigurationError e) {
-					e.printStackTrace();
+					logger.error("An error occurred while configuring the transformer factory", e);
 				} catch (TransformerException e) {
-					e.printStackTrace();
+					logger.error("An exception has occurred with the transformer", e);
 				}
 				//Create and start a new Thread object with server object
 				Thread thread = new Thread(jf);
@@ -285,7 +283,7 @@ public class JFilesServer implements Runnable {
 				numThrds++;
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Some error occurred", e);
 		}
 	}
 }

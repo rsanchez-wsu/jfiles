@@ -183,13 +183,11 @@ public class JFilesClient implements Runnable {
 			
 			}
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Unknown host exception was thrown", e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} // catch ( NoSuchAlgorithmException e) {
-			//e.printStackTrace();
+			logger.error("An error has occurred", e);
+		}  //catch ( NoSuchAlgorithmException e) {
+			//logger.error("No such algorithm exception was thrown", e);
 		//} 
 	}
 		
@@ -219,8 +217,7 @@ public class JFilesClient implements Runnable {
 			bw.close();
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("An error has occurred", e);
 		}
 	}
 	
@@ -259,18 +256,17 @@ public class JFilesClient implements Runnable {
 			System.out.println();
 
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			logger.error("No such algorithm exception was thrown.", e);;
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.error("The file was unable to be found.", e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("An error has occurred", e);
 		} finally {
 			if (fileSent != null) {
 				try {
 					fileSent.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error("An IOException was thrown while trying to close fileSent", e);
 				}
 			}
 		}
@@ -316,8 +312,7 @@ public class JFilesClient implements Runnable {
 		try {
 			init();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("An error has occurred", e);
 		}
 		JFilesClient jf = new JFilesClient();
 
