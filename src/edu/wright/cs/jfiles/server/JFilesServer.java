@@ -47,6 +47,7 @@ public class JFilesServer implements Runnable {
 	private static ServerSocket serverSocket;
 	private static final String UTF_8 = "UTF-8";
 	private Socket socket;
+	private boolean running = true;
 	
 	static {
 		try {
@@ -75,21 +76,27 @@ public class JFilesServer implements Runnable {
 		try {
 			InputStreamReader isr = new InputStreamReader(socket.getInputStream(), UTF_8);
 			BufferedReader in = new BufferedReader(isr);
-			String cmd = in.readLine();	
-			if (cmd != null) {
-				String [] cmdary = cmd.split(" ");
-				switch (cmdary [0]) {
-				case "FILE":
-					sendFile(cmdary [1],socket);
-					socket.close();	
-					break;
-				
-				case "LIST":
-					break;
-				
-				default:
-					System.out.println("Invalid Command.");
-					break;
+			while (running) {
+				String cmd = in.readLine();
+				if (cmd != null) {
+					String [] cmdary = cmd.split(" ");
+					switch (cmdary [0]) {
+					case "FILE":
+						sendFile(cmdary [1], socket);
+						break;
+
+					case "LIST":
+						break;
+					case "EXIT":
+					case "QUIT":
+						running = false;
+						socket.close();
+						break;
+
+					default:
+						System.out.println("Invalid Command.");
+						break;
+					}
 				}
 			}
 		} catch (IOException e) {
