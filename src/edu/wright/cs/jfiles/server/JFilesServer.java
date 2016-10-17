@@ -38,6 +38,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Properties;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
@@ -63,26 +64,28 @@ public class JFilesServer implements Runnable {
 	 *             If there is a problem binding to the socket
 	 */
 	
-	private static void init() throws IOException {
-		Properties prop = new Properties();
-		FileInputStream fis = null;
-		File config = null;	
-		
+	private static void init() throws IOException {	
 		//Array of strings containing possible paths to check for config files
-		String[] configPaths = {"$HOME/.jfiles/serverConfig.xml",
-				"/usr/local/etc/jfiles/serverConfig.xml",
-				"/opt/etc/jfiles/serverConfig.xml",
-				"/etc/jfiles/serverConfig.xml",
-				"%PROGRAMFILES%/jFiles/etc/serverConfig.xml",
-				"%APPDATA%/jFiles/etc/serverConfig.xml"};
+		ArrayList<String> configPaths = new ArrayList<String>();
+		configPaths.add("/usr/local/etc/jfiles/serverConfig.xml");
+		configPaths.add("/usr/local/etc/jfiles/serverConfig.xml");
+		configPaths.add("/opt/etc/jfiles/serverConfig.xml");
+		configPaths.add("/etc/jfiles/serverConfig.xml");
+		configPaths.add(System.getProperty("user.home") + "/jfiles/serverConfig.xml");
+		configPaths.add(System.getProperty("user.home") + "/.jfiles/serverConfig.xml");
 		
+		FileInputStream fis = null;
+		File config = null;
+				
 		//Checking location(s) for the config file);
-		for (int i = 0; i < configPaths.length; i++) {
-			if (new File(configPaths[i]).exists()) {
-				config = new File(configPaths[i]);
+		for (int i = 0; i < configPaths.size(); i++) {
+			if (new File(configPaths.get(i)).exists()) {
+				config = new File(configPaths.get(i));
 				break;
 			}
 		}
+		
+		Properties prop = new Properties();
 		
 		//Output location where the config file was found. Otherwise warn and use defaults.
 		if (config == null) {		

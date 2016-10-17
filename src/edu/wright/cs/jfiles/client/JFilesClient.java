@@ -33,6 +33,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Properties;
 
 /**
@@ -44,8 +45,8 @@ import java.util.Properties;
 public class JFilesClient implements Runnable {
 
 	static final Logger logger = LogManager.getLogger(JFilesClient.class);
-	private static String host = "localhost";
-	private static int port = 9786;
+	private static String host;
+	private static int port;
 	private static final String UTF_8 = "UTF-8";
 
 	/**
@@ -64,25 +65,27 @@ public class JFilesClient implements Runnable {
 	 *             If there is a problem binding to the socket
 	 */
 	private static void init() throws IOException {
-		Properties prop = new Properties();
-		FileInputStream fis = null;
-		File config = null;	
-		
 		//Array of strings containing possible paths to check for config files
-		String[] configPaths = {"$HOME/.jfiles/clientConfig.xml",
-				"/usr/local/etc/jfiles/clientConfig.xml",
-				"/opt/etc/jfiles/clientConfig.xml",
-				"/etc/jfiles/clientConfig.xml",
-				"%PROGRAMFILES%/jFiles/etc/clientConfig.xml",
-				"%APPDATA%/jFiles/etc/clientConfig.xml"};
+		ArrayList<String> configPaths = new ArrayList<String>();
+		configPaths.add("/usr/local/etc/jfiles/serverConfig.xml");
+		configPaths.add("/usr/local/etc/jfiles/serverConfig.xml");
+		configPaths.add("/opt/etc/jfiles/serverConfig.xml");
+		configPaths.add("/etc/jfiles/serverConfig.xml");
+		configPaths.add(System.getProperty("user.home") + "/jfiles/serverConfig.xml");
+		configPaths.add(System.getProperty("user.home") + "/.jfiles/serverConfig.xml");
 		
+		FileInputStream fis = null;
+		File config = null;
+				
 		//Checking location(s) for the config file);
-		for (int i = 0; i < configPaths.length; i++) {
-			if (new File(configPaths[i]).exists()) {
-				config = new File(configPaths[i]);
+		for (int i = 0; i < configPaths.size(); i++) {
+			if (new File(configPaths.get(i)).exists()) {
+				config = new File(configPaths.get(i));
 				break;
 			}
 		}
+		
+		Properties prop = new Properties();
 		
 		//Output location where the config file was found. Otherwise warn and use defaults.
 		if (config == null) {		
