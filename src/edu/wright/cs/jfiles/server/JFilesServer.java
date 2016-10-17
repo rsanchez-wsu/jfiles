@@ -26,6 +26,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -63,11 +65,14 @@ public class JFilesServer implements Runnable {
 	@Override
 	public void run() {
 		String dir = System.getProperty("user.dir");
+		File history = new File("SearchHistory.txt");
+		
 		Locale.setDefault(new Locale("English"));
 		try (Socket server = serverSocket.accept()) {
 			logger.info("Received connection from" + server.getRemoteSocketAddress());
 			InputStreamReader isr = new InputStreamReader(server.getInputStream(), UTF_8);
 			BufferedReader in = new BufferedReader(isr);
+			FileWriter hstWrt = new FileWriter(history); //history writer
 			String cmd;
 			OutputStreamWriter osw = new OutputStreamWriter(server.getOutputStream(), UTF_8);
 
@@ -84,10 +89,11 @@ public class JFilesServer implements Runnable {
 					listCmd(dir, out);
 					break;
 				case "FIND":
-					findCmd(dir, out, baseCommand[1].toLowerCase(Locale.ENGLISH));
+					findCmd(dir, out, baseCommand[1].toLowerCase(Locale.ENGLISH), hstWrt);
 					break;
 				case "FINDR":
-					recursiveFindCmd(dir, out, baseCommand[1].toLowerCase(Locale.ENGLISH));
+					recursiveFindCmd(dir, out, baseCommand[1].toLowerCase(Locale.ENGLISH), hstWrt);
+					break;
 				case "FILE":
 					break;
 				case "EXIT":
@@ -104,6 +110,7 @@ public class JFilesServer implements Runnable {
 				}
 
 				out.flush();
+				hstWrt.close();
 			}
 		} catch (IOException e) {
 			// TODO AUto-generated catch block
@@ -131,23 +138,27 @@ public class JFilesServer implements Runnable {
 	}
 
 	/**
-	 * Find Command function. Method for the find command. Writes results found within current directory.
+	 * Find Command function. Method for the find command. 
+	 * Writes results found within current directory.
 	 * Search supports glob patterns
 	 * 
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	void findCmd(String dir, BufferedWriter out, String searchTerm) {
+	void findCmd(String dir, BufferedWriter out, String searchTerm, FileWriter historyWrite) {
 		int findCount = 0;
-		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir), searchTerm)) {
+		try (DirectoryStream<Path> directoryStream = 
+				Files.newDirectoryStream(Paths.get(dir), searchTerm)) {
+			historyWrite.write(searchTerm + "\n");
 			for (Path path : directoryStream) {
 				//if (path.toString().toLowerCase(Locale.ENGLISH).contains(searchTerm)) {
-					out.write(path.toString() + "\n");
-					findCount++;
+				out.write(path.toString() + "\n");
+				findCount++;
 				//}
 			}
 			System.out.println(
-					"Found " + findCount + " file(s) in " + dir + " that contains \"" + searchTerm + "\"\n");
+					"Found " + findCount + " file(s) in " + dir
+						+ " that contains \"" + searchTerm + "\"\n");
 		} catch (IOException e) {
 			// TODO AUto-generated catch block
 			// e.printStackTrace();
@@ -163,11 +174,11 @@ public class JFilesServer implements Runnable {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	void recursiveFindCmd(String dir, BufferedWriter out, String searchTerm) {
+	void recursiveFindCmd(String dir, BufferedWriter out, String searchTerm, FileWriter hstWrt) {
 		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir))) {
 			for (Path path : directoryStream) {
 				if (path.toFile().isDirectory()) {
-					recursiveFindCmd(path.toString(), out, searchTerm);
+					recursiveFindCmd(path.toString(), out, searchTerm, hstWrt);
 				}
 			}
 		} catch (IOException e) {
@@ -175,7 +186,13 @@ public class JFilesServer implements Runnable {
 			// e.printStackTrace();
 			logger.error("Some error occured", e);
 		}
-		findCmd(dir, out, searchTerm);
+		findCmd(dir, out, searchTerm, hstWrt);
+		try {
+			hstWrt.write(searchTerm + "\n");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
