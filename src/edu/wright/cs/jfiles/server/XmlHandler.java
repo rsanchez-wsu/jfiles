@@ -112,6 +112,9 @@ public class XmlHandler {
 		try {
 			transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "FILESYSTEM");
+			transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "fileSystem.dtd");
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 			DOMSource source = new DOMSource(newDoc);
 			StreamResult str = new StreamResult(System.out);
 			transformer.transform(source, str);

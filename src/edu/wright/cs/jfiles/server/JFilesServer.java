@@ -23,6 +23,7 @@ package edu.wright.cs.jfiles.server;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.w3c.dom.Document;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -186,7 +187,8 @@ public class JFilesServer implements Runnable {
 			logger.info("Starting the server");
 			XmlHandler handler = new XmlHandler(logger);
 			try {
-				handler.createXml("fileSystem");
+				Document doc = handler.createXml("fileSystem");
+				handler.parseXml(doc);
 			} catch (TransformerFactoryConfigurationError e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
