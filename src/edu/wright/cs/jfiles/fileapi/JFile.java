@@ -25,7 +25,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is the Class of holding and managing the actual content of files. It is
@@ -35,16 +36,16 @@ import java.util.ArrayList;
  * @author Team 5
  *
  */
-public class JFile implements Cloneable {	
-	
+public class JFile implements Cloneable {
+
 	private Logger logger = LogManager.getLogger(JFile.class.getName());
 	private File file;
-	private ArrayList<Tag> tagList = new ArrayList<>();
+	private Map<String, String> tagList = new HashMap<>();
 
 	/**
 	 * Default constructor.
 	 */
-	protected JFile() {
+	public JFile() {
 	}
 
 	/**
@@ -53,7 +54,7 @@ public class JFile implements Cloneable {
 	 * @param file
 	 *            The file being stored in the JFile object.
 	 */
-	protected JFile(File file) {
+	public JFile(File file) {
 		logger.info("Creating File");
 		this.file = file;
 		logger.info("File Created");
@@ -68,7 +69,7 @@ public class JFile implements Cloneable {
 	 * @param tags
 	 *            The tags associated with the file.
 	 */
-	protected JFile(File file, ArrayList<Tag> tags) {
+	public JFile(File file, Map<String, String> tags) {
 		logger.info("Storing File and Arraylist of Tags Associated with the file");
 		logger.info("Storing Complete");
 		this.file = file;
@@ -82,7 +83,7 @@ public class JFile implements Cloneable {
 	 * @param path
 	 *            Path to wanted file.
 	 */
-	protected JFile(String path) {
+	public JFile(String path) {
 		logger.info("Storing to path " + path);
 		logger.info("Stored to path " + path);
 		this.file = new File(path);
@@ -90,15 +91,14 @@ public class JFile implements Cloneable {
 	}
 
 	/**
-	 * Deletes JFile's File contents.
+	 * Deletes JFile's File contents. Eventually. Right now, nothing.
 	 * 
 	 */
-	protected void deleteContents() /* throws IOException */ {
-		
-		
-		
+	public void deleteContents() /* throws IOException */ {
 
-		/* 
+		/* TODO: find out what is wanted from this method and implement.
+		 * 
+		 * 
 		 * if (file.canWrite() == false) { return false; } fOut = new
 		 * BufferedOutputStream(new FileOutputStream( file.getAbsoluteFile()));
 		 * fOut.write(' '); fOut.flush(); fOut.close(); return true;
@@ -113,7 +113,7 @@ public class JFile implements Cloneable {
 	 * @return true is the name given doesn't have any illegal characters, false
 	 *         if it does.
 	 */
-	protected boolean rename(String name) {
+	public boolean rename(String name) {
 
 		logger.info("Renaming " + name);
 		if (name.contains("/") || name.contains("\\")) {
@@ -127,153 +127,75 @@ public class JFile implements Cloneable {
 	}
 
 	/**
-	 * Checks to see if the current file has the wanted tag.
+	 * Tests whether or not the given key value is within the map
 	 * 
-	 * @param tagName
-	 *            String that the tag can go by.
-	 * @return True if the File has the tag, false if it doesn't.
+	 * @param key
+	 *            The given key to look for.
+	 * @return True if the key is in the map, false if it not.
 	 */
-	protected boolean hasTag(String tagName) {
-		if (searchTags(tagName).getstrId().compareTo("") != 0) {
+	public boolean hasTagkey(String key) {
+		if (tagList.containsKey(key)) {
 			return true;
 		}
 		return false;
 	}
 
 	/**
-	 * Checks to see if the current file has the wanted tag.
+	 * Tests whether or not the given value is within the map
 	 * 
-	 * @param intId
-	 *            Integer that the tag can go by.
-	 * @return True if the file has the tag, false if it doesn't.
+	 * @param value
+	 *            The given value to look for.
+	 * @return True if the given value is in the map, false if it is not.
 	 */
-	protected boolean hasTag(int intId) {
-		if (searchTags(intId).getintId() != -1) {
+	public boolean hasTagValue(String value) {
+		if (tagList.containsValue(value)) {
 			return true;
 		}
 		return false;
 	}
 
 	/**
-	 * Checks to see if the current file has the wanted tag.
+	 * Gets the value stored at the key location from the map.
 	 * 
-	 * @param tag
-	 *            The actual tag that the wanted tag may be.
-	 * @return True if the file has the tag, false if it doesn't.
+	 * @param key
+	 *            The given key for the key value pair.
+	 * @return The value from the key value pair.
 	 */
-	protected boolean hasTag(Tag tag) {
-		if (!searchTags(tag).equals(new Tag("", -1))) {
-			return true;
-		}
-		return false;
+	public String getTag(String key) {
+		return tagList.get(key);
 	}
 
 	/**
-	 * Gives the file the specified tag.
+	 * Gives the file a key value pair to put into the map.
 	 * 
-	 * @param strId
-	 *            String to identify the tag with.
-	 * @param intId
-	 *            Integer to identify the tag with.
+	 * @param key
+	 *            String to identify the value with
+	 * @param value
+	 *            the value to store
 	 */
-	protected void giveTag(String strId, int intId) {
-		tagList.add(new Tag(strId, intId));
-	}
-
-	/**
-	 * Gives the file the specified tag.
-	 * 
-	 * @param tag
-	 *            Tag to give to the file.
-	 */
-	protected void giveTag(Tag tag) {
-		tagList.add(tag);
+	public void setTag(String key, String value) {
+		tagList.put(key, value);
 	}
 
 	/**
 	 * Takes away the tag specified by a string.
 	 * 
-	 * @param strId
+	 * @param key
 	 *            String to find the tag with.
 	 * @return True if there is a similar tag, false otherwise.
 	 */
-	protected boolean revokeTag(String strId) {
-		if (tagList.remove(searchTags(strId))) {
+	public boolean revokeTag(String key) {
+		tagList.remove(key);
+		if (!tagList.containsKey(key)) {
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * Takes away the tag specified by an integer.
-	 * 
-	 * @param intId
-	 *            Integer to find the tag with.
-	 * @return True if there was a tag with the specified integer, false
-	 *         otherwise
-	 */
-	protected boolean revokeTag(int intId) {
-		if (tagList.remove(searchTags(intId))) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Takes away the tag specified by another tag.
-	 * 
-	 * @param tag
-	 *            Tag to revoke
-	 * @return True if there was a tag to be removed, false otherwise.
-	 */
-	protected boolean revokeTag(Tag tag) {
-		if (tagList.remove(searchTags(tag))) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Searches for Tags using the given object. If the Object is not a string,
-	 * integer, or tag, it will fail and return a tag with "" and -1 as the
-	 * string and integer. Otherwise, as long as the file has the tag, the tag
-	 * will be returned.
-	 * 
-	 * @param thing
-	 *            The thing to search by (will change in future).
-	 * @return The tag specified by the search object. If there is no tag found,
-	 *         at tag with "" as the string id and -1 as the integer id is
-	 *         returned instead.
-	 */
-	private <E> Tag searchTags(E thing) {
-
-		if (thing instanceof String) {
-			for (int i = 0; i < tagList.size(); i++) {
-				if (tagList.get(i).getstrId().compareTo((String) thing) == 0) {
-					return tagList.get(i);
-				}
-			}
-		} else if (thing instanceof Tag) {
-			for (int i = 0; i < tagList.size(); i++) {
-				if (tagList.get(i).equals(thing)) {
-					return tagList.get(i);
-				}
-			}
-		} else {
-			for (int i = 0; i < tagList.size(); i++) {
-				if (tagList.get(i).getintId() == (Integer) thing) {
-					return tagList.get(i);
-				}
-			}
-		}
-
-		return new Tag("", -1);
 	}
 
 	/**
 	 * gets the file's type. TODO: getType()
 	 */
-	protected void getType() {
+	public void getType() {
 		/*
 		 * if (System.getProperty("os.name").contains("Windows")) {
 		 * System.out.println(Files.getFileExtension(file.getName())); }
@@ -285,14 +207,14 @@ public class JFile implements Cloneable {
 	 * 
 	 * @return A long that represents the raw size of the file.
 	 */
-	protected long getFileSize() {
+	public long getFileSize() {
 		return file.length();
 	}
 
 	/**
 	 * Clone method used to clone the JFile object.
 	 */
-	protected Object clone() {
+	public Object clone() {
 		return new JFile(this.file, this.tagList);
 	}
 }
