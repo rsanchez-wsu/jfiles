@@ -21,6 +21,11 @@
 
 package edu.wright.cs.jfiles.client;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import edu.wright.cs.jfiles.server.JFilesServer;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -44,6 +49,7 @@ import java.util.Scanner;
  */
 public class JFilesClient implements Runnable {
 
+	static final Logger logger = LogManager.getLogger(JFilesClient.class);
 	private String host = "localhost";
 	private int port = 9786;
 	private static final String UTF_8 = "UTF-8";
@@ -141,13 +147,16 @@ public class JFilesClient implements Runnable {
 			}
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("Could not connect to host at that address", e);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("An error occured with the connection", e);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("A thread has been interrupted", e);
 		}
 	}
 
@@ -188,14 +197,16 @@ public class JFilesClient implements Runnable {
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("An error occurred while communicating with the server", e);
 		} finally {
 			if (bw != null) {
 				try {
 					bw.close();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
+					logger.error("An error occurred while closing a stream", e);
 				}
 			}
 		}
@@ -237,18 +248,22 @@ public class JFilesClient implements Runnable {
 			System.out.println();
 
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("An error occurred while preparing checksum", e);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("File was not found", e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("An error occurred while reading file", e);
 		} finally {
 			if (fileSent != null) {
 				try {
 					fileSent.close();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
+					logger.error("An error occured while closing connection to file", e);
 				}
 			}
 		}
