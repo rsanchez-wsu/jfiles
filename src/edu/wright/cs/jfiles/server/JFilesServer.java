@@ -125,7 +125,7 @@ public class JFilesServer implements Runnable {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	void listCmd(String dir, BufferedWriter out) {
+	private void listCmd(String dir, BufferedWriter out) {
 		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir))) {
 			for (Path path : directoryStream) {
 				out.write(path.toString() + System.getProperty("line.separator"));
@@ -145,7 +145,7 @@ public class JFilesServer implements Runnable {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	void findCmd(String dir, BufferedWriter out, String searchTerm, FileWriter historyWrite) {
+	private void findCmd(String dir, BufferedWriter out, String searchTerm, FileWriter historyWrite) {
 		int findCount = 0;
 		try (DirectoryStream<Path> directoryStream = 
 				Files.newDirectoryStream(Paths.get(dir), searchTerm)) {
@@ -174,7 +174,7 @@ public class JFilesServer implements Runnable {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	void recursiveFindCmd(String dir, BufferedWriter out, String searchTerm, FileWriter hstWrt) {
+	private void recursiveFindCmd(String dir, BufferedWriter out, String searchTerm, FileWriter hstWrt) {
 		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir))) {
 			for (Path path : directoryStream) {
 				if (path.toFile().isDirectory()) {
