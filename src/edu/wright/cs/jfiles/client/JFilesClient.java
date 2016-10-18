@@ -24,8 +24,6 @@ package edu.wright.cs.jfiles.client;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import edu.wright.cs.jfiles.server.JFilesServer;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -35,6 +33,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.MessageDigest;
@@ -70,16 +69,11 @@ public class JFilesClient implements Runnable {
 		try (Socket socket = new Socket(host, port)) {
 			while (running) {
 
-				/*
-				 * OutputStreamWriter osw = new
-				 * OutputStreamWriter(socket.getOutputStream(), UTF_8);
-				 */
-				// BufferedWriter out = new BufferedWriter(osw);
+				
 				System.out.println("Send a command to the server.");
 				System.out.println("FILE to receive file");
 				System.out.println("LIST to receive server directory");
-				// out.write("FILE\n");
-				// out.flush();
+				
 				/*
 				 * InputStreamReader isr = new
 				 * InputStreamReader(socket.getInputStream(), UTF_8);
@@ -127,17 +121,26 @@ public class JFilesClient implements Runnable {
 					});
 					thrd0.start();
 					break;
+				case "SENDFILE":
+					Thread thrd1 = new Thread(new Runnable() {
+						@Override
+						public void run() {
+							fileSendCommand(cmdary[1], socket);
+						}
+					});
+					thrd1.start();
+					break;
 				case "EXIT":
 				case "QUIT":
 					running = false;
-					Thread thrd1 = new Thread(new Runnable() {
+					Thread thrd2 = new Thread(new Runnable() {
 						@Override
 						public void run() {
 							fileCommand(cmdary[0], socket);
 						}
 					});
-					thrd1.start();
-					thrd1.join();
+					thrd2.start();
+					thrd2.join();
 					break;
 				default:
 					System.out.println("Not a valid command");
@@ -199,6 +202,39 @@ public class JFilesClient implements Runnable {
 					logger.error("An error occurred while closing a stream", e);
 				}
 			}
+		}
+	}
+	
+	/**
+	 * Method to handle what happens when user types "filesend." Program
+	 * should get bytes from the specified file and put them on the output
+	 * stream to the server.
+	 * @param filepath
+	 * 				  the location of the file to send
+	 * @param sock
+	 * 			  the active socket on which the server connection resides
+	 */
+	public void fileSendCommand(String filepath, Socket sock) {
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(
+				new FileInputStream(filepath), "UTF-8"))) {
+			OutputStreamWriter osw = new OutputStreamWriter(
+					sock.getOutputStream(), UTF_8);
+			BufferedWriter out = new BufferedWriter(osw);
+			String line;
+			while ((line = br.readLine()) != null) {
+				System.out.println(line);
+				out.write(line + "\n");
+			}
+			out.flush();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
