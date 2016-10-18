@@ -146,16 +146,10 @@ public class JFilesClient implements Runnable {
 				}
 			}
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
 			logger.error("Could not connect to host at that address", e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
 			logger.error("An error occured with the connection", e);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
 			logger.error("A thread has been interrupted", e);
 		}
 	}
@@ -196,16 +190,12 @@ public class JFilesClient implements Runnable {
 			}
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
 			logger.error("An error occurred while communicating with the server", e);
 		} finally {
 			if (bw != null) {
 				try {
 					bw.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					//e.printStackTrace();
 					logger.error("An error occurred while closing a stream", e);
 				}
 			}
@@ -261,8 +251,6 @@ public class JFilesClient implements Runnable {
 				try {
 					fileSent.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					//e.printStackTrace();
 					logger.error("An error occured while closing connection to file", e);
 				}
 			}

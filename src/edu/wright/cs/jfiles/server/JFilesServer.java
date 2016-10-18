@@ -53,8 +53,6 @@ public class JFilesServer implements Runnable {
 		try {
 			serverSocket = new ServerSocket(PORT);
 		} catch (IOException e) {
-			//TODO AUto-generated catch block
-			//e.printStackTrace();
 			logger.error("Some error occurred", e);
 		}
 	}
@@ -100,8 +98,6 @@ public class JFilesServer implements Runnable {
 				}
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
 			logger.error("An error has occurred", e);
 		} 
 	}
@@ -128,7 +124,6 @@ public class JFilesServer implements Runnable {
 			out.flush();
 
 		} catch (IOException e) {
-			//e.printStackTrace();
 			logger.error("Sending file error", e);
 		}
 		
@@ -164,8 +159,6 @@ public class JFilesServer implements Runnable {
 				System.out.println("Received connection from" 
 						+ sock.getRemoteSocketAddress());
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				//e.printStackTrace();
 				logger.error("An error occurred while connecting to client", e);
 			}
 			//Iterates the numThrds variable by 1
