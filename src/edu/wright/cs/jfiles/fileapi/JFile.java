@@ -25,6 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,8 +37,12 @@ import java.util.Map;
  * @author Team 5
  *
  */
-public class JFile implements Cloneable {
+public class JFile implements Cloneable, Serializable {
 
+	/**
+	 * Default serialization ID.
+	 */
+	private static final long serialVersionUID = 1L;
 	private Logger logger = LogManager.getLogger(JFile.class.getName());
 	private File file;
 	private Map<String, String> tagList = new HashMap<>();
@@ -88,21 +93,6 @@ public class JFile implements Cloneable {
 		logger.info("Stored to path " + path);
 		this.file = new File(path);
 		logger.error("Error Storing to path " + path);
-	}
-
-	/**
-	 * Deletes JFile's File contents. Eventually. Right now, nothing.
-	 * 
-	 */
-	public void deleteContents() /* throws IOException */ {
-
-		/* TODO: find out what is wanted from this method and implement.
-		 * 
-		 * 
-		 * if (file.canWrite() == false) { return false; } fOut = new
-		 * BufferedOutputStream(new FileOutputStream( file.getAbsoluteFile()));
-		 * fOut.write(' '); fOut.flush(); fOut.close(); return true;
-		 */
 	}
 
 	/**
@@ -212,9 +202,69 @@ public class JFile implements Cloneable {
 	}
 
 	/**
-	 * Clone method used to clone the JFile object.
+	 * Determines whether the file is a directory.
+	 * 
+	 * @return Try if he file in this JFile object is a directory; false is not.
 	 */
-	public Object clone() {
-		return new JFile(this.file, this.tagList);
+	public boolean isDirectory() {
+		return file.isDirectory();
+	}
+
+	/**
+	 * Determines whether the file is a file.
+	 * 
+	 * @return Try if he file in this JFile object is a file; false is not.
+	 */
+	public boolean isFile() {
+		return file.isFile();
+	}
+
+	/**
+	 * Deletes the actual file contents.
+	 * 
+	 * @return true if the file was able to be deleted; false otherwise.
+	 */
+	public boolean deleteContents() {
+		return file.delete();
+	}
+
+	/**
+	 * Tells whether the file is hidden or not. The method in File is OS-aware,
+	 * so this method is inherently OS-aware.
+	 * 
+	 * @return true if the file is hidden; false otherwise
+	 */
+	public boolean isHidden() {
+		return file.isHidden();
+	}
+
+	/**
+	 * Returns a deep copy of the JFile being clones.
+	 * 
+	 */
+	public JFile clone() {
+		JFile output;
+		logger.info("Creating clone of JFile.");
+		try {
+			output = (JFile) super.clone();
+			output.file = new File(file.getAbsolutePath());
+			output.tagList = new HashMap<String, String>(tagList);
+			return output;
+		} catch (CloneNotSupportedException e1) {
+			logger.error(
+					"Clone was called on JFile and caught a Clone " + "Not Supported Exception.");
+			e1.printStackTrace();
+			System.out.println("Trying to clone the JFile a different way.");
+			logger.info("Trying to create a clone a different way...");
+			try {
+				output = new JFile(new File(file.getAbsolutePath()),
+						new HashMap<String, String>(tagList));
+				logger.info("Clone successfully made.");
+				return output;
+			} catch (Exception e2) {
+				logger.error("Clone has caught a second error. Returning null.");
+				return null;
+			}
+		}
 	}
 }

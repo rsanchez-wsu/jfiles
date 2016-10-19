@@ -24,6 +24,7 @@ package edu.wright.cs.jfiles.fileapi;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -107,7 +108,7 @@ public class JFileManager {
 	 * 
 	 */
 	@SuppressWarnings("unused")
-	private JFile[] clipboard;
+	private ArrayList<JFile> clipboard;
 
 	/*
 	 * This method entirely depends on copy and delete. It is pretty much done.
@@ -159,7 +160,9 @@ public class JFileManager {
 	public void copy(JFile[] files) {
 		logger.info("Copying");
 		try {
-			clipboard = files.clone();
+			for (int i = 0; i < files.length; i++) {
+				clipboard.add(files[i].clone());
+			}
 			logger.info("Copy of " + Arrays.toString(files) + " Successful");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -354,17 +357,20 @@ public class JFileManager {
 
 		logger.info("Opening File");
 		try {
-
 			if (System.getProperty("os.name").contains("Windows")) {
-				// Open the file in a way compatible to Windows.
+				// TODO Open the file in a way compatible to Windows.
+				logger.info("OS determined to be \"Windows\".");
 			} else if (System.getProperty("os.name").contains("Macintosh")) {
-				// Open the file in a way compatible to Macintosh.
+				// TODO Open the file in a way compatible to Macintosh.
+				logger.info("OS determined to be \"Macintosh\".");
 			} else if (System.getProperty("os.name").contains("Linux")) {
-				// Open the file in a way compatible to Linux.
+				// TODO Open the file in a way compatible to Linux.
+				logger.info("OS determined to be \"Linux\".");
 			} else {
-				// ??? Error maybe?
+				// TODO ??? Error maybe?
+				logger.info("OS determined to be \"Unknown\".");
 			}
-			logger.info("Opened " + name + " With " /*application name*/);
+			logger.info("Opened " + name + " With " /* application name */);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error Opening the File");
@@ -388,47 +394,23 @@ public class JFileManager {
 
 		logger.info("Opening File");
 		try {
-
 			if (System.getProperty("os.name").contains("Windows")) {
-				// Open the file in a way compatible to Windows.
+				// TODO Open the file in a way compatible to Windows.
+				logger.info("OS determined to be \"Windows\".");
 			} else if (System.getProperty("os.name").contains("Macintosh")) {
-				// Open the file in a way compatible to Macintosh.
+				// TODO Open the file in a way compatible to Macintosh.
+				logger.info("OS determined to be \"Macintosh\".");
 			} else if (System.getProperty("os.name").contains("Linux")) {
-				// Open the file in a way compatible to Linux.
+				// TODO Open the file in a way compatible to Linux.
+				logger.info("OS determined to be \"Linux\".");
 			} else {
-				// ??? Error maybe?
+				// TODO ??? Error maybe?
+				logger.info("OS determined to be \"Unknown\".");
 			}
-			logger.info("Opened " + name + " With " /*application name*/);
+			logger.info("Opened " + name + " With " /* application name */);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error Opening File");
-		}
-	}
-
-	/*
-	 * We need to determine what properties we need to add to details. This data
-	 * may be used by other teams, and when we determine what properties we are
-	 * returning, we will need to update it in our documentation.
-	 * 
-	 * Should be do-able without collaboration.
-	 */
-
-	/**
-	 * Returns various details of a file in key-value pairs. By this, the user
-	 * can ask for a specific key, such as name, size, or type, and get an
-	 * appropriate response.
-	 * 
-	 * @param name
-	 *            The name of the file being displayed.
-	 * 
-	 */
-	public void getDetails(String name) {
-		logger.info("Requesting Details");
-		try {
-			logger.info(name + " Acknowledged and Sent Details");
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("Error Senging Details");
 		}
 	}
 
