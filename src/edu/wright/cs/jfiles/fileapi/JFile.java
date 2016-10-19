@@ -251,8 +251,7 @@ public class JFile implements Cloneable, Serializable {
 			output.tagList = new HashMap<String, String>(tagList);
 			return output;
 		} catch (CloneNotSupportedException e1) {
-			logger.error(
-					"Clone was called on JFile and caught a Clone " + "Not Supported Exception.");
+			logger.error("Clone was called on JFile and caught a Clone " + "Not Supported Exception.");
 			e1.printStackTrace();
 			System.out.println("Trying to clone the JFile a different way.");
 			logger.info("Trying to create a clone a different way...");
