@@ -32,6 +32,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -67,6 +68,8 @@ public class JFilesServer implements Runnable {
 		serverSocket = new ServerSocket(PORT);
 	}
 
+	@SuppressWarnings("resource") // suppress a filewriter being closed
+									// elsewhere error
 	@Override
 	public void run() {
 		String dir = System.getProperty("user.dir");
@@ -77,7 +80,31 @@ public class JFilesServer implements Runnable {
 			logger.info("Received connection from" + server.getRemoteSocketAddress());
 			InputStreamReader isr = new InputStreamReader(server.getInputStream(), UTF_8);
 			BufferedReader in = new BufferedReader(isr);
+
 			FileWriter hstWrt = new FileWriter(history); // history writer
+			if (history.exists()) {
+				File temp = new File("tempHistory.txt"); // create a temporary
+															// file
+				FileWriter tempWriter = new FileWriter(temp);
+				String previous;
+				FileReader readHistory = new FileReader("SearchHistory.txt");
+				BufferedReader br = new BufferedReader(readHistory);
+				while ((previous = br.readLine()) != null) { // read in data
+																// from previous
+																// searches
+					tempWriter.write(previous); // put data in temp file
+				}
+				br.close();
+				hstWrt = new FileWriter(temp);// suppressed the warning because
+												// it's closed elsewhere
+				tempWriter.close(); // hstWrt now writes to the temp file for
+									// new searches
+				history.delete(); // delete the old searchHistory so temp can be
+									// renamed
+				temp.renameTo(history); // rename the search file to
+										// searchHistory
+			}
+
 			String cmd;
 			OutputStreamWriter osw = new OutputStreamWriter(server.getOutputStream(), UTF_8);
 
@@ -205,7 +232,7 @@ public class JFilesServer implements Runnable {
 			hstWrt.write(searchTerm + "\n");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Some error occured while writing to a the history", e);
 		}
 	}
 
