@@ -21,6 +21,10 @@
 
 package edu.wright.cs.jfiles.exception;
 
+/**
+ * Class to process ExecutableExceptions.
+ *
+ */
 public class ExecutableException extends ShellException {
 
 	/**
@@ -28,6 +32,14 @@ public class ExecutableException extends ShellException {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Outputs the message for the exception and throws the given error.
+	 * 
+	 * @param message
+	 *            the message to output
+	 * @param t
+	 *            the error to throw
+	 */
 	public ExecutableException(String message, Throwable t) {
 		super(message, t);
 	}

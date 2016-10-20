@@ -21,6 +21,10 @@
 
 package edu.wright.cs.jfiles.exception;
 
+/**
+ * Class used to process EnvironmentExceptions.
+ *
+ */
 public class EnvironmentException extends ShellException {
 
 	/**
@@ -28,6 +32,12 @@ public class EnvironmentException extends ShellException {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Outputs the message for the environment exception.
+	 * 
+	 * @param message
+	 *            the message to output
+	 */
 	public EnvironmentException(String message) {
 		super(message);
 	}

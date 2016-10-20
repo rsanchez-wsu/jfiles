@@ -29,8 +29,6 @@ import java.util.List;
 /**
  * Basic arguments class to hold many arguments for a given command.
  * 
- * @author brett
- *
  */
 public class Arguments {
 

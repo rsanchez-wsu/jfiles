@@ -29,6 +29,10 @@ import edu.wright.cs.jfiles.exception.ExecutionResult;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+/**
+ * Abstract class for the use of executable class files for the commands.
+ *
+ */
 public abstract class AbstractExecutable implements Executable {
 
 	protected static final ExecutionResult SUCCESS = new ExecutionResult(0);
@@ -36,26 +40,60 @@ public abstract class AbstractExecutable implements Executable {
 
 	private String executableName;
 
+	/**
+	 * Abstract function for the main execution of the given command.
+	 * 
+	 * @param commandLine
+	 *            the parsed command line to use
+	 * @param out
+	 *            the output of the command
+	 * @param context
+	 *            the context of the current command execution
+	 * @return the execution result of the command that is ran
+	 */
 	protected abstract ExecutionResult executeCommand(CommandLine commandLine, PrintStream out,
 			ExecutionContext context);
 
+	/**
+	 * Function to load in an executable file.
+	 * 
+	 * @param executableName
+	 *            the name of the class file that is the executable command
+	 */
 	protected AbstractExecutable(String executableName) {
 		this.executableName = executableName;
 	}
 
+	/**
+	 * Returns the name of the executable class file.
+	 */
 	public String getName() {
 		return executableName;
 	}
 
+	/**
+	 * 
+	 */
 	public ExecutionResult execute(CommandLine commandLine, OutputStream out,
 			ExecutionContext context) {
 		return executeCommand(commandLine, new PrintStream(out), context);
 	}
 
+	/**
+	 * 
+	 * @param str
+	 * @return
+	 */
 	protected boolean isOption(String str) {
 		return str.startsWith("-") || str.startsWith("--");
 	}
 
+	/**
+	 * 
+	 * @param expected
+	 * @param actual
+	 * @return
+	 */
 	protected boolean isOption(String expected, String actual) {
 		return ("-" + expected).equals(actual) || ("--" + expected).equals(actual);
 	}

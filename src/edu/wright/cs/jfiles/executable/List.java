@@ -19,46 +19,41 @@
  *
  */
 
-package edu.wright.cs.jfiles.core;
+package edu.wright.cs.jfiles.executable;
+
+import edu.wright.cs.jfiles.core.CommandLine;
+import edu.wright.cs.jfiles.core.ExecutionContext;
+import edu.wright.cs.jfiles.exception.ExecutionResult;
+
+import java.io.PrintStream;
 
 /**
- * Class used to hold the context for command execution.
+ * Class for the list command for the jFiles program.
  *
  */
-public class ExecutionContext {
-
-	private Environment environment;
-	private ExecutablePath path;
+public class List extends AbstractExecutable {
 
 	/**
-	 * Sets the context for the execution environment.
-	 * 
-	 * @param environment
-	 *            the current environment
-	 * @param path
-	 *            the path of the executable
+	 * Default constructor for the list command.
 	 */
-	public ExecutionContext(Environment environment, ExecutablePath path) {
-		this.environment = environment;
-		this.path = path;
+	public List() {
+		super("list");
 	}
 
 	/**
-	 * Gets the path of the executable.
-	 * 
-	 * @return the path of the executable
+	 * Main function for the command execution.
 	 */
-	public ExecutablePath getPath() {
-		return path;
+	@Override
+	protected ExecutionResult executeCommand(final CommandLine commandLine, final PrintStream out,
+			final ExecutionContext context) {
+
+		return SUCCESS;
 	}
 
 	/**
-	 * Gets the current environment.
-	 * 
-	 * @return the current environment
+	 * Gets the help message for the command.
 	 */
-	public Environment getEnvironment() {
-		return environment;
-
+	public String getHelp() {
+		return "list directory contents";
 	}
 }

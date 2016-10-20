@@ -21,24 +21,51 @@
 
 package edu.wright.cs.jfiles.exception;
 
+/**
+ * Class used to hold the execution result for a command that was ran.
+ *
+ */
 public class ExecutionResult {
 
 	private int statusCode;
 	private boolean exitShell = false;
 
+	/**
+	 * Sets the statusCode for the current ExecutionResult of a command.
+	 * 
+	 * @param statusCode
+	 *            the status code from a resulting command execution
+	 */
 	public ExecutionResult(int statusCode) {
 		this.statusCode = statusCode;
 	}
 
+	/**
+	 * Sets the statusCode and the exitShell for the ExecutionResult of a
+	 * command.
+	 * 
+	 * @param statusCode
+	 *            the status code from a resulting command execution
+	 * @param exitShell
+	 */
 	public ExecutionResult(int statusCode, boolean exitShell) {
 		this.statusCode = statusCode;
 		this.exitShell = exitShell;
 	}
 
+	/**
+	 * Gets the status code that was set by the previously ran command.
+	 * 
+	 * @return the status code result
+	 */
 	public int getStatusCode() {
 		return statusCode;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isExitShell() {
 		return exitShell;
 	}

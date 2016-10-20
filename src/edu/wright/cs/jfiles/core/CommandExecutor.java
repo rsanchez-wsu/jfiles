@@ -25,6 +25,9 @@ import edu.wright.cs.jfiles.exception.ExecutionResult;
 
 import java.io.OutputStream;
 
+/**
+ * Class used to execute a command from the executable class.
+ */
 public class CommandExecutor {
 
 	private ExecutablePath path;
@@ -34,13 +37,24 @@ public class CommandExecutor {
 	 * Create a command executor with the given executable path and environment.
 	 * 
 	 * @param executablePath
+	 *            the path to the executable
 	 * @param environment
+	 *            the environment of the system
 	 */
 	public CommandExecutor(ExecutablePath executablePath, Environment environment) {
 		this.path = executablePath;
 		this.environment = environment;
 	}
 
+	/**
+	 * Executes the given command from the CommandLine object.
+	 * 
+	 * @param commandLine
+	 *            the current command line
+	 * @param out
+	 *            the output stream
+	 * @return the execution result
+	 */
 	public ExecutionResult executeCommand(CommandLine commandLine, OutputStream out) {
 		final Executable executable = path.locateExecutable(commandLine.getCommand());
 

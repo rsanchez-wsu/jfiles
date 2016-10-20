@@ -24,8 +24,6 @@ package edu.wright.cs.jfiles.core;
 /**
  * Basic argument class meant to hold an argument for a given command.
  * 
- * @author brett
- *
  */
 public class Argument {
 

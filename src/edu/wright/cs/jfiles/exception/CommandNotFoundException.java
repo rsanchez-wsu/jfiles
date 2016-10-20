@@ -21,6 +21,10 @@
 
 package edu.wright.cs.jfiles.exception;
 
+/**
+ * Class used to process CommandNotFoundExceptions.
+ *
+ */
 public class CommandNotFoundException extends ShellException {
 
 	/**
@@ -28,10 +32,25 @@ public class CommandNotFoundException extends ShellException {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Outputs the message for the command that was not found.
+	 * 
+	 * @param message
+	 *            the message to output
+	 */
 	public CommandNotFoundException(String message) {
 		super(message);
 	}
 
+	/**
+	 * Outputs the message for the command that was not found and throws an
+	 * error.
+	 * 
+	 * @param message
+	 *            the message to output
+	 * @param t
+	 *            the error to throw
+	 */
 	public CommandNotFoundException(String message, Throwable t) {
 		super(message, t);
 	}

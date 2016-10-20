@@ -21,6 +21,10 @@
 
 package edu.wright.cs.jfiles.exception;
 
+/**
+ * Class used to process general ShellExceptions that can occur.
+ *
+ */
 public class ShellException extends RuntimeException {
 
 	/**
@@ -28,10 +32,24 @@ public class ShellException extends RuntimeException {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Outputs the message for the shell exception.
+	 * 
+	 * @param message
+	 *            the message to output
+	 */
 	public ShellException(String message) {
 		super(message);
 	}
 
+	/**
+	 * Outputs the message for the shell exception and throws an error.
+	 * 
+	 * @param message
+	 *            the message to output
+	 * @param t
+	 *            the error to throw
+	 */
 	public ShellException(String message, Throwable t) {
 		super(message, t);
 	}

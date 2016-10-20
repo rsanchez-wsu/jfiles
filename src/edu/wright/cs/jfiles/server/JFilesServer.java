@@ -21,6 +21,11 @@
 
 package edu.wright.cs.jfiles.server;
 
+import edu.wright.cs.jfiles.core.CommandExecutor;
+import edu.wright.cs.jfiles.core.CommandParser;
+import edu.wright.cs.jfiles.core.Environment;
+import edu.wright.cs.jfiles.core.ExecutablePath;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -66,17 +71,24 @@ public class JFilesServer implements Runnable {
 	public void run() {
 		String dir = System.getProperty("user.dir");
 		File history = new File("SearchHistory.txt");
-		
+
 		Locale.setDefault(new Locale("English"));
 		try (Socket server = serverSocket.accept()) {
 			logger.info("Received connection from" + server.getRemoteSocketAddress());
 			InputStreamReader isr = new InputStreamReader(server.getInputStream(), UTF_8);
 			BufferedReader in = new BufferedReader(isr);
-			FileWriter hstWrt = new FileWriter(history); //history writer
+			FileWriter hstWrt = new FileWriter(history); // history writer
 			String cmd;
 			OutputStreamWriter osw = new OutputStreamWriter(server.getOutputStream(), UTF_8);
 
+			ExecutablePath executablePath = new ExecutablePath();
+			Environment environment = new Environment();
+
+			CommandParser parser = new CommandParser(environment);
+			CommandExecutor executor = new CommandExecutor(executablePath, environment);
+
 			BufferedWriter out = new BufferedWriter(osw);
+
 			while (null != (cmd = in.readLine())) {
 				if ("".equals(cmd)) {
 					break;
@@ -103,15 +115,15 @@ public class JFilesServer implements Runnable {
 						serverSocket.close();
 					} catch (IOException ex) {
 						System.out.println("Error closing the socket and streams");
-					}
-					break;
-				default:
-					System.out.println("Invalid Command");
-				}
 
-				out.flush();
-				hstWrt.close();
+					}
+				default:
+					break;
+				}
 			}
+			out.flush();
+			hstWrt.close();
+
 		} catch (IOException e) {
 			// TODO AUto-generated catch block
 			// e.printStackTrace();
@@ -138,27 +150,28 @@ public class JFilesServer implements Runnable {
 	}
 
 	/**
-	 * Find Command function. Method for the find command. 
-	 * Writes results found within current directory.
-	 * Search supports glob patterns
+	 * Find Command function. Method for the find command. Writes results found
+	 * within current directory. Search supports glob patterns
 	 * 
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	private void findCmd(String dir, BufferedWriter out, String searchTerm, FileWriter historyWrite) {
+	private void findCmd(String dir, BufferedWriter out, String searchTerm,
+			FileWriter historyWrite) {
 		int findCount = 0;
-		try (DirectoryStream<Path> directoryStream = 
+		try (DirectoryStream<Path> directoryStream =
 				Files.newDirectoryStream(Paths.get(dir), searchTerm)) {
 			historyWrite.write(searchTerm + "\n");
 			for (Path path : directoryStream) {
-				//if (path.toString().toLowerCase(Locale.ENGLISH).contains(searchTerm)) {
+				// if
+				// (path.toString().toLowerCase(Locale.ENGLISH).contains(searchTerm))
+				// {
 				out.write(path.toString() + "\n");
 				findCount++;
-				//}
+				// }
 			}
-			System.out.println(
-					"Found " + findCount + " file(s) in " + dir
-						+ " that contains \"" + searchTerm + "\"\n");
+			System.out.println("Found " + findCount + " file(s) in " + dir + " that contains \""
+					+ searchTerm + "\"\n");
 		} catch (IOException e) {
 			// TODO AUto-generated catch block
 			// e.printStackTrace();
@@ -167,14 +180,15 @@ public class JFilesServer implements Runnable {
 	}
 
 	/**
-	 * Recursive find Command function. Method for the recursive option of the find command.
-	 * Calls itself if a child directory is found, otherwise calls findCmd to get results from
-	 * current directory.
+	 * Recursive find Command function. Method for the recursive option of the
+	 * find command. Calls itself if a child directory is found, otherwise calls
+	 * findCmd to get results from current directory.
 	 * 
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	private void recursiveFindCmd(String dir, BufferedWriter out, String searchTerm, FileWriter hstWrt) {
+	private void recursiveFindCmd(String dir, BufferedWriter out, String searchTerm,
+			FileWriter hstWrt) {
 		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir))) {
 			for (Path path : directoryStream) {
 				if (path.toFile().isDirectory()) {
