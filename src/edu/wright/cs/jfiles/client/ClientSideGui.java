@@ -65,20 +65,31 @@ public class ClientSideGui extends Application {
 		// Create File menu with open and close items
 		// Creates Menu Name
 		Menu fileMenu = new Menu("File");
-		// Creates Menu Items
-		MenuItem openMenuItem = new MenuItem("Open");
+		Menu editMenu = new Menu("Edit");
+
+		// Create File Menu Items
+		MenuItem openFileMenuItem = new MenuItem("Open");
 		MenuItem closeMenuItem = new MenuItem("Close");
+		// Create Edit Menu Items
+		MenuItem createMenuItem = new MenuItem("Create");
+		MenuItem openMenuItem = new MenuItem("Open");
+		MenuItem deleteMenuItem = new MenuItem("Delete");
+		MenuItem copyMenuItem = new MenuItem("Copy");
+		MenuItem pasteMenuItem = new MenuItem("Paste");
+		MenuItem cutMenuItem = new MenuItem("Cut");
 
 		// Add Menu Items and a Separator to File Menu. Separate Close option
 		// for visual distinction.
-		fileMenu.getItems().addAll(openMenuItem, new SeparatorMenuItem(), closeMenuItem);
-		
+		fileMenu.getItems().addAll(openFileMenuItem, new SeparatorMenuItem(), closeMenuItem);
+
+		editMenu.getItems().addAll(createMenuItem, openMenuItem, deleteMenuItem, copyMenuItem,
+				pasteMenuItem, cutMenuItem);
+
 		// Exits the window if clicked
 		closeMenuItem.setOnAction(actionEvent -> Platform.exit());
-		
 
-		// Add the menu to the menu bar
-		headderMenuBar.getMenus().addAll(fileMenu);
+		// Add the menus to the menu bar
+		headderMenuBar.getMenus().addAll(fileMenu, editMenu);
 
 		// Scene Creation. Put the basePane on the scene.
 		Scene scene = new Scene(basePane, 1200, 600, Color.WHITE);
