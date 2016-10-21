@@ -72,6 +72,7 @@ public class JFilesClient implements Runnable {
 				
 				System.out.println("Send a command to the server.");
 				System.out.println("FILE to receive file");
+				System.out.println("SENDFILE to send file to server");
 				System.out.println("LIST to receive server directory");
 				
 				/*
@@ -220,6 +221,8 @@ public class JFilesClient implements Runnable {
 			OutputStreamWriter osw = new OutputStreamWriter(
 					sock.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
+			out.write("GETFILE " + filepath + "\n");
+			out.flush();
 			String line;
 			while ((line = br.readLine()) != null) {
 				System.out.println(line);
