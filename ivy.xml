@@ -15,6 +15,10 @@
 		<dependency org="junit" name="junit" rev="4.6" conf="tools->default"/>
 		<dependency org="com.google.code.findbugs" name="findbugs" rev="3.0.1" conf="tools->default"/>
 		<dependency org="com.puppycrawl.tools" name="checkstyle" rev="6.11.2" conf="tools->default"/>
+		
+		<!-- Dependencies for Log4J Framework -->
+		<dependency org="org.apache.logging.log4j" name="log4j-api" rev="2.6.2" conf="lib->*"/>
+		<dependency org="org.apache.logging.log4j" name="log4j-core" rev="2.6.2" conf="lib->*"/>
 
 	</dependencies>
 </ivy-module>
