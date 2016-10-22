@@ -43,8 +43,6 @@ import javafx.stage.Stage;
  */
 public class ClientSideGui extends Application {
 
-	// Global Variables used because JavaFX does not pass parameters well.
-
 	/**
 	 * This method is where most visual elements are created and manipulated.
 	 */
@@ -58,12 +56,9 @@ public class ClientSideGui extends Application {
 
 		// Create MenuBar on window Top
 		MenuBar headderMenuBar = new MenuBar();
-		// Line not needed because it is already set as default
-		// headderMenuBar.prefWidthProperty().bind(primaryStage.widthProperty());
 		basePane.setTop(headderMenuBar);
 
-		// Create File menu with open and close items
-		// Creates Menu Name
+		// Create Menus
 		Menu fileMenu = new Menu("File");
 		Menu editMenu = new Menu("Edit");
 
@@ -78,14 +73,12 @@ public class ClientSideGui extends Application {
 		MenuItem pasteMenuItem = new MenuItem("Paste");
 		MenuItem cutMenuItem = new MenuItem("Cut");
 
-		// Add Menu Items and a Separator to File Menu. Separate Close option
-		// for visual distinction.
+		// Add Menu Items and a Separator to Menu.
 		fileMenu.getItems().addAll(openFileMenuItem, new SeparatorMenuItem(), closeMenuItem);
-
 		editMenu.getItems().addAll(createMenuItem, openMenuItem, deleteMenuItem, copyMenuItem,
 				pasteMenuItem, cutMenuItem);
 
-		// Exits the window if clicked
+		// Exits the window if Close is clicked
 		closeMenuItem.setOnAction(actionEvent -> Platform.exit());
 
 		// Add the menus to the menu bar
@@ -93,11 +86,8 @@ public class ClientSideGui extends Application {
 
 		// Scene Creation. Put the basePane on the scene.
 		Scene scene = new Scene(basePane, 1200, 600, Color.WHITE);
-		// addedPain, Width, Height, backgroundColor
-		// scene color is buried under the basePane and is not currently visible
 
 		// Manipulating the primaryStage or "window"
-		// Sets the title on the window itself
 		primaryStage.setTitle("JFiles");
 		// Adds the scene to the stage. Takes up the whole window.
 		primaryStage.setScene(scene);
