@@ -223,7 +223,7 @@ public class JFilesServer implements Runnable {
 					}
 
 				} else { // End search block
-					logger.error("Unknown commad");
+					logger.error("Unknown command");
 				}
 				out.flush();
 			}
