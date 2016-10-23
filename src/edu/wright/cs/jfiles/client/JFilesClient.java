@@ -75,31 +75,6 @@ public class JFilesClient implements Runnable {
 				System.out.println("SENDFILE to send file to server");
 				System.out.println("LIST to receive server directory");
 				
-				/*
-				 * InputStreamReader isr = new
-				 * InputStreamReader(socket.getInputStream(), UTF_8);
-				 * 
-				 * //this is temp info on CheckSum /* File datafile = new
-				 * File("AUTHORS");
-				 * 
-				 * MessageDigest checkFile = MessageDigest.getInstance("MD5");
-				 * 
-				 * @SuppressWarnings("resource") FileInputStream fileSent = new
-				 * FileInputStream(datafile); //Creating a byte array so we can
-				 * read the bytes of the file in chunks byte[] chunkOfBytes =
-				 * new byte[(int) datafile.length()]; //used as the place holder
-				 * for the array int startPoint = 0;
-				 * 
-				 * while ((startPoint = fileSent.read(chunkOfBytes)) != -1) {
-				 * checkFile.update(chunkOfBytes, 0, startPoint); } //the
-				 * finalized checksum byte[] checksum = checkFile.digest();
-				 * System.out.print("Digest(in bytes):: "); for (int i = 0; i <
-				 * checksum.length - 1 ; i++) { System.out.print(checksum[i] );
-				 * } System.out.println();
-				 */
-				// BufferedReader in = new BufferedReader(isr);
-				// Get user input
-				@SuppressWarnings("resource")
 				// Eclipse complained that kb wasn't being used. Not sure why.
 				// kb input is used on the line after it is initialized
 				// Overrode resource leak warning for now
@@ -169,11 +144,19 @@ public class JFilesClient implements Runnable {
 	 */
 	public void fileCommand(String file, Socket sock) {
 		BufferedWriter bw = null;
+		//Initializing a Buffer Reader br
+		// this allows the reader to read the incoming stream of data from the server
+				
 		try {
+			//Initialing a Output Stream writer and a bufferedWrite, to be able to send information to the server
 			OutputStreamWriter osw = new OutputStreamWriter(sock.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
+			//send the command needed to receive a file to the server. 
+			//the \n character needs to be their to signify to the buffered reader when the line has ended and to stop reading. 
 			out.write("FILE " + file + "\n");
 			out.flush();
+			
+			
 			if (!file.equals("QUIT") || !file.equals("EXIT")) {
 				InputStreamReader isr = new InputStreamReader(sock.getInputStream(), UTF_8);
 				BufferedReader br = new BufferedReader(isr);
@@ -216,16 +199,22 @@ public class JFilesClient implements Runnable {
 	 * 			  the active socket on which the server connection resides
 	 */
 	public void fileSendCommand(String filepath, Socket sock) {
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(
-				new FileInputStream(filepath), "UTF-8"))) {
-			OutputStreamWriter osw = new OutputStreamWriter(
-					sock.getOutputStream(), UTF_8);
+		//Initializing a Buffer Reader br
+		// this allows the reader to read the incoming stream of data from the server
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filepath), "UTF-8"))) {
+			//Initialing a Output Stream writer and a bufferedWrite, to be able to send information to the server
+			OutputStreamWriter osw = new OutputStreamWriter(sock.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
+			//send the command needed to send a file to the server. 
+			//the \n character needs to be their to signify to the buffered reader when the line has ended and to stop reading. 
 			out.write("GETFILE " + filepath + "\n");
+			//this pushes the stream to the server and clears it out locally again
 			out.flush();
 			String line;
+			//after the command we now read the response from the server. 
 			while ((line = br.readLine()) != null) {
 				System.out.println(line);
+				//this writes the response from the server to a file.
 				out.write(line + "\n");
 			}
 			out.flush();
