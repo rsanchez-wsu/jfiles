@@ -42,6 +42,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.WindowConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -61,6 +62,8 @@ public class Gui {
 			throws ParserConfigurationException, SAXException, IOException {
 		// Creates the frame
 		JFrame frame = new JFrame();
+		// Ends program when you close the window
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		// Sets size of frame
 		frame.setSize(450, 350);
 		// Where buttons will be place (rows, columns)
@@ -71,11 +74,11 @@ public class Gui {
 		final int iconHeight = 100;
 		
 		// Specifies a new image icon and resizes it
-		ImageIcon fileIcon = new ImageIcon(new ImageIcon(Gui.class.getResource("file_icon.png"))
+		ImageIcon fileIcon = new ImageIcon(new ImageIcon(Gui.class.getResource("img/file_icon.png"))
 				.getImage().getScaledInstance(IconWidth, iconHeight, Image.SCALE_DEFAULT));
 		
 		// Reserved for folder icon when we can use it
-		ImageIcon folderIcon = new ImageIcon(new ImageIcon(Gui.class.getResource("folder_icon.png"))
+		ImageIcon folderIcon = new ImageIcon(new ImageIcon(Gui.class.getResource("img/folder_icon.png"))
 				.getImage().getScaledInstance(IconWidth, iconHeight, Image.SCALE_DEFAULT));
 
 		/*
