@@ -25,6 +25,10 @@ import edu.wright.cs.jfiles.exception.EnvironmentException;
 
 import java.util.Properties;
 
+/**
+ * Environment class for the command executor.
+ *
+ */
 public class Environment {
 
 	public static final String PROPERTY_CHAR = "$";
@@ -84,13 +88,24 @@ public class Environment {
 	 * default value argument if the property is not found.
 	 * 
 	 * @param propertyName
+	 *            the name of the property to find
 	 * @param defaultValue
-	 * @return
+	 *            the default value of the property
+	 * @return the string value of the system property, or the default value if
+	 *         there is no property with that key
 	 */
 	public String getProperty(String propertyName, String defaultValue) {
 		return properties.getProperty(propertyName, defaultValue);
 	}
 
+	/**
+	 * Sets the system property indicated by the specified key.
+	 * 
+	 * @param key
+	 *            the property to set
+	 * @param value
+	 *            the value to set the property to
+	 */
 	public void setProperty(String key, String value) {
 		if (key == null || value == null) {
 			throw new EnvironmentException("Property key and property value cannot be null");
@@ -98,6 +113,9 @@ public class Environment {
 		properties.setProperty(key, value);
 	}
 
+	/**
+	 * Loads the default properties and values from the system.
+	 */
 	private void loadDefaults() {
 	}
 }

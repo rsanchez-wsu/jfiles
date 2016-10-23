@@ -22,9 +22,12 @@
 package edu.wright.cs.jfiles.server;
 
 import edu.wright.cs.jfiles.core.CommandExecutor;
+import edu.wright.cs.jfiles.core.CommandLine;
 import edu.wright.cs.jfiles.core.CommandParser;
 import edu.wright.cs.jfiles.core.Environment;
 import edu.wright.cs.jfiles.core.ExecutablePath;
+import edu.wright.cs.jfiles.exception.CommandNotFoundException;
+import edu.wright.cs.jfiles.exception.ExecutionResult;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -121,6 +124,21 @@ public class JFilesServer implements Runnable {
 					break;
 				}
 
+				// command example
+				// ========================================================================
+				out.write("Prompt :> ");
+				CommandLine commandLine = parser.parse(cmd);
+
+				try {
+					ExecutionResult result = executor.executeCommand(commandLine, out);
+					if (result.isExitShell()) {
+						break;
+					}
+				} catch (CommandNotFoundException e) {
+					out.write(" " + e.getMessage() + ": command not found\n");
+				}
+				// ========================================================================
+
 				String[] baseCommand = cmd.split(" ");
 
 				switch (baseCommand[0].toUpperCase(Locale.ENGLISH)) {
@@ -144,8 +162,6 @@ public class JFilesServer implements Runnable {
 						System.out.println("Error closing the socket and streams");
 
 					}
-				default:
-					break;
 				}
 			}
 			out.flush();

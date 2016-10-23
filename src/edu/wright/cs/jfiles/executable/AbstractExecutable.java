@@ -26,7 +26,7 @@ import edu.wright.cs.jfiles.core.Executable;
 import edu.wright.cs.jfiles.core.ExecutionContext;
 import edu.wright.cs.jfiles.exception.ExecutionResult;
 
-import java.io.OutputStream;
+import java.io.BufferedWriter;
 import java.io.PrintStream;
 
 /**
@@ -51,7 +51,7 @@ public abstract class AbstractExecutable implements Executable {
 	 *            the context of the current command execution
 	 * @return the execution result of the command that is ran
 	 */
-	protected abstract ExecutionResult executeCommand(CommandLine commandLine, PrintStream out,
+	protected abstract ExecutionResult executeCommand(CommandLine commandLine, BufferedWriter out,
 			ExecutionContext context);
 
 	/**
@@ -74,9 +74,9 @@ public abstract class AbstractExecutable implements Executable {
 	/**
 	 * 
 	 */
-	public ExecutionResult execute(CommandLine commandLine, OutputStream out,
+	public ExecutionResult execute(CommandLine commandLine, BufferedWriter out,
 			ExecutionContext context) {
-		return executeCommand(commandLine, new PrintStream(out), context);
+		return executeCommand(commandLine, new BufferedWriter(out), context);
 	}
 
 	/**

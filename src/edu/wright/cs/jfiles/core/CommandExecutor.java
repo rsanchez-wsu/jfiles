@@ -23,7 +23,7 @@ package edu.wright.cs.jfiles.core;
 
 import edu.wright.cs.jfiles.exception.ExecutionResult;
 
-import java.io.OutputStream;
+import java.io.BufferedWriter;
 
 /**
  * Class used to execute a command from the executable class.
@@ -55,7 +55,7 @@ public class CommandExecutor {
 	 *            the output stream
 	 * @return the execution result
 	 */
-	public ExecutionResult executeCommand(CommandLine commandLine, OutputStream out) {
+	public ExecutionResult executeCommand(CommandLine commandLine, BufferedWriter out) {
 		final Executable executable = path.locateExecutable(commandLine.getCommand());
 
 		ExecutionContext context = new ExecutionContext(environment, path);

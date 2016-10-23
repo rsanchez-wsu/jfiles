@@ -47,6 +47,7 @@ public class ExecutionResult {
 	 * @param statusCode
 	 *            the status code from a resulting command execution
 	 * @param exitShell
+	 *            boolean flag for when the shell exits
 	 */
 	public ExecutionResult(int statusCode, boolean exitShell) {
 		this.statusCode = statusCode;

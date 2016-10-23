@@ -25,6 +25,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+/**
+ * 
+ *
+ */
 public class CommandParser {
 
 	private static final String PROPERTY_CHAR = Environment.PROPERTY_CHAR;
@@ -32,10 +36,17 @@ public class CommandParser {
 
 	private Environment environment;
 
+	/**
+	 * 
+	 */
 	public CommandParser() {
 		this.environment = new Environment();
 	}
 
+	/**
+	 * 
+	 * @param environment
+	 */
 	public CommandParser(Environment environment) {
 		this.environment = environment;
 	}
@@ -66,6 +77,11 @@ public class CommandParser {
 		return commandLine;
 	}
 
+	/**
+	 * 
+	 * @param arg
+	 * @return
+	 */
 	private String translateEnvironmentVariable(String arg) {
 		int propCharIndex = arg.indexOf(PROPERTY_CHAR);
 		if (propCharIndex >= 0) {
@@ -87,6 +103,11 @@ public class CommandParser {
 		return arg;
 	}
 
+	/**
+	 * 
+	 * @param commandLine
+	 * @return
+	 */
 	private Stack<String> populateStackWithArgs(String commandLine) {
 		List<String> args = new ArrayList<String>();
 

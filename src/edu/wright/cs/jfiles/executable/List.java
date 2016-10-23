@@ -25,7 +25,7 @@ import edu.wright.cs.jfiles.core.CommandLine;
 import edu.wright.cs.jfiles.core.ExecutionContext;
 import edu.wright.cs.jfiles.exception.ExecutionResult;
 
-import java.io.PrintStream;
+import java.io.BufferedWriter;
 
 /**
  * Class for the list command for the jFiles program.
@@ -44,8 +44,8 @@ public class List extends AbstractExecutable {
 	 * Main function for the command execution.
 	 */
 	@Override
-	protected ExecutionResult executeCommand(final CommandLine commandLine, final PrintStream out,
-			final ExecutionContext context) {
+	protected ExecutionResult executeCommand(final CommandLine commandLine,
+			final BufferedWriter out, final ExecutionContext context) {
 
 		return SUCCESS;
 	}
