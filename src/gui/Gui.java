@@ -30,14 +30,16 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 
-import javax.swing.JButton;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.xml.parsers.DocumentBuilder;
@@ -64,12 +66,24 @@ public class Gui {
 		// Where buttons will be place (rows, columns)
 		frame.setLayout(new GridLayout(2, 5));
 
+		// Icon width and height variables
+		final int IconWidth = 100;
+		final int iconHeight = 100;
+		
+		// Specifies a new image icon and resizes it
+		ImageIcon fileIcon = new ImageIcon(new ImageIcon(Gui.class.getResource("file_icon.png"))
+				.getImage().getScaledInstance(IconWidth, iconHeight, Image.SCALE_DEFAULT));
+		
+		// Reserved for folder icon when we can use it
+		ImageIcon folderIcon = new ImageIcon(new ImageIcon(Gui.class.getResource("folder_icon.png"))
+				.getImage().getScaledInstance(IconWidth, iconHeight, Image.SCALE_DEFAULT));
+
 		/*
 		 * Some initial testing for parsing XML for file names and types. Uses
 		 * fake data for now, assuming this will come later. Simply logs file
 		 * name + extension from XML string to console for now.
 		 */
-		
+
 		// String containing fake XML for parsing testing (output from server
 		// issue #17)
 		String testXml = "<?xml version=\"1.0\"?>" + "<items>"
@@ -88,32 +102,61 @@ public class Gui {
 			Node newNode = nodes.item(i);
 
 			Element newElement = (Element) newNode;
-
+			
 			items.add(newElement.getElementsByTagName("name").item(0).getTextContent()
 					+ newElement.getElementsByTagName("ext").item(0).getTextContent());
+			
+			/*
+			 * We need to determine how we will approach differentiating files and folders 
+			 * I'm thinking maybe an array within the array list that holds the 
+			 * file / folder and its information
+			 * 
+			 * i.e. something like the below
+			 * 
+			 * [0] 
+			 *   => array(
+			 *   		name = "test",
+			 *      	extension = ".txt",
+			 *      	type = "file"
+			 *   ),
+			 * [1]
+			 *   => array(
+			 *   		name = "folderTest",
+			 *   		extension = "",
+			 *   		type = "folder"
+			 *   )
+			 *   
+			 * etc.
+			 * 
+			 * I may tackle this next week. - Alex
+			 * 
+			 * */
 		}
-		
-		//This creates a box with appendable text that can be scrolled through.
-		//It is initialized here so that when clicking a button it can be edited
+
+		// This creates a box with appendable text that can be scrolled through.
+		// It is initialized here so that when clicking a button it can be
+		// edited
 		JTextArea consoleOutput = new JTextArea();
 		JScrollPane scrollPane = new JScrollPane(consoleOutput);
 		consoleOutput.setEditable(false);
 
 		for (int i = 0; i < items.size(); i++) {
-			JButton thebutton = new JButton();
-			thebutton.setText(items.get(i));
-			thebutton.addActionListener(new ActionListener() {
-				// This creates the event for when the button is clicked
-				public void actionPerformed(ActionEvent error) {
-					
-					consoleOutput.append("You clicked a button");
-					consoleOutput.append("\n");
+			String fileName = items.get(i);
+			
+			JLabel fileIconLabel = new JLabel(fileName, fileIcon, JLabel.CENTER);
+			fileIconLabel.setVerticalTextPosition(JLabel.BOTTOM);
+			fileIconLabel.setHorizontalTextPosition(JLabel.CENTER);
+
+			fileIconLabel.addMouseListener(new MouseAdapter() {
+				public void mouseClicked(MouseEvent event) {
+					consoleOutput.append("You clicked " + fileName + "\n");
 				}
 			});
-			// Puts the button on the frame
-			frame.add(thebutton);
+
+			// Puts the icon on the frame
+			frame.add(fileIconLabel);
 		}
-		//Puts console  output area on frame after buttons
+		// Puts console output area on frame after buttons
 		frame.add(scrollPane);
 		frame.setVisible(true);
 	}
