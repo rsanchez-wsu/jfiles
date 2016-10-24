@@ -64,8 +64,9 @@ public class ExecutionResult {
 	}
 
 	/**
+	 * Checks if the shell is going to exit.
 	 * 
-	 * @return
+	 * @return true if exitShell is set
 	 */
 	public boolean isExitShell() {
 		return exitShell;

@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Stack;
 
 /**
- * 
+ * Command parser class used to parse a command from the client.
  *
  */
 public class CommandParser {
@@ -37,22 +37,28 @@ public class CommandParser {
 	private Environment environment;
 
 	/**
-	 * 
+	 * Default constructor that sets the environment to the default environment.
 	 */
 	public CommandParser() {
 		this.environment = new Environment();
 	}
 
 	/**
+	 * Creates a CommandParser with the given environment.
 	 * 
 	 * @param environment
+	 *            the environment to use for the CommandParser
 	 */
 	public CommandParser(Environment environment) {
 		this.environment = environment;
 	}
 
 	/**
-	 *
+	 * Parses the command from the client input.
+	 * <p>
+	 * Reads in the entire command line string and parses out the command and
+	 * any/all arguments that go with the command.
+	 * 
 	 * @param commandLineString
 	 *            the command line to parse.
 	 * @return populated command line.
@@ -78,9 +84,11 @@ public class CommandParser {
 	}
 
 	/**
+	 * Parses an argument that has an effect on the environment.
 	 * 
 	 * @param arg
-	 * @return
+	 *            the environment argument
+	 * @return the argument
 	 */
 	private String translateEnvironmentVariable(String arg) {
 		int propCharIndex = arg.indexOf(PROPERTY_CHAR);
@@ -104,9 +112,11 @@ public class CommandParser {
 	}
 
 	/**
+	 * Generates a stack with the list of arguments.
 	 * 
 	 * @param commandLine
-	 * @return
+	 *            the current parsed command line
+	 * @return a stack populated with the arguments for the command
 	 */
 	private Stack<String> populateStackWithArgs(String commandLine) {
 		List<String> args = new ArrayList<String>();

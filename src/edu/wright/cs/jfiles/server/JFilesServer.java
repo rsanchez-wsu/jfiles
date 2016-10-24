@@ -162,6 +162,10 @@ public class JFilesServer implements Runnable {
 						System.out.println("Error closing the socket and streams");
 
 					}
+					break;
+				default:
+					logger.info("Hit default switch." + System.lineSeparator());
+					break;
 				}
 			}
 			out.flush();
