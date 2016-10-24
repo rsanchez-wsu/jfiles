@@ -175,6 +175,14 @@ public class JFilesServer implements Runnable {
 		}
 	}
 	
+	/** 
+	 * Method for producing a Checksum.
+	 * Takes in a file type and converts it into an MD5 
+	 * standard checksum which is returned in the form of a byte array.
+	 * 
+	 * @param file the file to be digested into a checksum
+	 * @return a byte array containing the processed file
+	 */
 	public byte[] getChecksum(File file) {
 		// Initialize some variables
 		byte[] checksum = null;
