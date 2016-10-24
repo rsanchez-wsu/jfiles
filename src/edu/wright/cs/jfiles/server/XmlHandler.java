@@ -24,6 +24,7 @@ package edu.wright.cs.jfiles.server;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -86,20 +87,6 @@ public class XmlHandler {
 		}
 		
 		// Return the XML document
-		return doc;
-	}
-	
-	
-	/**
-	 * Adds an element to an XML document.
-	 * @param newDoc XML document to add an element to
-	 * @param str Name of element to be added
-	 * @return XML document
-	 */
-	public Document addElement(Document newDoc, String str) {
-		
-		Document doc = newDoc;
-		// TODO: implement adding elements
 		return doc;
 	}
 	
