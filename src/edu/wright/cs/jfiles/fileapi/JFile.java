@@ -67,7 +67,8 @@ public class JFile implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Stores the given file and the arraylist of tags associated with the file.
+	 * Stores the given file and the Map of tags associated with the file.
+	 * Can be given any map type.
 	 * 
 	 * @param file
 	 *            The file being stored in the JFile object.
@@ -168,6 +169,15 @@ public class JFile implements Cloneable, Serializable {
 	}
 
 	/**
+	 * Gets the absolute path of the file.
+	 * 
+	 * @return the absolute path of the file.
+	 */
+	public String getPath() {
+		return file.getAbsolutePath();
+	}
+	
+	/**
 	 * Takes away the tag specified by a string.
 	 * 
 	 * @param key
@@ -184,12 +194,33 @@ public class JFile implements Cloneable, Serializable {
 
 	/**
 	 * gets the file's type. TODO: getType()
+	 * 
+	 * @return String of what the file is. Example: JFile.java returns java
 	 */
-	public void getType() {
-		/*
-		 * if (System.getProperty("os.name").contains("Windows")) {
-		 * System.out.println(Files.getFileExtension(file.getName())); }
-		 */
+	public String getType() {
+		logger.info("determining file type");
+		try {
+			if (System.getProperty("os.name").contains("Windows")) {
+				logger.info("OS determined to be \"Windows\".");
+				return file.getName().substring(
+						file.getName().lastIndexOf('.') + 1,
+						file.getName().length());
+			} else if (System.getProperty("os.name").contains("Macintosh")) {
+				// TODO Determine how files are defined and how to get the file type on Mac.
+				logger.info("OS determined to be \"Macintosh\".");
+			} else if (System.getProperty("os.name").contains("Linux")) {
+				// TODO Get the file type from linux.
+				logger.info("OS determined to be \"Linux\".");
+			} else {
+				// TODO ??? Error maybe?
+				logger.info("OS determined to be \"Unknown\".");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Error getting type.");
+		}
+		//temporary until all ifs get a return.
+		return null;
 	}
 
 	/**
@@ -222,9 +253,11 @@ public class JFile implements Cloneable, Serializable {
 	/**
 	 * Deletes the actual file contents.
 	 * 
+	 * <b>Meant to be used with a JFM</b>
+	 * 
 	 * @return true if the file was able to be deleted; false otherwise.
 	 */
-	public boolean deleteContents() {
+	protected boolean deleteContents() {
 		return file.delete();
 	}
 
@@ -251,7 +284,7 @@ public class JFile implements Cloneable, Serializable {
 			output.tagList = new HashMap<String, String>(tagList);
 			return output;
 		} catch (CloneNotSupportedException e1) {
-			logger.error("Clone was called on JFile and caught a Clone " + "Not Supported Exception.");
+			logger.error("Clone call on JFile and caught a Clone " + "Not Supported Exception.");
 			e1.printStackTrace();
 			System.out.println("Trying to clone the JFile a different way.");
 			logger.info("Trying to create a clone a different way...");
