@@ -52,13 +52,11 @@ public class JFilesClient implements Runnable {
 	@Override
 	public void run() {
 		try (Socket socket = new Socket(host, port)) {
-			OutputStreamWriter osw =
-					new OutputStreamWriter(socket.getOutputStream(), UTF_8);
+			OutputStreamWriter osw =new OutputStreamWriter(socket.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
 			out.write("LIST\n");
 			out.flush();
-			InputStreamReader isr =
-					new InputStreamReader(socket.getInputStream(), UTF_8);
+			InputStreamReader isr =new InputStreamReader(socket.getInputStream(), UTF_8);
 			BufferedReader in = new BufferedReader(isr);
 			String line;
 			while ((line = in.readLine()) != null) {
