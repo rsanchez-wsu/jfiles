@@ -58,18 +58,14 @@ public class JFilesServer implements Runnable {
 	public void run() {
 		String dir = System.getProperty("user.dir");
 		try (Socket server = serverSocket.accept()) {
-			System.out.println("Received connection from"
-					+ server.getRemoteSocketAddress());
-			InputStreamReader isr =
-					new InputStreamReader(server.getInputStream(), UTF_8);
+			System.out.println("Received connection from"+ server.getRemoteSocketAddress());
+			InputStreamReader isr = new InputStreamReader(server.getInputStream(), UTF_8);
 			BufferedReader in = new BufferedReader(isr);
 			String cmd = in.readLine();
-			OutputStreamWriter osw =
-					new OutputStreamWriter(server.getOutputStream(), UTF_8);
+			OutputStreamWriter osw = new OutputStreamWriter(server.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
 			if ("LIST".equalsIgnoreCase(cmd)) {
-				try (DirectoryStream<Path> directoryStream =
-						Files.newDirectoryStream(Paths.get(dir))) {
+				try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir))) {
 					for (Path path : directoryStream) {
 						out.write(path.toString() + "\n");
 					}
