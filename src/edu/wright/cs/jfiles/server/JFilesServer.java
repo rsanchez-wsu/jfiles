@@ -100,14 +100,14 @@ public class JFilesServer implements Runnable {
 					}
 
 				} else { // End search block
-					logger.error("Unknown commad");
+					logger.error("Unknown command");
 				}
 				out.flush();
 			}
 		} catch (IOException e) {
-			//TODO AUto-generated catch block
+			//TODO Auto-generated catch block
 			//e.printStackTrace();
-			logger.error("Some error occured", e);
+			logger.error("Some error occurred", e);
 		}
 	}
 
