@@ -59,7 +59,9 @@ public class JFilesClient implements Runnable {
 			BufferedWriter out = new BufferedWriter(osw);
 			System.out.println("Send a command to the server.");
 			// System.out.println("FILE to receive file");
+			System.out.println("FIND to search directory for file");
 			System.out.println("LIST to receive server directory");
+			System.out.print("#");
 			String usrcmd = kb.nextLine();
 			kb.close();
 			out.write(usrcmd + "\n");
