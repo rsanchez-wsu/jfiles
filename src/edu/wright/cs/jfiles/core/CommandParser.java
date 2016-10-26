@@ -55,8 +55,8 @@ public class CommandParser {
 
 	/**
 	 * Parses the command from the client input.
-	 * <p>
-	 * Reads in the entire command line string and parses out the command and
+	 * 
+	 * <p>Reads in the entire command line string and parses out the command and
 	 * any/all arguments that go with the command.
 	 * 
 	 * @param commandLineString

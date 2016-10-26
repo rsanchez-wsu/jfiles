@@ -37,10 +37,10 @@ public class ExecutableException extends ShellException {
 	 * 
 	 * @param message
 	 *            the message to output
-	 * @param t
+	 * @param th
 	 *            the error to throw
 	 */
-	public ExecutableException(String message, Throwable t) {
-		super(message, t);
+	public ExecutableException(String message, Throwable th) {
+		super(message, th);
 	}
 }

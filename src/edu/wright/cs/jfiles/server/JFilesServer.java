@@ -89,6 +89,7 @@ public class JFilesServer implements Runnable {
 				File temp = new File("tempHistory.txt"); // create a temporary
 															// file
 				FileWriter tempWriter = new FileWriter(temp);
+
 				String previous;
 				FileReader readHistory = new FileReader("SearchHistory.txt");
 				BufferedReader br = new BufferedReader(readHistory);
@@ -119,24 +120,25 @@ public class JFilesServer implements Runnable {
 
 			BufferedWriter out = new BufferedWriter(osw);
 
-			while (null != (cmd = in.readLine())) {
+			while (null != (cmd = in.readLine()) && true) {
 				if ("".equals(cmd)) {
 					break;
 				}
-
+				out.write("Prompt :> ");
 				// command example
 				// ========================================================================
-				out.write("Prompt :> ");
-				CommandLine commandLine = parser.parse(cmd);
-
-				try {
-					ExecutionResult result = executor.executeCommand(commandLine, out);
-					if (result.isExitShell()) {
-						break;
-					}
-				} catch (CommandNotFoundException e) {
-					out.write(" " + e.getMessage() + ": command not found\n");
-				}
+				// out.write("Prompt :> ");
+				// CommandLine commandLine = parser.parse(cmd);
+				//
+				// try {
+				// ExecutionResult result = executor.executeCommand(commandLine,
+				// out);
+				// if (result.isExitShell()) {
+				// break;
+				// }
+				// } catch (CommandNotFoundException e) {
+				// out.write(" " + e.getMessage() + ": command not found\n");
+				// }
 				// ========================================================================
 
 				String[] baseCommand = cmd.split(" ");
