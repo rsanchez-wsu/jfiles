@@ -169,7 +169,8 @@ public class JFilesServer implements Runnable {
 				try {
 					bw.close();
 				} catch (IOException e) {
-					logger.error("An error has occurred while trying to get the file.", e);
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		}
