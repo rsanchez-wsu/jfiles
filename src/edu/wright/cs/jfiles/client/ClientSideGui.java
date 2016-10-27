@@ -23,13 +23,19 @@ package edu.wright.cs.jfiles.client;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 /**
@@ -48,6 +54,52 @@ public class ClientSideGui extends Application {
 	 */
 	@Override
 	public void start(Stage primaryStage) {
+		
+		//Login Window Construction
+		//Label Creation
+		Label programNameLabel = new Label("JFiles");
+		programNameLabel.setTextFill(Color.web("#01DF01"));
+		programNameLabel.setFont(Font.font("Algerian",FontWeight.BOLD, 60));
+		
+		Label usernameLabel = new Label("Username:");
+		usernameLabel.setFont(Font.font("Currier New",FontWeight.BOLD, 20));
+		usernameLabel.setTextFill(Color.web("#0101DF"));
+		
+		Label passwordLabel = new Label("Password:");
+		passwordLabel.setFont(Font.font("Currier New",FontWeight.BOLD, 20));
+		passwordLabel.setTextFill(Color.web("#0101DF"));
+		
+		//Error Labels
+		Label noConnectionLabel = new Label("No Connection Detected.");
+		Label invalidLabel = new Label("Incorrect Username & Password Combination.");
+		
+		
+		HBox loginHbox = new HBox();
+		//Padding Top, Left Bottom, Right
+		loginHbox.setPadding(new Insets(5, 5, 5, 70));
+		loginHbox.getChildren().add(programNameLabel);
+		
+		VBox loginVbox = new VBox();
+		loginVbox.setPadding(new Insets(5, 5, 5, 20));
+		loginVbox.getChildren().add(usernameLabel);
+		loginVbox.getChildren().add(passwordLabel);
+		//loginVbox.getChildren().add();
+		//loginVbox.getChildren().add();
+		
+		BorderPane  loginBorderPane = new BorderPane();
+		loginBorderPane.setTop(loginHbox);
+		loginBorderPane.setCenter(loginVbox);
+		//loginMainPane.getChildren().add(featuresNames);
+		Scene loginScene = new Scene(loginBorderPane, 300, 300);
+		
+		
+		Stage loginStage = new Stage();
+		loginStage.setTitle("JFiles Login Screen");
+		loginStage.setScene(loginScene);
+		loginStage.setResizable(false);
+		// Displays the start Stage and its contents.
+		loginStage.show();
+		
 
 		// Pane Creation
 		BorderPane basePane = new BorderPane();
@@ -94,7 +146,7 @@ public class ClientSideGui extends Application {
 		// User Resizing Allowed
 		primaryStage.setResizable(true);
 		// Displays the start Stage and its contents.
-		primaryStage.show();
+		//primaryStage.show();
 
 	}
 
