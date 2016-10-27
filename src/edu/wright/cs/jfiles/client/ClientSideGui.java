@@ -30,6 +30,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -55,6 +56,10 @@ public class ClientSideGui extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		
+		//Variables
+		String username = "";
+		String password = "";
+		
 		//Login Window Construction
 		//Label Creation
 		Label programNameLabel = new Label("JFiles");
@@ -73,6 +78,16 @@ public class ClientSideGui extends Application {
 		Label noConnectionLabel = new Label("No Connection Detected.");
 		Label invalidLabel = new Label("Incorrect Username & Password Combination.");
 		
+		//Text Field Creation
+		TextField usernameTextField = new TextField ();
+		usernameTextField.setPromptText("Enter your Username.");
+		usernameTextField.setPrefColumnCount(25);
+		usernameTextField.getText();
+		
+		TextField passwordTextField = new TextField ();
+		passwordTextField.setPromptText("Enter your Password.");
+		passwordTextField.setPrefColumnCount(25);
+		passwordTextField.getText();
 		
 		HBox loginHbox = new HBox();
 		//Padding Top, Left Bottom, Right
@@ -80,9 +95,11 @@ public class ClientSideGui extends Application {
 		loginHbox.getChildren().add(programNameLabel);
 		
 		VBox loginVbox = new VBox();
-		loginVbox.setPadding(new Insets(5, 5, 5, 20));
+		loginVbox.setPadding(new Insets(5, 20, 5, 20));
 		loginVbox.getChildren().add(usernameLabel);
+		loginVbox.getChildren().add(usernameTextField);
 		loginVbox.getChildren().add(passwordLabel);
+		loginVbox.getChildren().add(passwordTextField);
 		//loginVbox.getChildren().add();
 		//loginVbox.getChildren().add();
 		
