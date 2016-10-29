@@ -63,8 +63,8 @@ public class ClientSideGui extends Application {
 	public void start(Stage primaryStage) {
 
 		// Variables
-		String username = "";
-		String password = "";
+		// String username = "";
+		// String password = "";
 
 		// Login Window Construction
 		// Label Creation
@@ -82,18 +82,21 @@ public class ClientSideGui extends Application {
 
 		// Error Labels
 		Label noConnectionLabel = new Label("No Connection Detected.");
-		Label invalidLabel = new Label("Incorrect Username & Password Combination.");
-		Label emptyUsernameFieldLabel = new Label("Username Field Must Be Filled In.");
-		Label emptyPasswordFieldLabel = new Label("Password Field Must Be Filled In.");
 		noConnectionLabel.setVisible(false);
 		noConnectionLabel.setTextFill(Color.web("#FF0000"));
+		
+		Label invalidLabel = new Label("Incorrect Username & Password Combination.");
 		invalidLabel.setVisible(false);
-		invalidLabel.setTextFill(Color.web("#FF0000"));
+		invalidLabel.setTextFill(Color.web("#FF0000")); 
+		
+		Label emptyUsernameFieldLabel = new Label("Username Field Must Be Filled In.");
 		emptyUsernameFieldLabel.setVisible(false);
 		emptyUsernameFieldLabel.setTextFill(Color.web("#FF0000"));
+		
+		Label emptyPasswordFieldLabel = new Label("Password Field Must Be Filled In.");
 		emptyPasswordFieldLabel.setVisible(false);
 		emptyPasswordFieldLabel.setTextFill(Color.web("#FF0000"));
-
+		
 		// Text Field Creation
 		TextField usernameTextField = new TextField();
 		usernameTextField.setPromptText("Enter your Username.");
@@ -124,31 +127,31 @@ public class ClientSideGui extends Application {
 		// Adding the shadow when the mouse cursor is on
 		exitButton.addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
 			@Override
-			public void handle(MouseEvent e) {
+			public void handle(MouseEvent exitButtonMouseOver) {
 				exitButton.setEffect(exitButtonShadow);
 			}
 		});
 		// Removing the shadow when the mouse cursor is off
 		exitButton.addEventHandler(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
 			@Override
-			public void handle(MouseEvent e) {
+			public void handle(MouseEvent exitButtonMouseNotOver) {
 				exitButton.setEffect(null);
 			}
 		});
 
 		// connectButton DropShadow
-		DropShadow ConnectButtonShadow = new DropShadow();
+		DropShadow connectButtonShadow = new DropShadow();
 		// Adding the shadow when the mouse cursor is on
 		connectButton.addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
 			@Override
-			public void handle(MouseEvent e) {
-				connectButton.setEffect(ConnectButtonShadow);
+			public void handle(MouseEvent connectButtonMouseOver) {
+				connectButton.setEffect(connectButtonShadow);
 			}
 		});
 		// Removing the shadow when the mouse cursor is off
 		connectButton.addEventHandler(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
 			@Override
-			public void handle(MouseEvent e) {
+			public void handle(MouseEvent connectButtonMouseNotOver) {
 				connectButton.setEffect(null);
 			}
 		});
@@ -156,7 +159,7 @@ public class ClientSideGui extends Application {
 		// Setting an action for the connectButton
 		connectButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
-			public void handle(ActionEvent e) {
+			public void handle(ActionEvent connectButtonClicked) {
 				// Hide Old Error Labels
 				noConnectionLabel.setVisible(false);
 				invalidLabel.setVisible(false);
@@ -175,9 +178,8 @@ public class ClientSideGui extends Application {
 					emptyPasswordFieldLabel.setVisible(true);
 				}
 				/*
-				 * if correct
-				 * username = usernameTextField.getText(); // password =
-				 * passwordTextField.getText(); 
+				 * if correct username = usernameTextField.getText(); //
+				 * password = passwordTextField.getText();
 				 */
 			}
 		});
