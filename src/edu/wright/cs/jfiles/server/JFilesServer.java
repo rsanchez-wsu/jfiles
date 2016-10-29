@@ -93,7 +93,6 @@ public class JFilesServer implements Runnable {
 							if (path.toString().contains(baseCommand[1])) {
 								out.write(path.toString() + "\n");
 							}
-
 						}
 					}
 
@@ -126,5 +125,4 @@ public class JFilesServer implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
 }
