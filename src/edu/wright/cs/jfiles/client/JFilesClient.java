@@ -82,5 +82,4 @@ public class JFilesClient implements Runnable {
 		Thread thread = new Thread(jf);
 		thread.start();
 	}
-
 }
