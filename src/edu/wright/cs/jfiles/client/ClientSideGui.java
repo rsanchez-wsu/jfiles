@@ -84,19 +84,19 @@ public class ClientSideGui extends Application {
 		Label noConnectionLabel = new Label("No Connection Detected.");
 		noConnectionLabel.setVisible(false);
 		noConnectionLabel.setTextFill(Color.web("#FF0000"));
-		
+
 		Label invalidLabel = new Label("Incorrect Username & Password Combination.");
 		invalidLabel.setVisible(false);
-		invalidLabel.setTextFill(Color.web("#FF0000")); 
-		
+		invalidLabel.setTextFill(Color.web("#FF0000"));
+
 		Label emptyUsernameFieldLabel = new Label("Username Field Must Be Filled In.");
 		emptyUsernameFieldLabel.setVisible(false);
 		emptyUsernameFieldLabel.setTextFill(Color.web("#FF0000"));
-		
+
 		Label emptyPasswordFieldLabel = new Label("Password Field Must Be Filled In.");
 		emptyPasswordFieldLabel.setVisible(false);
 		emptyPasswordFieldLabel.setTextFill(Color.web("#FF0000"));
-		
+
 		// Text Field Creation
 		TextField usernameTextField = new TextField();
 		usernameTextField.setPromptText("Enter your Username.");
