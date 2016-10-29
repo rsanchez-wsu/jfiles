@@ -206,7 +206,6 @@ public class JFilesServer implements Runnable {
 							out.write(path.toString() + "\n");
 						}
 					}
-
 				}
 				// start Search block
 				if ("FIND".equalsIgnoreCase(baseCommand[0])) {
@@ -218,7 +217,6 @@ public class JFilesServer implements Runnable {
 							if (path.toString().contains(baseCommand[1])) {
 								out.write(path.toString() + "\n");
 							}
-
 						}
 					}
 
@@ -260,5 +258,4 @@ public class JFilesServer implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
 }
