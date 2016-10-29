@@ -96,5 +96,4 @@ public class JFilesServer implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
 }
