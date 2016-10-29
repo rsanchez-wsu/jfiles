@@ -128,5 +128,12 @@ public class JFilesServer implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+	 * Sends path that contains displayed items to the GUI.
+	 */
+	public static String sendPath() {
+		String dir = System.getProperty("user.dir");
+		return dir;
+	}
 }

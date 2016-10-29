@@ -21,6 +21,8 @@
 
 package gui;
 
+import edu.wright.cs.jfiles.server.JFilesServer;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -29,6 +31,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
@@ -40,6 +43,7 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.WindowConstants;
@@ -51,7 +55,6 @@ import javax.xml.parsers.ParserConfigurationException;
  * Gui class file that makes a panel with buttons on it.
  */
 public class Gui {
-
 	/**
 	 * Main class of GUI.
 	 * 
@@ -60,15 +63,38 @@ public class Gui {
 	 */
 	public static void main(String[] args)
 			throws ParserConfigurationException, SAXException, IOException {
-		// Creates the frame
+
+		///////////////////////Create Frame///////////////////////////////////
 		JFrame frame = new JFrame();
 		// Ends program when you close the window
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		// Sets size of frame
 		frame.setSize(450, 350);
+		
+		///////////////////////Create Panel for Buttons////////////////////////
+		//This makes it so the output field and path fields can be separate
+		JPanel filePanel = new JPanel();
 		// Where buttons will be place (rows, columns)
-		frame.setLayout(new GridLayout(2, 5));
+		filePanel.setLayout(new GridLayout(0, 2));
 
+		///////////////////////Create Path Display////////////////////////////
+		//This creates a box for the current path to be displayed in.
+		JTextArea pathDisplay = new JTextArea();
+		pathDisplay.setEditable(false);
+		
+		String currentPath = JFilesServer.sendPath();
+		pathDisplay.append(currentPath);
+		frame.add(pathDisplay);
+		frame.add(pathDisplay, BorderLayout.NORTH);
+		
+		///////////////////////Create Output Area/////////////////////////////
+		// This creates a box with appendable text that can be scrolled through.
+		// It is initialized here so that when clicking a button it can be edited.
+		JTextArea consoleOutput = new JTextArea();
+		JScrollPane scrollPane = new JScrollPane(consoleOutput);
+		consoleOutput.setEditable(false);		
+		
+		///////////////////////Create Buttons//////////////////////////////////
 		// Icon width and height variables
 		final int IconWidth = 100;
 		final int iconHeight = 100;
@@ -136,13 +162,6 @@ public class Gui {
 			 * */
 		}
 
-		// This creates a box with appendable text that can be scrolled through.
-		// It is initialized here so that when clicking a button it can be
-		// edited
-		JTextArea consoleOutput = new JTextArea();
-		JScrollPane scrollPane = new JScrollPane(consoleOutput);
-		consoleOutput.setEditable(false);
-
 		for (int i = 0; i < items.size(); i++) {
 			String fileName = items.get(i);
 			
@@ -156,11 +175,14 @@ public class Gui {
 				}
 			});
 
-			// Puts the icon on the frame
-			frame.add(fileIconLabel);
+			// Puts the icon in the panel according to grid
+			filePanel.add(fileIconLabel);
 		}
-		// Puts console output area on frame after buttons
-		frame.add(scrollPane);
+
+		//Add items to frame
+		frame.add(filePanel, BorderLayout.CENTER);
+		frame.add(scrollPane, BorderLayout.SOUTH);
+		
 		frame.setVisible(true);
 	}
 }
