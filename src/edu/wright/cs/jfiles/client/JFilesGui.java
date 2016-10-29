@@ -83,5 +83,4 @@ public class JFilesGui extends Application {
 		System.out.println("Starting the GUI");
 		launch(args);
 	}
-
 }
