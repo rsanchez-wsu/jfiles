@@ -73,7 +73,6 @@ public class JFilesServer implements Runnable {
 					break;
 				}
 				OutputStreamWriter osw = new OutputStreamWriter(server.getOutputStream(), UTF_8);
-
 				BufferedWriter out = new BufferedWriter(osw);
 				String[] baseCommand = cmd.split(" ");
 				if ("LIST".equalsIgnoreCase(baseCommand[0])) {
@@ -85,7 +84,6 @@ public class JFilesServer implements Runnable {
 				}
 				// start Search block
 				if ("FIND".equalsIgnoreCase(baseCommand[0])) {
-
 					try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir))) {
 						for (Path path : directoryStream) {
 							// out.write(path.toString() + "\n");
@@ -110,7 +108,7 @@ public class JFilesServer implements Runnable {
 	 * The main entry point to the program.
 	 * 
 	 * @throws IOException
-	 *             If there is a problem binding to the socket
+	 * If there is a problem binding to the socket
 	 */
 	public static void main(String[] args) {
 		try {
