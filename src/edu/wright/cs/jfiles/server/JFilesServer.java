@@ -82,7 +82,6 @@ public class JFilesServer implements Runnable {
 							out.write(path.toString() + "\n");
 						}
 					}
-
 				}
 				// start Search block
 				if ("FIND".equalsIgnoreCase(baseCommand[0])) {
