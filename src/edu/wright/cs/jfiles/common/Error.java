@@ -35,7 +35,7 @@ public enum Error {
 	
 	/**
 	 * Constructor for error codes.
-	 * @param code Integar value error number
+	 * @param code Integer value error number
 	 * @param description Text to display
 	 */
 	private Error(int code, String description) {
