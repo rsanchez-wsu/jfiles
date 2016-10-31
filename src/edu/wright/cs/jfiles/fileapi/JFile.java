@@ -26,7 +26,9 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -251,14 +253,133 @@ public class JFile implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Deletes the actual file contents.
+	 * Gets the current working directory is the current file is a directory.
+	 * <p>
+	 * Variable out gets cleared and then stores the JFiles made from the
+	 * current working directory, if the current file is a directory.
+	 * </p>
+	 * 
+	 * @param out
+	 *            List of JFile objects returned if method returns true. Is also
+	 *            cleared first before the new JFiles are stored.
+	 * @return True, if the current file is a directory, and stores the files in
+	 *         the directory into the given list. False otherwise.
+	 */
+	public boolean getWorkingDirectory(List<JFile> out) {
+
+		if (file.isFile()) {
+			return false;
+		}
+		
+		out.clear();
+
+		for (int i = 0; i < file.listFiles().length; i++) {
+			out.add(new JFile(file.listFiles()[i]));
+		}
+
+		return true;
+
+	}
+	
+	/**
+	 * Deletes the actual file contents. Will loop through and delete files if
+	 * the given file is actually a folder that has content in it.
+	 * 
+	 * <p>
+	 * TODO: Revise method so that there is less complexity.
+	 * </p>
 	 * 
 	 * <b>Meant to be used with a JFM</b>
 	 * 
 	 * @return true if the file was able to be deleted; false otherwise.
 	 */
 	protected boolean deleteContents() {
-		return file.delete();
+		
+		// Since dirs cannot be deleted if they
+		// are holding something else,
+		// files and dirs have to be handled differently.
+		
+		if (file.isDirectory()) {
+		
+			// Arraylist to hold the dirs/files that need to be deleted.
+			ArrayList<File> fileArr = new ArrayList<>();
+			
+			// int to note which fir/object we are looking at.
+			int location = 0;
+			
+			// load the file we overall want to be deleted.
+			fileArr.add(file);
+			
+			// Move through array until the array is empty.
+			while (fileArr.size() != 0) {
+				
+				// detect if the file object is a dir
+				if (fileArr.get(location).isDirectory()) {
+					
+					// attempt to delete the dir
+					if (fileArr.get(location).delete()) {
+
+						// if deleted, move where you're looking at back.
+						fileArr.remove(location);
+						location--;
+
+						// if it cannot be deleted, get its values and move on.
+					} else {
+
+						/*
+						 * TODO: learn and squash findbugs warning.
+						 * 
+						 * I don't see what find bugs is complaining about here.
+						 * The first variable will always give an array, because
+						 * it's a file that we cannot delete, therefore there is
+						 * something in the file.
+						 * 
+						 */
+						insertVals(fileArr.get(location).listFiles(), fileArr);
+
+					}
+					// if it is a file, delete it, and move where you are
+					// looking at.
+				} else {
+
+					fileArr.get(location).delete();
+					fileArr.remove(location);
+					location--;
+
+				}
+
+				// increment where you're looking at
+				// if there are less things then where you're looking at
+				// move back to the start
+				location++;
+				if (location >= fileArr.size()) {
+					location = 0;
+				}
+				
+			}
+
+		} else {
+			file.delete();
+		}
+
+		return true;
+	}
+
+	/**
+	 * Used to insert values from an array into an arraylist. Most likely, this
+	 * method will be deleted upon revision of the delete method.
+	 * 
+	 * @param arr
+	 *            Array to get values from
+	 * @param list
+	 *            ArrayList to put values into
+	 */
+	private void insertVals(File[] arr, ArrayList<File> list) {
+
+		for (int i = 0; i < arr.length; i++) {
+			list.add(arr[i]);
+		}
+
 	}
 
 	/**
