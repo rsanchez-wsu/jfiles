@@ -33,6 +33,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -113,7 +116,23 @@ public class JFilesClient implements Runnable {
 		logger.info("Config set to port " + port);
 		
 		host = prop.getProperty("host","localhost");
-		logger.info("Config set max threads to " + host);		
+		logger.info("Config set max threads to " + host);	
+		
+		// Create a Derby database in memory called jFiles
+		String jfilesCachedb = "jdbc:derby:memory:jFiles;create=true";
+		
+
+		try {
+			Connection conn = DriverManager.getConnection(jfilesCachedb);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+        if (jfilesCachedb != null) {
+        	logger.info("Database connection successful");
+        }
+
 	}
 	
 	
@@ -159,3 +178,4 @@ public class JFilesClient implements Runnable {
 	}
 
 }
+
