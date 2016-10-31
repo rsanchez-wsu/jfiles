@@ -124,14 +124,16 @@ public class JFilesClient implements Runnable {
 
 		try {
 			Connection conn = DriverManager.getConnection(jfilesCachedb);
+			// Added so Eclipse won't complain about not using the Connection object
+			conn.getMetaData();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-        if (jfilesCachedb != null) {
-        	logger.info("Database connection successful");
-        }
+		if (jfilesCachedb != null) {
+			logger.info("Database connection successful");
+		}
 
 	}
 	
