@@ -121,20 +121,25 @@ public class JFilesClient implements Runnable {
 		// Create a Derby database in memory called jFiles
 		String jfilesCachedb = "jdbc:derby:memory:jFiles;create=true";
 		
-
+		Connection conn = null;
 		try {
-			Connection conn = DriverManager.getConnection(jfilesCachedb);
+			conn = DriverManager.getConnection(jfilesCachedb);
+			logger.info("Database connection successful");
 			// Added so Eclipse won't complain about not using the Connection object
 			conn.getMetaData();
+			conn.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			try {
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
-		
-		if (jfilesCachedb != null) {
-			logger.info("Database connection successful");
-		}
-
 	}
 	
 	
