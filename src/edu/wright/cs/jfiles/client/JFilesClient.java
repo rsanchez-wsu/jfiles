@@ -21,6 +21,9 @@
 
 package edu.wright.cs.jfiles.client;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -30,6 +33,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.MessageDigest;
@@ -44,6 +48,7 @@ import java.util.Scanner;
  */
 public class JFilesClient implements Runnable {
 
+	static final Logger logger = LogManager.getLogger(JFilesClient.class);
 	private String host = "localhost";
 	private int port = 9786;
 	private static final String UTF_8 = "UTF-8";
@@ -64,41 +69,12 @@ public class JFilesClient implements Runnable {
 		try (Socket socket = new Socket(host, port)) {
 			while (running) {
 
-				/*
-				 * OutputStreamWriter osw = new
-				 * OutputStreamWriter(socket.getOutputStream(), UTF_8);
-				 */
-				// BufferedWriter out = new BufferedWriter(osw);
+				
 				System.out.println("Send a command to the server.");
 				System.out.println("FILE to receive file");
+				System.out.println("SENDFILE to send file to server");
 				System.out.println("LIST to receive server directory");
-				// out.write("FILE\n");
-				// out.flush();
-				/*
-				 * InputStreamReader isr = new
-				 * InputStreamReader(socket.getInputStream(), UTF_8);
-				 * 
-				 * //this is temp info on CheckSum /* File datafile = new
-				 * File("AUTHORS");
-				 * 
-				 * MessageDigest checkFile = MessageDigest.getInstance("MD5");
-				 * 
-				 * @SuppressWarnings("resource") FileInputStream fileSent = new
-				 * FileInputStream(datafile); //Creating a byte array so we can
-				 * read the bytes of the file in chunks byte[] chunkOfBytes =
-				 * new byte[(int) datafile.length()]; //used as the place holder
-				 * for the array int startPoint = 0;
-				 * 
-				 * while ((startPoint = fileSent.read(chunkOfBytes)) != -1) {
-				 * checkFile.update(chunkOfBytes, 0, startPoint); } //the
-				 * finalized checksum byte[] checksum = checkFile.digest();
-				 * System.out.print("Digest(in bytes):: "); for (int i = 0; i <
-				 * checksum.length - 1 ; i++) { System.out.print(checksum[i] );
-				 * } System.out.println();
-				 */
-				// BufferedReader in = new BufferedReader(isr);
-				// Get user input
-				@SuppressWarnings("resource")
+				
 				// Eclipse complained that kb wasn't being used. Not sure why.
 				// kb input is used on the line after it is initialized
 				// Overrode resource leak warning for now
@@ -121,17 +97,26 @@ public class JFilesClient implements Runnable {
 					});
 					thrd0.start();
 					break;
+				case "SENDFILE":
+					Thread thrd1 = new Thread(new Runnable() {
+						@Override
+						public void run() {
+							fileSendCommand(cmdary[1], socket);
+						}
+					});
+					thrd1.start();
+					break;
 				case "EXIT":
 				case "QUIT":
 					running = false;
-					Thread thrd1 = new Thread(new Runnable() {
+					Thread thrd2 = new Thread(new Runnable() {
 						@Override
 						public void run() {
 							fileCommand(cmdary[0], socket);
 						}
 					});
-					thrd1.start();
-					thrd1.join();
+					thrd2.start();
+					thrd2.join();
 					break;
 				default:
 					System.out.println("Not a valid command");
@@ -140,14 +125,11 @@ public class JFilesClient implements Runnable {
 				}
 			}
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Could not connect to host at that address", e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("An error occured with the connection", e);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("A thread has been interrupted", e);
 		}
 	}
 
@@ -162,11 +144,19 @@ public class JFilesClient implements Runnable {
 	 */
 	public void fileCommand(String file, Socket sock) {
 		BufferedWriter bw = null;
+		//Initializing a Buffer Reader br
+		// this allows the reader to read the incoming stream of data from the server
+				
 		try {
+			//Initialing a Output Stream writer and a bufferedWrite, to be able to send information to the server
 			OutputStreamWriter osw = new OutputStreamWriter(sock.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
+			//send the command needed to receive a file to the server. 
+			//the \n character needs to be their to signify to the buffered reader when the line has ended and to stop reading. 
 			out.write("FILE " + file + "\n");
 			out.flush();
+			
+			
 			if (!file.equals("QUIT") || !file.equals("EXIT")) {
 				InputStreamReader isr = new InputStreamReader(sock.getInputStream(), UTF_8);
 				BufferedReader br = new BufferedReader(isr);
@@ -187,17 +177,56 @@ public class JFilesClient implements Runnable {
 			}
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("An error occurred while communicating with the server", e);
 		} finally {
 			if (bw != null) {
 				try {
 					bw.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error("An error occurred while closing a stream", e);
 				}
 			}
+		}
+	}
+	
+	/**
+	 * Method to handle what happens when user types "filesend." Program
+	 * should get bytes from the specified file and put them on the output
+	 * stream to the server.
+	 * @param filepath
+	 * 				  the location of the file to send
+	 * @param sock
+	 * 			  the active socket on which the server connection resides
+	 */
+	public void fileSendCommand(String filepath, Socket sock) {
+		//Initializing a Buffer Reader br
+		// this allows the reader to read the incoming stream of data from the server
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filepath), "UTF-8"))) {
+			//Initialing a Output Stream writer and a bufferedWrite, to be able to send information to the server
+			OutputStreamWriter osw = new OutputStreamWriter(sock.getOutputStream(), UTF_8);
+			BufferedWriter out = new BufferedWriter(osw);
+			//send the command needed to send a file to the server. 
+			//the \n character needs to be their to signify to the buffered reader when the line has ended and to stop reading. 
+			out.write("GETFILE " + filepath + "\n");
+			//this pushes the stream to the server and clears it out locally again
+			out.flush();
+			String line;
+			//after the command we now read the response from the server. 
+			while ((line = br.readLine()) != null) {
+				System.out.println(line);
+				//this writes the response from the server to a file.
+				out.write(line + "\n");
+			}
+			out.flush();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -237,18 +266,20 @@ public class JFilesClient implements Runnable {
 			System.out.println();
 
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("An error occurred while preparing checksum", e);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("File was not found", e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("An error occurred while reading file", e);
 		} finally {
 			if (fileSent != null) {
 				try {
 					fileSent.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error("An error occured while closing connection to file", e);
 				}
 			}
 		}
