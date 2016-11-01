@@ -21,8 +21,8 @@
 
 package edu.wright.cs.jfiles.client;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+//import org.apache.logging.log4j.LogManager;
+//import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -48,11 +48,12 @@ import java.util.Scanner;
  */
 public class JFilesClient implements Runnable {
 
-	static final Logger logger = LogManager.getLogger(JFilesClient.class);
+	//static final Logger logger = LogManager.getLogger(JFilesClient.class);
 	private String host = "localhost";
 	private int port = 9786;
 	private static final String UTF_8 = "UTF-8";
 	private boolean running = true;
+	private Scanner kb;
 
 	/**
 	 * Handles allocating resources needed for the client.
@@ -73,12 +74,9 @@ public class JFilesClient implements Runnable {
 				System.out.println("Send a command to the server.");
 				System.out.println("FILE to receive file");
 				System.out.println("SENDFILE to send file to server");
-				System.out.println("LIST to receive server directory");
+				System.out.println("LIST to receive server directory \n");
 				
-				// Eclipse complained that kb wasn't being used. Not sure why.
-				// kb input is used on the line after it is initialized
-				// Overrode resource leak warning for now
-				Scanner kb = new Scanner(System.in, UTF_8);
+				kb = new Scanner(System.in, UTF_8);
 				// Enter input in format:
 				// command (space) argument
 				String line = kb.nextLine();
@@ -86,9 +84,13 @@ public class JFilesClient implements Runnable {
 				// spaces
 				// switch statement for which command was entered
 				String[] cmdary = line.split(" ");
-				switch (cmdary[0]) {
+				//Changing the user command so if they do not enter
+				//a command in all upper case i still works
+				String commandInput = cmdary[0].toUpperCase();
+				switch (commandInput) {
 
 				case "FILE":
+					cmdary[1] = getFileName(0);
 					Thread thrd0 = new Thread(new Runnable() {
 						@Override
 						public void run() {
@@ -98,6 +100,7 @@ public class JFilesClient implements Runnable {
 					thrd0.start();
 					break;
 				case "SENDFILE":
+					cmdary[1] = getFileName(1);
 					Thread thrd1 = new Thread(new Runnable() {
 						@Override
 						public void run() {
@@ -105,6 +108,9 @@ public class JFilesClient implements Runnable {
 						}
 					});
 					thrd1.start();
+					break;
+				case "LIST":
+					System.out.println("**List of files**");
 					break;
 				case "EXIT":
 				case "QUIT":
@@ -125,11 +131,11 @@ public class JFilesClient implements Runnable {
 				}
 			}
 		} catch (UnknownHostException e) {
-			logger.error("Could not connect to host at that address", e);
+		//	logger.error("Could not connect to host at that address", e);
 		} catch (IOException e) {
-			logger.error("An error occured with the connection", e);
+		//	logger.error("An error occured with the connection", e);
 		} catch (InterruptedException e) {
-			logger.error("A thread has been interrupted", e);
+		//	logger.error("A thread has been interrupted", e);
 		}
 	}
 
@@ -148,11 +154,13 @@ public class JFilesClient implements Runnable {
 		// this allows the reader to read the incoming stream of data from the server
 				
 		try {
-			//Initialing a Output Stream writer and a bufferedWrite, to be able to send information to the server
+			//Initialing a Output Stream writer and a bufferedWrite,
+			//to be able to send information to the server
 			OutputStreamWriter osw = new OutputStreamWriter(sock.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
 			//send the command needed to receive a file to the server. 
-			//the \n character needs to be their to signify to the buffered reader when the line has ended and to stop reading. 
+			//the \n character needs to be their to signify to the buffered reader
+			//when the line has ended and to stop reading. 
 			out.write("FILE " + file + "\n");
 			out.flush();
 			
@@ -177,13 +185,13 @@ public class JFilesClient implements Runnable {
 			}
 			
 		} catch (IOException e) {
-			logger.error("An error occurred while communicating with the server", e);
+			//logger.error("An error occurred while communicating with the server", e);
 		} finally {
 			if (bw != null) {
 				try {
 					bw.close();
 				} catch (IOException e) {
-					logger.error("An error occurred while closing a stream", e);
+					//logger.error("An error occurred while closing a stream", e);
 				}
 			}
 		}
@@ -200,13 +208,17 @@ public class JFilesClient implements Runnable {
 	 */
 	public void fileSendCommand(String filepath, Socket sock) {
 		//Initializing a Buffer Reader br
-		// this allows the reader to read the incoming stream of data from the server
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filepath), "UTF-8"))) {
-			//Initialing a Output Stream writer and a bufferedWrite, to be able to send information to the server
+		// this allows the reader to read the incoming 
+		//stream of data from the server
+		try (BufferedReader br = 
+				new BufferedReader(new InputStreamReader(new FileInputStream(filepath), "UTF-8"))) {
+			//Initialing a Output Stream writer and a bufferedWrite, 
+			//to be able to send information to the server
 			OutputStreamWriter osw = new OutputStreamWriter(sock.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
 			//send the command needed to send a file to the server. 
-			//the \n character needs to be their to signify to the buffered reader when the line has ended and to stop reading. 
+			//the \n character needs to be their to signify to the 
+			//buffered reader when the line has ended and to stop reading. 
 			out.write("GETFILE " + filepath + "\n");
 			//this pushes the stream to the server and clears it out locally again
 			out.flush();
@@ -267,19 +279,19 @@ public class JFilesClient implements Runnable {
 
 		} catch (NoSuchAlgorithmException e) {
 			//e.printStackTrace();
-			logger.error("An error occurred while preparing checksum", e);
+		//	logger.error("An error occurred while preparing checksum", e);
 		} catch (FileNotFoundException e) {
 			//e.printStackTrace();
-			logger.error("File was not found", e);
+		//	logger.error("File was not found", e);
 		} catch (IOException e) {
 			//e.printStackTrace();
-			logger.error("An error occurred while reading file", e);
+		//	logger.error("An error occurred while reading file", e);
 		} finally {
 			if (fileSent != null) {
 				try {
 					fileSent.close();
 				} catch (IOException e) {
-					logger.error("An error occured while closing connection to file", e);
+				//	logger.error("An error occured while closing connection to file", e);
 				}
 			}
 		}
@@ -315,7 +327,42 @@ public class JFilesClient implements Runnable {
 
 		return same;
 	}
-
+	/**
+	 * This method gets the name of a file that the user wants to
+	 *  receive from the server or send to the server. This method
+	 * also makes sure that the file name is vaild.
+	 * TODO: make sure input is vaild 
+	 * @param mode if mode = 0 gets the name of the file that is to be received from the server 
+	 * 			   if mode = 1 gets the name of the file that is to be sent to the server
+	 * 
+	 * @return the name of file 
+	 */
+	public String getFileName(int mode) {
+		String filename = "";
+		Boolean getInput = true;
+		kb = new Scanner(System.in, UTF_8);
+	
+		while (getInput) {
+			
+			switch (mode) {
+			
+			case 0:
+				System.out.println("What file would you like to receive from the server?");
+				filename = kb.nextLine();
+				getInput = false;
+				break;
+			case 1:
+				System.out.println("What file would you like to send to the server?");
+				filename = kb.nextLine();
+				getInput = false;
+				break;
+			default:
+				getInput = false;
+				break;
+			}
+		}
+		return filename;
+	}
 	/**
 	 * The main entry point to the program.
 	 * 
