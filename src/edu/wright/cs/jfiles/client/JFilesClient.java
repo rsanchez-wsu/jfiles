@@ -71,12 +71,12 @@ public class JFilesClient implements Runnable {
 	private static void init() throws IOException {
 		//Array of strings containing possible paths to check for config files
 		ArrayList<String> configPaths = new ArrayList<String>();
-		configPaths.add("/usr/local/etc/jfiles/serverConfig.xml");
-		configPaths.add("/usr/local/etc/jfiles/serverConfig.xml");
-		configPaths.add("/opt/etc/jfiles/serverConfig.xml");
+		configPaths.add("/usr/local/etc/jfiles/clientConfig.xml");
+		configPaths.add("/usr/local/etc/jfiles/clientConfig.xml");
+		configPaths.add("/opt/etc/jfiles/clientConfig.xml");
 		configPaths.add("/etc/jfiles/serverConfig.xml");
-		configPaths.add(System.getProperty("user.home") + "/jfiles/serverConfig.xml");
-		configPaths.add(System.getProperty("user.home") + "/.jfiles/serverConfig.xml");
+		configPaths.add(System.getProperty("user.home") + "/jfiles/clientConfig.xml");
+		configPaths.add(System.getProperty("user.home") + "/.jfiles/clientConfig.xml");
 		
 		FileInputStream fis = null;
 		File config = null;
