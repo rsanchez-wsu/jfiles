@@ -74,26 +74,37 @@ public class JFilesServer implements Runnable {
 	@Override
 	public void run() {
 		//String dir = System.getProperty("user.dir");
-		//These were added to implement File command
-		//------------------------------------------
 		try {
+			//Objects to read output from client
 			InputStreamReader isr = new InputStreamReader(socket.getInputStream(), UTF_8);
 			BufferedReader in = new BufferedReader(isr);
 			while (running) {
 				String cmd = in.readLine();
 				if (cmd != null) {
+					//cmdary splits up cmd to distinguish command
+					//from arguments
+					//cmdary[0] is command
+					//cmdary[1] is argument
 					String [] cmdary = cmd.split(" ");
+					//Switch statement replaces if-else structure
+					//Match command to one of these cases and execute
+					//accordingly
 					switch (cmdary [0]) {
+					//Client wants a file from the server
+					//Send file to client
 					case "FILE":
 						sendFile(cmdary [1], socket);
 						break;
-						
+					//Client wants to send file to server
+					//Prepare to receive file from client
 					case "GETFILE":
 						getFile(cmdary[1], socket);
 						break;
-						
+					//List command existed in repository's initial state
+					//May be obsolete
 					case "LIST":
 						break;
+					//Why do we have two different exit commands?
 					case "EXIT":
 					case "QUIT":
 						running = false;
@@ -169,7 +180,6 @@ public class JFilesServer implements Runnable {
 				try {
 					bw.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

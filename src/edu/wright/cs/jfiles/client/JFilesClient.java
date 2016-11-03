@@ -231,13 +231,10 @@ public class JFilesClient implements Runnable {
 			}
 			out.flush();
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -327,6 +324,7 @@ public class JFilesClient implements Runnable {
 
 		return same;
 	}
+	
 	/**
 	 * This method gets the name of a file that the user wants to
 	 *  receive from the server or send to the server. This method
