@@ -56,12 +56,8 @@ public class JFilesClient implements Runnable {
 	private Scanner kb;
 
 	/**
-	 * Handles allocating resources needed for the client.
-	 * 
-	 * @throws IOException
-	 *             If there is a problem binding to the socket
+	 * No argument constructor.
 	 */
-
 	public JFilesClient() {
 	}
 
@@ -69,26 +65,21 @@ public class JFilesClient implements Runnable {
 	public void run() {
 		try (Socket socket = new Socket(host, port)) {
 			while (running) {
-
-				
 				System.out.println("Send a command to the server.");
 				System.out.println("FILE to receive file");
 				System.out.println("SENDFILE to send file to server");
 				System.out.println("LIST to receive server directory \n");
 				
+				// Read in command as: "<COMMAND> <FILE>"
 				kb = new Scanner(System.in, UTF_8);
-				// Enter input in format:
-				// command (space) argument
 				String line = kb.nextLine();
-				// Splits the user input into an array of words separated by
-				// spaces
-				// switch statement for which command was entered
+				
+				// Parse command and convert to upper case
 				String[] cmdary = line.split(" ");
-				//Changing the user command so if they do not enter
-				//a command in all upper case i still works
 				String commandInput = cmdary[0].toUpperCase();
+				
+				// Find which command was entered
 				switch (commandInput) {
-
 				case "FILE":
 					cmdary[1] = getFileName(0);
 					Thread thrd0 = new Thread(new Runnable() {
@@ -113,6 +104,7 @@ public class JFilesClient implements Runnable {
 					System.out.println("**List of files**");
 					break;
 				case "EXIT":
+					break;
 				case "QUIT":
 					running = false;
 					Thread thrd2 = new Thread(new Runnable() {
@@ -127,7 +119,6 @@ public class JFilesClient implements Runnable {
 				default:
 					System.out.println("Not a valid command");
 					break;
-
 				}
 			}
 		} catch (UnknownHostException e) {
@@ -143,33 +134,23 @@ public class JFilesClient implements Runnable {
 	 * Method for the FILE command. Downloads a file from the server and
 	 * compares checksums to verify file.
 	 * 
-	 * @param file
-	 *            name of file that needs to be sent
-	 * @param sock
-	 *            an active Socket object connected to server
+	 * @param file name of file that needs to be sent
+	 * @param sock an active Socket object connected to server
 	 */
 	public void fileCommand(String file, Socket sock) {
 		BufferedWriter bw = null;
-		//Initializing a Buffer Reader br
-		// this allows the reader to read the incoming stream of data from the server
-				
 		try {
-			//Initialing a Output Stream writer and a bufferedWrite,
-			//to be able to send information to the server
+			// Sends FILE command to output stream
 			OutputStreamWriter osw = new OutputStreamWriter(sock.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
-			//send the command needed to receive a file to the server. 
-			//the \n character needs to be their to signify to the buffered reader
-			//when the line has ended and to stop reading. 
 			out.write("FILE " + file + "\n");
 			out.flush();
 			
-			
+			// Reads in file from server
 			if (!file.equals("QUIT") || !file.equals("EXIT")) {
 				InputStreamReader isr = new InputStreamReader(sock.getInputStream(), UTF_8);
 				BufferedReader br = new BufferedReader(isr);
-				// Remove .txt from end of filename. Probably better way of
-				// doing this.
+				// Remove .txt from end of filename. Probably better way of doing this.
 				int index = 0;
 				while (file.charAt(index) != 46) {
 					index++;
@@ -198,35 +179,24 @@ public class JFilesClient implements Runnable {
 	}
 	
 	/**
-	 * Method to handle what happens when user types "filesend." Program
-	 * should get bytes from the specified file and put them on the output
-	 * stream to the server.
-	 * @param filepath
-	 * 				  the location of the file to send
-	 * @param sock
-	 * 			  the active socket on which the server connection resides
+	 * Method to handle FILESEND command. Read bytes from file and sends to output stream.
+	 * @param filepath the location of the file to send
+	 * @param sock the active socket on which the server connection resides
 	 */
 	public void fileSendCommand(String filepath, Socket sock) {
-		//Initializing a Buffer Reader br
-		// this allows the reader to read the incoming 
-		//stream of data from the server
-		try (BufferedReader br = 
-				new BufferedReader(new InputStreamReader(new FileInputStream(filepath), "UTF-8"))) {
-			//Initialing a Output Stream writer and a bufferedWrite, 
-			//to be able to send information to the server
+		try (BufferedReader br = new BufferedReader(
+				new InputStreamReader(new FileInputStream(filepath), "UTF-8"))) {
+			
+			// Send GETFILE command to output stream
 			OutputStreamWriter osw = new OutputStreamWriter(sock.getOutputStream(), UTF_8);
-			BufferedWriter out = new BufferedWriter(osw);
-			//send the command needed to send a file to the server. 
-			//the \n character needs to be their to signify to the 
-			//buffered reader when the line has ended and to stop reading. 
+			BufferedWriter out = new BufferedWriter(osw); 
 			out.write("GETFILE " + filepath + "\n");
-			//this pushes the stream to the server and clears it out locally again
 			out.flush();
+			
+			// Read response from server and log it
 			String line;
-			//after the command we now read the response from the server. 
 			while ((line = br.readLine()) != null) {
 				System.out.println(line);
-				//this writes the response from the server to a file.
 				out.write(line + "\n");
 			}
 			out.flush();
@@ -240,34 +210,30 @@ public class JFilesClient implements Runnable {
 	}
 
 	/**
-	 * Method for producing a Checksum. Takes in a file type and converts it
-	 * into an MD5 standard checksum which is returned in the form of a byte
-	 * array.
-	 * 
-	 * @param file
-	 *            the file to be digested into a checksum
-	 * @return a byte array containing the processed file
+	 * Generates checksum for a file.
+	 * @param file used to create checksum
+	 * @return checksum of file argument
 	 */
 	public byte[] getChecksum(File file) {
-		// Initialize some variables
+		
 		byte[] checksum = null;
 		FileInputStream fileSent = null;
 
 		try {
 			MessageDigest checkFile = MessageDigest.getInstance("MD5");
-			// @SuppressWarnings("resource")
 			fileSent = new FileInputStream(file);
-			// Creating a byte array so we can read the bytes of the file in
-			// chunks
 			byte[] chunkOfBytes = new byte[(int) file.length()];
-			// used as the place holder for the array
+			
+			// Array index
 			int startPoint = 0;
 
 			while ((startPoint = fileSent.read(chunkOfBytes)) != -1) {
 				checkFile.update(chunkOfBytes, 0, startPoint);
 			}
-			// the finalized checksum
+			
 			checksum = checkFile.digest();
+			
+			// Logs checksum
 			System.out.print("Digest(in bytes):: ");
 			for (int i = 0; i < checksum.length - 1; i++) {
 				System.out.print(checksum[i]);
@@ -275,15 +241,13 @@ public class JFilesClient implements Runnable {
 			System.out.println();
 
 		} catch (NoSuchAlgorithmException e) {
-			//e.printStackTrace();
-		//	logger.error("An error occurred while preparing checksum", e);
+			//	logger.error("An error occurred while preparing checksum", e);
 		} catch (FileNotFoundException e) {
-			//e.printStackTrace();
-		//	logger.error("File was not found", e);
+			//	logger.error("File was not found", e);
 		} catch (IOException e) {
-			//e.printStackTrace();
-		//	logger.error("An error occurred while reading file", e);
+			//	logger.error("An error occurred while reading file", e);
 		} finally {
+			// Close file stream
 			if (fileSent != null) {
 				try {
 					fileSent.close();
