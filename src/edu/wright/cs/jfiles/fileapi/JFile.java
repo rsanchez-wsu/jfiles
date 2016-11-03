@@ -27,6 +27,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -273,10 +274,12 @@ public class JFile implements Cloneable, Serializable {
 		
 		out.clear();
 
-		for (int i = 0; i < file.listFiles().length; i++) {
-			out.add(new JFile(file.listFiles()[i]));
+		File[] fileList = file.listFiles();
+		if (fileList != null) {
+			for (int i = 0; i < fileList.length; i++) {
+				out.add(new JFile(fileList[i]));
+			} 
 		}
-
 		return true;
 
 	}
@@ -312,7 +315,12 @@ public class JFile implements Cloneable, Serializable {
 			
 			// Move through array until the array is empty.
 			while (fileArr.size() != 0) {
-				
+
+				if (fileArr.get(location) == null) {
+					fileArr.remove(location);
+					continue;
+				}
+
 				// detect if the file object is a dir
 				if (fileArr.get(location).isDirectory()) {
 					
@@ -326,16 +334,10 @@ public class JFile implements Cloneable, Serializable {
 						// if it cannot be deleted, get its values and move on.
 					} else {
 
-						/*
-						 * TODO: learn and squash findbugs warning.
-						 * 
-						 * I don't see what find bugs is complaining about here.
-						 * The first variable will always give an array, because
-						 * it's a file that we cannot delete, therefore there is
-						 * something in the file.
-						 * 
-						 */
-						insertVals(fileArr.get(location).listFiles(), fileArr);
+						File[] fileList = fileArr.get(location).listFiles();
+						if (fileList != null) {
+							fileArr.addAll(Arrays.asList(fileList));
+						}
 
 					}
 					// if it is a file, delete it, and move where you are
@@ -366,23 +368,6 @@ public class JFile implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Used to insert values from an array into an arraylist. Most likely, this
-	 * method will be deleted upon revision of the delete method.
-	 * 
-	 * @param arr
-	 *            Array to get values from
-	 * @param list
-	 *            ArrayList to put values into
-	 */
-	private void insertVals(File[] arr, ArrayList<File> list) {
-
-		for (int i = 0; i < arr.length; i++) {
-			list.add(arr[i]);
-		}
-
-	}
-
-	/**
 	 * Tells whether the file is hidden or not. The method in File is OS-aware,
 	 * so this method is inherently OS-aware.
 	 * 
@@ -396,13 +381,14 @@ public class JFile implements Cloneable, Serializable {
 	 * Returns a deep copy of the JFile being clones.
 	 * 
 	 */
+	@Override
 	public JFile clone() {
 		JFile output;
 		logger.info("Creating clone of JFile.");
 		try {
 			output = (JFile) super.clone();
 			output.file = new File(file.getAbsolutePath());
-			output.tagList = new HashMap<String, String>(tagList);
+			output.tagList = new HashMap<>(tagList);
 			return output;
 		} catch (CloneNotSupportedException e1) {
 			logger.error("Clone call on JFile and caught a Clone " + "Not Supported Exception.");
@@ -411,7 +397,7 @@ public class JFile implements Cloneable, Serializable {
 			logger.info("Trying to create a clone a different way...");
 			try {
 				output = new JFile(new File(file.getAbsolutePath()),
-						new HashMap<String, String>(tagList));
+						new HashMap<>(tagList));
 				logger.info("Clone successfully made.");
 				return output;
 			} catch (Exception e2) {
