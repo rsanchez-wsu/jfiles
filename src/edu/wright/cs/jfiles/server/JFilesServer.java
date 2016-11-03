@@ -145,13 +145,27 @@ public class JFilesServer implements Runnable {
 
 				switch (baseCommand[0].toUpperCase(Locale.ENGLISH)) {
 				case "LIST":
+
 					listCmd(dir, out);
 					break;
 				case "FIND":
-					findCmd(dir, out, baseCommand[1].toLowerCase(Locale.ENGLISH), hstWrt);
+					if (isValid(baseCommand)) {
+						findCmd(dir, out, baseCommand[1].toLowerCase(Locale.ENGLISH), hstWrt);
+					} else {
+						out.write("Invaild Command");
+						
+					}
+
 					break;
 				case "FINDR":
-					recursiveFindCmd(dir, out, baseCommand[1].toLowerCase(Locale.ENGLISH), hstWrt);
+					if (isValid(baseCommand)) {
+						recursiveFindCmd(dir, out, baseCommand[1].toLowerCase(Locale.ENGLISH),
+								hstWrt);
+					} else {
+						out.write("Invaild Command");
+						
+					}
+
 					break;
 				case "FILE":
 					break;
@@ -177,6 +191,19 @@ public class JFilesServer implements Runnable {
 			// TODO AUto-generated catch block
 			// e.printStackTrace();
 			logger.error("Some error occured", e);
+		}
+	}
+	
+	/**
+	 * checks if the input is vaild.
+	 * 
+	 */
+	boolean isValid(String[] command) {
+		if (command.length <= 1) { // used for handling invalid error
+			logger.error("Invalid Input, nothing to find");
+			return false;
+		} else {
+			return true;
 		}
 	}
 
