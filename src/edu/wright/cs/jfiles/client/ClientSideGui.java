@@ -68,30 +68,15 @@ public class ClientSideGui extends Application {
 
 		// Login Window Construction
 		// Label Creation
-		Label programNameLabel = new Label("JFiles");
-		programNameLabel.setTextFill(Color.web("#01DF01"));
-		programNameLabel.setFont(Font.font("Algerian", FontWeight.BOLD, 60));
-
-		Label usernameLabel = new Label("Username:");
-		usernameLabel.setFont(Font.font("Currier New", FontWeight.BOLD, 20));
-		usernameLabel.setTextFill(Color.web("#0101DF"));
-
-		Label passwordLabel = new Label("Password:");
-		passwordLabel.setFont(Font.font("Currier New", FontWeight.BOLD, 20));
-		passwordLabel.setTextFill(Color.web("#0101DF"));
+		
+		Label programNameLabel = createLoginLabel("JFiles","#01DF01","Algerian",60 );
+		Label usernameLabel = createLoginLabel("Username","#0101DF","Currier New",20 );
+		Label passwordLabel = createLoginLabel("Password","#0101DF","Currier New",20 );
 
 		// Error Labels
-		Label noConnectionLabel = new Label("No Connection Detected.");
-		noConnectionLabel.setVisible(false);
-		noConnectionLabel.setTextFill(Color.web("#FF0000"));
-
-		Label invalidLabel = new Label("Incorrect Username & Password Combination.");
-		invalidLabel.setVisible(false);
-		invalidLabel.setTextFill(Color.web("#FF0000"));
-
-		Label emptyUsernameFieldLabel = new Label("Username Field Must Be Filled In.");
-		emptyUsernameFieldLabel.setVisible(false);
-		emptyUsernameFieldLabel.setTextFill(Color.web("#FF0000"));
+		Label noConnectionLabel = createErrorLabel("No Connection Detected.", false, "#FF0000");
+		Label invalidLabel = createErrorLabel("Incorrect Username & Password Combination.", false, "#FF0000");
+		Label emptyUsernameFieldLabel = createErrorLabel("Username Field Must Be Filled In.", false, "#FF0000");
 
 		Label emptyPasswordFieldLabel = new Label("Password Field Must Be Filled In.");
 		emptyPasswordFieldLabel.setVisible(false);
@@ -280,6 +265,28 @@ public class ClientSideGui extends Application {
 		// Displays the start Stage and its contents.
 		primaryStage.show();
 
+	}
+	
+	/**
+	 * Description: This method creates a label with the passed parameters.
+	 * @param name: label name
+	 * @param font: font style
+	 * @param color: font color
+	 * @param fontSize: font size
+	 * @return: returns the created label
+	 */
+	Label createLoginLabel (String name, String font, String color, int fontSize){
+		Label label = new Label(name);
+		label.setTextFill(Color.web(color));
+		label.setFont(Font.font(font, FontWeight.BOLD, fontSize));
+		return label;
+	}
+	
+	Label createErrorLabel (String name, boolean visible, String color){
+		Label label = new Label(name);
+		label.setTextFill(Color.web(color));
+		label.setVisible(visible);
+		return label;
 	}
 
 	/**
