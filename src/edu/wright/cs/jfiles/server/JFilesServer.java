@@ -168,7 +168,7 @@ public class JFilesServer implements Runnable {
 					}
 
 				} else { // End search block
-					logger.error("Unknown commad");
+					logger.error(Error.UNKNOWN_COMMAND.toString());
 				}
 				out.flush();
 			}

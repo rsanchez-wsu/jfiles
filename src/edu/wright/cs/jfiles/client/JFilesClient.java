@@ -21,6 +21,7 @@
 
 package edu.wright.cs.jfiles.client;
 
+import edu.wright.cs.jfiles.common.Error;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -101,7 +102,7 @@ public class JFilesClient implements Runnable {
 				fis = new FileInputStream(config);
 				prop.loadFromXML(fis);			
 			} catch (IOException e) {
-				logger.error("IOException occured when trying to access the server config", e);
+				logger.error(Error.IOEXCEPTION2.toString(), e);
 			} finally {
 				if (fis != null) {
 					fis.close();
