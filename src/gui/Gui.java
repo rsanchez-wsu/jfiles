@@ -28,6 +28,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
@@ -50,51 +51,77 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 /**
- * Gui class file that makes a panel with buttons on it.
+ * Gui class file that creates a frame and adds components to it.
  */
 public class Gui {
-	/**
-	 * Main class of GUI.
-	 * 
-	 * @param args
-	 *            The command line argument
-	 * @throws XPathExpressionException XPatchException handler
-	 */
-	public static void main(String[] args) throws ParserConfigurationException, SAXException,
-			IOException, XPathExpressionException {
 
-		/////////////////////// Create Frame///////////////////////////////////
+	/**
+	 * Creates frame the components of the GUI will be places on.
+	 * @throws IOException 						IOException handler
+	 * @throws SAXException 					SAXException handler
+	 * @throws ParserConfigurationException 	Parser exception handler
+	 * @throws XPathExpressionException 		XPatchException handler
+	 */
+	static void createGui() throws XPathExpressionException, 
+		ParserConfigurationException, SAXException, IOException {
 		JFrame frame = new JFrame();
 		// Ends program when you close the window
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		// Sets size of frame
 		frame.setSize(450, 350);
+		
+		addComponents(frame);
+		frame.setVisible(true);
+	}
 
-		/////////////////////// Create Panel for Buttons////////////////////////
-		// This makes it so the output field and path fields can be separate
-		JPanel filePanel = new JPanel();
-		// Where buttons will be place (rows, columns)
-		filePanel.setLayout(new GridLayout(0, 2));
+	/**
+	 * Adds different parts of the GUI to the frame.
+	 * @param pane Passes the frame to add components to.
+	 * @throws IOException 						IOException handler
+	 * @throws SAXException 					SAXException handler
+	 * @throws ParserConfigurationException 	Parser exception handler
+	 * @throws XPathExpressionException 		XPatchException handler
+	 */
+	static void addComponents(Container pane) throws XPathExpressionException, 
+		ParserConfigurationException, SAXException, IOException {
 
-		/////////////////////// Create Path Display////////////////////////////
-		// This creates a box for the current path to be displayed in.
+		// Creates a box for the current path to be displayed in.
 		JTextArea pathDisplay = new JTextArea();
 		pathDisplay.setEditable(false);
 
+		// Populates box with current path
 		String currentPath = JFilesServer.sendPath();
 		pathDisplay.append(currentPath);
-		frame.add(pathDisplay);
-		frame.add(pathDisplay, BorderLayout.NORTH);
-
-		/////////////////////// Create Output Area/////////////////////////////
-		// This creates a box with appendable text that can be scrolled through.
-		// It is initialized here so that when clicking a button it can be
-		/////////////////////// edited.
+		pane.add(pathDisplay);
+		pane.add(pathDisplay, BorderLayout.NORTH);
+		
+		// This creates a box with changeable text that can be scrolled through.
+		// Must be initialized before file panel is populated to contain event information
 		JTextArea consoleOutput = new JTextArea();
 		JScrollPane scrollPane = new JScrollPane(consoleOutput);
 		consoleOutput.setEditable(false);
+		pane.add(scrollPane, BorderLayout.SOUTH);
+		
+		// Creates panel to add buttons to. This keeps it separate from other components.
+		JPanel filePanel = new JPanel();
+		// Where files will be place (rows, columns)
+		filePanel.setLayout(new GridLayout(0, 2));
+		addFiles(filePanel, consoleOutput);
+		pane.add(filePanel, BorderLayout.CENTER);
 
-		/////////////////////// Create Buttons//////////////////////////////////
+	}
+
+	/**
+	 * Creates and populates the passed panel with files.
+	 * @param filePanel							Pass the panel to populate files with
+	 * @param consoleOutput						Pass area to output text in console
+	 * @throws ParserConfigurationException		Parser exception handler
+	 * @throws SAXException						SAXException handler
+	 * @throws IOException						IOException handler
+	 * @throws XPathExpressionException			XPatchException handler
+	 */
+	static void addFiles(Container filePanel, Container consoleOutput) throws 
+		ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+
 		// Icon width and height variables
 		final int IconWidth = 100;
 		final int iconHeight = 100;
@@ -123,11 +150,11 @@ public class Gui {
 		ArrayList<String> items = new ArrayList<String>();
 
 		Parser parser = new Parser();
-		
+
 		Document doc = parser.parse(testXml);
-		
+
 		int itemCount = parser.countElements(doc, "/items/item");
-		
+
 		XPathFactory factory = XPathFactory.newInstance();
 		XPath xpath = factory.newXPath();
 
@@ -137,7 +164,7 @@ public class Gui {
 
 			String itemName = getFileName.evaluate(doc, XPathConstants.STRING).toString()
 					+ getFileExt.evaluate(doc, XPathConstants.STRING).toString();
-			
+
 			items.add(itemName);
 		}
 
@@ -150,18 +177,27 @@ public class Gui {
 
 			fileIconLabel.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent event) {
-					consoleOutput.append("You clicked " + fileName + "\n");
+					((JTextArea) consoleOutput).append("You clicked " + fileName + "\n");
 				}
 			});
 
 			// Puts the icon in the panel according to grid
 			filePanel.add(fileIconLabel);
 		}
+	}
 
-		// Add items to frame
-		frame.add(filePanel, BorderLayout.CENTER);
-		frame.add(scrollPane, BorderLayout.SOUTH);
-
-		frame.setVisible(true);
+	/**
+	 * Main class of GUI.
+	 * 
+	 * @param args								The command line argument
+	 * @throws IOException 						IOException handler
+	 * @throws SAXException 					SAXException handler
+	 * @throws ParserConfigurationException 	Parser exception handler
+	 * @throws XPathExpressionException			XPatchException handler
+	 */
+	public static void main(String[] args) throws XPathExpressionException,
+		ParserConfigurationException, SAXException, IOException {
+		
+		createGui();
 	}
 }
