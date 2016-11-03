@@ -37,6 +37,7 @@ import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -128,17 +129,21 @@ public class JFilesClient implements Runnable {
 			logger.info("Database connection successful");
 			// Added so Eclipse won't complain about not using the Connection object
 			conn.getMetaData();
+			
+			Statement sta = conn.createStatement();
+			int result = sta.executeUpdate("CREATE TABLE tags (filePath VARCHAR(260), "
+					+ "tag VARCHAR(255))");
+			
+			result = sta.executeUpdate("CREATE TABLE cache (filePath VARCHAR(260), XML Blob)");
 			conn.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(Error.SQL_INIT_ERROR.toString());
 			try {
 				if (conn != null) {
 					conn.close();
 				}
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				logger.error(Error.SQL_INIT_ERROR.toString());
 			}
 		}
 	}

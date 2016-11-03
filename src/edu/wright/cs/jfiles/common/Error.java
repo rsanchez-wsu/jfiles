@@ -32,7 +32,8 @@ public enum Error {
 	IOEXCEPTION(0, "The file cannot be read."),
 	IOEXCEPTION1(1, "IOException occured when trying to access the server config."),
 	IOEXCEPTION2(3, "IOException occured when trying to access the client config."),
-	UNKNOWN_COMMAND(2,"Unknown commad was sent by the client.");
+	UNKNOWN_COMMAND(2,"Unknown commad was sent by the client."),
+	SQL_INIT_ERROR(3,"Error in SQL init.");
 	
 	private final int code;
 	private final String description;
