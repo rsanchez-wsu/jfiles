@@ -26,7 +26,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -67,7 +70,8 @@ public class JFile implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Stores the given file and the arraylist of tags associated with the file.
+	 * Stores the given file and the Map of tags associated with the file.
+	 * Can be given any map type.
 	 * 
 	 * @param file
 	 *            The file being stored in the JFile object.
@@ -168,6 +172,15 @@ public class JFile implements Cloneable, Serializable {
 	}
 
 	/**
+	 * Gets the absolute path of the file.
+	 * 
+	 * @return the absolute path of the file.
+	 */
+	public String getPath() {
+		return file.getAbsolutePath();
+	}
+	
+	/**
 	 * Takes away the tag specified by a string.
 	 * 
 	 * @param key
@@ -184,12 +197,33 @@ public class JFile implements Cloneable, Serializable {
 
 	/**
 	 * gets the file's type. TODO: getType()
+	 * 
+	 * @return String of what the file is. Example: JFile.java returns java
 	 */
-	public void getType() {
-		/*
-		 * if (System.getProperty("os.name").contains("Windows")) {
-		 * System.out.println(Files.getFileExtension(file.getName())); }
-		 */
+	public String getType() {
+		logger.info("determining file type");
+		try {
+			if (System.getProperty("os.name").contains("Windows")) {
+				logger.info("OS determined to be \"Windows\".");
+				return file.getName().substring(
+						file.getName().lastIndexOf('.') + 1,
+						file.getName().length());
+			} else if (System.getProperty("os.name").contains("Macintosh")) {
+				// TODO Determine how files are defined and how to get the file type on Mac.
+				logger.info("OS determined to be \"Macintosh\".");
+			} else if (System.getProperty("os.name").contains("Linux")) {
+				// TODO Get the file type from linux.
+				logger.info("OS determined to be \"Linux\".");
+			} else {
+				// TODO ??? Error maybe?
+				logger.info("OS determined to be \"Unknown\".");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("Error getting type.");
+		}
+		//temporary until all ifs get a return.
+		return null;
 	}
 
 	/**
@@ -220,12 +254,117 @@ public class JFile implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Deletes the actual file contents.
+	 * Gets the current working directory is the current file is a directory.
+	 * <p>
+	 * Variable out gets cleared and then stores the JFiles made from the
+	 * current working directory, if the current file is a directory.
+	 * </p>
+	 * 
+	 * @param out
+	 *            List of JFile objects returned if method returns true. Is also
+	 *            cleared first before the new JFiles are stored.
+	 * @return True, if the current file is a directory, and stores the files in
+	 *         the directory into the given list. False otherwise.
+	 */
+	public boolean getWorkingDirectory(List<JFile> out) {
+
+		if (file.isFile()) {
+			return false;
+		}
+		
+		out.clear();
+
+		File[] fileList = file.listFiles();
+		if (fileList != null) {
+			for (int i = 0; i < fileList.length; i++) {
+				out.add(new JFile(fileList[i]));
+			} 
+		}
+		return true;
+
+	}
+	
+	/**
+	 * Deletes the actual file contents. Will loop through and delete files if
+	 * the given file is actually a folder that has content in it.
+	 * 
+	 * <p>
+	 * TODO: Revise method so that there is less complexity.
+	 * </p>
+	 * 
+	 * <b>Meant to be used with a JFM</b>
 	 * 
 	 * @return true if the file was able to be deleted; false otherwise.
 	 */
-	public boolean deleteContents() {
-		return file.delete();
+	protected boolean deleteContents() {
+		
+		// Since dirs cannot be deleted if they
+		// are holding something else,
+		// files and dirs have to be handled differently.
+		
+		if (file.isDirectory()) {
+		
+			// Arraylist to hold the dirs/files that need to be deleted.
+			ArrayList<File> fileArr = new ArrayList<>();
+			
+			// int to note which fir/object we are looking at.
+			int location = 0;
+			
+			// load the file we overall want to be deleted.
+			fileArr.add(file);
+			
+			// Move through array until the array is empty.
+			while (fileArr.size() != 0) {
+
+				if (fileArr.get(location) == null) {
+					fileArr.remove(location);
+					continue;
+				}
+
+				// detect if the file object is a dir
+				if (fileArr.get(location).isDirectory()) {
+					
+					// attempt to delete the dir
+					if (fileArr.get(location).delete()) {
+
+						// if deleted, move where you're looking at back.
+						fileArr.remove(location);
+						location--;
+
+						// if it cannot be deleted, get its values and move on.
+					} else {
+
+						File[] fileList = fileArr.get(location).listFiles();
+						if (fileList != null) {
+							fileArr.addAll(Arrays.asList(fileList));
+						}
+
+					}
+					// if it is a file, delete it, and move where you are
+					// looking at.
+				} else {
+
+					fileArr.get(location).delete();
+					fileArr.remove(location);
+					location--;
+
+				}
+
+				// increment where you're looking at
+				// if there are less things then where you're looking at
+				// move back to the start
+				location++;
+				if (location >= fileArr.size()) {
+					location = 0;
+				}
+				
+			}
+
+		} else {
+			file.delete();
+		}
+
+		return true;
 	}
 
 	/**
@@ -242,23 +381,23 @@ public class JFile implements Cloneable, Serializable {
 	 * Returns a deep copy of the JFile being clones.
 	 * 
 	 */
+	@Override
 	public JFile clone() {
 		JFile output;
 		logger.info("Creating clone of JFile.");
 		try {
 			output = (JFile) super.clone();
 			output.file = new File(file.getAbsolutePath());
-			output.tagList = new HashMap<String, String>(tagList);
+			output.tagList = new HashMap<>(tagList);
 			return output;
 		} catch (CloneNotSupportedException e1) {
-			logger.error(
-					"Clone was called on JFile and caught a Clone " + "Not Supported Exception.");
+			logger.error("Clone call on JFile and caught a Clone " + "Not Supported Exception.");
 			e1.printStackTrace();
 			System.out.println("Trying to clone the JFile a different way.");
 			logger.info("Trying to create a clone a different way...");
 			try {
 				output = new JFile(new File(file.getAbsolutePath()),
-						new HashMap<String, String>(tagList));
+						new HashMap<>(tagList));
 				logger.info("Clone successfully made.");
 				return output;
 			} catch (Exception e2) {

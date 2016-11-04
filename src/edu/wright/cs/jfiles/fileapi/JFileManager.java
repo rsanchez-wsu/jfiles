@@ -107,9 +107,8 @@ public class JFileManager {
 	 * only be accessed via the JFileManager methods for the sake of security.
 	 * 
 	 */
-	@SuppressWarnings("unused")
 	private ArrayList<JFile> clipboard;
-
+	
 	/*
 	 * This method entirely depends on copy and delete. It is pretty much done.
 	 */
@@ -231,14 +230,38 @@ public class JFileManager {
 	 * Deletes a particular JFile object. If the file(s) is/are not in the trash
 	 * bin, it moves it/them to that location. If they are, then it deletes them
 	 * off of the hard drive the same way the OS would.
-	 * 
+	 * <p>
+	 * Tests what OS the JFM is on, then loops through to check where the file(s)
+	 * are located.
+	 * </p>
 	 * @param files
 	 *            The files being deleted.
 	 * 
 	 */
 	public void delete(JFile[] files) {
-		logger.info("Deleting File");
+		logger.info("Deleting File(s)");
 		try {
+			if (System.getProperty("os.name").contains("Windows")) {
+				for (int i = 0; i < files.length; i++) {
+					//The problem with how windows handles the recycling bin
+					//(from win 10) is that it is not an absolute file.
+					if (files[i].getPath().contains("$Recycle.Bin") == true) {
+						files[i].deleteContents();
+					} else {
+						//TODO: find out how to move files to recycle bin
+					}
+				}
+				logger.info("OS determined to be \"Windows\".");
+			} else if (System.getProperty("os.name").contains("Macintosh")) {
+				
+				logger.info("OS determined to be \"Macintosh\".");
+			} else if (System.getProperty("os.name").contains("Linux")) {
+				
+				logger.info("OS determined to be \"Linux\".");
+			} else {
+				
+				logger.info("OS determined to be \"Unknown\".");
+			}
 			logger.info("Successfully Deleted " + Arrays.toString(files));
 		} catch (Exception e) {
 			e.printStackTrace();

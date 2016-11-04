@@ -73,41 +73,34 @@ public class JFilesServer implements Runnable {
 					break;
 				}
 				OutputStreamWriter osw = new OutputStreamWriter(server.getOutputStream(), UTF_8);
-
 				BufferedWriter out = new BufferedWriter(osw);
 				String[] baseCommand = cmd.split(" ");
 				if ("LIST".equalsIgnoreCase(baseCommand[0])) {
-					try (DirectoryStream<Path> directoryStream = Files
-							.newDirectoryStream(Paths.get(dir))) {
+					try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir))) {
 						for (Path path : directoryStream) {
 							out.write(path.toString() + "\n");
 						}
 					}
-
 				}
 				// start Search block
 				if ("FIND".equalsIgnoreCase(baseCommand[0])) {
-
-					try (DirectoryStream<Path> directoryStream = Files
-							.newDirectoryStream(Paths.get(dir))) {
+					try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir))) {
 						for (Path path : directoryStream) {
 							// out.write(path.toString() + "\n");
 							if (path.toString().contains(baseCommand[1])) {
 								out.write(path.toString() + "\n");
 							}
-
 						}
 					}
-
 				} else { // End search block
-					logger.error("Unknown commad");
+					logger.error("Unknown command");
 				}
 				out.flush();
 			}
 		} catch (IOException e) {
-			//TODO AUto-generated catch block
+			//TODO Auto-generated catch block
 			//e.printStackTrace();
-			logger.error("Some error occured", e);
+			logger.error("Some error occurred", e);
 		}
 	}
 
@@ -115,7 +108,7 @@ public class JFilesServer implements Runnable {
 	 * The main entry point to the program.
 	 * 
 	 * @throws IOException
-	 *             If there is a problem binding to the socket
+	 * If there is a problem binding to the socket
 	 */
 	public static void main(String[] args) {
 		try {
@@ -128,5 +121,4 @@ public class JFilesServer implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
 }
