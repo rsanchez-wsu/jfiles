@@ -67,20 +67,27 @@ public class ClientSideGui extends Application {
 		// String password = "";
 
 		// Login Window Construction
+
 		// Label Creation
-		
-		Label programNameLabel = createLoginLabel("JFiles","#01DF01","Algerian",60 );
-		Label usernameLabel = createLoginLabel("Username","#0101DF","Currier New",20 );
-		Label passwordLabel = createLoginLabel("Password","#0101DF","Currier New",20 );
+		Label programNameLabel;
+		programNameLabel = createLoginLabel("JFiles", "#01DF01", "Algerian", 60);
+		Label usernameLabel;
+		usernameLabel = createLoginLabel("Username", "#0101DF", "Currier New", 20);
+		Label passwordLabel;
+		passwordLabel = createLoginLabel("Password", "#0101DF", "Currier New", 20);
 
 		// Error Labels
-		Label noConnectionLabel = createErrorLabel("No Connection Detected.", false, "#FF0000");
-		Label invalidLabel = createErrorLabel("Incorrect Username & Password Combination.", false, "#FF0000");
-		Label emptyUsernameFieldLabel = createErrorLabel("Username Field Must Be Filled In.", false, "#FF0000");
-
-		Label emptyPasswordFieldLabel = new Label("Password Field Must Be Filled In.");
-		emptyPasswordFieldLabel.setVisible(false);
-		emptyPasswordFieldLabel.setTextFill(Color.web("#FF0000"));
+		Label noConnectionLabel;
+		noConnectionLabel = createErrorLabel("No Connection Detected.", false, "#FF0000");
+		Label invalidLabel;
+		invalidLabel = createErrorLabel("Incorrect Username & Password Combination.", false,
+				"#FF0000");
+		Label emptyUsernameFieldLabel;
+		emptyUsernameFieldLabel = createErrorLabel("Username Field Must Be Filled In.", false,
+				"#FF0000");
+		Label emptyPasswordFieldLabel;
+		emptyPasswordFieldLabel = createErrorLabel("Password Field Must Be Filled In.", false,
+				"#FF0000");
 
 		// Text Field Creation
 		TextField usernameTextField = new TextField();
@@ -264,25 +271,42 @@ public class ClientSideGui extends Application {
 		primaryStage.setResizable(true);
 		// Displays the start Stage and its contents.
 		primaryStage.show();
-
 	}
-	
+
 	/**
-	 * Description: This method creates a label with the passed parameters.
-	 * @param name: label name
-	 * @param font: font style
-	 * @param color: font color
-	 * @param fontSize: font size
+	 * Description: This method creates a Login Screen Label with the passed
+	 * parameters.
+	 * 
+	 * @param name
+	 *            : The label's name
+	 * @param font
+	 *            : The font style of the label
+	 * @param color
+	 *            : The font color of the label
+	 * @param fontSize
+	 *            : The font size of the label
 	 * @return: returns the created label
 	 */
-	Label createLoginLabel (String name, String font, String color, int fontSize){
+	Label createLoginLabel(String name, String color, String font, int fontSize) {
 		Label label = new Label(name);
 		label.setTextFill(Color.web(color));
 		label.setFont(Font.font(font, FontWeight.BOLD, fontSize));
 		return label;
 	}
-	
-	Label createErrorLabel (String name, boolean visible, String color){
+
+	/**
+	 * Description: This method creates a Error Label with the passed
+	 * parameters.
+	 * 
+	 * @param name
+	 *            : The label's name
+	 * @param visible
+	 *            : The label's state of visibility
+	 * @param color
+	 *            : The font color of the label
+	 * @return: returns the created label
+	 */
+	Label createErrorLabel(String name, boolean visible, String color) {
 		Label label = new Label(name);
 		label.setTextFill(Color.web(color));
 		label.setVisible(visible);
@@ -303,5 +327,4 @@ public class ClientSideGui extends Application {
 		// Launches the GUI
 		launch(args);
 	}
-
 }
