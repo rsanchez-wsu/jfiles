@@ -145,9 +145,10 @@ public class Gui {
 		// issue #17)
 		String testXml = "<?xml version=\"1.0\"?>" + "<items>"
 				+ "<item><name>Test</name><ext>.txt</ext><type>file</type></item>"
-				+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>" + "</items>";
+				+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>" 
+				+ "<item><name>Folder</name><ext></ext><type>folder</type></item>" + "</items>";
 
-		ArrayList<String> items = new ArrayList<String>();
+		ArrayList<Item> items = new ArrayList<Item>();
 
 		Parser parser = new Parser();
 
@@ -161,28 +162,41 @@ public class Gui {
 		for (int i = 1; i <= itemCount; i++) {
 			XPathExpression getFileName = xpath.compile("/items/item[" + i + "]/name");
 			XPathExpression getFileExt = xpath.compile("/items/item[" + i + "]/ext");
+			XPathExpression getFileType = xpath.compile("/items/item[" + i + "]/type");
+			
+			String fileName = getFileName.evaluate(doc, XPathConstants.STRING).toString();
+			String fileExt = getFileExt.evaluate(doc, XPathConstants.STRING).toString();
+			String fileType = getFileType.evaluate(doc, XPathConstants.STRING).toString();
+			
+			Item item = new Item(fileName, fileExt, fileType);
 
-			String itemName = getFileName.evaluate(doc, XPathConstants.STRING).toString()
-					+ getFileExt.evaluate(doc, XPathConstants.STRING).toString();
-
-			items.add(itemName);
+			items.add(item);
 		}
 
 		for (int i = 0; i < items.size(); i++) {
-			String fileName = items.get(i);
+			Item item = items.get(i);
+			String fileName = item.getName() + item.getExt();
+			String fileType = item.getType();
+			
+			JLabel iconLabel = new JLabel(fileName, JLabel.CENTER);
+			iconLabel.setVerticalTextPosition(JLabel.BOTTOM);
+			iconLabel.setHorizontalTextPosition(JLabel.CENTER);
+			
+			if (fileType.equals("folder")) {
+				iconLabel.setIcon(folderIcon);
+				
+			} else {
+				iconLabel.setIcon(fileIcon);
+			}
 
-			JLabel fileIconLabel = new JLabel(fileName, fileIcon, JLabel.CENTER);
-			fileIconLabel.setVerticalTextPosition(JLabel.BOTTOM);
-			fileIconLabel.setHorizontalTextPosition(JLabel.CENTER);
-
-			fileIconLabel.addMouseListener(new MouseAdapter() {
+			iconLabel.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent event) {
 					((JTextArea) consoleOutput).append("You clicked " + fileName + "\n");
 				}
 			});
 
 			// Puts the icon in the panel according to grid
-			filePanel.add(fileIconLabel);
+			filePanel.add(iconLabel);
 		}
 	}
 

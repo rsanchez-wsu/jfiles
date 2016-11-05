@@ -60,8 +60,8 @@ public class Parser {
 	/**
 	 * Takes an XPath string and returns the count at that location.
 	 */
-	public int countElements(Document doc, String xPathExpression) throws XPathExpressionException {
-		XPathExpression getCount = xpath.compile("count(" + xPathExpression + ")");
+	public int countElements(Document doc, String expression) throws XPathExpressionException {
+		XPathExpression getCount = xpath.compile("count(" + expression + ")");
 
 		Number itemCount = (Number) getCount.evaluate(doc, XPathConstants.NUMBER);
 
