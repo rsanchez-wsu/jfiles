@@ -40,6 +40,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 
+import edu.wright.cs.jfiles.common.NetUtil;
+
 /**
  * The main class of the JFiles client application.
  * 
@@ -54,6 +56,7 @@ public class JFilesClient implements Runnable {
 	private static final String UTF_8 = "UTF-8";
 	private boolean running = true;
 	private Scanner kb;
+	NetUtil util = new NetUtil();
 
 	/**
 	 * No argument constructor.
@@ -163,6 +166,17 @@ public class JFilesClient implements Runnable {
 					System.out.println(line);
 					bw.write(line + "\n");
 				}
+				//receive checkSum
+				String sentCheck = br.readLine();
+				System.out.println(line);
+				
+				File copiedFile = new File(newFile);
+				String checkNewFile = util.getChecksum(copiedFile);
+				
+				if (checkNewFile.equalsIgnoreCase(sentCheck)){
+					System.out.println("An error occured in sending the file");
+					//Logger.error("An error occured in sending the file");
+				}
 			}
 			
 		} catch (IOException e) {
@@ -200,6 +214,12 @@ public class JFilesClient implements Runnable {
 				out.write(line + "\n");
 			}
 			out.flush();
+			
+			File clientFile = new File(filepath);
+			String sendCheck = util.getChecksum(clientFile);
+			out.write(sendCheck + "\n" );
+			out.flush();
+			
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
@@ -207,86 +227,6 @@ public class JFilesClient implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	/**
-	 * Generates checksum for a file.
-	 * @param file used to create checksum
-	 * @return checksum of file argument
-	 */
-	public byte[] getChecksum(File file) {
-		
-		byte[] checksum = null;
-		FileInputStream fileSent = null;
-
-		try {
-			MessageDigest checkFile = MessageDigest.getInstance("MD5");
-			fileSent = new FileInputStream(file);
-			byte[] chunkOfBytes = new byte[(int) file.length()];
-			
-			// Array index
-			int startPoint = 0;
-
-			while ((startPoint = fileSent.read(chunkOfBytes)) != -1) {
-				checkFile.update(chunkOfBytes, 0, startPoint);
-			}
-			
-			checksum = checkFile.digest();
-			
-			// Logs checksum
-			System.out.print("Digest(in bytes):: ");
-			for (int i = 0; i < checksum.length - 1; i++) {
-				System.out.print(checksum[i]);
-			}
-			System.out.println();
-
-		} catch (NoSuchAlgorithmException e) {
-			//	logger.error("An error occurred while preparing checksum", e);
-		} catch (FileNotFoundException e) {
-			//	logger.error("File was not found", e);
-		} catch (IOException e) {
-			//	logger.error("An error occurred while reading file", e);
-		} finally {
-			// Close file stream
-			if (fileSent != null) {
-				try {
-					fileSent.close();
-				} catch (IOException e) {
-				//	logger.error("An error occured while closing connection to file", e);
-				}
-			}
-		}
-		return checksum;
-	}
-
-	/**
-	 * Method for comparing checksums. Takes two byte arrays containing checksum
-	 * data and returns true if they are the same and false if they are not.
-	 * 
-	 * @param first
-	 *            a byte array containing the first file's checksum
-	 * @param second
-	 *            a byte array containing the second file's checksum
-	 * @return returns a boolean of true or false based on how they compare
-	 */
-	public boolean isSame(byte[] first, byte[] second) {
-		// Initialize the boolean value
-		boolean same = true;
-		// If the lengths of the arrays are not the same then they are obviously
-		// different
-		// and the boolean can be changes to false before the for loop.
-		if (first.length != second.length) {
-			same = false;
-		}
-		// a shorted circuited AND allows the boolean value to control the for
-		// loop
-		for (int i = 0; same && i < first.length; i++) {
-			if (first[i] != second[i]) {
-				same = false;
-			}
-		}
-
-		return same;
 	}
 	
 	/**

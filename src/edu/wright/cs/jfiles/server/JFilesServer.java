@@ -141,6 +141,13 @@ public class JFilesServer implements Runnable {
 				out.write(line + "\n");
 			}
 			out.flush();
+			
+			//sending Checksum
+			File serverFile = new File(file);
+			String sendCheck = util.getChecksum(serverFile);
+			out.write(sendCheck + "\n" );
+			out.flush();
+			
 		} catch (IOException e) {
 			logger.error("Sending file error", e);
 		}	
@@ -168,9 +175,22 @@ public class JFilesServer implements Runnable {
 			String newFile = file.substring(0, index) + "-copy.txt";
 			bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(newFile), "UTF-8"));
 			String line;
+			
 			while ((line = br.readLine()) != null) {
 				System.out.println(line);
 				bw.write(line + "\n");
+			}
+			
+			//receive checkSum
+			String sentCheck = br.readLine();
+			System.out.println(line);
+			
+			File copiedFile = new File(newFile);
+			String checkNewFile = util.getChecksum(copiedFile);
+			
+			if (checkNewFile.equalsIgnoreCase(sentCheck)){
+				System.out.println("An error occured in sending the file");
+				logger.error("An error occured in sending the file");
 			}
 			System.out.println("File received.");
 		} catch (IOException e) {
