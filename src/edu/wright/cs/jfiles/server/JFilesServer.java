@@ -35,7 +35,6 @@ import org.apache.logging.log4j.Logger;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -71,8 +70,6 @@ public class JFilesServer implements Runnable {
 		serverSocket = new ServerSocket(PORT);
 	}
 
-	@SuppressWarnings("resource") // suppress a filewriter being closed
-									// elsewhere error
 	@Override
 	public void run() {
 		String dir = System.getProperty("user.dir");
@@ -85,30 +82,6 @@ public class JFilesServer implements Runnable {
 			BufferedReader in = new BufferedReader(isr);
 
 			FileWriter hstWrt = new FileWriter(history); // history writer
-			if (history.exists()) {
-				File temp = new File("tempHistory.txt"); // create a temporary
-															// file
-				FileWriter tempWriter = new FileWriter(temp);
-
-				String previous;
-				FileReader readHistory = new FileReader("SearchHistory.txt");
-				BufferedReader br = new BufferedReader(readHistory);
-				while ((previous = br.readLine()) != null) { // read in data
-																// from previous
-																// searches
-					tempWriter.write(previous); // put data in temp file
-				}
-				br.close();
-				hstWrt = new FileWriter(temp);// suppressed the warning because
-												// it's closed elsewhere
-				tempWriter.close(); // hstWrt now writes to the temp file for
-									// new searches
-				history.delete(); // delete the old searchHistory so temp can be
-									// renamed
-				temp.renameTo(history); // rename the search file to
-										// searchHistory
-			}
-
 			String cmd;
 			OutputStreamWriter osw = new OutputStreamWriter(server.getOutputStream(), UTF_8);
 
@@ -150,20 +123,17 @@ public class JFilesServer implements Runnable {
 					break;
 				case "FIND":
 					if (isValid(baseCommand)) {
-						findCmd(dir, out, baseCommand[1].toLowerCase(Locale.ENGLISH), hstWrt);
+						findCmd(dir, out, baseCommand[1].toLowerCase(Locale.ENGLISH));
 					} else {
 						out.write("Invaild Command");
-						
 					}
 
 					break;
 				case "FINDR":
 					if (isValid(baseCommand)) {
-						recursiveFindCmd(dir, out, baseCommand[1].toLowerCase(Locale.ENGLISH),
-								hstWrt);
+						recursiveFindCmd(dir, out, baseCommand[1].toLowerCase(Locale.ENGLISH));
 					} else {
-						out.write("Invaild Command");
-						
+						out.write("Invaild Command");	
 					}
 
 					break;
@@ -172,6 +142,7 @@ public class JFilesServer implements Runnable {
 				case "EXIT":
 					try {
 						out.close();
+						hstWrt.close();
 						in.close();
 						serverSocket.close();
 					} catch (IOException ex) {
@@ -182,6 +153,11 @@ public class JFilesServer implements Runnable {
 				default:
 					logger.info("Hit default switch." + System.lineSeparator());
 					break;
+				}
+				if (history.exists()) {
+					hstWrt.append(baseCommand[1] + "\n");
+				} else {
+					hstWrt.write(baseCommand[1] + "\n");
 				}
 			}
 			out.flush();
@@ -232,19 +208,15 @@ public class JFilesServer implements Runnable {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	private void findCmd(String dir, BufferedWriter out, String searchTerm,
-			FileWriter historyWrite) {
+	private void findCmd(String dir, BufferedWriter out, String searchTerm) {
 		int findCount = 0;
 		try (DirectoryStream<Path> directoryStream =
 				Files.newDirectoryStream(Paths.get(dir), searchTerm)) {
-			historyWrite.write(searchTerm + "\n");
 			for (Path path : directoryStream) {
-				// if
-				// (path.toString().toLowerCase(Locale.ENGLISH).contains(searchTerm))
-				// {
-				out.write(path.toString() + "\n");
-				findCount++;
-				// }
+				if (path.toString().toLowerCase(Locale.ENGLISH).contains(searchTerm))	{
+					out.write(path.toString() + "\n");
+					findCount++;
+				}
 			}
 			System.out.println("Found " + findCount + " file(s) in " + dir + " that contains \""
 					+ searchTerm + "\"\n");
@@ -263,12 +235,11 @@ public class JFilesServer implements Runnable {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	private void recursiveFindCmd(String dir, BufferedWriter out, String searchTerm,
-			FileWriter hstWrt) {
+	private void recursiveFindCmd(String dir, BufferedWriter out, String searchTerm) {
 		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir))) {
 			for (Path path : directoryStream) {
 				if (path.toFile().isDirectory()) {
-					recursiveFindCmd(path.toString(), out, searchTerm, hstWrt);
+					recursiveFindCmd(path.toString(), out, searchTerm);
 				}
 			}
 		} catch (IOException e) {
@@ -276,13 +247,7 @@ public class JFilesServer implements Runnable {
 			// e.printStackTrace();
 			logger.error("Some error occured", e);
 		}
-		findCmd(dir, out, searchTerm, hstWrt);
-		try {
-			hstWrt.write(searchTerm + "\n");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			logger.error("Some error occured while writing to a the history", e);
-		}
+		findCmd(dir, out, searchTerm);
 	}
 
 	/**
