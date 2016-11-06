@@ -20,7 +20,6 @@
  */
 
 package edu.wright.cs.jfiles.server;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -37,6 +36,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import edu.wright.cs.jfiles.common.*;
 
 
 /**
@@ -53,6 +53,7 @@ public class JFilesServer implements Runnable {
 	private static final String UTF_8 = "UTF-8";
 	private Socket socket;
 	private boolean running = true;
+	NetUtil util = new NetUtil();
 	
 	static {
 		try {
@@ -118,12 +119,12 @@ public class JFilesServer implements Runnable {
 	 * @param servsock the socket where the server connection resides
 	 */
 	public void sendFile(String file, Socket servsock) {
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(
-				new FileInputStream(file), "UTF-8"))) {
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))) {
 			OutputStreamWriter osw = new OutputStreamWriter(servsock.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
 			String line;
-
+			
+			String checksum = util.getChecksum(new File(file));
 			while ((line = br.readLine()) != null) {
 				System.out.println(line);
 				out.write(line + "\n");
@@ -154,8 +155,7 @@ public class JFilesServer implements Runnable {
 				index++;
 			}
 			String newFile = file.substring(0, index) + "-copy.txt";
-			bw = new BufferedWriter(
-					new OutputStreamWriter(new FileOutputStream(newFile), "UTF-8"));
+			bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(newFile), "UTF-8"));
 			String line;
 			while ((line = br.readLine()) != null) {
 				System.out.println(line);
@@ -174,61 +174,6 @@ public class JFilesServer implements Runnable {
 				}
 			}
 		}
-	}
-	
-	/** 
-	 * Method for producing a Checksum.
-	 * Takes in a file type and converts it into an MD5 
-	 * standard checksum which is returned in the form of a byte array.
-	 * 
-	 * @param file the file to be digested into a checksum
-	 * @return a byte array containing the processed file
-	 */
-	public byte[] getChecksum(File file) {
-		// Initialize some variables
-		byte[] checksum = null;
-		FileInputStream fileSent = null;
-
-		try {
-			MessageDigest checkFile = MessageDigest.getInstance("MD5");
-			// @SuppressWarnings("resource")
-			fileSent = new FileInputStream(file);
-			// Creating a byte array so we can read the bytes of the file in
-			// chunks
-			byte[] chunkOfBytes = new byte[(int) file.length()];
-			// used as the place holder for the array
-			int startPoint = 0;
-
-			while ((startPoint = fileSent.read(chunkOfBytes)) != -1) {
-				checkFile.update(chunkOfBytes, 0, startPoint);
-			}
-			// the finalized checksum
-			checksum = checkFile.digest();
-			System.out.print("Digest(in bytes):: ");
-			for (int i = 0; i < checksum.length - 1; i++) {
-				System.out.print(checksum[i]);
-			}
-			System.out.println();
-
-		} catch (NoSuchAlgorithmException e) {
-			//e.printStackTrace();
-			logger.error("An error occurred while preparing checksum", e);
-		} catch (FileNotFoundException e) {
-			//e.printStackTrace();
-			logger.error("File was not found", e);
-		} catch (IOException e) {
-			//e.printStackTrace();
-			logger.error("An error occurred while reading file", e);
-		} finally {
-			if (fileSent != null) {
-				try {
-					fileSent.close();
-				} catch (IOException e) {
-					logger.error("An error occured while closing connection to file", e);
-				}
-			}
-		}
-		return checksum;
 	}
 	
 	/**
