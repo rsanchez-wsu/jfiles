@@ -67,10 +67,11 @@ public class FileTest {
 	 * the original files and make sure that they are deleted from the
 	 * filesystem.
 	 * 
-	 * This method MUST call the testDelete method before testing the actual
+	 * <p>This method MUST call the testDelete method before testing the actual
 	 * move method. This is because, since the paste method in move is private,
 	 * and needs to stay private, we cannot access this form of the paste method
-	 * outside of the move method. This, in turn, means that we need to come up with a way of singling out the 
+	 * outside of the move method. This, in turn, means that we need to come up
+	 * with a way of singling out the
 	 * 
 	 */
 	public static void testMove() {
