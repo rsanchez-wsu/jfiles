@@ -20,6 +20,7 @@
  */
 
 package edu.wright.cs.jfiles.server;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -130,11 +131,13 @@ public class JFilesServer implements Runnable {
 	 * @param servsock the socket where the server connection resides
 	 */
 	public void sendFile(String file, Socket servsock) {
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))) {
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(
+				new FileInputStream(file), "UTF-8"))) {
 			OutputStreamWriter osw = new OutputStreamWriter(servsock.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
 			String line;
 			
+			@SuppressWarnings("unused")	//to be implemented
 			String checksum = util.getChecksum(new File(file));
 			while ((line = br.readLine()) != null) {
 				System.out.println(line);
