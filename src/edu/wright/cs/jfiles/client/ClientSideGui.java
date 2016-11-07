@@ -59,6 +59,14 @@ public class ClientSideGui extends Application {
 	// Variables
 	String username = "";
 	String password = "";
+	Button exitButton;
+	Button connectButton;
+	Label noConnectionLabel;
+	Label invalidLabel;
+	Label emptyUsernameFieldLabel;
+	Label emptyPasswordFieldLabel;
+	TextField usernameTextField;
+	TextField passwordTextField;
 
 	/**
 	 * This method is where most visual elements are created and manipulated.
@@ -77,96 +85,43 @@ public class ClientSideGui extends Application {
 		passwordLabel = createLoginLabel("Password", "#0101DF", "Currier New", 20);
 
 		// Error Labels
-		Label noConnectionLabel;
 		noConnectionLabel = createErrorLabel("No Connection Detected.", false, "#FF0000");
-		Label invalidLabel;
 		invalidLabel = createErrorLabel("Incorrect Username & Password Combination.", false,
 				"#FF0000");
-		Label emptyUsernameFieldLabel;
 		emptyUsernameFieldLabel = createErrorLabel("Username Field Must Be Filled In.", false,
 				"#FF0000");
-		Label emptyPasswordFieldLabel;
 		emptyPasswordFieldLabel = createErrorLabel("Password Field Must Be Filled In.", false,
 				"#FF0000");
 
 		// Text Field Creation
-		TextField usernameTextField = new TextField();
+		usernameTextField = new TextField();
 		usernameTextField.setPromptText("Enter your Username.");
 		usernameTextField.setPrefColumnCount(25);
 		usernameTextField.getText();
 
-		TextField passwordTextField = new TextField();
+		passwordTextField = new TextField();
 		passwordTextField.setPromptText("Enter your Password.");
 		passwordTextField.setPrefColumnCount(25);
 		passwordTextField.getText();
 
-		// Button Creation
-		Button exitButton = new Button("Exit");
+		// Button Styling
+		exitButton = new Button("Exit");
 		exitButton.setStyle("-fx-font-size: 20px;" + "-fx-font-family: 'Currier New' ;"
 				+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
 
-		Button connectButton = new Button("Connect");
+		connectButton = new Button("Connect");
 		connectButton.setStyle("-fx-font-size: 20px;" + "-fx-font-family: 'Currier New' ;"
 				+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
 
-		// exitButton DropShadow
-		DropShadow exitButtonShadow = new DropShadow();
-		// Adding the shadow when the mouse cursor is on
-		exitButton.addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent exitButtonMouseOver) {
-				exitButton.setEffect(exitButtonShadow);
-			}
-		});
-		// Removing the shadow when the mouse cursor is off
-		exitButton.addEventHandler(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent exitButtonMouseNotOver) {
-				exitButton.setEffect(null);
-			}
-		});
+		// Adding DropShadow s
+		exitButton.addEventHandler(MouseEvent.MOUSE_ENTERED, new AddExitDropShadow());
+		connectButton.addEventHandler(MouseEvent.MOUSE_ENTERED, new AddConnectDropShadow());
+		// Removing DropShadows
+		exitButton.addEventHandler(MouseEvent.MOUSE_EXITED, new RemoveExitDropShadow());
+		connectButton.addEventHandler(MouseEvent.MOUSE_EXITED, new RemoveConnectDropShadow());
 
-		// connectButton DropShadow
-		DropShadow connectButtonShadow = new DropShadow();
-		// Adding the shadow when the mouse cursor is on
-		connectButton.addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent connectButtonMouseOver) {
-				connectButton.setEffect(connectButtonShadow);
-			}
-		});
-		// Removing the shadow when the mouse cursor is off
-		connectButton.addEventHandler(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent connectButtonMouseNotOver) {
-				connectButton.setEffect(null);
-			}
-		});
-
-		// Setting an action for the connectButton
-		connectButton.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent connectButtonClicked) {
-				// Hide Old Error Labels
-				noConnectionLabel.setVisible(false);
-				invalidLabel.setVisible(false);
-				emptyUsernameFieldLabel.setVisible(false);
-				emptyPasswordFieldLabel.setVisible(false);
-
-				if ((usernameTextField.getText() == null
-						|| usernameTextField.getText().trim().isEmpty())) {
-					emptyUsernameFieldLabel.setVisible(true);
-				} else if ((passwordTextField.getText() == null
-						|| passwordTextField.getText().trim().isEmpty())) {
-					emptyPasswordFieldLabel.setVisible(true);
-				} else {
-					username = usernameTextField.getText();
-					password = passwordTextField.getText();
-					System.out.println(
-							"username = " + username + "\n" + "password = " + password + "\n");
-				}
-			}
-		});
+		// connectButton Action
+		connectButton.setOnAction(new ConnectButtonClicked());
 
 		// exitButton action closes the program
 		exitButton.setOnAction(actionEvent -> Platform.exit());
@@ -318,4 +273,76 @@ public class ClientSideGui extends Application {
 		// Launches the GUI
 		launch(args);
 	}
+
+	/**
+	 * EventHandler for when the connectButton is clicked. Collects the users's
+	 * input or displays appropriate error messages.
+	 */
+	public class ConnectButtonClicked implements EventHandler<ActionEvent> {
+		@Override
+		public void handle(ActionEvent connectButtonClicked) {
+			// Hide Old Error Labels
+			noConnectionLabel.setVisible(false);
+			invalidLabel.setVisible(false);
+			emptyUsernameFieldLabel.setVisible(false);
+			emptyPasswordFieldLabel.setVisible(false);
+			// Display New Error Labels
+			if ((usernameTextField.getText() == null
+					|| usernameTextField.getText().trim().isEmpty())) {
+				emptyUsernameFieldLabel.setVisible(true);
+			} else if ((passwordTextField.getText() == null
+					|| passwordTextField.getText().trim().isEmpty())) {
+				emptyPasswordFieldLabel.setVisible(true);
+			} else {
+				username = usernameTextField.getText();
+				password = passwordTextField.getText();
+				// Just uses the variables to shutup FindBugs
+				System.out
+						.println("Username = " + username + "\n" + "Password = " + password + "\n");
+			}
+		}
+	}
+
+	/**
+	 * Adds a DropShadow to the exitButton when it is moused over.
+	 */
+	public class RemoveConnectDropShadow implements EventHandler<MouseEvent> {
+		@Override
+		public void handle(MouseEvent connectButtonMouseNotOver) {
+			connectButton.setEffect(null);
+		}
+	}
+
+	/**
+	 * Adds a DropShadow to the connect button when it is moused over.
+	 */
+	public class RemoveExitDropShadow implements EventHandler<MouseEvent> {
+		@Override
+		public void handle(MouseEvent exitButtonMouseNotOver) {
+			exitButton.setEffect(null);
+		}
+	}
+
+	/**
+	 * Removes the DropShadow from the exitButton when the mouse has left it.
+	 */
+	public class AddExitDropShadow implements EventHandler<MouseEvent> {
+		@Override
+		public void handle(MouseEvent exitButtonMouseOver) {
+			DropShadow dropShadow = new DropShadow();
+			exitButton.setEffect(dropShadow);
+		}
+	}
+
+	/**
+	 * Removes the DropShadow from the connectButton when the mouse has left it.
+	 */
+	public class AddConnectDropShadow implements EventHandler<MouseEvent> {
+		@Override
+		public void handle(MouseEvent exitButtonMouseOver) {
+			DropShadow dropShadow = new DropShadow();
+			connectButton.setEffect(dropShadow);
+		}
+	}
+
 }
