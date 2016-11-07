@@ -21,8 +21,6 @@
 
 package edu.wright.cs.jfiles.client;
 
-import edu.wright.cs.jfiles.server.JFilesServer;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -68,34 +66,33 @@ public class JFilesClient implements Runnable {
 	private static void init() throws IOException {
 		Properties prop = new Properties();
 		FileInputStream fis = null;
-		File config = null;	
-		
-		//Array of strings containing possible paths to check for config files
-		String[] configPaths = {"$HOME/.jfiles/clientConfig.xml",
-				"/usr/local/etc/jfiles/clientConfig.xml",
-				"/opt/etc/jfiles/clientConfig.xml",
-				"/etc/jfiles/clientConfig.xml",
-				"%PROGRAMFILES%/jFiles/etc/clientConfig.xml",
-				"%APPDATA%/jFiles/etc/clientConfig.xml"};
-		
-		//Checking location(s) for the config file);
+		File config = null;
+
+		// Array of strings containing possible paths to check for config files
+		String[] configPaths = { "$HOME/.jfiles/clientConfig.xml",
+				"/usr/local/etc/jfiles/clientConfig.xml", "/opt/etc/jfiles/clientConfig.xml",
+				"/etc/jfiles/clientConfig.xml", "%PROGRAMFILES%/jFiles/etc/clientConfig.xml",
+				"%APPDATA%/jFiles/etc/clientConfig.xml" };
+
+		// Checking location(s) for the config file);
 		for (int i = 0; i < configPaths.length; i++) {
 			if (new File(configPaths[i]).exists()) {
 				config = new File(configPaths[i]);
 				break;
 			}
 		}
-		
-		//Output location where the config file was found. Otherwise warn and use defaults.
-		if (config == null) {		
+
+		// Output location where the config file was found. Otherwise warn and
+		// use defaults.
+		if (config == null) {
 			logger.info("No config file found. Using default values.");
 		} else {
 			logger.info("Config file found in " + config.getPath());
-			//Read file
+			// Read file
 			try {
-				//Reads xmlfile into prop object as key value pairs
+				// Reads xmlfile into prop object as key value pairs
 				fis = new FileInputStream(config);
-				prop.loadFromXML(fis);			
+				prop.loadFromXML(fis);
 			} catch (IOException e) {
 				logger.error("IOException occured when trying to access the server config", e);
 			} finally {
@@ -104,18 +101,19 @@ public class JFilesClient implements Runnable {
 				}
 			}
 		}
-	
-		//Add setters here. First value is the key name and second is the default value.
-		//Default values are require as they are used if the config file cannot be found OR if
+
+		// Add setters here. First value is the key name and second is the
+		// default value.
+		// Default values are require as they are used if the config file cannot
+		// be found OR if
 		// the config file doesn't contain the key.
-		port = Integer.parseInt(prop.getProperty("port","9786"));
+		port = Integer.parseInt(prop.getProperty("port", "9786"));
 		logger.info("Config set to port " + port);
-		
-		host = prop.getProperty("host","localhost");
-		logger.info("Config set max threads to " + host);		
+
+		host = prop.getProperty("host", "localhost");
+		logger.info("Config set max threads to " + host);
 	}
-	
-	
+
 	@Override
 	public void run() {
 		try (Socket socket = new Socket(host, port)) {
@@ -130,10 +128,8 @@ public class JFilesClient implements Runnable {
 				System.out.println(line);
 			}
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -149,7 +145,6 @@ public class JFilesClient implements Runnable {
 		try {
 			init();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		JFilesClient jf = new JFilesClient();

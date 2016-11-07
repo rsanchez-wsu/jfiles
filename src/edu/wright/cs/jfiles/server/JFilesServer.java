@@ -31,7 +31,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -74,38 +73,37 @@ public class JFilesServer implements Runnable {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	
+
 	private static void init() throws IOException {
 		Properties prop = new Properties();
 		FileInputStream fis = null;
-		File config = null;	
-		
-		//Array of strings containing possible paths to check for config files
-		String[] configPaths = {"$HOME/.jfiles/serverConfig.xml",
-				"/usr/local/etc/jfiles/serverConfig.xml",
-				"/opt/etc/jfiles/serverConfig.xml",
-				"/etc/jfiles/serverConfig.xml",
-				"%PROGRAMFILES%/jFiles/etc/serverConfig.xml",
-				"%APPDATA%/jFiles/etc/serverConfig.xml"};
-		
-		//Checking location(s) for the config file);
+		File config = null;
+
+		// Array of strings containing possible paths to check for config files
+		String[] configPaths = { "$HOME/.jfiles/serverConfig.xml",
+				"/usr/local/etc/jfiles/serverConfig.xml", "/opt/etc/jfiles/serverConfig.xml",
+				"/etc/jfiles/serverConfig.xml", "%PROGRAMFILES%/jFiles/etc/serverConfig.xml",
+				"%APPDATA%/jFiles/etc/serverConfig.xml" };
+
+		// Checking location(s) for the config file);
 		for (int i = 0; i < configPaths.length; i++) {
 			if (new File(configPaths[i]).exists()) {
 				config = new File(configPaths[i]);
 				break;
 			}
 		}
-		
-		//Output location where the config file was found. Otherwise warn and use defaults.
-		if (config == null) {		
+
+		// Output location where the config file was found. Otherwise warn and
+		// use defaults.
+		if (config == null) {
 			logger.info("No config file found. Using default values.");
 		} else {
 			logger.info("Config file found in " + config.getPath());
-			//Read file
+			// Read file
 			try {
-				//Reads xmlfile into prop object as key value pairs
+				// Reads xmlfile into prop object as key value pairs
 				fis = new FileInputStream(config);
-				prop.loadFromXML(fis);			
+				prop.loadFromXML(fis);
 			} catch (IOException e) {
 				logger.error("IOException occured when trying to access the server config", e);
 			} finally {
@@ -114,32 +112,38 @@ public class JFilesServer implements Runnable {
 				}
 			}
 		}
-	
-		//Add setters here. First value is the key name and second is the default value.
-		//Default values are require as they are used if the config file cannot be found OR if
+
+		// Add setters here. First value is the key name and second is the
+		// default value.
+		// Default values are require as they are used if the config file cannot
+		// be found OR if
 		// the config file doesn't contain the key.
-		PORT = Integer.parseInt(prop.getProperty("Port","9786"));
+		PORT = Integer.parseInt(prop.getProperty("Port", "9786"));
 		logger.info("Config set to port " + PORT);
-		
-		MAXTHREADS = Integer.parseInt(prop.getProperty("maxThreads","10"));
-		logger.info("Config set max threads to " + MAXTHREADS);		
+
+		MAXTHREADS = Integer.parseInt(prop.getProperty("maxThreads", "10"));
+		logger.info("Config set max threads to " + MAXTHREADS);
 	}
-	
+
 	/**
 	 * This is a Javadoc comment to statisfy Checkstyle.
-	 * @throws IOException When bad things happen
+	 * 
+	 * @throws IOException
+	 *             When bad things happen
 	 */
 	public JFilesServer() throws IOException {
 		serverSocket = new ServerSocket(PORT);
 	}
-	
+
 	/**
 	 * Creates an XML file.
-	 * @throws TransformerFactoryConfigurationError error in configuration
-	 * @throws TransformerException error in configuration
+	 * 
+	 * @throws TransformerFactoryConfigurationError
+	 *             error in configuration
+	 * @throws TransformerException
+	 *             error in configuration
 	 */
-	private void createXml() throws TransformerFactoryConfigurationError, 
-					TransformerException {
+	private void createXml() throws TransformerFactoryConfigurationError, TransformerException {
 		Document doc = null;
 		try {
 			// Create new XML document
@@ -148,34 +152,37 @@ public class JFilesServer implements Runnable {
 			DocumentBuilder builder;
 			builder = factory.newDocumentBuilder();
 			doc = builder.newDocument();
-			
+
 			// Add elements to new document
 			Element root = doc.createElement("fileSystem");
 			doc.appendChild(root);
-			Node dir = createNode(doc,"directory");
-			dir.appendChild(createNode(doc,"file"));
+			Node dir = createNode(doc, "directory");
+			dir.appendChild(createNode(doc, "file"));
 			root.appendChild(dir);
-			
-			//Output XML to console
+
+			// Output XML to console
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			DOMSource source = new DOMSource(doc);
 			StreamResult console = new StreamResult(System.out);
 			transformer.transform(source, console);
-			
+
 		} catch (ParserConfigurationException e) {
-			logger.error("An error occurred while configuring the parser",e);
+			logger.error("An error occurred while configuring the parser", e);
 		} catch (TransformerConfigurationException e) {
 			logger.error("An error occurred while configuring the transformer", e);
 		} catch (TransformerFactoryConfigurationError e) {
-			logger.error("An error occurred while configuring the transformer factory",e);
+			logger.error("An error occurred while configuring the transformer factory", e);
 		}
 	}
-	
+
 	/**
 	 * Create an xml node.
-	 * @param doc document to create node for
-	 * @param name name of node that should be created
+	 * 
+	 * @param doc
+	 *            document to create node for
+	 * @param name
+	 *            name of node that should be created
 	 * @return returns a Node element
 	 */
 	private Node createNode(Document doc, String name) {
@@ -225,8 +232,7 @@ public class JFilesServer implements Runnable {
 				out.flush();
 			}
 		} catch (IOException e) {
-			//TODO Auto-generated catch block
-			//e.printStackTrace();
+			// e.printStackTrace();
 			logger.error("Some error occured", e);
 		}
 	}
@@ -245,14 +251,12 @@ public class JFilesServer implements Runnable {
 			try {
 				jf.createXml();
 			} catch (TransformerFactoryConfigurationError e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (TransformerException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			//Thread thread = new Thread(jf);
-			//thread.start();
+			// Thread thread = new Thread(jf);
+			// thread.start();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
