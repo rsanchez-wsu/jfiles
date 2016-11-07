@@ -157,7 +157,7 @@ public class JFilesServer implements Runnable {
 			break;
 		case "FIND":
 			if (isValid(baseCommand)) {
-				findCmd(dir, ID, baseCommand[1].toLowerCase(Locale.ENGLISH));
+				findCmd(dir, ID, baseCommand[1]);
 			} else {
 
 				clients[findClient(ID)].send("Invaild Command\n");
@@ -167,7 +167,7 @@ public class JFilesServer implements Runnable {
 			break;
 		case "FINDR":
 			if (isValid(baseCommand)) {
-				recursiveFindCmd(dir, ID, baseCommand[1].toLowerCase(Locale.ENGLISH));
+				recursiveFindCmd(dir, ID, baseCommand[1]);
 			} else {
 				clients[findClient(ID)].send("Invaild Command\n");
 			}
@@ -270,11 +270,9 @@ public class JFilesServer implements Runnable {
 		try (DirectoryStream<Path> directoryStream =
 				Files.newDirectoryStream(Paths.get(dir), searchTerm)) {
 			for (Path path : directoryStream) {
-				if (path.toString().toLowerCase(Locale.ENGLISH).contains(searchTerm)) {
-					// out.write(path.toString() + "\n");
-					clients[findClient(ID)].send(path.toString() + "\n");
-					findCount++;
-				}
+				// out.write(path.toString() + "\n");
+				clients[findClient(ID)].send(path.toString() + "\n");
+				findCount++;
 			}
 			System.out.println("Found " + findCount + " file(s) in " + dir + " that contains \""
 					+ searchTerm + "\"\n");
