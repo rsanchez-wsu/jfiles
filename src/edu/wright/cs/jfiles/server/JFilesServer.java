@@ -21,6 +21,8 @@
 
 package edu.wright.cs.jfiles.server;
 
+import edu.wright.cs.jfiles.common.NetUtil;
+import edu.wright.cs.jfiles.socketmanagement.SocketManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,8 +36,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import edu.wright.cs.jfiles.common.*;
-
 
 /**
  * The main class of the JFiles server application.
@@ -52,6 +52,7 @@ public class JFilesServer implements Runnable {
 	private Socket socket;
 	private boolean running = true;
 	NetUtil util = new NetUtil();
+	private SocketManager sockMan = null;
 	
 	static {
 		try {
@@ -68,6 +69,7 @@ public class JFilesServer implements Runnable {
 	 */
 	public JFilesServer(Socket sock) {
 		socket = sock;
+		sockMan = new SocketManager(socket);
 	}
 
 	@Override
@@ -75,10 +77,11 @@ public class JFilesServer implements Runnable {
 		//String dir = System.getProperty("user.dir");
 		try {
 			//Objects to read output from client
-			InputStreamReader isr = new InputStreamReader(socket.getInputStream(), UTF_8);
-			BufferedReader in = new BufferedReader(isr);
+			//InputStreamReader isr = new InputStreamReader(socket.getInputStream(), UTF_8);
+			//BufferedReader in = new BufferedReader(isr);
 			while (running) {
-				String cmd = in.readLine();
+				//String cmd = in.readLine();
+				String cmd = sockMan.getCommandInput();
 				if (cmd != null) {
 					//cmdary splits up cmd to distinguish command
 					//from arguments
@@ -92,12 +95,23 @@ public class JFilesServer implements Runnable {
 					//Client wants a file from the server
 					//Send file to client
 					case "FILE":
-						sendFile(cmdary [1], socket);
+						//sendFile(cmdary [1], socket);
+						sockMan.sendFile(new File(cmdary[1]));
 						break;
 					//Client wants to send file to server
 					//Prepare to receive file from client
 					case "GETFILE":
 						getFile(cmdary[1], socket);
+						break;
+					//Used by the socket manager to notify server of incoming file.
+					case "REC_FILE":
+						int identifier = Integer.parseInt(cmdary[1]);
+						String filename = cmdary[2];
+						File file = null;
+						while (file == null) {
+							file = sockMan.getFile(identifier);
+						}
+						file.renameTo(new File("copy-" + filename));
 						break;
 					//List command existed in repository's initial state
 					//May be obsolete
@@ -188,7 +202,7 @@ public class JFilesServer implements Runnable {
 			File copiedFile = new File(newFile);
 			String checkNewFile = util.getChecksum(copiedFile);
 			
-			if (checkNewFile.equalsIgnoreCase(sentCheck)){
+			if (checkNewFile.equalsIgnoreCase(sentCheck)) {
 				System.out.println("An error occured in sending the file");
 				logger.error("An error occured in sending the file");
 			}

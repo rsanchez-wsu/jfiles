@@ -21,6 +21,8 @@
 
 package edu.wright.cs.jfiles.client;
 
+import edu.wright.cs.jfiles.common.NetUtil;
+import edu.wright.cs.jfiles.socketmanagement.SocketManager;
 //import org.apache.logging.log4j.LogManager;
 //import org.apache.logging.log4j.Logger;
 
@@ -40,8 +42,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 
-import edu.wright.cs.jfiles.common.NetUtil;
-
 /**
  * The main class of the JFiles client application.
  * 
@@ -55,6 +55,8 @@ public class JFilesClient implements Runnable {
 	private int port = 9786;
 	private static final String UTF_8 = "UTF-8";
 	private boolean running = true;
+	static volatile String serverCommand = null;
+	private SocketManager sockMan;
 	private Scanner kb;
 	NetUtil util = new NetUtil();
 
@@ -67,15 +69,54 @@ public class JFilesClient implements Runnable {
 	@Override
 	public void run() {
 		try (Socket socket = new Socket(host, port)) {
+			sockMan = new SocketManager(socket);
+			kb = new Scanner(System.in);
+			Thread keyboard = new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					while (running) {
+						serverCommand = kb.nextLine();
+					}
+				}
+
+			});
+			keyboard.setDaemon(true);
+			keyboard.start();
+			Thread internalCommand = new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					while (running) {
+						serverCommand = sockMan.getCommandInput();
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+
+				}
+
+			});
+			internalCommand.setDaemon(true);
+			internalCommand.start();
+
+			System.out.println("Send a command to the server.");
+			System.out.println("FILE to receive file");
+			System.out.println("SENDFILE to send file to server");
+			System.out.println("LIST to receive server directory \n");
+			
 			while (running) {
-				System.out.println("Send a command to the server.");
-				System.out.println("FILE to receive file");
-				System.out.println("SENDFILE to send file to server");
-				System.out.println("LIST to receive server directory \n");
 				
 				// Read in command as: "<COMMAND> <FILE>"
-				kb = new Scanner(System.in, UTF_8);
-				String line = kb.nextLine();
+				//kb = new Scanner(System.in, UTF_8);
+				//String line = kb.nextLine();
+				String line = serverCommand;
+				if (line == null) {
+					continue;
+				}
 				
 				// Parse command and convert to upper case
 				String[] cmdary = line.split(" ");
@@ -84,11 +125,12 @@ public class JFilesClient implements Runnable {
 				// Find which command was entered
 				switch (commandInput) {
 				case "FILE":
-					cmdary[1] = getFileName(0);
+					//cmdary[1] = getFileName(0);
 					Thread thrd0 = new Thread(new Runnable() {
 						@Override
 						public void run() {
-							fileCommand(cmdary[1], socket);
+							//fileCommand(cmdary[1], socket);
+							sockMan.sendCommand(cmdary[0] + " " + cmdary[1]);
 						}
 					});
 					thrd0.start();
@@ -103,17 +145,26 @@ public class JFilesClient implements Runnable {
 					});
 					thrd1.start();
 					break;
+				case "REC_FILE":
+					int identifier = Integer.parseInt(cmdary[1]);
+					String filename = cmdary[2];
+					File file = null;
+					while (file == null) {
+						file = sockMan.getFile(identifier);
+					}
+					file.renameTo(new File("copy-" + filename));
+					break;
 				case "LIST":
 					System.out.println("**List of files**");
 					break;
 				case "EXIT":
-					break;
 				case "QUIT":
 					running = false;
 					Thread thrd2 = new Thread(new Runnable() {
 						@Override
 						public void run() {
-							fileCommand(cmdary[0], socket);
+							//fileCommand(cmdary[0], socket);
+							sockMan.sendCommand(cmdary[0]);
 						}
 					});
 					thrd2.start();
@@ -123,6 +174,7 @@ public class JFilesClient implements Runnable {
 					System.out.println("Not a valid command");
 					break;
 				}
+				commandInput = null;
 			}
 		} catch (UnknownHostException e) {
 		//	logger.error("Could not connect to host at that address", e);
@@ -173,7 +225,7 @@ public class JFilesClient implements Runnable {
 				File copiedFile = new File(newFile);
 				String checkNewFile = util.getChecksum(copiedFile);
 				
-				if (checkNewFile.equalsIgnoreCase(sentCheck)){
+				if (checkNewFile.equalsIgnoreCase(sentCheck)) {
 					System.out.println("An error occured in sending the file");
 					//Logger.error("An error occured in sending the file");
 				}

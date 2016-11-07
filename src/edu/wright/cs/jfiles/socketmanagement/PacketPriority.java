@@ -27,7 +27,7 @@ package edu.wright.cs.jfiles.socketmanagement;
  * @author Daryl Arouchian
  *
  */
-public enum Priority {
+public enum PacketPriority {
 	LOW, NORMAL, HIGH, IMMEDIATE;
 
 }
