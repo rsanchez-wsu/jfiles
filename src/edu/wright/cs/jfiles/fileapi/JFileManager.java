@@ -137,6 +137,7 @@ public class JFileManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error Cutting Files");
+			logger.error(e.getStackTrace());
 		}
 	}
 
@@ -166,6 +167,7 @@ public class JFileManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error Copying Files.");
+			logger.error(e.getStackTrace());
 		}
 	}
 
@@ -188,6 +190,7 @@ public class JFileManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error pasting files.");
+			logger.error(e.getStackTrace());
 		}
 
 	}
@@ -219,6 +222,7 @@ public class JFileManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error Moving Files");
+			logger.error(e.getStackTrace());
 		}
 
 	}
@@ -266,6 +270,7 @@ public class JFileManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error Deleting");
+			logger.error(e.getStackTrace());
 		}
 
 	}
@@ -313,6 +318,7 @@ public class JFileManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error Moving Files");
+			logger.error(e.getStackTrace());
 		}
 	}
 
@@ -335,6 +341,7 @@ public class JFileManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error Renaming File");
+			logger.error(e.getStackTrace());
 		}
 
 	}
@@ -397,6 +404,7 @@ public class JFileManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error Opening the File");
+			logger.error(e.getStackTrace());
 		}
 	}
 
@@ -434,6 +442,7 @@ public class JFileManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error Opening File");
+			logger.error(e.getStackTrace());
 		}
 	}
 
@@ -452,6 +461,7 @@ public class JFileManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error Requesting Type");
+			logger.error(e.getStackTrace());
 		}
 
 	}

@@ -264,6 +264,7 @@ public class JFile implements Cloneable, Serializable {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error getting type.");
+			logger.error(e.getStackTrace());
 		}
 		//temporary until all ifs get a return.
 		return null;
@@ -427,17 +428,19 @@ public class JFile implements Cloneable, Serializable {
 	@Override
 	public JFile clone() {
 		JFile output;
-		logger.info("Creating clone of JFile.");
+		logger.info("Creating a clone of a JFile.");
 		try {
 			output = (JFile) super.clone();
 			output.file = new File(file.getAbsolutePath());
 			output.tagList = new HashMap<>(tagList);
 			return output;
 		} catch (CloneNotSupportedException e1) {
-			logger.error("Clone call on JFile and caught a Clone " + "Not Supported Exception.");
+			logger.error("Clone call on JFile caught a Clone Not Supported Exception.");
+			logger.error(e1.getStackTrace());
+			logger.info("Trying to create a clone a different way...");
+			System.err.println("Clone call on JFile caught a Clone Not Supported Exception.");
 			e1.printStackTrace();
 			System.out.println("Trying to clone the JFile a different way.");
-			logger.info("Trying to create a clone a different way...");
 			try {
 				output = new JFile(new File(file.getAbsolutePath()),
 						new HashMap<>(tagList));
@@ -445,6 +448,9 @@ public class JFile implements Cloneable, Serializable {
 				return output;
 			} catch (Exception e2) {
 				logger.error("Clone has caught a second error. Returning null.");
+				logger.error(e2.getStackTrace());
+				System.err.println("Clone has caught a second error. Returning null.");
+				e2.printStackTrace();
 				return null;
 			}
 		}
