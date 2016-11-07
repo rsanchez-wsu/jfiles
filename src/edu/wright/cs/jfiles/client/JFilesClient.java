@@ -169,6 +169,7 @@ public class JFilesClient implements Runnable {
 					});
 					thrd2.start();
 					thrd2.join();
+					sockMan.close();
 					break;
 				default:
 					System.out.println("Not a valid command");

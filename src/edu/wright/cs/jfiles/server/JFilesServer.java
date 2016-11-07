@@ -121,6 +121,7 @@ public class JFilesServer implements Runnable {
 					case "EXIT":
 					case "QUIT":
 						running = false;
+						sockMan.close();
 						socket.close();
 						break;
 
