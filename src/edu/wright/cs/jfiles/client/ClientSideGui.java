@@ -56,15 +56,15 @@ import javafx.stage.Stage;
  */
 public class ClientSideGui extends Application {
 
+	// Variables
+	String username = "";
+	String password = "";
+
 	/**
 	 * This method is where most visual elements are created and manipulated.
 	 */
 	@Override
 	public void start(Stage primaryStage) {
-
-		// Variables
-		// String username = "";
-		// String password = "";
 
 		// Login Window Construction
 
@@ -101,15 +101,10 @@ public class ClientSideGui extends Application {
 		passwordTextField.getText();
 
 		// Button Creation
-		// Image image name = new
-		// Image(getClass().getResourceAsStream("imagename.png"));
-		// Button button3 = new Button("Accept", new ImageView(imageOk));
 		Button exitButton = new Button("Exit");
 		exitButton.setStyle("-fx-font-size: 20px;" + "-fx-font-family: 'Currier New' ;"
 				+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
 
-		// Image image name = new
-		// Image(getClass().getResourceAsStream("imagename.png"));
 		Button connectButton = new Button("Connect");
 		connectButton.setStyle("-fx-font-size: 20px;" + "-fx-font-family: 'Currier New' ;"
 				+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
@@ -160,23 +155,20 @@ public class ClientSideGui extends Application {
 
 				if ((usernameTextField.getText() == null
 						|| usernameTextField.getText().trim().isEmpty())) {
-					// username = usernameTextField.getText();
-					// password = passwordTextField.getText();
 					emptyUsernameFieldLabel.setVisible(true);
 				} else if ((passwordTextField.getText() == null
 						|| passwordTextField.getText().trim().isEmpty())) {
-					// username = usernameTextField.getText();
-					// password = passwordTextField.getText();
 					emptyPasswordFieldLabel.setVisible(true);
+				} else {
+					username = usernameTextField.getText();
+					password = passwordTextField.getText();
+					System.out.println(
+							"username = " + username + "\n" + "password = " + password + "\n");
 				}
-				/*
-				 * if correct username = usernameTextField.getText(); //
-				 * password = passwordTextField.getText();
-				 */
 			}
 		});
 
-		// Setting an action for the exitButton
+		// exitButton action closes the program
 		exitButton.setOnAction(actionEvent -> Platform.exit());
 
 		// HBox For BorderPane Top Alignment
@@ -200,9 +192,6 @@ public class ClientSideGui extends Application {
 		loginVbox.getChildren().add(passwordLabel);
 		loginVbox.getChildren().add(passwordTextField);
 		loginVbox.getChildren().add(loginStack);
-		// Use for Error Labels
-		// loginVbox.getChildren().add();
-		// loginVbox.getChildren().add();
 
 		// HBox For BorderPane Bottom Alignment
 		HBox loginHbox2 = new HBox();
@@ -215,7 +204,7 @@ public class ClientSideGui extends Application {
 		loginBorderPane.setTop(loginHbox);
 		loginBorderPane.setCenter(loginVbox);
 		loginBorderPane.setBottom(loginHbox2);
-		// loginMainPane.getChildren().add(featuresNames);
+
 		Scene loginScene = new Scene(loginBorderPane, 300, 280);
 
 		Stage loginStage = new Stage();
@@ -224,6 +213,8 @@ public class ClientSideGui extends Application {
 		loginStage.setResizable(false);
 		// Displays the start Stage and its contents.
 		loginStage.show();
+
+		// Main Window Creation
 
 		// Pane Creation
 		BorderPane basePane = new BorderPane();
