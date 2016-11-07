@@ -23,6 +23,8 @@ package edu.wright.cs.jfiles.client;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -36,65 +38,80 @@ import java.util.Scanner;
  * @author Roberto C. Sánchez &lt;roberto.sanchez@wright.edu&gt;
  *
  */
-public class JFilesClient implements Runnable {
+public class JFilesClient implements Runnable {  
+	private Socket socket              = null;
+	private Thread thread              = null;
+	private DataInputStream  console   = null;
+	private DataOutputStream streamOut = null;
+	private JFilesClientThread client    = null;
 
-	private String host = "localhost";
-	private int port = 9786;
-	private static final String UTF_8 = "UTF-8";
-
-	/**
-	 * Handles allocating resources needed for the client.
-	 * 
-	 * @throws IOException
-	 *             If there is a problem binding to the socket
-	 */
-	public JFilesClient() {
-	}
-
-	@Override
-	public void run() {
-		try (Socket socket = new Socket(host, port)) {
-			Scanner kb = new Scanner(System.in, "UTF-8");
-			OutputStreamWriter osw = new OutputStreamWriter(socket.getOutputStream(), UTF_8);
-			BufferedWriter out = new BufferedWriter(osw);
-			System.out.println("Send a command to the server.");
-			// System.out.println("FILE to receive file");
-			System.out.println("FIND to search directory for file");
-			System.out.println("LIST to receive server directory");
-			System.out.print("#");
-			String usrcmd = kb.nextLine();
-			kb.close();
-			out.write(usrcmd + "\n");
-			// out.write("LIST\n");
-			out.flush();
-			InputStreamReader isr = new InputStreamReader(socket.getInputStream(), UTF_8);
-			BufferedReader in = new BufferedReader(isr);
-			String line;
-			while ((line = in.readLine()) != null) {
-				out.write(line);
-				System.out.println(line);
-
-			}
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * The main entry point to the program.
-	 * 
-	 * @param args
-	 *            The command-line arguments
-	 */
-	public static void main(String[] args) {
-		System.out.println("Starting the client");
-		JFilesClient jf = new JFilesClient();
-		Thread thread = new Thread(jf);
-		thread.start();
-	}
-
+   public JFilesClient(String serverName, int serverPort) {  
+	   System.out.println("Establishing connection. Please wait ...");
+      try
+      {  socket = new Socket("localhost", 9786);
+         System.out.println("Connected: " + socket);
+         start();
+      }
+      catch(UnknownHostException uhe)
+      {  System.out.println("Host unknown: " + uhe.getMessage()); }
+      catch(IOException ioe)
+      {  System.out.println("Unexpected exception: " + ioe.getMessage()); }
+   }
+   public void run()
+   {  System.out.print(">");
+	   while (thread != null)
+      {  try
+         {  
+    	  	
+    	  	
+    	    streamOut.writeUTF(console.readLine());
+    	   
+            streamOut.flush();
+            
+           
+         }
+         catch(IOException ioe)
+         {  System.out.println("Sending error: " + ioe.getMessage());
+            stop();
+         }
+     
+      }
+	   
+   }
+   public void handle(String msg)
+   {  if (msg.equals(".exit"))
+      {  System.out.println("Good bye. Press RETURN to exit ...");
+         stop();
+      }
+      else
+         System.out.print(msg);
+   }
+   public void start() throws IOException
+   {  console   = new DataInputStream(System.in);
+      streamOut = new DataOutputStream(socket.getOutputStream());
+      if (thread == null)
+      {  client = new JFilesClientThread(this, socket);
+         thread = new Thread(this);                   
+         thread.start();
+      }
+   }
+   public void stop()
+   {  if (thread != null)
+      {  thread.stop();  
+         thread = null;
+      }
+      try
+      {  if (console   != null)  console.close();
+         if (streamOut != null)  streamOut.close();
+         if (socket    != null)  socket.close();
+      }
+      catch(IOException ioe)
+      {  System.out.println("Error closing ..."); }
+      client.close();  
+      client.stop();
+   }
+   public static void main(String args[])
+   {  JFilesClient client = null;
+         client = new JFilesClient("localhost", 9786);
+   }
 }

@@ -57,8 +57,12 @@ public class JFilesServer implements Runnable {
 
 	static final Logger logger = LogManager.getLogger(JFilesServer.class);
 	private static final int PORT = 9786;
-	private final ServerSocket serverSocket;
+	//private final ServerSocket serverSocket;
 	private static final String UTF_8 = "UTF-8";
+	private JFilesServerThread clients[] = new JFilesServerThread[50];
+	private ServerSocket server = null;
+	private Thread thread = null;
+	private int clientCount = 0;
 
 	/**
 	 * Handles allocating resources needed for the server.
@@ -66,114 +70,164 @@ public class JFilesServer implements Runnable {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	public JFilesServer() throws IOException {
-		serverSocket = new ServerSocket(PORT);
+	  JFilesServer(int port) {
+		try {
+			System.out.println("Binding to port " + PORT + ", please wait  ...");
+			server = new ServerSocket(PORT);
+			System.out.println("Server started: " + server);
+			start();
+		} catch (IOException ioe) {
+			System.out.println("Can not bind to port " + PORT + ": " + ioe.getMessage());
+		}
 	}
 
-	@Override
 	public void run() {
+		while (true) {
+			try {
+				System.out.println("Waiting for a client ...");
+				addThread(server.accept());
+			} catch (IOException ioe) {
+				System.out.println("Server accept error: " + ioe);
+				stop();
+			}
+		}
+	}
+
+	public void start() {
+		if (thread == null) {
+			thread = new Thread(this);
+			thread.start();
+		}
+	}
+
+	public void stop() {
+		if (thread != null) {
+			thread.stop();
+			thread = null;
+		}
+	}
+
+	private int findClient(int ID) {
+		for (int i = 0; i < clientCount; i++)
+			if (clients[i].getID() == ID)
+				return i;
+		return -1;
+	}
+
+	public synchronized void handle(int ID, String input) throws IOException {
+
+		// logger.info("Received connection from" +
+		// server.getRemoteSocketAddress());
 		String dir = System.getProperty("user.dir");
 		File history = new File("SearchHistory.txt");
 
 		Locale.setDefault(new Locale("English"));
-		try (Socket server = serverSocket.accept()) {
-			logger.info("Received connection from" + server.getRemoteSocketAddress());
-			InputStreamReader isr = new InputStreamReader(server.getInputStream(), UTF_8);
-			BufferedReader in = new BufferedReader(isr);
+		FileWriter hstWrt = new FileWriter(history); // history writer
+		String cmd;
 
-			FileWriter hstWrt = new FileWriter(history); // history writer
-			String cmd;
-			OutputStreamWriter osw = new OutputStreamWriter(server.getOutputStream(), UTF_8);
+		ExecutablePath executablePath = new ExecutablePath();
+		Environment environment = new Environment();
 
-			ExecutablePath executablePath = new ExecutablePath();
-			Environment environment = new Environment();
+		CommandParser parser = new CommandParser(environment);
+		CommandExecutor executor = new CommandExecutor(executablePath, environment);
+		
+		// out.write("Prompt :> ");
+		// command example
+		// ========================================================================
+		// out.write("Prompt :> ");
+		// CommandLine commandLine = parser.parse(cmd);
+		//
+		// try {
+		// ExecutionResult result = executor.executeCommand(commandLine,
+		// out);
+		// if (result.isExitShell()) {
+		// break;
+		// }
+		// } catch (CommandNotFoundException e) {
+		// out.write(" " + e.getMessage() + ": command not found\n");
+		// }
+		// ========================================================================
 
-			CommandParser parser = new CommandParser(environment);
-			CommandExecutor executor = new CommandExecutor(executablePath, environment);
+		String[] baseCommand = input.split(" ");
 
-			BufferedWriter out = new BufferedWriter(osw);
+		switch (baseCommand[0].toUpperCase(Locale.ENGLISH)) {
+		case "LIST":
 
-			while (null != (cmd = in.readLine()) && true) {
-				if ("".equals(cmd)) {
-					break;
-				}
-				out.write("Prompt :> ");
-				// command example
-				// ========================================================================
-				// out.write("Prompt :> ");
-				// CommandLine commandLine = parser.parse(cmd);
-				//
-				// try {
-				// ExecutionResult result = executor.executeCommand(commandLine,
-				// out);
-				// if (result.isExitShell()) {
-				// break;
-				// }
-				// } catch (CommandNotFoundException e) {
-				// out.write(" " + e.getMessage() + ": command not found\n");
-				// }
-				// ========================================================================
+			listCmd(dir, ID);
+			break;
+		case "FIND":
+			if (isValid(baseCommand)) {
+				findCmd(dir, ID, baseCommand[1].toLowerCase(Locale.ENGLISH));
+			} else {
 
-				String[] baseCommand = cmd.split(" ");
+				clients[findClient(ID)].send("Invaild Command\n");
 
-				switch (baseCommand[0].toUpperCase(Locale.ENGLISH)) {
-				case "LIST":
-
-					listCmd(dir, out);
-					break;
-				case "FIND":
-					if (isValid(baseCommand)) {
-						findCmd(dir, out, baseCommand[1].toLowerCase(Locale.ENGLISH));
-					} else {
-						out.write("Invaild Command");
-					}
-
-					break;
-				case "FINDR":
-					if (isValid(baseCommand)) {
-						recursiveFindCmd(dir, out, baseCommand[1].toLowerCase(Locale.ENGLISH));
-					} else {
-						out.write("Invaild Command");	
-					}
-
-					break;
-				case "FILE":
-					break;
-				case "EXIT":
-					try {
-						out.close();
-						hstWrt.close();
-						in.close();
-						serverSocket.close();
-					} catch (IOException ex) {
-						System.out.println("Error closing the socket and streams");
-
-					}
-					break;
-				default:
-					logger.info("Hit default switch." + System.lineSeparator());
-					break;
-				}
-				if (history.exists()) {
-					hstWrt.append(baseCommand[1] + "\n");
-				} else {
-					hstWrt.write(baseCommand[1] + "\n");
-				}
 			}
-			out.flush();
-			hstWrt.close();
 
-		} catch (IOException e) {
-			// TODO AUto-generated catch block
-			// e.printStackTrace();
-			logger.error("Some error occured", e);
+			break;
+		case "FINDR":
+			if (isValid(baseCommand)) {
+				recursiveFindCmd(dir, ID, baseCommand[1].toLowerCase(Locale.ENGLISH));
+			} else {
+				clients[findClient(ID)].send("Invaild Command\n");
+			}
+
+			break;
+		case "FILE":
+			break;
+		case "EXIT":
+			clients[findClient(ID)].send(".exit");
+			remove(ID);
+			break;
+		default:
+			logger.info("Hit default switch." + System.lineSeparator());
+			break;
+		}
+		// if (history.exists()) {
+		// hstWrt.append(baseCommand + "\n");
+		// } else {
+		// hstWrt.write(baseCommand + "\n");
+		// }
+
+		// out.flush();
+		clients[findClient(ID)].send(">");
+		hstWrt.close();
+
+	}
+
+	public synchronized void remove(int ID) {
+		int pos = findClient(ID);
+		if (pos >= 0) {
+			JFilesServerThread toTerminate = clients[pos];
+			System.out.println("Removing client thread " + ID + " at " + pos);
+			if (pos < clientCount - 1)
+				for (int i = pos + 1; i < clientCount; i++)
+					clients[i - 1] = clients[i];
+			clientCount--;
+			try {
+				toTerminate.close();
+			} catch (IOException ioe) {
+				System.out.println("Error closing thread: " + ioe);
+			}
+			toTerminate.stop();
 		}
 	}
-	
-	/**
-	 * checks if the input is vaild.
-	 * 
-	 */
+
+	private void addThread(Socket socket) {
+		if (clientCount < clients.length) {
+			System.out.println("Client accepted: " + socket);
+			clients[clientCount] = new JFilesServerThread(this, socket);
+			try {
+				clients[clientCount].open();
+				clients[clientCount].start();
+				clientCount++;
+			} catch (IOException ioe) {
+				System.out.println("Error opening thread: " + ioe);
+			}
+		} else
+			System.out.println("Client refused: maximum " + clients.length + " reached.");
+	}
+
 	boolean isValid(String[] command) {
 		if (command.length <= 1) { // used for handling invalid error
 			logger.error("Invalid Input, nothing to find");
@@ -189,10 +243,13 @@ public class JFilesServer implements Runnable {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	private void listCmd(String dir, BufferedWriter out) {
+	private void listCmd(String dir, int ID) {
 		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir))) {
 			for (Path path : directoryStream) {
-				out.write(path.toString() + System.getProperty("line.separator"));
+				// out.write(path.toString() +
+				// System.getProperty("line.separator"));
+				clients[findClient(ID)]
+						.send(path.toString() + System.getProperty("line.separator"));
 			}
 		} catch (IOException e) {
 			// TODO AUto-generated catch block
@@ -208,13 +265,14 @@ public class JFilesServer implements Runnable {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	private void findCmd(String dir, BufferedWriter out, String searchTerm) {
+	private void findCmd(String dir, int ID, String searchTerm) {
 		int findCount = 0;
 		try (DirectoryStream<Path> directoryStream =
 				Files.newDirectoryStream(Paths.get(dir), searchTerm)) {
 			for (Path path : directoryStream) {
-				if (path.toString().toLowerCase(Locale.ENGLISH).contains(searchTerm))	{
-					out.write(path.toString() + "\n");
+				if (path.toString().toLowerCase(Locale.ENGLISH).contains(searchTerm)) {
+					// out.write(path.toString() + "\n");
+					clients[findClient(ID)].send(path.toString() + "\n");
 					findCount++;
 				}
 			}
@@ -235,11 +293,11 @@ public class JFilesServer implements Runnable {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	private void recursiveFindCmd(String dir, BufferedWriter out, String searchTerm) {
+	private void recursiveFindCmd(String dir, int ID, String searchTerm) {
 		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir))) {
 			for (Path path : directoryStream) {
 				if (path.toFile().isDirectory()) {
-					recursiveFindCmd(path.toString(), out, searchTerm);
+					recursiveFindCmd(path.toString(), ID, searchTerm);
 				}
 			}
 		} catch (IOException e) {
@@ -247,7 +305,7 @@ public class JFilesServer implements Runnable {
 			// e.printStackTrace();
 			logger.error("Some error occured", e);
 		}
-		findCmd(dir, out, searchTerm);
+		findCmd(dir, ID, searchTerm);
 	}
 
 	/**
@@ -256,16 +314,11 @@ public class JFilesServer implements Runnable {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	public static void main(String[] args) {
-		try {
-			logger.info("Starting the server");
-			JFilesServer jf = new JFilesServer();
-			Thread thread = new Thread(jf);
-			thread.start();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public static void main(String args[]) {
+		JFilesServer server = null;
+		int porter = 5050;
+
+		server = new JFilesServer(porter);
 	}
 
 }
