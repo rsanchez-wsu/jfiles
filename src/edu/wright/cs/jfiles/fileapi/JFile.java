@@ -21,10 +21,13 @@
 
 package edu.wright.cs.jfiles.fileapi;
 
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -204,19 +207,59 @@ public class JFile implements Cloneable, Serializable {
 		logger.info("determining file type");
 		try {
 			if (System.getProperty("os.name").contains("Windows")) {
+				
 				logger.info("OS determined to be \"Windows\".");
+				
 				return file.getName().substring(
 						file.getName().lastIndexOf('.') + 1,
 						file.getName().length());
+				
 			} else if (System.getProperty("os.name").contains("Macintosh")) {
 				// TODO Determine how files are defined and how to get the file type on Mac.
+				
 				logger.info("OS determined to be \"Macintosh\".");
+				
 			} else if (System.getProperty("os.name").contains("Linux")) {
+				
 				// TODO Get the file type from linux.
+				
 				logger.info("OS determined to be \"Linux\".");
+				
+				if ( file.getName().substring(
+						file.getName().indexOf('.') + 1)
+						.compareTo("") > 0 
+					) {
+					
+					logger.info("file type gotten from end of file.");
+					
+					return file.getName().substring(
+							file.getName().indexOf('.') + 1
+							);
+				} else {
+					try (BufferedReader in = new BufferedReader(new FileReader(file))) {
+						String tmp = in.readLine();
+						
+						if (tmp != null && tmp.contains("#!")) {
+							
+							logger.info("File type gotten from within the file.");
+							
+							return tmp.substring(tmp.lastIndexOf('/'));
+							
+						}
+						
+					}
+					
+					logger.info("Couldn't find file type.");
+					
+					return null;
+				}
+				
 			} else {
+				
 				// TODO ??? Error maybe?
+				
 				logger.info("OS determined to be \"Unknown\".");
+				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
