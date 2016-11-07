@@ -123,31 +123,19 @@ public class JFilesClient implements Runnable {
 		// Create a Derby database in memory called jFiles
 		String jfilesCachedb = "jdbc:derby:memory:jFiles;create=true";
 		
-		//Connection conn = null;
-		//Statement sta = null;
 		try (Connection conn = DriverManager.getConnection(jfilesCachedb);
 				Statement sta = conn.createStatement()) {
 			logger.info("Database connection successful");
 			// Added so Eclipse won't complain about not using the Connection object
 			conn.getMetaData();
 			
-			//sta = conn.createStatement();
 			sta.executeUpdate("CREATE TABLE tags (filePath VARCHAR(260), "
 					+ "tag VARCHAR(255))");
 			
 			sta.executeUpdate("CREATE TABLE cache (filePath VARCHAR(260), XML Blob)");
 			
-			//conn.close();
-			//sta.close();
 		} catch (SQLException e) {
 			logger.error(Error.SQL_INIT_ERROR.toString());
-			//try {
-				//if (sta != null) {
-					//sta.close();
-				//}
-			//} catch (SQLException e1) {
-				//logger.error(Error.SQL_INIT_ERROR.toString());
-			//}
 		}
 	}
 	
