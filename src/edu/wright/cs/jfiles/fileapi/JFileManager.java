@@ -24,6 +24,7 @@ package edu.wright.cs.jfiles.fileapi;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -106,9 +107,8 @@ public class JFileManager {
 	 * only be accessed via the JFileManager methods for the sake of security.
 	 * 
 	 */
-	@SuppressWarnings("unused")
-	private JFile[] clipboard;
-
+	private ArrayList<JFile> clipboard;
+	
 	/*
 	 * This method entirely depends on copy and delete. It is pretty much done.
 	 */
@@ -137,6 +137,7 @@ public class JFileManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error Cutting Files");
+			logger.error(e.getStackTrace());
 		}
 	}
 
@@ -159,11 +160,14 @@ public class JFileManager {
 	public void copy(JFile[] files) {
 		logger.info("Copying");
 		try {
-			clipboard = files.clone();
+			for (int i = 0; i < files.length; i++) {
+				clipboard.add(files[i].clone());
+			}
 			logger.info("Copy of " + Arrays.toString(files) + " Successful");
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error Copying Files.");
+			logger.error(e.getStackTrace());
 		}
 	}
 
@@ -186,6 +190,7 @@ public class JFileManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error pasting files.");
+			logger.error(e.getStackTrace());
 		}
 
 	}
@@ -217,6 +222,7 @@ public class JFileManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error Moving Files");
+			logger.error(e.getStackTrace());
 		}
 
 	}
@@ -228,18 +234,43 @@ public class JFileManager {
 	 * Deletes a particular JFile object. If the file(s) is/are not in the trash
 	 * bin, it moves it/them to that location. If they are, then it deletes them
 	 * off of the hard drive the same way the OS would.
-	 * 
+	 * <p>
+	 * Tests what OS the JFM is on, then loops through to check where the file(s)
+	 * are located.
+	 * </p>
 	 * @param files
 	 *            The files being deleted.
 	 * 
 	 */
 	public void delete(JFile[] files) {
-		logger.info("Deleting File");
+		logger.info("Deleting File(s)");
 		try {
+			if (System.getProperty("os.name").contains("Windows")) {
+				for (int i = 0; i < files.length; i++) {
+					//The problem with how windows handles the recycling bin
+					//(from win 10) is that it is not an absolute file.
+					if (files[i].getPath().contains("$Recycle.Bin") == true) {
+						files[i].deleteContents();
+					} else {
+						//TODO: find out how to move files to recycle bin
+					}
+				}
+				logger.info("OS determined to be \"Windows\".");
+			} else if (System.getProperty("os.name").contains("Macintosh")) {
+				
+				logger.info("OS determined to be \"Macintosh\".");
+			} else if (System.getProperty("os.name").contains("Linux")) {
+				
+				logger.info("OS determined to be \"Linux\".");
+			} else {
+				
+				logger.info("OS determined to be \"Unknown\".");
+			}
 			logger.info("Successfully Deleted " + Arrays.toString(files));
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error Deleting");
+			logger.error(e.getStackTrace());
 		}
 
 	}
@@ -287,6 +318,7 @@ public class JFileManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error Moving Files");
+			logger.error(e.getStackTrace());
 		}
 	}
 
@@ -309,6 +341,7 @@ public class JFileManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error Renaming File");
+			logger.error(e.getStackTrace());
 		}
 
 	}
@@ -354,20 +387,24 @@ public class JFileManager {
 
 		logger.info("Opening File");
 		try {
-
 			if (System.getProperty("os.name").contains("Windows")) {
-				// Open the file in a way compatible to Windows.
+				// TODO Open the file in a way compatible to Windows.
+				logger.info("OS determined to be \"Windows\".");
 			} else if (System.getProperty("os.name").contains("Macintosh")) {
-				// Open the file in a way compatible to Macintosh.
+				// TODO Open the file in a way compatible to Macintosh.
+				logger.info("OS determined to be \"Macintosh\".");
 			} else if (System.getProperty("os.name").contains("Linux")) {
-				// Open the file in a way compatible to Linux.
+				// TODO Open the file in a way compatible to Linux.
+				logger.info("OS determined to be \"Linux\".");
 			} else {
-				// ??? Error maybe?
+				// TODO ??? Error maybe?
+				logger.info("OS determined to be \"Unknown\".");
 			}
-			logger.info("Opened " + name + " With " /*application name*/);
+			logger.info("Opened " + name + " With " /* application name */);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error Opening the File");
+			logger.error(e.getStackTrace());
 		}
 	}
 
@@ -388,47 +425,24 @@ public class JFileManager {
 
 		logger.info("Opening File");
 		try {
-
 			if (System.getProperty("os.name").contains("Windows")) {
-				// Open the file in a way compatible to Windows.
+				// TODO Open the file in a way compatible to Windows.
+				logger.info("OS determined to be \"Windows\".");
 			} else if (System.getProperty("os.name").contains("Macintosh")) {
-				// Open the file in a way compatible to Macintosh.
+				// TODO Open the file in a way compatible to Macintosh.
+				logger.info("OS determined to be \"Macintosh\".");
 			} else if (System.getProperty("os.name").contains("Linux")) {
-				// Open the file in a way compatible to Linux.
+				// TODO Open the file in a way compatible to Linux.
+				logger.info("OS determined to be \"Linux\".");
 			} else {
-				// ??? Error maybe?
+				// TODO ??? Error maybe?
+				logger.info("OS determined to be \"Unknown\".");
 			}
-			logger.info("Opened " + name + " With " /*application name*/);
+			logger.info("Opened " + name + " With " /* application name */);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error Opening File");
-		}
-	}
-
-	/*
-	 * We need to determine what properties we need to add to details. This data
-	 * may be used by other teams, and when we determine what properties we are
-	 * returning, we will need to update it in our documentation.
-	 * 
-	 * Should be do-able without collaboration.
-	 */
-
-	/**
-	 * Returns various details of a file in key-value pairs. By this, the user
-	 * can ask for a specific key, such as name, size, or type, and get an
-	 * appropriate response.
-	 * 
-	 * @param name
-	 *            The name of the file being displayed.
-	 * 
-	 */
-	public void getDetails(String name) {
-		logger.info("Requesting Details");
-		try {
-			logger.info(name + " Acknowledged and Sent Details");
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("Error Senging Details");
+			logger.error(e.getStackTrace());
 		}
 	}
 
@@ -447,6 +461,7 @@ public class JFileManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error Requesting Type");
+			logger.error(e.getStackTrace());
 		}
 
 	}
