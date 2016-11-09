@@ -139,7 +139,8 @@ public class JFilesServer implements Runnable {
 				BufferedWriter out = new BufferedWriter(osw);
 				String[] baseCommand = cmd.split(" ");
 				if ("LIST".equalsIgnoreCase(baseCommand[0])) {
-					try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir))) {
+					try (DirectoryStream<Path> directoryStream = 
+							Files.newDirectoryStream(Paths.get(dir))) {
 						for (Path path : directoryStream) {
 							out.write(path.toString() + "\n");
 						}
@@ -147,7 +148,8 @@ public class JFilesServer implements Runnable {
 				}
 				// start Search block
 				if ("FIND".equalsIgnoreCase(baseCommand[0])) {
-					try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir))) {
+					try (DirectoryStream<Path> directoryStream = 
+							Files.newDirectoryStream(Paths.get(dir))) {
 						for (Path path : directoryStream) {
 							// out.write(path.toString() + "\n");
 							if (path.toString().contains(baseCommand[1])) {
@@ -176,6 +178,14 @@ public class JFilesServer implements Runnable {
 	public static void main(String[] args) {
 		try {
 			init();
+			/*
+			XmlHandler2 aaa = new XmlHandler2(Paths.get("/home/brian/git/jfiles"));
+			XStream xstream = new XStream();
+			String sss = xstream.toXML(aaa);
+			PrintWriter out = new PrintWriter("test.xml");
+			out.print(sss);
+			out.close();
+			*/
 			logger.info("Starting the server");
 			XmlHandler handler = new XmlHandler(logger);
 			try {
