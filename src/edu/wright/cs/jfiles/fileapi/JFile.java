@@ -66,10 +66,15 @@ public class JFile implements Cloneable, Serializable {
 	 *            The file being stored in the JFile object.
 	 */
 	public JFile(File file) {
-		logger.info("Creating File");
-		this.file = file;
-		logger.info("File Created");
-		logger.error("Error Creating File");
+		try {
+			logger.info("Creating File");
+			this.file = file;
+			logger.info("File Created");	
+		} catch (Exception e) {
+			logger.error("Error Creating File", e.printStackTrace());	
+		} finally {
+			java.util.logging.LogManager.getLogManager().reset();
+		}		
 	}
 
 	/**
@@ -82,11 +87,16 @@ public class JFile implements Cloneable, Serializable {
 	 *            The tags associated with the file.
 	 */
 	public JFile(File file, Map<String, String> tags) {
-		logger.info("Storing File and Arraylist of Tags Associated with the file");
-		logger.info("Storing Complete");
-		this.file = file;
-		this.tagList = tags;
-		logger.error("Error Storing File and Arraylist");
+		try {
+			logger.info("Storing File and Arraylist of Tags Associated with the file");
+			this.file = file;
+			this.tagList = tags;
+			logger.info("Storing Complete");
+		} catch (Exception e) {
+			logger.error("Error Storing File and Arraylist", e.printStackTrace());				
+		} finally {
+			java.util.logging.LogManager.getLogManager().reset();
+		}		
 	}
 
 	/**
@@ -96,10 +106,15 @@ public class JFile implements Cloneable, Serializable {
 	 *            Path to wanted file.
 	 */
 	public JFile(String path) {
-		logger.info("Storing to path " + path);
-		logger.info("Stored to path " + path);
-		this.file = new File(path);
-		logger.error("Error Storing to path " + path);
+		try {
+			logger.info("Storing to path " + path);
+			logger.info("Stored to path " + path);
+			this.file = new File(path);			
+		} catch (Exception e) {
+			logger.error("Error Storing to path " + path, e.printStackTrace());			
+		} finally {
+			java.util.logging.LogManager.getLogManager().reset();
+		}		
 	}
 
 	/**
