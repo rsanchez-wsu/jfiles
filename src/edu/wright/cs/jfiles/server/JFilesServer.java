@@ -22,11 +22,11 @@
 package edu.wright.cs.jfiles.server;
 
 import edu.wright.cs.jfiles.common.Error;
+import edu.wright.cs.jfiles.common.XmlHandler2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 
-import edu.wright.cs.jfiles.common.XmlHandler2;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -187,7 +187,8 @@ public class JFilesServer implements Runnable {
 		try {
 			init();
 			XmlHandler2 aaa = new XmlHandler2(Paths.get("/home/brian/git/jfiles"));
-			OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(new File("test.xml")));
+			OutputStreamWriter osw = new OutputStreamWriter(
+					new FileOutputStream(new File("test.xml")));
 			aaa.sendXml(osw);
 			logger.info("Starting the server");
 			XmlHandler handler = new XmlHandler(logger);

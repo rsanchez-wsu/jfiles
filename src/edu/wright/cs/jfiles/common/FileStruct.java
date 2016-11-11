@@ -194,12 +194,22 @@ public class FileStruct implements Serializable {
 		}
 		return attribute;
 	}
+	/**
+	 * getAttrNames searches the attrList and returns an array of its values.
+	 * @return an array of the values of the attList.
+	 */
 	
+	public String[] getAttrNames() {
+		Collection<String> attNames = attrList.values();
+		String [] namesArray = attNames.toArray(new String[attNames.size()]); 
+		return namesArray;
+	}
 	/**
 	 * contains determines if the attrList has a value for the given key.
 	 * @param name is the key to search for a value
 	 * @return true or false depending on if a value is found
 	 */
+	
 	public boolean contains(String name) {
 		boolean truth = false;
 		if (attrList.containsKey(name)) {

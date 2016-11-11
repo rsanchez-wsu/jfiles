@@ -22,7 +22,6 @@
 package edu.wright.cs.jfiles.common;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import java.io.File;
 import java.io.IOException;
