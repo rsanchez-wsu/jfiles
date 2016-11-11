@@ -30,6 +30,7 @@ import java.nio.file.attribute.DosFileAttributes;
 import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -179,7 +180,34 @@ public class FileStruct implements Serializable {
 	public Map<String, String> getAttrList() {
 		return attrList;
 	}
+	
 
+	/**
+	 * getAttr searches the attrList for an attribute corresponding to the given string
+	 * @param name is the key to search for an attribute
+	 * @return the corresponding attribute if it exists. Otherwise returns an empty string
+	 */
+	public String getAttr(String name) {
+		String attribute = "";
+		if (attrList.containsKey(name)) {
+			attribute = attrList.get(name);
+		}
+		return attribute;
+	}
+	
+	/**
+	 * contains determines if the attrList has a value for the given key.
+	 * @param name is the key to search for a value
+	 * @return true or false depending on if a value is found
+	 */
+	public boolean contains(String name) {
+		boolean truth = false;
+		if (attrList.containsKey(name)) {
+			truth = true;
+		}
+		return truth;
+	}
+	
 	/**
 	 * Default.
 	 * @param attrList the attrList to set
