@@ -19,6 +19,8 @@
 		<!-- Dependencies for Log4J Framework -->
 		<dependency org="org.apache.logging.log4j" name="log4j-api" rev="2.6.2" conf="lib->*"/>
 		<dependency org="org.apache.logging.log4j" name="log4j-core" rev="2.6.2" conf="lib->*"/>
-
+		
+		<!--Denpendencies for XStream -->
+		<dependency org="com.thoughtworks.xstream" name="xstream" rev="1.4.9"/>
 	</dependencies>
 </ivy-module>

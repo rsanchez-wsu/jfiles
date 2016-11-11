@@ -26,10 +26,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 
+import edu.wright.cs.jfiles.common.XmlHandler2;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -141,32 +144,27 @@ public class JFilesServer implements Runnable {
 					break;
 				}
 				OutputStreamWriter osw = new OutputStreamWriter(server.getOutputStream(), UTF_8);
-
 				BufferedWriter out = new BufferedWriter(osw);
 				String[] baseCommand = cmd.split(" ");
 				if ("LIST".equalsIgnoreCase(baseCommand[0])) {
-					try (DirectoryStream<Path> directoryStream = Files
-							.newDirectoryStream(Paths.get(dir))) {
+					try (DirectoryStream<Path> directoryStream = 
+							Files.newDirectoryStream(Paths.get(dir))) {
 						for (Path path : directoryStream) {
 							out.write(path.toString() + "\n");
 						}
 					}
-
 				}
 				// start Search block
 				if ("FIND".equalsIgnoreCase(baseCommand[0])) {
-
-					try (DirectoryStream<Path> directoryStream = Files
-							.newDirectoryStream(Paths.get(dir))) {
+					try (DirectoryStream<Path> directoryStream = 
+							Files.newDirectoryStream(Paths.get(dir))) {
 						for (Path path : directoryStream) {
 							// out.write(path.toString() + "\n");
 							if (path.toString().contains(baseCommand[1])) {
 								out.write(path.toString() + "\n");
 							}
-
 						}
 					}
-
 				} else { // End search block
 					logger.error(Error.UNKNOWN_COMMAND.toString());
 				}
@@ -175,7 +173,7 @@ public class JFilesServer implements Runnable {
 		} catch (IOException e) {
 			//TODO Auto-generated catch block
 			//e.printStackTrace();
-			logger.error("Some error occured", e);
+			logger.error("Some error occurred", e);
 		}
 	}
 
@@ -183,11 +181,14 @@ public class JFilesServer implements Runnable {
 	 * The main entry point to the program.
 	 * 
 	 * @throws IOException
-	 *             If there is a problem binding to the socket
+	 * If there is a problem binding to the socket
 	 */
 	public static void main(String[] args) {
 		try {
 			init();
+			XmlHandler2 aaa = new XmlHandler2(Paths.get("/home/brian/git/jfiles"));
+			OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(new File("test.xml")));
+			aaa.sendXml(osw);
 			logger.info("Starting the server");
 			XmlHandler handler = new XmlHandler(logger);
 			try {
@@ -206,5 +207,4 @@ public class JFilesServer implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
 }
