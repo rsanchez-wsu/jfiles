@@ -38,7 +38,7 @@ import java.util.Map;
  * @author brian
  *
  */
-public class XmlStruct implements Serializable {
+public class FileStruct implements Serializable {
 
 	private static final long serialVersionUID = -5456733342924856091L;
 	private Map<String, String> attrList = new HashMap<>();
@@ -47,7 +47,7 @@ public class XmlStruct implements Serializable {
 	/**
 	 * An attempt was made.
 	 */
-	public XmlStruct() {
+	public FileStruct() {
 		
 	}
 	
@@ -58,7 +58,7 @@ public class XmlStruct implements Serializable {
 	 * @param input Input file or path to generate JFile(s) from
 	 * @throws IOException Throws IOException when file at path cannot be accessed
 	 */
-	public XmlStruct(Path input) throws IOException {
+	public FileStruct(Path input) throws IOException {
 		this.file = input;
 		populateArray();
 	}

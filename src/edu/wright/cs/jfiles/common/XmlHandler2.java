@@ -22,6 +22,7 @@
 package edu.wright.cs.jfiles.common;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,8 +40,15 @@ import java.util.ArrayList;
 public class XmlHandler2 {
 	
 	private Path currentPath;
-	private ArrayList<XmlStruct> arrlist;
-	private XStream xstream;
+	private ArrayList<FileStruct> arrlist;
+	private transient XStream xstream = new XStream();
+	
+	/**
+	 * Zero argument constructor.
+	 */
+	public XmlHandler2() {
+		confXStream();
+	}
 	
 	/**
 	 * Constructor for sending XML.
@@ -48,10 +56,10 @@ public class XmlHandler2 {
 	 * @throws IOException If Path object is inaccessible 
 	 */
 	public XmlHandler2(Path path) throws IOException {
+		confXStream();
 		this.currentPath = path;
-		arrlist = new ArrayList<XmlStruct>();
-		populateArray();
-		confXStream();				
+		arrlist = new ArrayList<FileStruct>();
+		populateArray();	
 	}
 	
 	/**
@@ -66,32 +74,35 @@ public class XmlHandler2 {
 			return;
 		}
 		for (int i = 0; i < temp.length; i++) {
-			arrlist.add(new XmlStruct(temp[i].toPath()));	
+			arrlist.add(new FileStruct(temp[i].toPath()));	
 		}
 	}
 	
 	/**
 	 * Method to serialize an object and write XML to an output stream.
 	 * @param osw OutputStreamWriter to write to
+	 * @throws IOException If output stream can't be read from
 	 */
-	public void sendXml(OutputStreamWriter osw) {
-		
+	public void sendXml(OutputStreamWriter osw) throws IOException {
+		xstream.toXML(this, osw);
 	}
 	
 	/**
-	 * Method to read XML and deserialze to an object.
+	 * Method to read XML and deserialize to an object.
 	 * @param isr InputStreamReader to read from
 	 * @return reconstructed object
 	 */
-	public ArrayList<XmlStruct> readXml(InputStreamReader isr) {
-		return arrlist;	
+	public ArrayList<FileStruct> readXml(InputStreamReader isr) {
+		XmlHandler2 temp = (XmlHandler2) xstream.fromXML(isr);
+		return temp.arrlist;	
 	}
 	
 	/**
 	 * Helper method to configure XStream before writing to OSW.
 	 */
 	private void confXStream() {
-		
+		xstream.alias("filesystem", ArrayList.class);
+		xstream.omitField(XStream.class, "xstream");
 	}
 
 }

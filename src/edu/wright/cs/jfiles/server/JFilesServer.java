@@ -24,10 +24,13 @@ package edu.wright.cs.jfiles.server;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import edu.wright.cs.jfiles.common.XmlHandler2;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -178,14 +181,9 @@ public class JFilesServer implements Runnable {
 	public static void main(String[] args) {
 		try {
 			init();
-			/*
 			XmlHandler2 aaa = new XmlHandler2(Paths.get("/home/brian/git/jfiles"));
-			XStream xstream = new XStream();
-			String sss = xstream.toXML(aaa);
-			PrintWriter out = new PrintWriter("test.xml");
-			out.print(sss);
-			out.close();
-			*/
+			OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(new File("test.xml")));
+			aaa.sendXml(osw);
 			logger.info("Starting the server");
 			XmlHandler handler = new XmlHandler(logger);
 			try {
