@@ -136,10 +136,7 @@ public class JFileManager {
 			logger.info("Successfully Cut " + Arrays.toString(files));
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("Error Cutting Files");
-			logger.error(e.getStackTrace());
-		} finally {
-			java.util.logging.LogManager.getLogManager().reset();
+			logger.error("Error Cutting Files", e);
 		}
 	}
 
@@ -168,10 +165,7 @@ public class JFileManager {
 			logger.info("Copy of " + Arrays.toString(files) + " Successful");
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("Error Copying Files.");
-			logger.error(e.getStackTrace());
-		} finally {
-			java.util.logging.LogManager.getLogManager().reset();
+			logger.error("Error Copying Files.", e);
 		}
 	}
 
@@ -193,12 +187,8 @@ public class JFileManager {
 			logger.info("Successful Paste of " + dirName);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("Error pasting files.");
-			logger.error(e.getStackTrace());
-		} finally {
-			java.util.logging.LogManager.getLogManager().reset();
+			logger.error("Error pasting files.", e);
 		}
-
 	}
 
 	/**
@@ -227,12 +217,8 @@ public class JFileManager {
 			logger.info(Arrays.toString(files) + " Moved to " + dirName + " Successfully");
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("Error Moving Files");
-			logger.error(e.getStackTrace());
-		} finally {
-			java.util.logging.LogManager.getLogManager().reset();
+			logger.error("Error Moving Files", e);
 		}
-
 	}
 
 	/*
@@ -277,12 +263,8 @@ public class JFileManager {
 			logger.info("Successfully Deleted " + Arrays.toString(files));
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("Error Deleting");
-			logger.error(e.getStackTrace());
-		} finally {
-			java.util.logging.LogManager.getLogManager().reset();
+			logger.error("Error Deleting", e);
 		}
-
 	}
 
 	/*
@@ -327,10 +309,7 @@ public class JFileManager {
 			logger.info(Arrays.toString(files) + " Successfully Moved to " + dirName);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("Error Moving Files");
-			logger.error(e.getStackTrace());
-		} finally {
-			java.util.logging.LogManager.getLogManager().reset();
+			logger.error("Error Moving Files", e);
 		}
 	}
 
@@ -352,12 +331,8 @@ public class JFileManager {
 			logger.info("Renamed " + oldName + " to " + newName);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("Error Renaming File");
-			logger.error(e.getStackTrace());
-		} finally {
-			java.util.logging.LogManager.getLogManager().reset();
+			logger.error("Error Renaming File", e);
 		}
-
 	}
 
 	/*
@@ -417,10 +392,7 @@ public class JFileManager {
 			logger.info("Opened " + name + " With " /* application name */);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("Error Opening the File");
-			logger.error(e.getStackTrace());
-		} finally {
-			java.util.logging.LogManager.getLogManager().reset();
+			logger.error("Error Opening the File", e);
 		}
 	}
 
@@ -457,10 +429,7 @@ public class JFileManager {
 			logger.info("Opened " + name + " With " /* application name */);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("Error Opening File");
-			logger.error(e.getStackTrace());
-		} finally {
-			java.util.logging.LogManager.getLogManager().reset();
+			logger.error("Error Opening File", e);
 		}
 	}
 
@@ -478,11 +447,7 @@ public class JFileManager {
 			logger.info("Acknowledged and Sent " + name + "'s Type");
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("Error Requesting Type");
-			logger.error(e.getStackTrace());
-		} finally {
-			java.util.logging.LogManager.getLogManager().reset();
+			logger.error("Error Requesting Type", e);
 		}
-
 	}
 }

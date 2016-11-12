@@ -72,11 +72,8 @@ public class JFile implements Cloneable, Serializable {
 			logger.info("File Created");	
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("Error creating a JFile from a File.");	
-			logger.error(e.getStackTrace());
-		} finally {
-			java.util.logging.LogManager.getLogManager().reset();
-		}		
+			logger.error("Error creating a JFile from a File.", e);	
+		}
 	}
 
 	/**
@@ -96,11 +93,8 @@ public class JFile implements Cloneable, Serializable {
 			logger.info("Storing Complete");
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("Error creating a JFile from a File and a Map of tags.");				
-			logger.error(e.getStackTrace());
-		} finally {
-			java.util.logging.LogManager.getLogManager().reset();
-		}		
+			logger.error("Error creating a JFile from a File and a Map of tags.", e);				
+		}
 	}
 
 	/**
@@ -116,11 +110,8 @@ public class JFile implements Cloneable, Serializable {
 			this.file = new File(path);			
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("Error creating a JFile from a file path.");
-			logger.error(e.getStackTrace());
-		} finally {
-			java.util.logging.LogManager.getLogManager().reset();
-		}		
+			logger.error("Error creating a JFile from a file path.", e);
+		}
 	}
 
 	/**
@@ -284,8 +275,7 @@ public class JFile implements Cloneable, Serializable {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("Error getting type.");
-			logger.error(e.getStackTrace());
+			logger.error("Error getting type.", e);
 		}
 		//temporary until all ifs get a return.
 		return null;
@@ -456,8 +446,7 @@ public class JFile implements Cloneable, Serializable {
 			output.tagList = new HashMap<>(tagList);
 			return output;
 		} catch (CloneNotSupportedException e1) {
-			logger.error("Clone call on JFile caught a Clone Not Supported Exception.");
-			logger.error(e1.getStackTrace());
+			logger.error("Clone call on JFile caught a Clone Not Supported Exception.", e1);
 			logger.info("Trying to create a clone a different way...");
 			System.err.println("Clone call on JFile caught a Clone Not Supported Exception.");
 			e1.printStackTrace();
@@ -468,8 +457,7 @@ public class JFile implements Cloneable, Serializable {
 				logger.info("Clone successfully made.");
 				return output;
 			} catch (Exception e2) {
-				logger.error("Clone has caught a second error. Returning null.");
-				logger.error(e2.getStackTrace());
+				logger.error("Clone has caught a second error. Returning null.", e2);
 				System.err.println("Clone has caught a second error. Returning null.");
 				e2.printStackTrace();
 				return null;
