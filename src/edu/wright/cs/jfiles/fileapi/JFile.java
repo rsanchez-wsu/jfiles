@@ -2,7 +2,7 @@
  * Copyright (C) 2016 - WSU CEG3120 Students
  * 
  * Roberto C. Sánchez <roberto.sanchez@wright.edu>
- * John T. Wintersohle II <Dorkatron199@aols.com>
+ * 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +71,9 @@ public class JFile implements Cloneable, Serializable {
 			this.file = file;
 			logger.info("File Created");	
 		} catch (Exception e) {
-			logger.error("Error Creating File", e.printStackTrace());	
+			e.printStackTrace();
+			logger.error("Error creating a JFile from a File.");	
+			logger.error(e.getStackTrace());
 		} finally {
 			java.util.logging.LogManager.getLogManager().reset();
 		}		
@@ -93,7 +95,9 @@ public class JFile implements Cloneable, Serializable {
 			this.tagList = tags;
 			logger.info("Storing Complete");
 		} catch (Exception e) {
-			logger.error("Error Storing File and Arraylist", e.printStackTrace());				
+			e.printStackTrace();
+			logger.error("Error creating a JFile from a File and a Map of tags.");				
+			logger.error(e.getStackTrace());
 		} finally {
 			java.util.logging.LogManager.getLogManager().reset();
 		}		
@@ -111,7 +115,9 @@ public class JFile implements Cloneable, Serializable {
 			logger.info("Stored to path " + path);
 			this.file = new File(path);			
 		} catch (Exception e) {
-			logger.error("Error Storing to path " + path, e.printStackTrace());			
+			e.printStackTrace();
+			logger.error("Error creating a JFile from a file path.");
+			logger.error(e.getStackTrace());
 		} finally {
 			java.util.logging.LogManager.getLogManager().reset();
 		}		
