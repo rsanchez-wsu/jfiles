@@ -6,7 +6,7 @@ import java.io.*;
 public class JFilesServerThread extends Thread {
 	private JFilesServer server = null;
 	private Socket socket = null;
-	private int ID = -1;
+	private int id = -1;
 	private DataInputStream streamIn = null;
 	private DataOutputStream streamOut = null;
 
@@ -14,7 +14,7 @@ public class JFilesServerThread extends Thread {
 		super();
 		server = _server;
 		socket = _socket;
-		ID = socket.getPort();
+		id = socket.getPort();
 	}
 
 	@SuppressWarnings("deprecation") // .interrupt(); 
@@ -23,24 +23,24 @@ public class JFilesServerThread extends Thread {
 			streamOut.writeUTF(msg);
 			streamOut.flush();
 		} catch (IOException ioe) {
-			System.out.println(ID + " ERROR sending: " + ioe.getMessage());
-			server.remove(ID);
+			System.out.println(id + " ERROR sending: " + ioe.getMessage());
+			server.remove(id);
 			stop();
 		}
 	}
 
-	public int getID() {
-		return ID;
+	public int getid() {
+		return id;
 	}
 
 	public void run() {
-		System.out.println("Server Thread " + ID + " running.");
+		System.out.println("Server Thread " + id + " running.");
 		while (true) {
 			try {
-				server.handle(ID, streamIn.readUTF());
+				server.handle(id, streamIn.readUTF());
 			} catch (IOException ioe) {
-				System.out.println(ID + " ERROR reading: " + ioe.getMessage());
-				server.remove(ID);
+				System.out.println(id + " ERROR reading: " + ioe.getMessage());
+				server.remove(id);
 				stop();
 			}
 		}

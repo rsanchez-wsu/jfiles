@@ -39,6 +39,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.DirectoryStream;
@@ -59,7 +60,7 @@ public class JFilesServer implements Runnable {
 	private static final int PORT = 9786;
 	//private final ServerSocket serverSocket;
 	private static final String UTF_8 = "UTF-8";
-	private JFilesServerThread clients[] = new JFilesServerThread[50];
+	private JFilesServerThread[] clients = new JFilesServerThread[50];
 	private ServerSocket server = null;
 	private Thread thread = null;
 	private int clientCount = 0;
@@ -70,7 +71,7 @@ public class JFilesServer implements Runnable {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	  JFilesServer(int port) {
+	JFilesServer(int port) {
 		try {
 			System.out.println("Binding to port " + PORT + ", please wait  ...");
 			server = new ServerSocket(PORT);
@@ -107,23 +108,30 @@ public class JFilesServer implements Runnable {
 		}
 	}
 
-	private int findClient(int ID) {
-		for (int i = 0; i < clientCount; i++)
-			if (clients[i].getID() == ID)
+	private int findClient(int id) {
+		for (int i = 0; i < clientCount; i++) {
+			if (clients[i].getid() == id) {
 				return i;
+			}
+		}
 		return -1;
 	}
 
-	public synchronized void handle(int ID, String input) throws IOException {
+	public synchronized void handle(int id, String input) throws IOException {
 
 		// logger.info("Received connection from" +
 		// server.getRemoteSocketAddress());
 		String dir = System.getProperty("user.dir");
 		File history = new File("SearchHistory.txt");
-
+		PrintWriter hstWrt;
+		
+		if (history.exists()) { //determines if the word need to be appended
+			hstWrt = new PrintWriter(new FileWriter(history, true));
+		} else {
+			hstWrt = new PrintWriter(history);
+		}
+		
 		Locale.setDefault(new Locale("English"));
-		FileWriter hstWrt = new FileWriter(history); // history writer
-		String cmd;
 
 		ExecutablePath executablePath = new ExecutablePath();
 		Environment environment = new Environment();
@@ -153,57 +161,58 @@ public class JFilesServer implements Runnable {
 		switch (baseCommand[0].toUpperCase(Locale.ENGLISH)) {
 		case "LIST":
 
-			listCmd(dir, ID);
+			listCmd(dir, id);
 			break;
 		case "FIND":
+			hstWrt.println(baseCommand[1]);
 			if (isValid(baseCommand)) {
-				findCmd(dir, ID, baseCommand[1]);
+				findCmd(dir, id, baseCommand[1]);
 			} else {
 
-				clients[findClient(ID)].send("Invaild Command\n");
+				clients[findClient(id)].send("Invaild Command\n");
 
 			}
 
 			break;
 		case "FINDR":
+			hstWrt.println(baseCommand[1]);
 			if (isValid(baseCommand)) {
-				recursiveFindCmd(dir, ID, baseCommand[1]);
+				recursiveFindCmd(dir, id, baseCommand[1]);
 			} else {
-				clients[findClient(ID)].send("Invaild Command\n");
+				clients[findClient(id)].send("Invaild Command\n");
 			}
 
 			break;
 		case "FILE":
 			break;
 		case "EXIT":
-			clients[findClient(ID)].send(".exit");
-			remove(ID);
+			clients[findClient(id)].send(".exit");
+			remove(id);
 			break;
 		default:
 			logger.info("Hit default switch." + System.lineSeparator());
 			break;
 		}
-		// if (history.exists()) {
-		// hstWrt.append(baseCommand + "\n");
-		// } else {
-		// hstWrt.write(baseCommand + "\n");
-		// }
 
 		// out.flush();
-		clients[findClient(ID)].send(">");
+		clients[findClient(id)].send(">");
+		hstWrt.flush();
 		hstWrt.close();
 
 	}
 
-	public synchronized void remove(int ID) {
-		int pos = findClient(ID);
+	public synchronized void remove(int id) {
+		int pos = findClient(id);
 		if (pos >= 0) {
 			JFilesServerThread toTerminate = clients[pos];
-			System.out.println("Removing client thread " + ID + " at " + pos);
-			if (pos < clientCount - 1)
-				for (int i = pos + 1; i < clientCount; i++)
+			System.out.println("Removing client thread " + id + " at " + pos);
+			if (pos < clientCount - 1) {
+				for (int i = pos + 1; i < clientCount; i++) {
 					clients[i - 1] = clients[i];
-			clientCount--;
+				}
+				clientCount--;
+			}
+			
 			try {
 				toTerminate.close();
 			} catch (IOException ioe) {
@@ -224,8 +233,9 @@ public class JFilesServer implements Runnable {
 			} catch (IOException ioe) {
 				System.out.println("Error opening thread: " + ioe);
 			}
-		} else
+		} else {
 			System.out.println("Client refused: maximum " + clients.length + " reached.");
+		}
 	}
 
 	boolean isValid(String[] command) {
@@ -243,12 +253,12 @@ public class JFilesServer implements Runnable {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	private void listCmd(String dir, int ID) {
+	private void listCmd(String dir, int id) {
 		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir))) {
 			for (Path path : directoryStream) {
 				// out.write(path.toString() +
 				// System.getProperty("line.separator"));
-				clients[findClient(ID)]
+				clients[findClient(id)]
 						.send(path.toString() + System.getProperty("line.separator"));
 			}
 		} catch (IOException e) {
@@ -265,13 +275,13 @@ public class JFilesServer implements Runnable {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	private void findCmd(String dir, int ID, String searchTerm) {
+	private void findCmd(String dir, int id, String searchTerm) {
 		int findCount = 0;
 		try (DirectoryStream<Path> directoryStream =
 				Files.newDirectoryStream(Paths.get(dir), searchTerm)) {
 			for (Path path : directoryStream) {
 				// out.write(path.toString() + "\n");
-				clients[findClient(ID)].send(path.toString() + "\n");
+				clients[findClient(id)].send(path.toString() + "\n");
 				findCount++;
 			}
 			System.out.println("Found " + findCount + " file(s) in " + dir + " that contains \""
@@ -291,11 +301,11 @@ public class JFilesServer implements Runnable {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	private void recursiveFindCmd(String dir, int ID, String searchTerm) {
+	private void recursiveFindCmd(String dir, int id, String searchTerm) {
 		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir))) {
 			for (Path path : directoryStream) {
 				if (path.toFile().isDirectory()) {
-					recursiveFindCmd(path.toString(), ID, searchTerm);
+					recursiveFindCmd(path.toString(), id, searchTerm);
 				}
 			}
 		} catch (IOException e) {
@@ -303,7 +313,7 @@ public class JFilesServer implements Runnable {
 			// e.printStackTrace();
 			logger.error("Some error occured", e);
 		}
-		findCmd(dir, ID, searchTerm);
+		findCmd(dir, id, searchTerm);
 	}
 
 	/**
@@ -312,7 +322,7 @@ public class JFilesServer implements Runnable {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		JFilesServer server = null;
 		int porter = 5050;
 
