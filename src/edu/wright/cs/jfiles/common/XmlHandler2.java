@@ -40,13 +40,17 @@ public class XmlHandler2 {
 	
 	private Path currentPath;
 	private ArrayList<FileStruct> arrlist;
-	private transient XStream xstream = new XStream();
+	private static transient XStream xstream = new XStream();
+	
+	static {
+		xstream.alias("filesystem", ArrayList.class);
+		xstream.omitField(XStream.class, "xstream");
+	}
 	
 	/**
 	 * Zero argument constructor.
 	 */
 	public XmlHandler2() {
-		confXStream();
 	}
 	
 	/**
@@ -55,7 +59,6 @@ public class XmlHandler2 {
 	 * @throws IOException If Path object is inaccessible 
 	 */
 	public XmlHandler2(Path path) throws IOException {
-		confXStream();
 		this.currentPath = path;
 		arrlist = new ArrayList<FileStruct>();
 		populateArray();	
@@ -95,13 +98,4 @@ public class XmlHandler2 {
 		XmlHandler2 temp = (XmlHandler2) xstream.fromXML(isr);
 		return temp.arrlist;	
 	}
-	
-	/**
-	 * Helper method to configure XStream before writing to OSW.
-	 */
-	private void confXStream() {
-		xstream.alias("filesystem", ArrayList.class);
-		xstream.omitField(XStream.class, "xstream");
-	}
-
 }
