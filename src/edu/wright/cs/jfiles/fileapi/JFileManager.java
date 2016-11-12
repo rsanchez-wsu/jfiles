@@ -109,6 +109,14 @@ public class JFileManager {
 	 */
 	private ArrayList<JFile> clipboard;
 	
+	/**
+	 * This file functions as the working directory for the File API. This is
+	 * useful for tracking what directory the user is considered to be in. To
+	 * make this function correctly, the method setting this ensures that the
+	 * file being assigned is a directory.
+	 */
+	private JFile workingDirectory;
+	
 	/*
 	 * This method entirely depends on copy and delete. It is pretty much done.
 	 */
@@ -430,6 +438,88 @@ public class JFileManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error Opening File", e);
+		}
+	}
+	
+	// This will be made to handle security (permissions) later, for now,
+	// I am just making something that is functioning. Leave this in until
+	// such functionality is added.
+	/**
+	 * This method takes in a JFile argument, checks to see if it is a directory,
+	 * and, if it is, sets the current working directory to be this file.
+	 */
+	public void setWorkingDirectory(JFile file) {
+		logger.info("Attempting to set the working directory.");
+		try {
+			logger.info("Checking whether the file argumet is a file or directory.");
+			if (file.isDirectory()) {
+				logger.info("File argument was determined to be a directory.");
+				workingDirectory = file;
+				logger.info("System successfully set the working directory to its new location.");
+			} else {
+				logger.info("File argument was determined to be a file.");
+				logger.error("System attempted to set a file as the working directory.");
+			}
+		} catch (Exception e) {
+			System.err.println("System ran into an error setting the working directory.");
+			e.printStackTrace();
+			logger.error("The system ran into an excpetion while "
+					+ "setting the working directory.", e);
+		}
+	}
+	
+	/**
+	 * This method gets the current working directory as a JFile.
+	 * 
+	 * @return The current working directory as a JFile.
+	 */
+	public JFile getWorkingDirectory() {
+		logger.info("Attempting to get the working directory.");
+		try {
+			return workingDirectory;
+		} catch (Exception e) {
+			System.err.println("System ran into an error setting the working directory.");
+			e.printStackTrace();
+			logger.error("The system ran into an exception getting the working directory.\n"
+					+ "Returning null value.", e);
+			return null;
+		}
+	}
+	
+	/**
+	 * This method gets the contents of the working directory as an array of JFiles. This
+	 * is suitable for use listing the contents of the working directory in a UI. Though the
+	 * listWorkingDirectoryContents method is suitable for simply listing out the names of
+	 * the files/directories in the working directory, this method s necessary for doing
+	 * anything meaningful, such as getting absolute paths, file sizes and types, and for
+	 * easily getting the JFile to pass it into a method, such as cut, copy, or paste.
+	 * 
+	 * @return The contents of the working directory as an array of JFiles.
+	 */
+	public JFile[] getWorkingDirectoryContents() {
+		try {
+			// TODO: Add logging methods.
+			return workingDirectory.getContents();
+		} catch (Exception e) {
+			// TODO: Add logging methods.
+			return null;
+		}
+	}
+	
+	/**
+	 * This method returns the names of the contents of the working directory
+	 * as an array of abstract path names. For anything more advanced, the
+	 * getWorkingDirectoryContents method must be called.
+	 * 
+	 * @return An abstract listing of the contents of the working directory.
+	 */
+	public String[] listWorkingDirectoryContents() {
+		try {
+			// TODO: Add logging methods.
+			return workingDirectory.list();
+		} catch (Exception e) {
+			// TODO: Add logging methods.
+			return null;
 		}
 	}
 

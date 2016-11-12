@@ -21,7 +21,6 @@
 
 package edu.wright.cs.jfiles.fileapi;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,7 +31,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -69,16 +67,16 @@ public class JFile implements Cloneable, Serializable {
 		try {
 			logger.info("Creating File");
 			this.file = file;
-			logger.info("File Created");	
+			logger.info("File Created");
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("Error creating a JFile from a File.", e);	
+			logger.error("Error creating a JFile from a File.", e);
 		}
 	}
 
 	/**
-	 * Stores the given file and the Map of tags associated with the file.
-	 * Can be given any map type.
+	 * Stores the given file and the Map of tags associated with the file. Can
+	 * be given any map type.
 	 * 
 	 * @param file
 	 *            The file being stored in the JFile object.
@@ -93,7 +91,7 @@ public class JFile implements Cloneable, Serializable {
 			logger.info("Storing Complete");
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("Error creating a JFile from a File and a Map of tags.", e);				
+			logger.error("Error creating a JFile from a File and a Map of tags.", e);
 		}
 	}
 
@@ -107,7 +105,7 @@ public class JFile implements Cloneable, Serializable {
 		try {
 			logger.info("Storing to path " + path);
 			logger.info("Stored to path " + path);
-			this.file = new File(path);			
+			this.file = new File(path);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error creating a JFile from a file path.", e);
@@ -194,7 +192,7 @@ public class JFile implements Cloneable, Serializable {
 	public String getPath() {
 		return file.getAbsolutePath();
 	}
-	
+
 	/**
 	 * Takes away the tag specified by a string.
 	 * 
@@ -219,65 +217,60 @@ public class JFile implements Cloneable, Serializable {
 		logger.info("determining file type");
 		try {
 			if (System.getProperty("os.name").contains("Windows")) {
-				
+
 				logger.info("OS determined to be \"Windows\".");
-				
-				return file.getName().substring(
-						file.getName().lastIndexOf('.') + 1,
+
+				return file.getName().substring(file.getName().lastIndexOf('.') + 1,
 						file.getName().length());
-				
+
 			} else if (System.getProperty("os.name").contains("Macintosh")) {
-				// TODO Determine how files are defined and how to get the file type on Mac.
-				
+				// TODO Determine how files are defined and how to get the file
+				// type on Mac.
+
 				logger.info("OS determined to be \"Macintosh\".");
-				
+
 			} else if (System.getProperty("os.name").contains("Linux")) {
-				
+
 				// TODO Get the file type from linux.
-				
+
 				logger.info("OS determined to be \"Linux\".");
-				
-				if ( file.getName().substring(
-						file.getName().indexOf('.') + 1)
-						.compareTo("") > 0 
-					) {
-					
+
+				if (file.getName().substring(file.getName().indexOf('.') + 1).compareTo("") > 0) {
+
 					logger.info("file type gotten from end of file.");
-					
-					return file.getName().substring(
-							file.getName().indexOf('.') + 1
-							);
+
+					return file.getName().substring(file.getName().indexOf('.') + 1);
 				} else {
 					try (BufferedReader in = new BufferedReader(new FileReader(file))) {
 						String tmp = in.readLine();
-						
+
 						if (tmp != null && tmp.contains("#!")) {
-							
+
 							logger.info("File type gotten from within the file.");
-							
+
 							return tmp.substring(tmp.lastIndexOf('/'));
-							
+
 						}
-						
+
 					}
-					
+
 					logger.info("Couldn't find file type.");
-					
+
 					return null;
 				}
-				
+
 			} else {
-				
+
 				// TODO ??? Error maybe?
-				
+
 				logger.info("OS determined to be \"Unknown\".");
-				
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error getting type.", e);
 		}
-		//temporary until all ifs get a return.
+		// temporary until all ifs get a return.
 		return null;
 	}
 
@@ -309,37 +302,6 @@ public class JFile implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Gets the current working directory is the current file is a directory.
-	 * <p>
-	 * Variable out gets cleared and then stores the JFiles made from the
-	 * current working directory, if the current file is a directory.
-	 * </p>
-	 * 
-	 * @param out
-	 *            List of JFile objects returned if method returns true. Is also
-	 *            cleared first before the new JFiles are stored.
-	 * @return True, if the current file is a directory, and stores the files in
-	 *         the directory into the given list. False otherwise.
-	 */
-	public boolean getWorkingDirectory(List<JFile> out) {
-
-		if (file.isFile()) {
-			return false;
-		}
-		
-		out.clear();
-
-		File[] fileList = file.listFiles();
-		if (fileList != null) {
-			for (int i = 0; i < fileList.length; i++) {
-				out.add(new JFile(fileList[i]));
-			} 
-		}
-		return true;
-
-	}
-	
-	/**
 	 * Deletes the actual file contents. Will loop through and delete files if
 	 * the given file is actually a folder that has content in it.
 	 * 
@@ -352,22 +314,22 @@ public class JFile implements Cloneable, Serializable {
 	 * @return true if the file was able to be deleted; false otherwise.
 	 */
 	protected boolean deleteContents() {
-		
+
 		// Since dirs cannot be deleted if they
 		// are holding something else,
 		// files and dirs have to be handled differently.
-		
+
 		if (file.isDirectory()) {
-		
+
 			// Arraylist to hold the dirs/files that need to be deleted.
 			ArrayList<File> fileArr = new ArrayList<>();
-			
+
 			// int to note which fir/object we are looking at.
 			int location = 0;
-			
+
 			// load the file we overall want to be deleted.
 			fileArr.add(file);
-			
+
 			// Move through array until the array is empty.
 			while (fileArr.size() != 0) {
 
@@ -378,7 +340,7 @@ public class JFile implements Cloneable, Serializable {
 
 				// detect if the file object is a dir
 				if (fileArr.get(location).isDirectory()) {
-					
+
 					// attempt to delete the dir
 					if (fileArr.get(location).delete()) {
 
@@ -412,7 +374,7 @@ public class JFile implements Cloneable, Serializable {
 				if (location >= fileArr.size()) {
 					location = 0;
 				}
-				
+
 			}
 
 		} else {
@@ -430,6 +392,94 @@ public class JFile implements Cloneable, Serializable {
 	 */
 	public boolean isHidden() {
 		return file.isHidden();
+	}
+	
+	/**
+	 * This method passes the File.list() method to the JFile
+	 * so that other teams that may have used this method in
+	 * scripting can more easily convert to JFile objects.
+	 * 
+	 * <p>It functions as closely to the File.list() method as
+	 * possible, to ensure easy transition.
+	 * 
+	 * @return
+	 * 		A string list of the abstract names of the contents of the JFile.
+	 */
+	public String[] list() {
+		logger.info("Attempting to list the abstract names of " + getPath());
+		try {
+			logger.info("Checking to see if the file is a directory.");
+			if (file.isDirectory()) {
+				logger.info("File was determined to be a directory.\n"
+						+ "   Returning list...");
+				return file.list();
+			} else {
+				logger.warn("File was determined to be a file; system attempted to"
+						+ "call list method on a file.\nReturning null value."); 
+				return null;
+			}
+		} catch (Exception e) {
+			logger.error("System caught an exception while attempting to "
+					+ "list file contents.", e);
+			return null;
+		}
+	}
+
+	/**
+	 * This method returns the contents of the JFile as JFiles. Since the File
+	 * command is not friendly to this, and doesn't even have a nice method for
+	 * listing the absolute file paths, we have to recreate this functionality.
+	 * 
+	 * <p>To this end, we have to first turn the abstract path names to absolute.
+	 * Then, we have to use those to make JFiles. In order to make the abstract
+	 * path names absolute, we also have to determine what separator to use, so
+	 * we have to determine what OS we're in.
+	 */
+	public JFile[] getContents() {
+		try {
+			if (file.isDirectory()) {
+				String[] fileNames = file.list();
+				// This if-then statement has to be kept to appease
+				// FindBugs. It is concerned that file.list() may
+				// return null, even though this is actually covered
+				// by the outer if-then statement in theory.
+				if (fileNames != null) {
+					JFile[] output = new JFile[fileNames.length];
+					String separator = "";
+					if (System.getProperty("os.name").contains("Windows")) {
+						logger.info("OS determined to be \"Windows\".");
+						separator = "\\";
+					} else if (System.getProperty("os.name").contains("Macintosh")) {
+						logger.info("OS determined to be \"Macintosh\".");
+						// TODO: Determine separator for Mac.
+						separator = "";
+					} else if (System.getProperty("os.name").contains("Linux")) {
+						logger.info("OS determined to be \"Linux\".");
+						// TODO: Determine separator for Linux.
+						separator = "";
+					} else {
+						// TODO ??? Error maybe?
+						logger.info("OS determined to be \"Unknown\".");
+					}
+					for (int i = 0; i < fileNames.length; i++) {
+						String temp = file.getAbsolutePath() + separator + fileNames[i];
+						output[i] = new JFile(temp);
+					}
+					// TODO: Add logging methods.
+					return output;
+				} else {
+					// TODO: Add logging methods.
+					return null;
+				}
+				
+			} else {
+				// TODO: Add logging methods.
+				return null;
+			}
+		} catch (Exception e) {
+			// TODO: Add logging methods.
+			return null;
+		}
 	}
 
 	/**
@@ -452,8 +502,7 @@ public class JFile implements Cloneable, Serializable {
 			e1.printStackTrace();
 			System.out.println("Trying to clone the JFile a different way.");
 			try {
-				output = new JFile(new File(file.getAbsolutePath()),
-						new HashMap<>(tagList));
+				output = new JFile(new File(file.getAbsolutePath()), new HashMap<>(tagList));
 				logger.info("Clone successfully made.");
 				return output;
 			} catch (Exception e2) {
