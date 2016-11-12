@@ -36,12 +36,13 @@ import java.util.ArrayList;
  * @author brian
  *
  */
-public class XmlHandler2 {
+public class XmlHandler {
 	
 	private Path currentPath;
 	private ArrayList<FileStruct> arrlist;
 	private static transient XStream xstream = new XStream();
 	
+	//Static init block to configure XStream
 	static {
 		xstream.alias("filesystem", ArrayList.class);
 		xstream.omitField(XStream.class, "xstream");
@@ -50,7 +51,7 @@ public class XmlHandler2 {
 	/**
 	 * Zero argument constructor.
 	 */
-	public XmlHandler2() {
+	public XmlHandler() {
 	}
 	
 	/**
@@ -58,7 +59,7 @@ public class XmlHandler2 {
 	 * @param path path that you want to XMLify
 	 * @throws IOException If Path object is inaccessible 
 	 */
-	public XmlHandler2(Path path) throws IOException {
+	public XmlHandler(Path path) throws IOException {
 		this.currentPath = path;
 		arrlist = new ArrayList<FileStruct>();
 		populateArray();	
@@ -95,7 +96,7 @@ public class XmlHandler2 {
 	 * @return reconstructed object
 	 */
 	public ArrayList<FileStruct> readXml(InputStreamReader isr) {
-		XmlHandler2 temp = (XmlHandler2) xstream.fromXML(isr);
+		XmlHandler temp = (XmlHandler) xstream.fromXML(isr);
 		return temp.arrlist;	
 	}
 }

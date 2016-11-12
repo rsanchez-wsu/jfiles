@@ -22,7 +22,8 @@
 package edu.wright.cs.jfiles.server;
 
 import edu.wright.cs.jfiles.common.Error;
-import edu.wright.cs.jfiles.common.XmlHandler2;
+import edu.wright.cs.jfiles.common.FileStruct;
+import edu.wright.cs.jfiles.common.XmlHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
@@ -186,24 +187,16 @@ public class JFilesServer implements Runnable {
 	public static void main(String[] args) {
 		try {
 			init();
-			XmlHandler2 aaa = new XmlHandler2(Paths.get("/home/brian/git/jfiles"));
+			XmlHandler aaa = new XmlHandler(Paths.get("/home/brian/git/jfiles"));
 			OutputStreamWriter osw = new OutputStreamWriter(
 					new FileOutputStream(new File("test.xml")));
 			aaa.sendXml(osw);
+			
+			
+			ArrayList<FileStruct> test = aaa.readXml(new InputStreamReader(new FileInputStream(new File("test.xml"))));
+			
+			
 			logger.info("Starting the server");
-			XmlHandler handler = new XmlHandler(logger);
-			try {
-				Document doc = handler.createXml("fileSystem");
-				handler.parseXml(doc);
-			} catch (TransformerFactoryConfigurationError e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (TransformerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			//Thread thread = new Thread(jf);
-			//thread.start();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
