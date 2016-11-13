@@ -38,8 +38,6 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 
 /**
@@ -125,11 +123,9 @@ public class JFilesClient implements Runnable {
 				// Find which command was entered
 				switch (commandInput) {
 				case "FILE":
-					//cmdary[1] = getFileName(0);
 					Thread thrd0 = new Thread(new Runnable() {
 						@Override
 						public void run() {
-							//fileCommand(cmdary[1], socket);
 							sockMan.sendCommand(cmdary[0] + " " + cmdary[1]);
 						}
 					});
@@ -163,7 +159,6 @@ public class JFilesClient implements Runnable {
 					Thread thrd2 = new Thread(new Runnable() {
 						@Override
 						public void run() {
-							//fileCommand(cmdary[0], socket);
 							sockMan.sendCommand(cmdary[0]);
 						}
 					});

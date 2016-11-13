@@ -74,11 +74,7 @@ public class JFilesServer implements Runnable {
 
 	@Override
 	public void run() {
-		//String dir = System.getProperty("user.dir");
 		try {
-			//Objects to read output from client
-			//InputStreamReader isr = new InputStreamReader(socket.getInputStream(), UTF_8);
-			//BufferedReader in = new BufferedReader(isr);
 			while (running) {
 				//String cmd = in.readLine();
 				String cmd = sockMan.getCommandInput();
@@ -95,7 +91,6 @@ public class JFilesServer implements Runnable {
 					//Client wants a file from the server
 					//Send file to client
 					case "FILE":
-						//sendFile(cmdary [1], socket);
 						sockMan.sendFile(new File(cmdary[1]));
 						break;
 					//Client wants to send file to server
