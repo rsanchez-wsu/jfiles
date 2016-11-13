@@ -19,7 +19,7 @@
  *
  */
 
-package gui;
+package edu.wright.cs.jfiles.gui;
 
 /**
  * Each file / folder is stored as an object.

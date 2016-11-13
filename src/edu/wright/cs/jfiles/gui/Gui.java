@@ -19,7 +19,7 @@
  *
  */
 
-package gui;
+package edu.wright.cs.jfiles.gui;
 
 import edu.wright.cs.jfiles.server.JFilesServer;
 
