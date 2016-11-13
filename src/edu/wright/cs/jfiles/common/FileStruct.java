@@ -43,7 +43,6 @@ public class FileStruct implements Serializable {
 
 	private static final long serialVersionUID = -5456733342924856091L;
 	private Map<String, String> attrList = new HashMap<>();
-	private Path file;
 	
 	/**
 	 * An attempt was made.
@@ -60,15 +59,14 @@ public class FileStruct implements Serializable {
 	 * @throws IOException Throws IOException when file at path cannot be accessed
 	 */
 	public FileStruct(Path input) throws IOException {
-		this.file = input;
-		populateArray();
+		populateArray(input);
 	}
 	
 	/**
 	 * Helper method to populate the attribute array.
 	 * @throws IOException If object passed is inaccessible
 	 */
-	private void populateArray() throws IOException {
+	private void populateArray(Path file) throws IOException {
 		if (file == null) {
 			return;
 		}
@@ -224,21 +222,5 @@ public class FileStruct implements Serializable {
 	 */
 	public void setAttrList(Map<String, String> attrList) {
 		this.attrList = attrList;
-	}
-
-	/**
-	 * Default.
-	 * @return the file
-	 */
-	public Path getFile() {
-		return file;
-	}
-
-	/**
-	 * Default.
-	 * @param file the file to set
-	 */
-	public void setFile(Path file) {
-		this.file = file;
 	}
 }

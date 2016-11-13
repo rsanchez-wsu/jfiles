@@ -24,10 +24,10 @@ package edu.wright.cs.jfiles.server;
 import edu.wright.cs.jfiles.common.Error;
 import edu.wright.cs.jfiles.common.FileStruct;
 import edu.wright.cs.jfiles.common.XmlHandler;
+
+import org.apache.commons.dbutils.DbUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.w3c.dom.Document;
-
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -43,10 +43,12 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Properties;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 
 /**
  * The main class of the JFiles server application.
@@ -110,7 +112,6 @@ public class JFilesServer implements Runnable {
 				}
 			}
 		}
-	
 		//Add setters here. First value is the key name and second is the default value.
 		//Default values are require as they are used if the config file cannot be found OR if
 		// the config file doesn't contain the key.
@@ -118,7 +119,37 @@ public class JFilesServer implements Runnable {
 		logger.info("Config set to port " + PORT);
 		
 		MAXTHREADS = Integer.parseInt(prop.getProperty("maxThreads","10"));
-		logger.info("Config set max threads to " + MAXTHREADS);		
+		logger.info("Config set max threads to " + MAXTHREADS);	
+		
+		// Create a Derby database in memory called jFiles
+		String jfilesCachedb = "jdbc:derby:memory:jFiles;create=true";
+		
+		Connection conn = null;
+		Statement stmt = null;
+		
+		try {
+			conn = DriverManager.getConnection(jfilesCachedb);
+			logger.info("Database connection successful");
+			
+			// Added so Eclipse won't complain about not using the Connection object
+			conn.getMetaData();
+			
+			stmt = conn.createStatement();
+			int result = stmt.executeUpdate("CREATE TABLE tags (filePath VARCHAR(260), "
+					+ "tag VARCHAR(255))");
+			logger.info("Table tags result: " + result);
+			
+			result = stmt.executeUpdate("CREATE TABLE cache (filePath VARCHAR(260), content BLOB,"
+					+ " time TIME)");
+			logger.info("Table cache result: " + result);
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			DbUtils.closeQuietly(conn);
+			DbUtils.closeQuietly(stmt);
+		}
 	}
 	
 	/**
@@ -187,16 +218,21 @@ public class JFilesServer implements Runnable {
 	public static void main(String[] args) {
 		try {
 			init();
-			XmlHandler aaa = new XmlHandler(Paths.get("/home/brian/git/jfiles"));
-			OutputStreamWriter osw = new OutputStreamWriter(
-					new FileOutputStream(new File("test.xml")));
-			aaa.sendXml(osw);
 			
-			
-			ArrayList<FileStruct> test = aaa.readXml(new InputStreamReader(new FileInputStream(new File("test.xml"))));
-			
+			/*
+			XmlHandler test1 = new XmlHandler(Paths.get("/home/brian/git/jfiles"));
+			OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(
+					new File("test.xml")));
+			test1.sendXml(osw);		
+			XmlHandler test2 = new XmlHandler();
+			ArrayList<FileStruct> arr = test2.readXml(new InputStreamReader(new FileInputStream(
+					new File("test.xml"))));
+			 */
 			
 			logger.info("Starting the server");
+			//JFilesServer jf = new JFilesServer();
+			// Thread thread = new Thread(jf);
+			// thread.start();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
