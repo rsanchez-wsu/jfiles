@@ -103,10 +103,12 @@ public class Gui {
 		
 		// Creates panel to add buttons to. This keeps it separate from other components.
 		JPanel filePanel = new JPanel();
+		JScrollPane fileScroller = new JScrollPane(filePanel);
 		// Where files will be place (rows, columns)
 		filePanel.setLayout(new GridLayout(0, 2));
 		addFiles(filePanel, consoleOutput);
-		pane.add(filePanel, BorderLayout.CENTER);
+		pane.add(fileScroller, BorderLayout.CENTER);
+		
 
 	}
 
