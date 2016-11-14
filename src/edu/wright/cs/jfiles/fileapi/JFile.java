@@ -134,6 +134,33 @@ public class JFile implements Cloneable, Serializable {
 	}
 
 	/**
+	 * This method is so that the JFM can access the .renameTo() method
+	 * to move the file into a different directory.
+	 * 
+	 * <p>
+	 * NOTE: the .renameTo() method in File objects cannot rename things
+	 * across different filesystems. I (Brand) have tried to use the method
+	 * to try to move it across drives on my windows machine. Both drives
+	 * are NTFS, but the file that I used to test with DID NOT get put into
+	 * the right place. The file instead sat in it's original directory.   
+	 * </p>
+	 * 
+	 * <p>
+	 * Note: the JFM handles if the given string is a directory or not,
+	 * int the paste method.
+	 * </p>
+	 * @param directory directory in which the file moves to.
+	 */
+	protected void moveTo(String directory) {
+		if (System.getProperty("os.name").contains("Windows")) {
+			file.renameTo(new File(directory + "\\" + file.getName()));
+		} else {
+			file.renameTo(new File(directory + "/" + file.getName()));
+		}
+		
+	}
+
+	/**
 	 * Tests whether or not the given key value is within the map
 	 * 
 	 * @param key
@@ -393,34 +420,33 @@ public class JFile implements Cloneable, Serializable {
 	public boolean isHidden() {
 		return file.isHidden();
 	}
-	
+
 	/**
-	 * This method passes the File.list() method to the JFile
-	 * so that other teams that may have used this method in
-	 * scripting can more easily convert to JFile objects.
+	 * This method passes the File.list() method to the JFile so that other
+	 * teams that may have used this method in scripting can more easily convert
+	 * to JFile objects.
 	 * 
-	 * <p>It functions as closely to the File.list() method as
-	 * possible, to ensure easy transition.
-	 * 
-	 * @return
-	 * 		A string list of the abstract names of the contents of the JFile.
+	 * <p>
+	 * It functions as closely to the File.list() method as possible, to ensure
+	 * easy transition.
+	 * </p>
+	 * @return A string list of the abstract names of the contents of the JFile.
 	 */
 	public String[] list() {
 		logger.info("Attempting to list the abstract names of " + getPath());
 		try {
 			logger.info("Checking to see if the file is a directory.");
 			if (file.isDirectory()) {
-				logger.info("File was determined to be a directory.\n"
-						+ "   Returning list...");
+				logger.info("File was determined to be a directory.\n" + "   Returning list...");
 				return file.list();
 			} else {
 				logger.warn("File was determined to be a file; system attempted to"
-						+ "call list method on a file.\nReturning null value."); 
+						+ "call list method on a file.\nReturning null value.");
 				return null;
 			}
 		} catch (Exception e) {
-			logger.error("System caught an exception while attempting to "
-					+ "list file contents.", e);
+			logger.error("System caught an exception while attempting to " + "list file contents.",
+					e);
 			return null;
 		}
 	}
@@ -430,10 +456,12 @@ public class JFile implements Cloneable, Serializable {
 	 * command is not friendly to this, and doesn't even have a nice method for
 	 * listing the absolute file paths, we have to recreate this functionality.
 	 * 
-	 * <p>To this end, we have to first turn the abstract path names to absolute.
+	 * <p>
+	 * To this end, we have to first turn the abstract path names to absolute.
 	 * Then, we have to use those to make JFiles. In order to make the abstract
 	 * path names absolute, we also have to determine what separator to use, so
 	 * we have to determine what OS we're in.
+	 * </p>
 	 */
 	public JFile[] getContents() {
 		try {
@@ -471,7 +499,7 @@ public class JFile implements Cloneable, Serializable {
 					// TODO: Add logging methods.
 					return null;
 				}
-				
+
 			} else {
 				// TODO: Add logging methods.
 				return null;

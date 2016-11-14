@@ -24,8 +24,10 @@ package edu.wright.cs.jfiles.fileapi;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+
 
 /**
  * <p>
@@ -107,16 +109,16 @@ public class JFileManager {
 	 * only be accessed via the JFileManager methods for the sake of security.
 	 * 
 	 */
-	private ArrayList<JFile> clipboard;
-	
+	private static ArrayList<JFile> clipboard = new ArrayList<>();
+
 	/**
 	 * This file functions as the working directory for the File API. This is
 	 * useful for tracking what directory the user is considered to be in. To
 	 * make this function correctly, the method setting this ensures that the
 	 * file being assigned is a directory.
 	 */
-	private JFile workingDirectory;
-	
+	private static JFile workingDirectory;
+
 	/*
 	 * This method entirely depends on copy and delete. It is pretty much done.
 	 */
@@ -134,7 +136,7 @@ public class JFileManager {
 	 * @param files
 	 *            The files being cut.
 	 */
-	public void cut(JFile[] files) {
+	public static void cut(JFile[] files) {
 		// Since the copy and delete methods already document themselves,
 		// I changed this documentation to only reflect the cut method.
 		logger.info("Cut Started");
@@ -155,6 +157,18 @@ public class JFileManager {
 	 * 
 	 * Though the clone method is used, I am not happy until its exact
 	 * functionality is defined in JFile...
+	 * 
+	 ******************************
+	 * NOTE ABOUT STATIC FUNCTIONS
+	 ******************************
+	 * Since we are using multithreading, there is concern for errors at the 
+	 * lower levels. These issues are around the dynamic variables being around
+	 * static methods. The thought is that if two threads happen into the same
+	 * static method at the same time, one of the threads could change the variable 
+	 * that the other is using, causing an error. The solution is to be found
+	 * at a later date. The current theory to the solution is to have
+	 * multiple JFMs. This is currently untested, and probably never really
+	 * will be because of the nature of this error. 
 	 */
 
 	/**
@@ -164,7 +178,7 @@ public class JFileManager {
 	 *            The files being copied to the clipboard.
 	 * 
 	 */
-	public void copy(JFile[] files) {
+	public static void copy(JFile[] files) {
 		logger.info("Copying");
 		try {
 			for (int i = 0; i < files.length; i++) {
@@ -189,7 +203,7 @@ public class JFileManager {
 	 * @param dirName
 	 *            The name of the directory being pasted to.
 	 */
-	public void paste(String dirName) {
+	public static void paste(String dirName) {
 		logger.info("Pasting File");
 		try {
 			logger.info("Successful Paste of " + dirName);
@@ -218,11 +232,22 @@ public class JFileManager {
 	 * @param dirName
 	 *            The directory the files are being duplicated to.
 	 */
-	private void paste(JFile[] files, String dirName) {
+	private static void paste(JFile[] files, String dirName) {
 		// Updated logging strings to better document method.
 		logger.info("Copying Files.");
 		try {
-			logger.info(Arrays.toString(files) + " Moved to " + dirName + " Successfully");
+
+			File tempFile = new File(dirName);
+
+			if (tempFile.isDirectory()) {
+				for (int i = 0; i < files.length ; i++) {
+					files[i].moveTo(dirName);
+				}
+				logger.info(Arrays.toString(files) + " Moved to " + dirName + " Successfully");
+			} else {
+				logger.error("Given string isn't a directory.");
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error Moving Files", e);
@@ -237,35 +262,36 @@ public class JFileManager {
 	 * bin, it moves it/them to that location. If they are, then it deletes them
 	 * off of the hard drive the same way the OS would.
 	 * <p>
-	 * Tests what OS the JFM is on, then loops through to check where the file(s)
-	 * are located.
+	 * Tests what OS the JFM is on, then loops through to check where the
+	 * file(s) are located.
 	 * </p>
+	 * 
 	 * @param files
 	 *            The files being deleted.
 	 * 
 	 */
-	public void delete(JFile[] files) {
+	public static void delete(JFile[] files) {
 		logger.info("Deleting File(s)");
 		try {
 			if (System.getProperty("os.name").contains("Windows")) {
 				for (int i = 0; i < files.length; i++) {
-					//The problem with how windows handles the recycling bin
-					//(from win 10) is that it is not an absolute file.
+					// The problem with how windows handles the recycling bin
+					// (from win 10) is that it is not an absolute file.
 					if (files[i].getPath().contains("$Recycle.Bin") == true) {
 						files[i].deleteContents();
 					} else {
-						//TODO: find out how to move files to recycle bin
+						// TODO: find out how to move files to recycle bin
 					}
 				}
 				logger.info("OS determined to be \"Windows\".");
 			} else if (System.getProperty("os.name").contains("Macintosh")) {
-				
+
 				logger.info("OS determined to be \"Macintosh\".");
 			} else if (System.getProperty("os.name").contains("Linux")) {
-				
+
 				logger.info("OS determined to be \"Linux\".");
 			} else {
-				
+
 				logger.info("OS determined to be \"Unknown\".");
 			}
 			logger.info("Successfully Deleted " + Arrays.toString(files));
@@ -309,7 +335,7 @@ public class JFileManager {
 	 * @param dirName
 	 *            The name of the directory where files will be moved to.
 	 */
-	public void move(JFile[] files, String dirName) {
+	public static void move(JFile[] files, String dirName) {
 		logger.info("Moving Files");
 		try {
 			paste(files, dirName);
@@ -333,7 +359,7 @@ public class JFileManager {
 	 *            The name that the file is changing to.
 	 * 
 	 */
-	public void rename(String oldName, String newName) {
+	public static void rename(String oldName, String newName) {
 		logger.info("Renaming File");
 		try {
 			logger.info("Renamed " + oldName + " to " + newName);
@@ -355,7 +381,7 @@ public class JFileManager {
 	 *            The file being opened.
 	 * 
 	 */
-	public void open(String name) {
+	public static void open(String name) {
 
 		/*
 		 * Notes on how to do this:
@@ -416,7 +442,7 @@ public class JFileManager {
 	 * 
 	 */
 
-	public void openWith(String name/* , Application app */) {
+	public static void openWith(String name/* , Application app */) {
 		// See open(JFile file) for details.
 
 		logger.info("Opening File");
@@ -440,15 +466,16 @@ public class JFileManager {
 			logger.error("Error Opening File", e);
 		}
 	}
-	
+
 	// This will be made to handle security (permissions) later, for now,
 	// I am just making something that is functioning. Leave this in until
 	// such functionality is added.
 	/**
-	 * This method takes in a JFile argument, checks to see if it is a directory,
-	 * and, if it is, sets the current working directory to be this file.
+	 * This method takes in a JFile argument, checks to see if it is a
+	 * directory, and, if it is, sets the current working directory to be this
+	 * file.
 	 */
-	public void setWorkingDirectory(JFile file) {
+	public static void setWorkingDirectory(JFile file) {
 		logger.info("Attempting to set the working directory.");
 		try {
 			logger.info("Checking whether the file argumet is a file or directory.");
@@ -463,17 +490,18 @@ public class JFileManager {
 		} catch (Exception e) {
 			System.err.println("System ran into an error setting the working directory.");
 			e.printStackTrace();
-			logger.error("The system ran into an excpetion while "
-					+ "setting the working directory.", e);
+			logger.error(
+					"The system ran into an excpetion while " + "setting the working directory.",
+					e);
 		}
 	}
-	
+
 	/**
 	 * This method gets the current working directory as a JFile.
 	 * 
 	 * @return The current working directory as a JFile.
 	 */
-	public JFile getWorkingDirectory() {
+	public static JFile getWorkingDirectory() {
 		logger.info("Attempting to get the working directory.");
 		try {
 			return workingDirectory;
@@ -485,18 +513,19 @@ public class JFileManager {
 			return null;
 		}
 	}
-	
+
 	/**
-	 * This method gets the contents of the working directory as an array of JFiles. This
-	 * is suitable for use listing the contents of the working directory in a UI. Though the
-	 * listWorkingDirectoryContents method is suitable for simply listing out the names of
-	 * the files/directories in the working directory, this method s necessary for doing
-	 * anything meaningful, such as getting absolute paths, file sizes and types, and for
-	 * easily getting the JFile to pass it into a method, such as cut, copy, or paste.
+	 * This method gets the contents of the working directory as an array of
+	 * JFiles. This is suitable for use listing the contents of the working
+	 * directory in a UI. Though the listWorkingDirectoryContents method is
+	 * suitable for simply listing out the names of the files/directories in the
+	 * working directory, this method s necessary for doing anything meaningful,
+	 * such as getting absolute paths, file sizes and types, and for easily
+	 * getting the JFile to pass it into a method, such as cut, copy, or paste.
 	 * 
 	 * @return The contents of the working directory as an array of JFiles.
 	 */
-	public JFile[] getWorkingDirectoryContents() {
+	public static JFile[] getWorkingDirectoryContents() {
 		try {
 			// TODO: Add logging methods.
 			return workingDirectory.getContents();
@@ -505,15 +534,15 @@ public class JFileManager {
 			return null;
 		}
 	}
-	
+
 	/**
-	 * This method returns the names of the contents of the working directory
-	 * as an array of abstract path names. For anything more advanced, the
+	 * This method returns the names of the contents of the working directory as
+	 * an array of abstract path names. For anything more advanced, the
 	 * getWorkingDirectoryContents method must be called.
 	 * 
 	 * @return An abstract listing of the contents of the working directory.
 	 */
-	public String[] listWorkingDirectoryContents() {
+	public static String[] listWorkingDirectoryContents() {
 		try {
 			// TODO: Add logging methods.
 			return workingDirectory.list();
@@ -531,7 +560,7 @@ public class JFileManager {
 	 * change depending on which OS the user is using.
 	 * 
 	 */
-	public void getType(String name) {
+	public static void getType(String name) {
 		logger.info("Requesting file type");
 		try {
 			logger.info("Acknowledged and Sent " + name + "'s Type");

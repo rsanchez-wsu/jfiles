@@ -21,16 +21,19 @@
 
 package edu.wright.cs.jfiles.fileapi;
 
+import java.io.File;
+
 /**
  * This is a functional class that contains methods for testing the functions in
  * the JFileManager (JFM) and in JFile. Where applicable, these methods should
  * use files made explicitly for testing purposes and return them to heir
  * original state at the end of the method.
  * 
- * <p>This class' methods also should have the initialize method called in all
+ * <p>
+ * This class' methods also should have the initialize method called in all
  * exception calls in case the test fails and a file is left renamed, not
  * deleted, or not replaced after deletion.
- * 
+ * </p>
  * @author John Wintersohle II
  * @author Randy Musser
  *
@@ -39,20 +42,22 @@ public class FileTest {
 
 	/**
 	 * <b>NOTE</b>: this method should always be ran after testDelete and
-	 * testCopy. This is because the cut method just calls these two methods,
-	 * so the primary purpose of this method should be to test how the cut method
+	 * testCopy. This is because the cut method just calls these two methods, so
+	 * the primary purpose of this method should be to test how the cut method
 	 * puts the two together.
 	 * 
-	 * <p>This method shall test cut method from the JFM. As opposed to testing
-	 * the copy and delete methods independently, this method tests the final
-	 * result of the cut command. This is to make sure the tester does not assume
-	 * that, because the methods that make up the cut method work that the final
+	 * <p>
+	 * This method shall test cut method from the JFM. As opposed to testing the
+	 * copy and delete methods independently, this method tests the final result
+	 * of the cut command. This is to make sure the tester does not assume that,
+	 * because the methods that make up the cut method work that the final
 	 * product will work.
-	 * 
-	 * <p>That is to say, if the tester know that copy and delete are already
+	 * </p>
+	 * <p>
+	 * That is to say, if the tester know that copy and delete are already
 	 * working correctly, but cut is not, they can know that the problem' cause
 	 * is in how the cut method puts the two methods together.
-	 * 
+	 * </p>
 	 */
 	public static void testCut() {
 
@@ -64,12 +69,14 @@ public class FileTest {
 	 * should then use the compareFiles method to verify that the files in the
 	 * clipboard have the same contents as the files in the system.
 	 * 
-	 * <p>After copying to the clipboard, the system shall remove the contents
-	 * from the clipboard so that the system is returned to its starting state.
-	 * 
+	 * <p>
+	 * After copying to the clipboard, the system shall remove the contents from
+	 * the clipboard so that the system is returned to its starting state.
+	 * </p>
 	 */
-	public static void testCopy() {
-
+	public static void testCopy(JFile testFile) {
+		JFile[] tempJfArr = {testFile};
+		JFileManager.copy(tempJfArr);
 	}
 
 	/**
@@ -77,9 +84,10 @@ public class FileTest {
 	 * clipboard and then test the paste method by calling it and using the
 	 * compareFiles method to verify that the files are the same.
 	 * 
-	 * <p>After the file is created, the file shall be deleted to return the
-	 * system to its starting state.
-	 * 
+	 * <p>
+	 * After the file is created, the file shall be deleted to return the system
+	 * to its starting state.
+	 * </p>
 	 */
 	public static void testRegPaste() {
 
@@ -94,24 +102,28 @@ public class FileTest {
 	 * method. This method tests the final result of the move method, but also
 	 * functions as the test for that version of the paste method.
 	 * 
-	 * <p>-------------------------------------------------------------------------
-	 * 
-	 * <p>This tests both the move method of JFileManager as well as the version
-	 * of paste that it uses. After copying the file, this method shall call the
+	 * <p>
+	 * -------------------------------------------------------------------------
+	 * </p>
+	 * <p>
+	 * This tests both the move method of JFileManager as well as the version of
+	 * paste that it uses. After copying the file, this method shall call the
 	 * compareFiles method to ensure that the contents of the files are the same
 	 * before delete the original files. From there, this method shall delete
 	 * the original files and make sure that they are deleted from the
 	 * filesystem.
-	 * 
-	 * <p>Since the move method functionally consists of just a call to the
-	 * special paste method for move followed by the normal delete method, if
-	 * we test the delete method first and the testMove method fails, we can
-	 * know that it is the paste method that has the problem.
-	 * 
-	 * <p>If the system was able to move the file to its new location, the
-	 * system shall attempt to move it back to prepare for the next call of
-	 * this method.
-	 * 
+	 * </p>
+	 * <p>
+	 * Since the move method functionally consists of just a call to the special
+	 * paste method for move followed by the normal delete method, if we test
+	 * the delete method first and the testMove method fails, we can know that
+	 * it is the paste method that has the problem.
+	 * </p>
+	 * <p>
+	 * If the system was able to move the file to its new location, the system
+	 * shall attempt to move it back to prepare for the next call of this
+	 * method.
+	 * </p>
 	 */
 	public static void testMove() {
 
@@ -126,11 +138,13 @@ public class FileTest {
 	 * this reflects on the testing software, not the actual JFM, this should
 	 * still be checked.
 	 * 
-	 * <p>If the file used for testing this method is already deleted from some
+	 * <p>
+	 * If the file used for testing this method is already deleted from some
 	 * reason, the file will be made and then the test will be ran. With that
 	 * said, the fact that it was missing should be noted in the log. This is to
 	 * ensure that the tester knows that something is wrong with the testing
 	 * software.
+	 * </p>
 	 */
 	public static void testDelete() {
 
@@ -156,7 +170,8 @@ public class FileTest {
 	 * any system. The only thing that fits this is JFiles itself, so this
 	 * method shall use JFiles until further notice.
 	 * 
-	 * <p>To make sure the connection to the correct file is tested, this custom
+	 * <p>
+	 * To make sure the connection to the correct file is tested, this custom
 	 * file type must be on the same configuration file that all of the other
 	 * file types are on, but it must not be changeable by the user. To ensure
 	 * this, the method that sets default programs for different file types
@@ -164,11 +179,13 @@ public class FileTest {
 	 * prevent the user from changing this entry. Additionally, this entry must
 	 * not be viewable by the user. This is a technical detail that we want to
 	 * hide from the people using this API.
-	 * 
-	 * <p>Our other option is to make sure we have some other application is
+	 * </p>
+	 * <p>
+	 * Our other option is to make sure we have some other application is
 	 * installed as a prerequisite so that we have something to test this
 	 * method. For the sake of proper testing this may be wise, but this
 	 * application should be small and take up as little space as possible
+	 * </p>
 	 */
 	public static void testOpen() {
 
@@ -203,9 +220,10 @@ public class FileTest {
 	 * checks to see if they are equal. If a better way is known, it shall be
 	 * used and the doc updated to reflect the change.
 	 * 
-	 * <p>The order of which file is first and second should not be relevant to
-	 * the result.
-	 * 
+	 * <p>
+	 * The order of which file is first and second should not be relevant to the
+	 * result.
+	 * </p>
 	 * @param files1
 	 *            The first array of files being compared.
 	 * @param files2
@@ -225,5 +243,14 @@ public class FileTest {
 	 */
 	public static void initialize() {
 
+	}
+
+	/**
+	 * Place holder text.
+	 * @param args Place holder text. 
+	 */
+	public static void main(String[] args) {
+		
+		testCopy(new JFile(new File("D:\\TEST")));
 	}
 }
