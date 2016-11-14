@@ -81,7 +81,12 @@ public class JFilesServer implements Runnable {
 			System.out.println("Can not bind to port " + PORT + ": " + ioe.getMessage());
 		}
 	}
-
+	
+	/**
+	 * .
+	 * 
+	 *
+	 */
 	public void run() {
 		while (true) {
 			try {
@@ -93,21 +98,36 @@ public class JFilesServer implements Runnable {
 			}
 		}
 	}
-
+	
+	/**
+	 * .
+	 * 
+	 *
+	 */
 	public void start() {
 		if (thread == null) {
 			thread = new Thread(this);
 			thread.start();
 		}
 	}
-
+	
+	/**
+	 * This method stops the thread.
+	 * 
+	 *
+	 */
 	public void stop() {
 		if (thread != null) {
 			thread.stop();
 			thread = null;
 		}
 	}
-
+	
+	/**
+	 * This method searches for the client based on the id number.
+	 * 
+	 *
+	 */
 	private int findClient(int id) {
 		for (int i = 0; i < clientCount; i++) {
 			if (clients[i].getid() == id) {
@@ -116,7 +136,12 @@ public class JFilesServer implements Runnable {
 		}
 		return -1;
 	}
-
+	
+	/**
+	 * This method handles all the activities the thread will do.
+	 * 
+	 *
+	 */
 	public synchronized void handle(int id, String input) throws IOException {
 
 		// logger.info("Received connection from" +
@@ -201,6 +226,11 @@ public class JFilesServer implements Runnable {
 
 	}
 
+	/**
+	 * This method handles removing a thread.
+	 * 
+	 *
+	 */
 	public synchronized void remove(int id) {
 		int pos = findClient(id);
 		if (pos >= 0) {
@@ -221,7 +251,12 @@ public class JFilesServer implements Runnable {
 			toTerminate.stop();
 		}
 	}
-
+	
+	/**
+	 * This method handles adding a new thread.
+	 * 
+	 *
+	 */
 	private void addThread(Socket socket) {
 		if (clientCount < clients.length) {
 			System.out.println("Client accepted: " + socket);
@@ -237,7 +272,12 @@ public class JFilesServer implements Runnable {
 			System.out.println("Client refused: maximum " + clients.length + " reached.");
 		}
 	}
-
+	
+	/**
+	 * Checks to make sure the command input is valid.
+	 * 
+	 *
+	 */
 	boolean isValid(String[] command) {
 		if (command.length <= 1) { // used for handling invalid error
 			logger.error("Invalid Input, nothing to find");
