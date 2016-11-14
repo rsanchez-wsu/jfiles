@@ -22,9 +22,6 @@
 package edu.wright.cs.jfiles.server;
 
 import edu.wright.cs.jfiles.common.Error;
-import edu.wright.cs.jfiles.common.FileStruct;
-import edu.wright.cs.jfiles.common.XmlHandler;
-
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,7 +30,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
