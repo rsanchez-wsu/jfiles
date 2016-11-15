@@ -179,19 +179,27 @@ public class FileStruct implements Serializable {
 		return attrList;
 	}
 	
+	/**
+	 * Default.
+	 * @param attrList the attrList to set
+	 */
+	public void setAttrList(Map<String, String> attrList) {
+		this.attrList = attrList;
+	}
 
 	/**
-	 * getAttr searches the attrList for an attribute corresponding to the given string
+	 * getValue searches the attrList for an attribute corresponding to the given string
 	 * @param name is the key to search for an attribute
-	 * @return the corresponding attribute if it exists. Otherwise returns an empty string
+	 * @return the corresponding value if the attribute exists. Otherwise returns an empty string
 	 */
-	public String getAttr(String name) {
+	public String getValue(String name) {
 		String attribute = "";
 		if (attrList.containsKey(name)) {
 			attribute = attrList.get(name);
 		}
 		return attribute;
 	}
+	
 	/**
 	 * getAttrNames searches the attrList and returns an array of its values.
 	 * @return an array of the values of the attList.
@@ -202,6 +210,7 @@ public class FileStruct implements Serializable {
 		String [] namesArray = attNames.toArray(new String[attNames.size()]); 
 		return namesArray;
 	}
+	
 	/**
 	 * contains determines if the attrList has a value for the given key.
 	 * @param name is the key to search for a value
@@ -214,13 +223,5 @@ public class FileStruct implements Serializable {
 			truth = true;
 		}
 		return truth;
-	}
-	
-	/**
-	 * Default.
-	 * @param attrList the attrList to set
-	 */
-	public void setAttrList(Map<String, String> attrList) {
-		this.attrList = attrList;
 	}
 }

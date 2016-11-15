@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
@@ -70,14 +71,23 @@ public class XmlHandler {
 	 * @throws IOException If Path object is inaccessible
 	 */
 	private void populateArray() throws IOException {
-		//Tried this with an iterator and it blew up
-		File[] temp = currentPath.toFile().listFiles();
+		String ts = currentPath.toString();
+		ts = ts.substring(ts.length() - 1);
 		
-		if (temp == null) {
-			return;
-		}
-		for (int i = 0; i < temp.length; i++) {
-			arrlist.add(new FileStruct(temp[i].toPath()));	
+		//If passed a directory with a trailing slash in the path only list the directory
+		//Else list the content of the directory
+		if (Files.isDirectory(currentPath) && ts.equals(System.getProperty("file.separator"))) {
+			arrlist.add(new FileStruct(currentPath));
+		} else {
+			//Tried this with an iterator and it blew up
+			File[] temp = currentPath.toFile().listFiles();
+			
+			if (temp == null) {
+				return;
+			}
+			for (int i = 0; i < temp.length; i++) {
+				arrlist.add(new FileStruct(temp[i].toPath()));	
+			}
 		}
 	}
 	
