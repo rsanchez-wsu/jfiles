@@ -175,7 +175,7 @@ public class FileStruct implements Serializable {
 	 * Default.
 	 * @return the attrList
 	 */
-	public Map<String, String> getAttrList() {
+	protected Map<String, String> getAttrList() {
 		return attrList;
 	}
 	
@@ -183,7 +183,7 @@ public class FileStruct implements Serializable {
 	 * Default.
 	 * @param attrList the attrList to set
 	 */
-	public void setAttrList(Map<String, String> attrList) {
+	protected void setAttrList(Map<String, String> attrList) {
 		this.attrList = attrList;
 	}
 
@@ -201,12 +201,12 @@ public class FileStruct implements Serializable {
 	}
 	
 	/**
-	 * getAttrNames searches the attrList and returns an array of its values.
-	 * @return an array of the values of the attList.
+	 * getKeys returns an array of its keys.
+	 * @return an array of the keys of the attList.
 	 */
 	
-	public String[] getAttrNames() {
-		Collection<String> attNames = attrList.values();
+	public String[] getKeys() {
+		Collection<String> attNames = attrList.keySet();
 		String [] namesArray = attNames.toArray(new String[attNames.size()]); 
 		return namesArray;
 	}
