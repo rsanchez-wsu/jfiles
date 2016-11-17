@@ -22,6 +22,8 @@
 package edu.wright.cs.jfiles.client;
 
 import edu.wright.cs.jfiles.common.Error;
+
+import org.apache.commons.dbutils.DbUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -123,19 +125,26 @@ public class JFilesClient implements Runnable {
 		// Create a Derby database in memory called jFiles
 		String jfilesCachedb = "jdbc:derby:memory:jFiles;create=true";
 		
-		try (Connection conn = DriverManager.getConnection(jfilesCachedb);
-				Statement sta = conn.createStatement()) {
+		Connection conn = null;
+		Statement stmt = null;
+		
+		try {
+			conn = DriverManager.getConnection(jfilesCachedb);
 			logger.info("Database connection successful");
+			
 			// Added so Eclipse won't complain about not using the Connection object
 			conn.getMetaData();
 			
-			sta.executeUpdate("CREATE TABLE tags (filePath VARCHAR(260), "
-					+ "tag VARCHAR(255))");
-			
-			sta.executeUpdate("CREATE TABLE cache (filePath VARCHAR(260), XML Blob)");
-			
+			stmt = conn.createStatement();
+
+			int result = stmt.executeUpdate("CREATE TABLE cache (filePath VARCHAR(260), "
+					+ "content BLOB, time TIME)");
+			logger.info("Table cache result: " + result);			
 		} catch (SQLException e) {
-			logger.error(Error.SQL_INIT_ERROR.toString());
+			logger.error(Error.SQL_INIT_ERROR.toString(),e);
+		} finally {
+			DbUtils.closeQuietly(conn);
+			DbUtils.closeQuietly(stmt);
 		}
 	}
 	

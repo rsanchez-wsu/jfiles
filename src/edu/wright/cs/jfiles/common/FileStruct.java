@@ -120,6 +120,8 @@ public class FileStruct implements Serializable {
 			permissions += "l";
 		} else if (Files.isRegularFile(path)) {
 			permissions += "-";
+		} else {
+			permissions += " ";
 		}
 		
 		if (attrs.permissions().contains(PosixFilePermission.OWNER_READ)) {
@@ -204,7 +206,6 @@ public class FileStruct implements Serializable {
 	 * getKeys returns an array of its keys.
 	 * @return an array of the keys of the attList.
 	 */
-	
 	public String[] getKeys() {
 		Collection<String> attNames = attrList.keySet();
 		String [] namesArray = attNames.toArray(new String[attNames.size()]); 
@@ -216,7 +217,6 @@ public class FileStruct implements Serializable {
 	 * @param name is the key to search for a value
 	 * @return true or false depending on if a value is found
 	 */
-	
 	public boolean contains(String name) {
 		boolean truth = false;
 		if (attrList.containsKey(name)) {

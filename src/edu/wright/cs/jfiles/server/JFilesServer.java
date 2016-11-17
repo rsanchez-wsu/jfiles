@@ -101,7 +101,7 @@ public class JFilesServer implements Runnable {
 				fis = new FileInputStream(config);
 				prop.loadFromXML(fis);			
 			} catch (IOException e) {
-				logger.error(Error.IOEXCEPTION1.getDescription(), e);
+				logger.error(Error.IOEXCEPTION1.toString(), e);
 			} finally {
 				if (fis != null) {
 					fis.close();
@@ -135,13 +135,8 @@ public class JFilesServer implements Runnable {
 					+ "tag VARCHAR(255))");
 			logger.info("Table tags result: " + result);
 			
-			result = stmt.executeUpdate("CREATE TABLE cache (filePath VARCHAR(260), content BLOB,"
-					+ " time TIME)");
-			logger.info("Table cache result: " + result);
-			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(Error.SQL_INIT_ERROR.toString(),e);
 		} finally {
 			DbUtils.closeQuietly(conn);
 			DbUtils.closeQuietly(stmt);
