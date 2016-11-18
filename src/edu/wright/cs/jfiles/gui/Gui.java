@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -121,7 +122,7 @@ public class Gui {
 	 * @throws IOException						IOException handler
 	 * @throws XPathExpressionException			XPatchException handler
 	 */
-	static void addFiles(Container filePanel, Container consoleOutput) throws 
+	static void addFiles(Container filePanel, JComponent consoleOutput) throws 
 		ParserConfigurationException, SAXException, IOException, XPathExpressionException {
 
 		// Icon width and height variables
