@@ -21,15 +21,11 @@
 
 package edu.wright.cs.jfiles.client;
 
-import javax.swing.ImageIcon;
-
-import edu.wright.cs.jfiles.gui.Gui;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
