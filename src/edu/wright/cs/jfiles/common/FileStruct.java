@@ -40,9 +40,44 @@ import java.util.Map;
  *
  */
 public class FileStruct implements Serializable {
-
+	
+	/**
+	 * Enum inner class to define what type of object.
+	 * @author brian
+	 *
+	 */	
+	enum Type {
+		FILE("file"), DIRECTORY("directory"), SYMBOLICLINK("symbolicLink"), OTHER("other");
+		private String type;
+		
+		/**
+		 * Constructor.
+		 * @param input Type of object
+		 */
+		Type(String input) {
+			setType(input);
+		}
+		
+		/**
+		 * Public getter for type.
+		 * @return type
+		 */
+		public String getType() {
+			return type;
+		}
+		
+		/**
+		 * Public setter for type.
+		 * @param type type of object
+		 */
+		public void setType(String type) {
+			this.type = type;
+		}
+	}
+	
 	private static final long serialVersionUID = -5456733342924856091L;
 	private Map<String, String> attrList = new HashMap<>();
+	private Type type;
 	
 	/**
 	 * An attempt was made.
@@ -66,40 +101,46 @@ public class FileStruct implements Serializable {
 	 * Helper method to populate the attribute array.
 	 * @throws IOException If object passed is inaccessible
 	 */
-	private void populateArray(Path file) throws IOException {
-		if (file == null) {
+	private void populateArray(Path path) throws IOException {
+		if (path == null) {
 			return;
 		}
 		//Populates each JFile with a complete K/V map of all basic file attributes	
-		attrList.put("name", file.toFile().getName());
-		attrList.put("lastModifiedTime", Files.getAttribute(file, "lastModifiedTime").toString());
-		attrList.put("lastAccessTime", Files.getAttribute(file, "lastAccessTime").toString());
-		attrList.put("creationTime", Files.getAttribute(file, "creationTime").toString());
-		attrList.put("size", Files.getAttribute(file, "size").toString());
-		attrList.put("isRegularFile", Files.getAttribute(file, "isRegularFile").toString());
-		attrList.put("isDirectory", Files.getAttribute(file, "isDirectory").toString());
-		attrList.put("isSymbolicLink", Files.getAttribute(file, "isSymbolicLink").toString());
-		attrList.put("isOther", Files.getAttribute(file, "isOther").toString());
+		if (Files.isRegularFile(path)) {
+			this.setType(Type.FILE);
+		} else if (Files.isDirectory(path)) {
+			this.setType(Type.DIRECTORY);
+		} else if (Files.isSymbolicLink(path)) {
+			this.setType(Type.SYMBOLICLINK);
+		} else {
+			this.setType(Type.OTHER);
+		}
+		
+		attrList.put("name", path.toFile().getName());
+		attrList.put("lastModifiedTime", Files.getAttribute(path, "lastModifiedTime").toString());
+		attrList.put("lastAccessTime", Files.getAttribute(path, "lastAccessTime").toString());
+		attrList.put("creationTime", Files.getAttribute(path, "creationTime").toString());
+		attrList.put("size", Files.getAttribute(path, "size").toString());
 		
 		//Populates with DOS or POSIX attributes
-		if (Files.getFileStore(file).supportsFileAttributeView(DosFileAttributeView.class)) {
+		if (Files.getFileStore(path).supportsFileAttributeView(DosFileAttributeView.class)) {
 			DosFileAttributes attrs = Files.getFileAttributeView(
-					file, DosFileAttributeView.class).readAttributes();
+					path, DosFileAttributeView.class).readAttributes();
 			
 			attrList.put("system", "DOS");
 			attrList.put("readOnly", String.valueOf(attrs.isReadOnly()));
 			attrList.put("hidden", String.valueOf(attrs.isHidden()));
 			attrList.put("system", String.valueOf(attrs.isSystem()));
 			attrList.put("archive", String.valueOf(attrs.isArchive()));				
-		} else if (Files.getFileStore(file)
+		} else if (Files.getFileStore(path)
 				.supportsFileAttributeView(PosixFileAttributeView.class)) {
 			PosixFileAttributes attrs = Files.getFileAttributeView(
-					file, PosixFileAttributeView.class).readAttributes();
+					path, PosixFileAttributeView.class).readAttributes();
 			
 			attrList.put("system", "POSIX");
 			attrList.put("group", attrs.group().getName());
 			attrList.put("owner", attrs.owner().getName());
-			attrList.put("permissions", stringifyPermissions(file, attrs));
+			attrList.put("permissions", stringifyPermissions(path, attrs));
 		//Catching weird behavior	
 		} else {
 			attrList.put("system", "Unknown");
@@ -187,6 +228,22 @@ public class FileStruct implements Serializable {
 	 */
 	protected void setAttrList(Map<String, String> attrList) {
 		this.attrList = attrList;
+	}
+	
+	/**
+	 * Default.
+	 * @return type of object
+	 */
+	public Type getType() {
+		return type;
+	}
+
+	/**
+	 * Default.
+	 * @param type type to set
+	 */
+	public void setType(Type type) {
+		this.type = type;
 	}
 
 	/**

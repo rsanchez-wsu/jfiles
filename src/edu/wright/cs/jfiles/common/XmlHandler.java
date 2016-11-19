@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 /**
@@ -39,13 +39,14 @@ import java.util.ArrayList;
  */
 public class XmlHandler {
 	
-	private Path currentPath;
+	private String currentPath;
 	private ArrayList<FileStruct> arrlist;
 	private static transient XStream xstream = new XStream();
 	
 	//Static init block to configure XStream
 	static {
-		xstream.alias("filesystem", ArrayList.class);
+		xstream.alias("fileObject", FileStruct.class);
+		xstream.alias("fileSystem", XmlHandler.class);
 		xstream.omitField(XStream.class, "xstream");
 	}
 	
@@ -60,7 +61,7 @@ public class XmlHandler {
 	 * @param path path that you want to XMLify
 	 * @throws IOException If Path object is inaccessible 
 	 */
-	public XmlHandler(Path path) throws IOException {
+	public XmlHandler(String path) throws IOException {
 		this.currentPath = path;
 		arrlist = new ArrayList<FileStruct>();
 		populateArray();	
@@ -71,16 +72,16 @@ public class XmlHandler {
 	 * @throws IOException If Path object is inaccessible
 	 */
 	private void populateArray() throws IOException {
-		String ts = currentPath.toString();
-		ts = ts.substring(ts.length() - 1);
+		String ts = currentPath.substring(currentPath.length() - 1);
 		
 		//If passed a directory with a trailing slash in the path only list the directory
 		//Else list the content of the directory
-		if (Files.isDirectory(currentPath) && ts.equals(System.getProperty("file.separator"))) {
-			arrlist.add(new FileStruct(currentPath));
+		if (Files.isDirectory(Paths.get(currentPath)) 
+				&& ts.equals(System.getProperty("file.separator"))) {
+			arrlist.add(new FileStruct(Paths.get(currentPath)));
 		} else {
 			//Tried this with an iterator and it blew up
-			File[] temp = currentPath.toFile().listFiles();
+			File[] temp = new File(currentPath).listFiles();
 			
 			if (temp == null) {
 				return;
