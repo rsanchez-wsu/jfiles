@@ -576,12 +576,12 @@ public class JFileManager {
 }
 
 final class ProcessBuilder extends Object {
-	Process p1 = new ProcessBuilder("").start();
-	ProcessBuilder pb = new ProcessBuilder("");
+	Process p1 = new ProcessBuilder().start();
+	ProcessBuilder pb = new ProcessBuilder();
 	Map<String, String> env = pb
-			.environment();{env.put("VAR1","myValue");env.remove("OTHERVAR");env.put("VAR2",env.get("VAR1")+"suffix");pb.directory((new File("myDir")));
+			.environment();env.put("VAR1","myValue");env.remove("OTHERVAR");env.put("VAR2",env.get("VAR1")+"suffix");pb.directory(new File("myDir"));
 	File log = new File(
-			"log");pb.redirectErrorStream(true);pb.redirectOutput(Redirect.appendTo(log));
+			"log");pb.@redirectErrorStream(true);pb.redirectOutput(Redirect.appendTo(log));
 	Process p = pb.start();assert pb.redirectInput()==Redirect.PIPE;assert pb.redirectOutput().file()==log;assert p.getInputStream().read()==-1;
 
 	public ProcessBuilder(List<String> command) {
@@ -699,8 +699,8 @@ final class ProcessBuilder extends Object {
 	 * directory. The argument may be null -- this means to use the working
 	 * directory of the current Java process, usually the directory named by the
 	 * system property user.dir, as the working directory of the child process.
-	 * Parameters: directory - the new working directory 
-	 * Returns: this process builder
+	 * Parameters: directory - the new working directory Returns: this process
+	 * builder
 	 */
 	public ProcessBuilder redirectInput(ProcessBuilder.Redirect source) {
 		return null;
@@ -715,9 +715,8 @@ final class ProcessBuilder extends Object {
 	 * source is set to any other value, then Process.getOutputStream() will
 	 * return a null output stream.
 	 * 
-	 * Parameters: source - the new standard input source 
-	 * Returns: this process builder 
-	 * Throws: IllegalArgumentException - if the redirect does not
+	 * Parameters: source - the new standard input source Returns: this process
+	 * builder Throws: IllegalArgumentException - if the redirect does not
 	 * correspond to a valid source of data, that is, has type WRITE or APPEND
 	 */
 	public ProcessBuilder redirectOutput(ProcessBuilder.Redirect destination) {
@@ -733,13 +732,12 @@ final class ProcessBuilder extends Object {
 	 * destination is set to any other value, then Process.getInputStream() will
 	 * return a null input stream.
 	 * 
-	 * Parameters: destination - the new standard output destination 
-	 * Returns: this process builder 
-	 * Throws: IllegalArgumentException - if the redirect
+	 * Parameters: destination - the new standard output destination Returns:
+	 * this process builder Throws: IllegalArgumentException - if the redirect
 	 * does not correspond to a valid destination of data, that is, has type
 	 * READ
 	 */
-	public ProcessBuilder redirectError(ProcessBuilder.Redirect destination) throws IllegalArgumentException {
+	public ProcessBuilder redirectError(ProcessBuilder.Redirect destination) {
 		return null;
 	}
 
@@ -755,13 +753,12 @@ final class ProcessBuilder extends Object {
 	 * If the redirectErrorStream attribute has been set true, then the
 	 * redirection set by this method has no effect.
 	 * 
-	 * Parameters: destination - the new standard error destination 
-	 * Returns: this process builder 
-	 * Throws: IllegalArgumentException - if the redirect
+	 * Parameters: destination - the new standard error destination Returns:
+	 * this process builder Throws: IllegalArgumentException - if the redirect
 	 * does not correspond to a valid destination of data, that is, has type
 	 * READ
 	 */
-	public ProcessBuilder redirectInput(File file) throws IllegalArgumentException {
+	public ProcessBuilder redirectInput(File file) {
 		return null;
 	}
 
@@ -784,8 +781,8 @@ final class ProcessBuilder extends Object {
 	 * behaves in exactly the same way as the invocation redirectOutput
 	 * (Redirect.to(file)).
 	 * 
-	 * Parameters: file - the new standard output destination 
-	 * Returns: this process builder
+	 * Parameters: file - the new standard output destination Returns: this
+	 * process builder
 	 */
 	public ProcessBuilder redirectError(File file) {
 		return null;
@@ -862,8 +859,8 @@ final class ProcessBuilder extends Object {
 	 * Process.getInputStream() method. This makes it easier to correlate error
 	 * messages with the corresponding output. The initial value is false.
 	 * 
-	 * Parameters: redirectErrorStream - the new property value 
-	 * Returns: this process builder
+	 * Parameters: redirectErrorStream - the new property value Returns: this
+	 * process builder
 	 */
 	public ProcessBuilder redirectErrorStream(boolean redirectErrorStream) {
 		return null;
@@ -899,8 +896,8 @@ final class ProcessBuilder extends Object {
 	 * Subsequent modifications to this process builder will not affect the
 	 * returned Process.
 	 * 
-	 * Returns: a new Process object for managing the subprocess 
-	 * Throws: NullPointerException - if an element of the command list is null
+	 * Returns: a new Process object for managing the subprocess Throws:
+	 * NullPointerException - if an element of the command list is null
 	 * IndexOutOfBoundsException - if the command is an empty list (has size 0)
 	 * SecurityException - if a security manager exists and its checkExec method
 	 * doesn't allow creation of the subprocess, or the standard input to the
@@ -911,7 +908,7 @@ final class ProcessBuilder extends Object {
 	 * IOException - if an I/O error occurs See Also: Runtime.exec(String[],
 	 * String[], java.io.File)
 	 */
-	public Process start() throws IOException, NullPointerException, IndexOutOfBoundsException, SecurityException {
+	public Process start() throws IOException {
 		return null;
 	}
 
