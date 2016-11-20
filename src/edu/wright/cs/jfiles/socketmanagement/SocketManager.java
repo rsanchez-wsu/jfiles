@@ -24,6 +24,8 @@ package edu.wright.cs.jfiles.socketmanagement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import edu.wright.cs.jfiles.common.NetUtil;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -67,6 +69,7 @@ public class SocketManager {
 	private Socket mainSocket;
 	// total amount of bytes a packet can hold
 	private final int packetSize;
+	private NetUtil util = new NetUtil();
 	// keeps the threads alive
 	private static volatile boolean running = true;
 
@@ -187,8 +190,8 @@ public class SocketManager {
 	 * @param filename
 	 *            The name of the file being sent
 	 */
-	public void sendFileId(int identity, String filename) {
-		outbound.sendFileId(identity, filename);
+	public void sendFileId(int identity, String filename, String checksum) {
+		outbound.sendFileId(identity, filename, checksum);
 	}
 
 	/**
@@ -403,7 +406,7 @@ public class SocketManager {
 							packRecwritelock.lock();
 							packetsReceived.ensureCapacity(++numPackets);
 							packetsReceived.add(temp);
-							wakeSort();
+							//wakeSort();
 						} finally {
 							packRecwritelock.unlock();
 						}
@@ -712,7 +715,8 @@ public class SocketManager {
 					// notify the receiving side that the file with this id
 					// number
 					// is incoming
-					sendFileId(idnum, file.getName());
+					String checksum = util.getChecksum(file);
+					sendFileId(idnum, file.getName(), checksum);
 					FileInputStream in = null;
 					try {
 						in = new FileInputStream(file);
@@ -785,7 +789,7 @@ public class SocketManager {
 		 * @param filename
 		 *            The name of the file being sent
 		 */
-		public void sendFileId(int identity, String filename) {
+		public void sendFileId(int identity, String filename, String checksum) {
 			ArrayList<Byte> tempPacket = new ArrayList<>(packetSize);
 			// Add FILE_ID byte to first position
 			tempPacket.add(TrafficTag.FILE_ID.value());
@@ -807,6 +811,15 @@ public class SocketManager {
 					break;
 				}
 				tempPacket.add(filenameArr[i]);
+			}
+			tempPacket.add((byte) ' ');
+			byte[] checksumArr = checksum.getBytes();
+			for (int i = 0; i < checksumArr.length; i++) {
+				if ( tempPacket.size() == packetSize) {
+					System.out.println("Payload length exceeds packet size limits.");
+					break;
+				}
+				tempPacket.add(checksumArr[i]);
 			}
 			if (tempPacket.size() < packetSize) {
 				tempPacket.add((byte) '\r');

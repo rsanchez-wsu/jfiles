@@ -122,24 +122,17 @@ public class JFilesClient implements Runnable {
 				
 				// Find which command was entered
 				switch (commandInput) {
-				case "FILE":
+				case "GETFILE":
 					Thread thrd0 = new Thread(new Runnable() {
 						@Override
 						public void run() {
-							sockMan.sendCommand(cmdary[0] + " " + cmdary[1]);
+							sockMan.sendCommand("SENDFILE" + " " + cmdary[1]);
 						}
 					});
 					thrd0.start();
 					break;
 				case "SENDFILE":
-					cmdary[1] = getFileName(1);
-					Thread thrd1 = new Thread(new Runnable() {
-						@Override
-						public void run() {
-							fileSendCommand(cmdary[1], socket);
-						}
-					});
-					thrd1.start();
+					sockMan.sendFile(new File(cmdary[1]));
 					break;
 				case "REC_FILE":
 					int identifier = Integer.parseInt(cmdary[1]);

@@ -90,13 +90,19 @@ public class JFilesServer implements Runnable {
 					switch (cmdary [0]) {
 					//Client wants a file from the server
 					//Send file to client
-					case "FILE":
+					case "SENDFILE":
 						sockMan.sendFile(new File(cmdary[1]));
 						break;
 					//Client wants to send file to server
 					//Prepare to receive file from client
 					case "GETFILE":
-						getFile(cmdary[1], socket);
+						Thread thrd0 = new Thread(new Runnable() {
+							@Override
+							public void run() {
+								sockMan.sendCommand("SENDFILE" + " " + cmdary[1]);
+							}
+						});
+						thrd0.start();
 						break;
 					//Used by the socket manager to notify server of incoming file.
 					case "REC_FILE":
