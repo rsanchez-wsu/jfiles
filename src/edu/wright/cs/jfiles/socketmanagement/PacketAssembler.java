@@ -106,7 +106,9 @@ public class PacketAssembler implements Runnable {
 			}
 		}
 		try {
-			fos.close();
+			if (fos != null) {
+				fos.close();
+			}
 		} catch (IOException e) {
 			logger.error("Failed to close output stream for" + tempName + ".tmp", e);
 		}
@@ -156,13 +158,16 @@ public class PacketAssembler implements Runnable {
 	 * 				packet assembler build order
 	 */
 	public synchronized void addPacket(byte[] packet) {
-		writeLock.lock();
-		packetList.ensureCapacity(++numPack);
-		packetList.add(packet);
-		if (packetList.size() == 1) {
-			notifyAll();
+		try {
+			writeLock.lock();
+			packetList.ensureCapacity(++numPack);
+			packetList.add(packet);
+			if (packetList.size() == 1) {
+				notifyAll();
+			}
+		} finally {
+			writeLock.unlock();
 		}
-		writeLock.unlock();
 	}
 
 	/**
@@ -172,19 +177,24 @@ public class PacketAssembler implements Runnable {
 	private synchronized boolean exchangePacket() {
 		boolean success = false;
 		if (packetList.isEmpty()) {
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				logger.catching(e);
+			while (packetList.isEmpty()) {
+				try {
+					wait();
+				} catch (InterruptedException e) {
+					logger.catching(e);
+				}
 			}
 			success = false;
 		} else {
-			writeLock.lock();
-			packet = packetList.get(0);
-			packetList.remove(0);
-			packetList.ensureCapacity(--numPack);
-			success = true;
-			writeLock.unlock();
+			try {
+				writeLock.lock();
+				packet = packetList.get(0);
+				packetList.remove(0);
+				packetList.ensureCapacity(--numPack);
+				success = true;
+			} finally {
+				writeLock.unlock();
+			}
 		}
 		return success;
 	}

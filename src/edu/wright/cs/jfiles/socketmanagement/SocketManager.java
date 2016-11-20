@@ -82,22 +82,7 @@ public class SocketManager {
 		this.mainSocket = mainSocket;
 		packetSize = 1024;
 
-		try {
-			inbound = new Inbound(mainSocket.getInputStream());
-		} catch (IOException e) {
-			logger.error("Error getting inputstream from mainSocket", e);
-		}
-		try {
-			outbound = new Outbound(mainSocket.getOutputStream());
-		} catch (IOException e) {
-			logger.error("Error getting outputstream from mainSocket", e);
-		}
-		inboundTraffic = new Thread(inbound);
-		inboundTraffic.setName("Inbound Thread");
-		outboundTraffic = new Thread(outbound);
-		outboundTraffic.setName("Outbound Thread");
-		inboundTraffic.start();
-		outboundTraffic.start();
+		init();
 	}
 	
 	/**
@@ -112,6 +97,14 @@ public class SocketManager {
 		this.mainSocket = mainSocket;
 		this.packetSize = packetSize;
 
+		init();
+	}
+	
+	/**
+	 * Used by the constructor to initialize the inbound
+	 * and outbound threads.
+	 */
+	private void init() {
 		try {
 			inbound = new Inbound(mainSocket.getInputStream());
 		} catch (IOException e) {
@@ -406,11 +399,14 @@ public class SocketManager {
 							temp[i] = tempContainer.get(i);
 						}
 						// Add array to the received queue for processing
-						packRecwritelock.lock();
-						packetsReceived.ensureCapacity(++numPackets);
-						packetsReceived.add(temp);
-						wakeSort();
-						packRecwritelock.unlock();
+						try {
+							packRecwritelock.lock();
+							packetsReceived.ensureCapacity(++numPackets);
+							packetsReceived.add(temp);
+							wakeSort();
+						} finally {
+							packRecwritelock.unlock();
+						}
 					}
 				} catch (IOException e) {
 					logger.catching(e);
@@ -539,17 +535,19 @@ public class SocketManager {
 		 */
 		private synchronized boolean readyForNext(ArrayList<byte[]> readyPackets) {
 			boolean complete = false;
-			packRecreadlock.lock();
-			if (readyPackets.isEmpty()) {
-				try {
-					packRecreadlock.unlock();
-					wait(3000);
-				} catch (InterruptedException e) {
-					logger.catching(e);
+			try {
+				packRecreadlock.lock();
+				if (readyPackets.isEmpty()) {
+					try {
+						wait(3000);
+					} catch (InterruptedException e) {
+						logger.catching(e);
+					}
+				} else {
+					complete = true;
 				}
-			} else {
+			} finally {
 				packRecreadlock.unlock();
-				complete = true;
 			}
 			return complete;
 		}
@@ -586,15 +584,18 @@ public class SocketManager {
 		public File getFile(int fileId) {
 			File file = null;
 			int index = 0;
-			packAssemreadlock.lock();
-			// Find the PacketAssembler working on the requested file
-			for (; index < packAssemArr.size(); index++) {
-				if (packAssemArr.get(index).getId() == fileId) {
-					file = packAssemArr.get(index).getFile();
-					break;
+			try {
+				packAssemreadlock.lock();
+				// Find the PacketAssembler working on the requested file
+				for (; index < packAssemArr.size(); index++) {
+					if (packAssemArr.get(index).getId() == fileId) {
+						file = packAssemArr.get(index).getFile();
+						break;
+					}
 				}
+			} finally {
+				packAssemreadlock.unlock();
 			}
-			packAssemreadlock.unlock();
 			// Makes sure a file was found
 			if (file == null) {
 				// TODO Convert to a throwable exception
@@ -607,14 +608,17 @@ public class SocketManager {
 		 * objects still within the packAssemArr array.
 		 */
 		private void cleanUp() {
-			packAssemwritelock.lock();
-			for (int i = 0; i < packAssemArr.size(); i++) {
-				if (packAssemArr.get(i).isDone()) {
-					packAssemArr.remove(i);
-					packAssemArr.ensureCapacity(--numPackAssem);
+			try {
+				packAssemwritelock.lock();
+				for (int i = 0; i < packAssemArr.size(); i++) {
+					if (packAssemArr.get(i).isDone()) {
+						packAssemArr.remove(i);
+						packAssemArr.ensureCapacity(--numPackAssem);
+					}
 				}
+			} finally {
+				packAssemwritelock.unlock();
 			}
-			packAssemwritelock.unlock();
 		}
 	}
 
@@ -664,19 +668,22 @@ public class SocketManager {
 				while (packetsInTransit.isEmpty() && running) {
 					reload();
 				}
-				pitwriteLock.lock();
-				while (!packetsInTransit.isEmpty()) {
-					try {
-						// Writes a packet to the output stream
-						out.write(packetsInTransit.get(0));
-						out.flush();
-					} catch (IOException e) {
-						logger.error("Failed to send packet", e);
+				try {
+					pitwriteLock.lock();
+					while (!packetsInTransit.isEmpty()) {
+						try {
+							// Writes a packet to the output stream
+							out.write(packetsInTransit.get(0));
+							out.flush();
+						} catch (IOException e) {
+							logger.error("Failed to send packet", e);
+						}
+						// Removes the packet from the queue
+						packetsInTransit.remove(0);
 					}
-					// Removes the packet from the queue
-					packetsInTransit.remove(0);
+				} finally {
+					pitwriteLock.unlock();
 				}
-				pitwriteLock.unlock();
 				// Adds more packets to the transit queue
 				reload();
 			}
@@ -715,7 +722,7 @@ public class SocketManager {
 					byte[] packet = null;
 					try {
 						// Last add the file bytes to the packet
-						while (in.available() > 0) {
+						while (in != null && in.available() > 0) {
 							if (tempPacket.size() < packetSize) {
 								tempPacket.ensureCapacity(packetSize);
 							}
@@ -835,29 +842,33 @@ public class SocketManager {
 		 *            The Priority level of the packet
 		 */
 		public synchronized void sendOut(byte[] packet, PacketPriority pri) {
-			ogpwriteLock.lock();
-			outGoingPackets.ensureCapacity(++numogPackets);
-			switch (pri) {
-			// Currently both low and normal priority are the same
-			case LOW:
-			case NORMAL:
-				outGoingPackets.add(packet);
-				break;
-			// High priority gets pushed to near the front of the packet stream
-			case HIGH:
-				outGoingPackets.add(2, packet);
-				break;
-			// Immediate goes out on the next available transfer
-			case IMMEDIATE:
-				outGoingPackets.add(0, packet);
-				break;
-			default:
-				System.out.println("That's not an option. How did that happen?");
-				outGoingPackets.ensureCapacity(--numogPackets);
-				break;
+			try {
+				ogpwriteLock.lock();
+				outGoingPackets.ensureCapacity(++numogPackets);
+				switch (pri) {
+				// Currently both low and normal priority are the same
+				case LOW:
+				case NORMAL:
+					outGoingPackets.add(packet);
+					break;
+				// High priority gets pushed to near the front of the packet
+				// stream
+				case HIGH:
+					outGoingPackets.add(2, packet);
+					break;
+				// Immediate goes out on the next available transfer
+				case IMMEDIATE:
+					outGoingPackets.add(0, packet);
+					break;
+				default:
+					System.out.println("That's not an option. How did that happen?");
+					outGoingPackets.ensureCapacity(--numogPackets);
+					break;
 
+				}
+			} finally {
+				ogpwriteLock.unlock();
 			}
-			ogpwriteLock.unlock();
 		}
 
 		/**
@@ -867,25 +878,28 @@ public class SocketManager {
 		 */
 		private boolean reload() {
 			boolean complete = false;
-			ogpwriteLock.lock();
-			pitwriteLock.lock();
-			// Tries to load 3 packets at once
-			if (outGoingPackets.size() >= 3) {
-				while (packetsInTransit.size() < 3) {
+			try {
+				ogpwriteLock.lock();
+				pitwriteLock.lock();
+				// Tries to load 3 packets at once
+				if (outGoingPackets.size() >= 3) {
+					while (packetsInTransit.size() < 3) {
+						packetsInTransit.add(outGoingPackets.get(0));
+						outGoingPackets.remove(0);
+						outGoingPackets.ensureCapacity(--numogPackets);
+					}
+					complete = true;
+					// If it can't load 3 then it will load one at a time
+				} else if (outGoingPackets.size() > 0) {
 					packetsInTransit.add(outGoingPackets.get(0));
 					outGoingPackets.remove(0);
 					outGoingPackets.ensureCapacity(--numogPackets);
+					complete = true;
 				}
-				complete = true;
-				// If it can't load 3 then it will load one at a time
-			} else if (outGoingPackets.size() > 0) {
-				packetsInTransit.add(outGoingPackets.get(0));
-				outGoingPackets.remove(0);
-				outGoingPackets.ensureCapacity(--numogPackets);
-				complete = true;
+			} finally {
+				ogpwriteLock.unlock();
+				pitwriteLock.unlock();
 			}
-			ogpwriteLock.unlock();
-			pitwriteLock.unlock();
 			return complete;
 		}
 
