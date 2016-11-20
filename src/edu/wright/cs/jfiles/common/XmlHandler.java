@@ -46,7 +46,10 @@ public class XmlHandler {
 	//Static init block to configure XStream
 	static {
 		xstream.alias("fileObject", FileStruct.class);
-		xstream.alias("fileSystem", XmlHandler.class);
+		xstream.alias("root", XmlHandler.class);
+		xstream.aliasAttribute(XmlHandler.class, "arrlist", "filesystem");
+		xstream.aliasAttribute(FileStruct.class, "attrList", "attributeList");
+		xstream.useAttributeFor(FileStruct.class, "type");
 		xstream.omitField(XStream.class, "xstream");
 	}
 	
