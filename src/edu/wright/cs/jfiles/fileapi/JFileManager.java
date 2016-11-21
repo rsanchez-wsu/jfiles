@@ -26,12 +26,12 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ProcessBuilder.Redirect;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.lang.Object;
-import java.lang.ProcessBuilder.Redirect;
 
 /**
  * <p>
@@ -210,7 +210,24 @@ public class JFileManager {
 	public static void paste(String dirName) {
 		logger.info("Pasting File");
 		try {
-			logger.info("Successful Paste of " + dirName);
+			File tempFile = new File(dirName);
+
+			if (tempFile.isDirectory()) {
+				if (System.getProperty("os.name").contains("Windows")) {
+					tempFile = new File(
+							tempFile.getAbsolutePath() + "\\" + clipboard.get(0).getName());
+				} else {
+					tempFile = new File(
+							tempFile.getAbsolutePath() + "/" + clipboard.get(0).getName());
+				}
+
+				Files.copy(clipboard.get(0).getPath(), tempFile.toPath(),
+						java.nio.file.StandardCopyOption.COPY_ATTRIBUTES);
+
+				logger.info("Successful Paste of " + clipboard.get(0) + " To " + dirName);
+			} else {
+				logger.error("Given string isn't a directory.");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error pasting files.", e);
@@ -245,6 +262,8 @@ public class JFileManager {
 
 			if (tempFile.isDirectory()) {
 				for (int i = 0; i < files.length; i++) {
+					// this specifically just moves the file,
+					// and doesn't actually do what's intended.
 					files[i].moveTo(dirName);
 				}
 				logger.info(Arrays.toString(files) + " Moved to " + dirName + " Successfully");
@@ -276,33 +295,44 @@ public class JFileManager {
 	 */
 	public static void delete(JFile[] files) {
 		logger.info("Deleting File(s)");
-		try {
-			if (System.getProperty("os.name").contains("Windows")) {
-				for (int i = 0; i < files.length; i++) {
-					// The problem with how windows handles the recycling bin
-					// (from win 10) is that it is not an absolute file.
-					if (files[i].getPath().contains("$Recycle.Bin") == true) {
-						files[i].deleteContents();
-					} else {
-						// TODO: find out how to move files to recycle bin
-					}
-				}
-				logger.info("OS determined to be \"Windows\".");
-			} else if (System.getProperty("os.name").contains("Macintosh")) {
 
-				logger.info("OS determined to be \"Macintosh\".");
-			} else if (System.getProperty("os.name").contains("Linux")) {
-
-				logger.info("OS determined to be \"Linux\".");
-			} else {
-
-				logger.info("OS determined to be \"Unknown\".");
-			}
-			logger.info("Successfully Deleted " + Arrays.toString(files));
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("Error Deleting", e);
+		for (int i = 0; i < files.length; i++) {
+			files[i].deleteContents();
 		}
+
+		logger.info("Successfully Deleted " + Arrays.toString(files));
+		// Due to constraints, The current way we wish to implement this
+		// function
+		// is not possible.
+		// The way we want this function to work is so that it has the
+		// functionality
+		// of a windows/mac file system when it deletes things. Such that when a
+		// file is deleted, the file goes to a recycling bin instead, so that
+		// the
+		// user can then decide to either permanently delete the file, or have
+		// the
+		// file restored.
+		// For right now, this function just deletes files.
+		/*
+		 * try { if (System.getProperty("os.name").contains("Windows")) { for
+		 * (int i = 0; i < files.length; i++) { // The problem with how windows
+		 * handles the recycling bin // (from win 10) is that it is not an
+		 * absolute file. if (files[i].getPath().contains("$Recycle.Bin") ==
+		 * true) { files[i].deleteContents(); } else { // TODO: find out how to
+		 * move files to recycle bin } }
+		 * logger.info("OS determined to be \"Windows\"."); } else if
+		 * (System.getProperty("os.name").contains("Macintosh")) {
+		 * 
+		 * logger.info("OS determined to be \"Macintosh\"."); } else if
+		 * (System.getProperty("os.name").contains("Linux")) {
+		 * 
+		 * logger.info("OS determined to be \"Linux\"."); } else {
+		 * 
+		 * logger.info("OS determined to be \"Unknown\"."); }
+		 * logger.info("Successfully Deleted " + Arrays.toString(files)); }
+		 * catch (Exception e) { e.printStackTrace();
+		 * logger.error("Error Deleting", e); }
+		 */
 	}
 
 	/*

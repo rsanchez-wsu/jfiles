@@ -28,6 +28,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.Serializable;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -134,22 +135,24 @@ public class JFile implements Cloneable, Serializable {
 	}
 
 	/**
-	 * This method is so that the JFM can access the .renameTo() method
-	 * to move the file into a different directory.
+	 * This method is so that the JFM can access the .renameTo() method to move
+	 * the file into a different directory.
 	 * 
 	 * <p>
-	 * NOTE: the .renameTo() method in File objects cannot rename things
-	 * across different filesystems. I (Brand) have tried to use the method
-	 * to try to move it across drives on my windows machine. Both drives
-	 * are NTFS, but the file that I used to test with DID NOT get put into
-	 * the right place. The file instead sat in it's original directory.   
+	 * NOTE: the .renameTo() method in File objects cannot rename things across
+	 * different filesystems. I (Brand) have tried to use the method to try to
+	 * move it across drives on my windows machine. Both drives are NTFS, but
+	 * the file that I used to test with DID NOT get put into the right place.
+	 * The file instead sat in it's original directory.
 	 * </p>
 	 * 
 	 * <p>
-	 * Note: the JFM handles if the given string is a directory or not,
-	 * int the paste method.
+	 * Note: the JFM handles if the given string is a directory or not, int the
+	 * paste method.
 	 * </p>
-	 * @param directory directory in which the file moves to.
+	 * 
+	 * @param directory
+	 *            directory in which the file moves to.
 	 */
 	protected void moveTo(String directory) {
 		if (System.getProperty("os.name").contains("Windows")) {
@@ -157,7 +160,7 @@ public class JFile implements Cloneable, Serializable {
 		} else {
 			file.renameTo(new File(directory + "/" + file.getName()));
 		}
-		
+
 	}
 
 	/**
@@ -212,12 +215,21 @@ public class JFile implements Cloneable, Serializable {
 	}
 
 	/**
-	 * Gets the absolute path of the file.
+	 * This function is so that the name of the file is easily retrievable.
 	 * 
-	 * @return the absolute path of the file.
+	 * @return The name of the current file.
 	 */
-	public String getPath() {
-		return file.getAbsolutePath();
+	public String getName() {
+		return file.getName();
+	}
+
+	/**
+	 * Gets the absolute path of the file and returns a Path object.
+	 * 
+	 * @return the absolute path of the file and gives it back as a Path object.
+	 */
+	public Path getPath() {
+		return file.toPath();
 	}
 
 	/**
@@ -430,6 +442,7 @@ public class JFile implements Cloneable, Serializable {
 	 * It functions as closely to the File.list() method as possible, to ensure
 	 * easy transition.
 	 * </p>
+	 * 
 	 * @return A string list of the abstract names of the contents of the JFile.
 	 */
 	public String[] list() {
