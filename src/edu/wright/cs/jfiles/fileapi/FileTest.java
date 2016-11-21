@@ -22,6 +22,7 @@
 package edu.wright.cs.jfiles.fileapi;
 
 import java.io.File;
+import java.util.Scanner;
 
 /**
  * This is a functional class that contains methods for testing the functions in
@@ -74,9 +75,10 @@ public class FileTest {
 	 * the clipboard so that the system is returned to its starting state.
 	 * </p>
 	 */
-	public static void testCopy(JFile testFile) {
+	public static void testCopy(JFile testFile, String placeToPasteTo) {
 		JFile[] tempJfArr = {testFile};
 		JFileManager.copy(tempJfArr);
+		JFileManager.paste(placeToPasteTo);
 	}
 
 	/**
@@ -146,8 +148,8 @@ public class FileTest {
 	 * software.
 	 * </p>
 	 */
-	public static void testDelete() {
-
+	public static void testDelete(JFile[] file) {
+		JFileManager.delete(file);
 	}
 
 	/**
@@ -250,7 +252,30 @@ public class FileTest {
 	 * @param args Place holder text. 
 	 */
 	public static void main(String[] args) {
+		Scanner in = new Scanner(System.in);
+		String tmp;
+				
+		System.out.println("Please enter the absolute path to a file that you want to copy");
+		System.out.println("Remeber to escape the backslash if you are on windows:");
+		tmp = in.nextLine();
+		System.out.println("Please enter an absolute path to paste the file to:");
+		testCopy(new JFile(new File(tmp)), in.nextLine());
+		System.out.println("****************************************************");
+		System.out.println("Copy & paste test finished.");
+		System.out.println("****************************************************");
 		
-		testCopy(new JFile(new File("D:\\TEST")));
+		JFile[] tmpArr = {null, null};
+		System.out.println("\nPlease enter the absolute path to a file that you want to delete");
+		System.out.println("Remeber to escape the backslash if you are on windows:");
+		tmpArr[0] = new JFile(in.nextLine());
+		System.out.println("Please enter another absolute path to a file that you want to delete");
+		System.out.println("Remeber to escape the backslash if you are on windows:");
+		tmpArr[1] = new JFile(in.nextLine());
+		testDelete(tmpArr);
+		System.out.println("****************************************************");
+		System.out.println("Delete test finished.");
+		System.out.println("****************************************************");
+		
+		in.close();
 	}
 }
