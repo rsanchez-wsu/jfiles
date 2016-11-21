@@ -4,41 +4,29 @@
  * Roberto C. Sánchez <roberto.sanchez@wright.edu>
  * 
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  *
  */
 
 package edu.wright.cs.jfiles.server;
 
-import edu.wright.cs.jfiles.core.CommandExecutor;
-import edu.wright.cs.jfiles.core.CommandLine;
-import edu.wright.cs.jfiles.core.CommandParser;
-import edu.wright.cs.jfiles.core.Environment;
-import edu.wright.cs.jfiles.core.ExecutablePath;
-import edu.wright.cs.jfiles.exception.CommandNotFoundException;
-import edu.wright.cs.jfiles.exception.ExecutionResult;
+import edu.wright.cs.jfiles.core.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -58,7 +46,7 @@ public class JFilesServer implements Runnable {
 
 	static final Logger logger = LogManager.getLogger(JFilesServer.class);
 	private static final int PORT = 9786;
-	//private final ServerSocket serverSocket;
+	// private final ServerSocket serverSocket;
 	private static final String UTF_8 = "UTF-8";
 	private JFilesServerThread[] clients = new JFilesServerThread[50];
 	private ServerSocket server = null;
@@ -81,7 +69,7 @@ public class JFilesServer implements Runnable {
 			System.out.println("Can not bind to port " + PORT + ": " + ioe.getMessage());
 		}
 	}
-	
+
 	/**
 	 * .
 	 * 
@@ -98,7 +86,7 @@ public class JFilesServer implements Runnable {
 			}
 		}
 	}
-	
+
 	/**
 	 * .
 	 * 
@@ -110,7 +98,7 @@ public class JFilesServer implements Runnable {
 			thread.start();
 		}
 	}
-	
+
 	/**
 	 * This method stops the thread.
 	 * 
@@ -122,7 +110,7 @@ public class JFilesServer implements Runnable {
 			thread = null;
 		}
 	}
-	
+
 	/**
 	 * This method searches for the client based on the id number.
 	 * 
@@ -136,7 +124,7 @@ public class JFilesServer implements Runnable {
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * This method handles all the activities the thread will do.
 	 * 
@@ -149,44 +137,22 @@ public class JFilesServer implements Runnable {
 		String dir = System.getProperty("user.dir");
 		File history = new File("SearchHistory.txt");
 		PrintWriter hstWrt;
-		
-		if (history.exists()) { //determines if the word need to be appended
+
+		if (history.exists()) { // determines if the word need to be appended
 			hstWrt = new PrintWriter(new FileWriter(history, true));
 		} else {
 			hstWrt = new PrintWriter(history);
 		}
-		
+
 		Locale.setDefault(new Locale("English"));
-
-		ExecutablePath executablePath = new ExecutablePath();
-		Environment environment = new Environment();
-
-		CommandParser parser = new CommandParser(environment);
-		CommandExecutor executor = new CommandExecutor(executablePath, environment);
-		
-		// out.write("Prompt :> ");
-		// command example
-		// ========================================================================
-		// out.write("Prompt :> ");
-		// CommandLine commandLine = parser.parse(cmd);
-		//
-		// try {
-		// ExecutionResult result = executor.executeCommand(commandLine,
-		// out);
-		// if (result.isExitShell()) {
-		// break;
-		// }
-		// } catch (CommandNotFoundException e) {
-		// out.write(" " + e.getMessage() + ": command not found\n");
-		// }
-		// ========================================================================
 
 		String[] baseCommand = input.split(" ");
 
 		switch (baseCommand[0].toUpperCase(Locale.ENGLISH)) {
 		case "LIST":
+			List cmd = new List(clients[findClient(id)]);
+			cmd.executeCommand();
 
-			listCmd(dir, id);
 			break;
 		case "FIND":
 			hstWrt.println(baseCommand[1]);
@@ -242,7 +208,7 @@ public class JFilesServer implements Runnable {
 				}
 				clientCount--;
 			}
-			
+
 			try {
 				toTerminate.close();
 			} catch (IOException ioe) {
@@ -251,7 +217,7 @@ public class JFilesServer implements Runnable {
 			toTerminate.stop();
 		}
 	}
-	
+
 	/**
 	 * This method handles adding a new thread.
 	 * 
@@ -272,7 +238,7 @@ public class JFilesServer implements Runnable {
 			System.out.println("Client refused: maximum " + clients.length + " reached.");
 		}
 	}
-	
+
 	/**
 	 * Checks to make sure the command input is valid.
 	 * 
@@ -288,37 +254,16 @@ public class JFilesServer implements Runnable {
 	}
 
 	/**
-	 * List Command function. Method for the list command.
-	 * 
-	 * @throws IOException
-	 *             If there is a problem binding to the socket
-	 */
-	private void listCmd(String dir, int id) {
-		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir))) {
-			for (Path path : directoryStream) {
-				// out.write(path.toString() +
-				// System.getProperty("line.separator"));
-				clients[findClient(id)]
-						.send(path.toString() + System.getProperty("line.separator"));
-			}
-		} catch (IOException e) {
-			// TODO AUto-generated catch block
-			// e.printStackTrace();
-			logger.error("Some error occured", e);
-		}
-	}
-
-	/**
-	 * Find Command function. Method for the find command. Writes results found
-	 * within current directory. Search supports glob patterns
+	 * Find Command function. Method for the find command. Writes results found within current
+	 * directory. Search supports glob patterns
 	 * 
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
 	private void findCmd(String dir, int id, String searchTerm) {
 		int findCount = 0;
-		try (DirectoryStream<Path> directoryStream =
-				Files.newDirectoryStream(Paths.get(dir), searchTerm)) {
+		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir),
+				searchTerm)) {
 			for (Path path : directoryStream) {
 				// out.write(path.toString() + "\n");
 				clients[findClient(id)].send(path.toString() + "\n");
@@ -334,9 +279,9 @@ public class JFilesServer implements Runnable {
 	}
 
 	/**
-	 * Recursive find Command function. Method for the recursive option of the
-	 * find command. Calls itself if a child directory is found, otherwise calls
-	 * findCmd to get results from current directory.
+	 * Recursive find Command function. Method for the recursive option of the find command. Calls
+	 * itself if a child directory is found, otherwise calls findCmd to get results from current
+	 * directory.
 	 * 
 	 * @throws IOException
 	 *             If there is a problem binding to the socket

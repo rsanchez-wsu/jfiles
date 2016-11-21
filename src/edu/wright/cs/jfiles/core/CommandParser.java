@@ -4,18 +4,16 @@
  * Roberto C. Sánchez <roberto.sanchez@wright.edu>
  * 
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  *
  */
 
@@ -56,8 +54,8 @@ public class CommandParser {
 	/**
 	 * Parses the command from the client input.
 	 * 
-	 * <p>Reads in the entire command line string and parses out the command and
-	 * any/all arguments that go with the command.
+	 * <p>Reads in the entire command line string and parses out the command and any/all arguments
+	 * that go with the command.
 	 * 
 	 * @param commandLineString
 	 *            the command line to parse.
@@ -99,8 +97,8 @@ public class CommandParser {
 				endOfEnvVar = arg.length();
 			}
 
-			String envVarProperty =
-					arg.substring(propCharIndex + PROPERTY_CHAR_LENGTH, endOfEnvVar);
+			String envVarProperty = arg.substring(propCharIndex + PROPERTY_CHAR_LENGTH,
+					endOfEnvVar);
 			String envVarValue = environment.getProperty(envVarProperty, envVarProperty);
 
 			if (!envVarProperty.equals(envVarValue)) {

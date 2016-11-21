@@ -17,7 +17,7 @@ public class JFilesServerThread extends Thread {
 		id = socket.getPort();
 	}
 
-	@SuppressWarnings("deprecation") // .interrupt(); 
+	@SuppressWarnings("deprecation") // .interrupt();
 	public void send(String msg) {
 		try {
 			streamOut.writeUTF(msg);
@@ -55,11 +55,11 @@ public class JFilesServerThread extends Thread {
 		if (socket != null) {
 			socket.close();
 		}
-			
+
 		if (streamIn != null) {
 			streamIn.close();
 		}
-			
+
 		if (streamOut != null) {
 			streamOut.close();
 		}
