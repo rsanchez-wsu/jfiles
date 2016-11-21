@@ -26,12 +26,22 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.Object;
+import java.lang.ProcessBuilder.Redirect;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.lang.Object;
-import java.lang.ProcessBuilder.Redirect;
+
+/**
+ * Blah.
+ */
+@SuppressWarnings("unused")
+//   This SuppressWrnings is used in combination with the commented code at
+// the end of this file. When that code is uncommented, this should be removed.
+//   If the commented code is found to not be necessary, then it should be
+// deleted, the SuppressWarnings should be deleted, and any imports that
+// throw an error after this should be deleted.
 
 /**
  * <p>
@@ -575,356 +585,403 @@ public class JFileManager {
 	}
 	
 	
-	/**
-	 * Blah.
-	 *
-	 */
-	final class ProcessBuilder extends Object {
-		Process p1 = new ProcessBuilder("").start();
-		ProcessBuilder pb = new ProcessBuilder("");
-		Map<String, String> env = pb.environment();{env.put("VAR1","myValue");
-				env.remove("OTHERVAR");env.put("VAR2",env.get("VAR1")+"suffix");pb.directory(new File("myDir"));
-		File log = new File(
-				"log");pb.redirectErrorStream(true);pb.redirectOutput(Redirect.appendTo(log));
-		Process p = pb.start();assert pb.redirectInput()==Redirect.PIPE;assert pb.redirectOutput().file()==log;assert p.getInputStream().read()==-1;}
-
-		/**
-		 * blah.
-		 * @param command blah
-		 */
-		public ProcessBuilder(List<String> command) {
-
-		}
-
-		/**
-		 * blah.
-		 * @param command blah
-		 */
-		public ProcessBuilder(String command) {
-
-		}
-
-		/**
-		 * Sets this process builder's operating system program and arguments. This
-		 * method does not make a copy of the command list. Subsequent updates to
-		 * the list will be reflected in the state of the process builder. It is not
-		 * checked whether command corresponds to a valid operating system command.
-		 * Parameters: command - the list containing the program and its arguments
-		 * Returns: this process builder Throws: NullPointerException - if the
-		 * argument is null
-		 */
-		public ProcessBuilder command(List<String> command) {
-			return null;
-		}
-
-		/**
-		 * Sets this process builder's operating system program and arguments. This
-		 * is a convenience method that sets the command to a string list containing
-		 * the same strings as the command array, in the same order. It is not
-		 * checked whether command corresponds to a valid operating system command.
-		 * Parameters: command - a string array containing the program and its
-		 * arguments Returns: this process builder
-		 */
-		public ProcessBuilder command(String command) {
-			return null;
-		}
-
-		/**
-		 * Returns this process builder's operating system program and arguments.
-		 * The returned list is not a copy. Subsequent updates to the list will be
-		 * reflected in the state of this process builder. Returns: this process
-		 * builder's program and its arguments
-		 */
-		public List<String> command() {
-			return null;
-		}
-
-		/**
-		 * Returns a string map view of this process builder's environment. Whenever
-		 * a process builder is created, the environment is initialized to a copy of
-		 * the current process environment (see System.getenv()). Subprocesses
-		 * subsequently started by this object's start() method will use this map as
-		 * their environment. The returned object may be modified using ordinary Map
-		 * operations. These modifications will be visible to subprocesses started
-		 * via the start() method. Two ProcessBuilder instances always contain
-		 * independent process environments, so changes to the returned map will
-		 * never be reflected in any other ProcessBuilder instance or the values
-		 * returned by System.getenv.
-		 * 
-		 * <p>If the system does not support environment variables, an empty map is
-		 * returned.
-		 * 
-		 * <p>The returned map does not permit null keys or values. Attempting to
-		 * insert or query the presence of a null key or value will throw a
-		 * NullPointerException. Attempting to query the presence of a key or value
-		 * which is not of type String will throw a ClassCastException.
-		 * 
-		 * <p>The behavior of the returned map is system-dependent. A system may not
-		 * allow modifications to environment variables or may forbid certain
-		 * variable names or values. For this reason, attempts to modify the map may
-		 * fail with UnsupportedOperationException or IllegalArgumentException if
-		 * the modification is not permitted by the operating system.
-		 * 
-		 * <p>Since the external format of environment variable names and values is
-		 * system-dependent, there may not be a one-to-one mapping between them and
-		 * Java's Unicode strings. Nevertheless, the map is implemented in such a
-		 * way that environment variables which are not modified by Java code will
-		 * have an unmodified native representation in the subprocess.
-		 * 
-		 * <p>The returned map and its collection views may not obey the general
-		 * contract of the Object.equals(java.lang.Object) and Object.hashCode()
-		 * methods.
-		 * 
-		 * <p>The returned map is typically case-sensitive on all platforms.
-		 * 
-		 * <p>If a security manager exists, its checkPermission method is called with a
-		 * RuntimePermission("getenv.*") permission. This may result in a
-		 * SecurityException being thrown.
-		 * 
-		 * <p>When passing information to a Java subprocess, system properties are
-		 * generally preferred over environment variables.
-		 * 
-		 * @return this process builder's environment Throws: SecurityException -
-		 *     if a security manager exists and its checkPermission method doesn't allow
-		 *     access to the process environment See Also:
-		 *     Runtime.exec(String[],String[],java.io.File), System.getenv()
-		 */
-		public Map<String, String> environment() {
-			return null;
-		}
-
-		/**
-		 * Returns this process builder's working directory. Subprocesses
-		 * subsequently started by this object's start() method will use this as
-		 * their working directory. The returned value may be null -- this means to
-		 * use the working directory of the current Java process, usually the
-		 * directory named by the system property user.dir, as the working directory
-		 * of the child process. Returns: this process builder's working directory
-		 */
-		public ProcessBuilder directory(File directory) {
-			return null;
-		}
-
-		/**
-		 * Sets this process builder's working directory. Subprocesses subsequently
-		 * started by this object's start() method will use this as their working
-		 * directory. The argument may be null -- this means to use the working
-		 * directory of the current Java process, usually the directory named by the
-		 * system property user.dir, as the working directory of the child process.
-		 * Parameters: directory - the new working directory Returns: this process
-		 * builder
-		 */
-		public ProcessBuilder redirectInput(ProcessBuilder.Redirect source) {
-			return null;
-		}
-
-		/**
-		 * Sets this process builder's standard error destination. Subprocesses
-		 * subsequently started by this object's start() method send their standard
-		 * error to this destination. If the destination is Redirect.PIPE (the
-		 * initial value), then the error output of a subprocess can be read using
-		 * the input stream returned by Process.getErrorStream(). If the destination
-		 * is set to any other value, then Process.getErrorStream() will return a
-		 * null input stream.
-		 * 
-		 * <p>If the redirectErrorStream attribute has been set true, then the
-		 * redirection set by this method has no effect.
-		 * 
-		 * @Param destination - the new standard error destination Returns:
-		 *     this process builder Throws: IllegalArgumentException - if the redirect
-		 *     does not correspond to a valid destination of data, that is, has type
-		 *     READ
-		 */
-		public ProcessBuilder redirectInput(File file) {
-			return null;
-		}
-		
-
-		/**
-		 * Returns this process builder's standard input source. Subprocesses
-		 * subsequently started by this object's start() method obtain their
-		 * standard input from this source. The initial value is Redirect.PIPE.
-		 * Returns: this process builder's standard input source
-		 */
-		public ProcessBuilder.Redirect redirectInput() {
-			return null;
-		}
-
-		/**
-		 * Returns this process builder's standard output destination. Subprocesses
-		 * subsequently started by this object's start() method redirect their
-		 * standard output to this destination. The initial value is Redirect.PIPE.
-		 * Returns: this process builder's standard output destination
-		 */
-		public ProcessBuilder.Redirect redirectOutput() {
-			return null;
-		}
-
-		/**
-		 * Sets this process builder's standard input source to a file. This is a
-		 * convenience method. An invocation of the form redirectInput(file) behaves
-		 * in exactly the same way as the invocation redirectInput
-		 * (Redirect.from(file)).
-		 * 
-		 * @param file - the new standard input source Returns: this process
-		 *     builder
-		 */
-		public ProcessBuilder redirectOutput(File file) {
-			return null;
-		}
-
-		/**
-		 * Sets this process builder's standard output destination to a file. This
-		 * is a convenience method. An invocation of the form redirectOutput(file)
-		 * behaves in exactly the same way as the invocation redirectOutput
-		 * (Redirect.to(file)).
-		 * 
-		 * @param file - the new standard output destination Returns: this
-		 *     process builder
-		 */
-		public ProcessBuilder redirectError(File file) {
-			return null;
-		}
-		
-		/**
-		 * Returns this process builder's standard error destination. Subprocesses
-		 * subsequently started by this object's start() method redirect their
-		 * standard error to this destination. The initial value is Redirect.PIPE.
-		 * Returns: this process builder's standard error destination
-		 */
-		public ProcessBuilder.Redirect redirectError() {
-			return null;
-		}
-		
-		/**
-		 * Tells whether this process builder merges standard error and standard
-		 * output. If this property is true, then any error output generated by
-		 * subprocesses subsequently started by this object's start() method will be
-		 * merged with the standard output, so that both can be read using the
-		 * Process.getInputStream() method. This makes it easier to correlate error
-		 * messages with the corresponding output. The initial value is false.
-		 * 
-		 * @return this process builder's redirectErrorStream property
-		 */
-		public boolean redirectErrorStream() {
-			return false;
-		}
-		
-		/**
-		 * Sets this process builder's redirectErrorStream property. If this
-		 * property is true, then any error output generated by subprocesses
-		 * subsequently started by this object's start() method will be merged with
-		 * the standard output, so that both can be read using the
-		 * Process.getInputStream() method. This makes it easier to correlate error
-		 * messages with the corresponding output. The initial value is false.
-		 * 
-		 * @param redirectErrorStream - the new property value Returns: this
-		 *     process builder
-		 */
-		public ProcessBuilder redirectErrorStream(boolean redirectErrorStream) {
-			return null;
-		}
-
-		/**
-		 * Sets this process builder's standard input source. Subprocesses
-		 * subsequently started by this object's start() method obtain their
-		 * standard input from this source. If the source is Redirect.PIPE (the
-		 * initial value), then the standard input of a subprocess can be written to
-		 * using the output stream returned by Process.getOutputStream(). If the
-		 * source is set to any other value, then Process.getOutputStream() will
-		 * return a null output stream.
-		 * 
-		 * <p>Parameter: source - the new standard input source Returns: this process
-		 * builder Throws: IllegalArgumentException - if the redirect does not
-		 * correspond to a valid source of data, that is, has type WRITE or APPEND
-		 */
-		public ProcessBuilder redirectOutput(ProcessBuilder.Redirect destination) {
-			return null;
-		}
-
-		/**
-		 * Sets this process builder's standard output destination. Subprocesses
-		 * subsequently started by this object's start() method send their standard
-		 * output to this destination. If the destination is Redirect.PIPE (the
-		 * initial value), then the standard output of a subprocess can be read
-		 * using the input stream returned by Process.getInputStream(). If the
-		 * destination is set to any other value, then Process.getInputStream() will
-		 * return a null input stream.
-		 * 
-		 * @param destination - the new standard output destination Returns:
-		 *     this process builder Throws: IllegalArgumentException - if the redirect
-		 *     does not correspond to a valid destination of data, that is, has type
-		 *     READ
-		 */
-		public ProcessBuilder redirectError(ProcessBuilder.Redirect destination) {
-			return null;
-		}
-
-		/**
-		 * Sets the source and destination for subprocess standard I/O to be the
-		 * same as those of the current Java process. This is a convenience method.
-		 * An invocation of the form
-		 * 
-		 * <p>pb.inheritIO()
-		 * 
-		 * <p>behaves in exactly the same way as the invocation
-		 * pb.redirectInput(Redirect.INHERIT) .redirectOutput(Redirect.INHERIT)
-		 * .redirectError(Redirect.INHERIT)
-		 * 
-		 * <p>This gives behavior equivalent to most operating system command
-		 * interpreters, or the standard C library function system(). Returns: this
-		 * process builder
-		 */
-		public ProcessBuilder inheritIo() {
-			return null;
-		}
-
-		/**
-		 * Starts a new process using the attributes of this process builder. The
-		 * new process will invoke the command and arguments given by command(), in
-		 * a working directory as given by directory(), with a process environment
-		 * as given by environment().
-		 * 
-		 * <p>This method checks that the command is a valid operating system command.
-		 * Which commands are valid is system-dependent, but at the very least the
-		 * command must be a non-empty list of non-null strings.
-		 * 
-		 * <p>A minimal set of system dependent environment variables may be required
-		 * to start a process on some operating systems. As a result, the subprocess
-		 * may inherit additional environment variable settings beyond those in the
-		 * process builder's environment().
-		 * 
-		 * <p>If there is a security manager, its checkExec method is called with the
-		 * first component of this object's command array as its argument. This may
-		 * result in a SecurityException being thrown.
-		 * 
-		 * <p>Starting an operating system process is highly system-dependent. Among
-		 * the many things that can go wrong are:
-		 * 
-		 * <p>The operating system program file was not found. Access to the program
-		 * file was denied. The working directory does not exist. In such cases an
-		 * exception will be thrown. The exact nature of the exception is
-		 * system-dependent, but it will always be a subclass of IOException.
-		 * 
-		 * <p>Subsequent modifications to this process builder will not affect the
-		 * returned Process.
-		 * 
-		 * @return a new Process object for managing the subprocess Throws:
-		 *     NullPointerException - if an element of the command list is null
-		 *     IndexOutOfBoundsException - if the command is an empty list (has size 0)
-		 *     SecurityException - if a security manager exists and its checkExec method
-		 *     doesn't allow creation of the subprocess, or the standard input to the
-		 *     subprocess was redirected from a file and the security manager's
-		 *     checkRead method denies read access to the file, or the standard output
-		 *     or standard error of the subprocess was redirected to a file and the
-		 *     security manager's checkWrite method denies write access to the file
-		 *     IOException - if an I/O error occurs See Also: Runtime.exec(String[],
-		 *     String[], java.io.File)
-		 */
-		public Process start() throws IOException {
-			return null;
-		}
-
-	}
+//	This code has been commented out until the rest of Team 5
+//	can get to the bottom of what Jonnathan is trying to do.
+//	
+//	/**
+//	 * Blah.
+//	 *
+//	 */
+//	final class ProcessBuilder extends Object {
+//		Process p1 = new ProcessBuilder("").start();
+//		ProcessBuilder pb = new ProcessBuilder("");
+//		Map<String, String> env = pb.environment();
+//
+//		public void generateEnv () {
+//			env.put("VAR1","myValue");
+//			env.remove("OTHERVAR");
+//			env.put("VAR2",env.get("VAR1")+"suffix");
+//			pb.directory(new File("myDir"));
+//			File log = new File("log");
+//			pb.redirectErrorStream(true);
+//			pb.redirectOutput(Redirect(log));
+//			Process p = pb.start();
+//			assert pb.redirectInput() == Redirect.PIPE;
+//			assert pb.redirectOutput().file() == log;
+//			assert p.getInputStream().read() == -1;
+//		}
+//
+//		/**
+//		 * blah.
+//		 * 
+//		 * @param command
+//		 *            blah
+//		 */
+//		public ProcessBuilder(List<String> command) {
+//
+//		}
+//
+//		/**
+//		 * blah.
+//		 * 
+//		 * @param command
+//		 *            blah
+//		 */
+//		public ProcessBuilder(String command) {
+//
+//		}
+//
+//		/**
+//		 * Sets this process builder's operating system program and arguments.
+//		 * This method does not make a copy of the command list. Subsequent
+//		 * updates to the list will be reflected in the state of the process
+//		 * builder. It is not checked whether command corresponds to a valid
+//		 * operating system command. Parameters: command - the list containing
+//		 * the program and its arguments Returns: this process builder Throws:
+//		 * NullPointerException - if the argument is null
+//		 */
+//		public ProcessBuilder command(List<String> command) {
+//			return null;
+//		}
+//
+//		/**
+//		 * Sets this process builder's operating system program and arguments.
+//		 * This is a convenience method that sets the command to a string list
+//		 * containing the same strings as the command array, in the same order.
+//		 * It is not checked whether command corresponds to a valid operating
+//		 * system command. Parameters: command - a string array containing the
+//		 * program and its arguments Returns: this process builder
+//		 */
+//		public ProcessBuilder command(String command) {
+//			return null;
+//		}
+//
+//		/**
+//		 * Returns this process builder's operating system program and
+//		 * arguments. The returned list is not a copy. Subsequent updates to the
+//		 * list will be reflected in the state of this process builder. Returns:
+//		 * this process builder's program and its arguments
+//		 */
+//		public List<String> command() {
+//			return null;
+//		}
+//
+//		/**
+//		 * Returns a string map view of this process builder's environment.
+//		 * Whenever a process builder is created, the environment is initialized
+//		 * to a copy of the current process environment (see System.getenv()).
+//		 * Subprocesses subsequently started by this object's start() method
+//		 * will use this map as their environment. The returned object may be
+//		 * modified using ordinary Map operations. These modifications will be
+//		 * visible to subprocesses started via the start() method. Two
+//		 * ProcessBuilder instances always contain independent process
+//		 * environments, so changes to the returned map will never be reflected
+//		 * in any other ProcessBuilder instance or the values returned by
+//		 * System.getenv.
+//		 * 
+//		 * <p>
+//		 * If the system does not support environment variables, an empty map is
+//		 * returned.
+//		 * 
+//		 * <p>
+//		 * The returned map does not permit null keys or values. Attempting to
+//		 * insert or query the presence of a null key or value will throw a
+//		 * NullPointerException. Attempting to query the presence of a key or
+//		 * value which is not of type String will throw a ClassCastException.
+//		 * 
+//		 * <p>
+//		 * The behavior of the returned map is system-dependent. A system may
+//		 * not allow modifications to environment variables or may forbid
+//		 * certain variable names or values. For this reason, attempts to modify
+//		 * the map may fail with UnsupportedOperationException or
+//		 * IllegalArgumentException if the modification is not permitted by the
+//		 * operating system.
+//		 * 
+//		 * <p>
+//		 * Since the external format of environment variable names and values is
+//		 * system-dependent, there may not be a one-to-one mapping between them
+//		 * and Java's Unicode strings. Nevertheless, the map is implemented in
+//		 * such a way that environment variables which are not modified by Java
+//		 * code will have an unmodified native representation in the subprocess.
+//		 * 
+//		 * <p>
+//		 * The returned map and its collection views may not obey the general
+//		 * contract of the Object.equals(java.lang.Object) and Object.hashCode()
+//		 * methods.
+//		 * 
+//		 * <p>
+//		 * The returned map is typically case-sensitive on all platforms.
+//		 * 
+//		 * <p>
+//		 * If a security manager exists, its checkPermission method is called
+//		 * with a RuntimePermission("getenv.*") permission. This may result in a
+//		 * SecurityException being thrown.
+//		 * 
+//		 * <p>
+//		 * When passing information to a Java subprocess, system properties are
+//		 * generally preferred over environment variables.
+//		 * 
+//		 * @return this process builder's environment Throws: SecurityException
+//		 *         - if a security manager exists and its checkPermission method
+//		 *         doesn't allow access to the process environment See Also:
+//		 *         Runtime.exec(String[],String[],java.io.File), System.getenv()
+//		 */
+//		public Map<String, String> environment() {
+//			return null;
+//		}
+//
+//		/**
+//		 * Returns this process builder's working directory. Subprocesses
+//		 * subsequently started by this object's start() method will use this as
+//		 * their working directory. The returned value may be null -- this means
+//		 * to use the working directory of the current Java process, usually the
+//		 * directory named by the system property user.dir, as the working
+//		 * directory of the child process. Returns: this process builder's
+//		 * working directory
+//		 */
+//		public ProcessBuilder directory(File directory) {
+//			return null;
+//		}
+//
+//		/**
+//		 * Sets this process builder's working directory. Subprocesses
+//		 * subsequently started by this object's start() method will use this as
+//		 * their working directory. The argument may be null -- this means to
+//		 * use the working directory of the current Java process, usually the
+//		 * directory named by the system property user.dir, as the working
+//		 * directory of the child process. Parameters: directory - the new
+//		 * working directory Returns: this process builder
+//		 */
+//		public ProcessBuilder redirectInput(ProcessBuilder.Redirect source) {
+//			return null;
+//		}
+//
+//		/**
+//		 * Sets this process builder's standard error destination. Subprocesses
+//		 * subsequently started by this object's start() method send their
+//		 * standard error to this destination. If the destination is
+//		 * Redirect.PIPE (the initial value), then the error output of a
+//		 * subprocess can be read using the input stream returned by
+//		 * Process.getErrorStream(). If the destination is set to any other
+//		 * value, then Process.getErrorStream() will return a null input stream.
+//		 * 
+//		 * <p>
+//		 * If the redirectErrorStream attribute has been set true, then the
+//		 * redirection set by this method has no effect.
+//		 * 
+//		 * @Param destination - the new standard error destination Returns: this
+//		 *        process builder Throws: IllegalArgumentException - if the
+//		 *        redirect does not correspond to a valid destination of data,
+//		 *        that is, has type READ
+//		 */
+//		public ProcessBuilder redirectInput(File file) {
+//			return null;
+//		}
+//
+//		/**
+//		 * Returns this process builder's standard input source. Subprocesses
+//		 * subsequently started by this object's start() method obtain their
+//		 * standard input from this source. The initial value is Redirect.PIPE.
+//		 * Returns: this process builder's standard input source
+//		 */
+//		public ProcessBuilder.Redirect redirectInput() {
+//			return null;
+//		}
+//
+//		/**
+//		 * Returns this process builder's standard output destination.
+//		 * Subprocesses subsequently started by this object's start() method
+//		 * redirect their standard output to this destination. The initial value
+//		 * is Redirect.PIPE. Returns: this process builder's standard output
+//		 * destination
+//		 */
+//		public ProcessBuilder.Redirect redirectOutput() {
+//			return null;
+//		}
+//
+//		/**
+//		 * Sets this process builder's standard input source to a file. This is
+//		 * a convenience method. An invocation of the form redirectInput(file)
+//		 * behaves in exactly the same way as the invocation redirectInput
+//		 * (Redirect.from(file)).
+//		 * 
+//		 * @param file
+//		 *            - the new standard input source Returns: this process
+//		 *            builder
+//		 */
+//		public ProcessBuilder redirectOutput(File file) {
+//			return null;
+//		}
+//
+//		/**
+//		 * Sets this process builder's standard output destination to a file.
+//		 * This is a convenience method. An invocation of the form
+//		 * redirectOutput(file) behaves in exactly the same way as the
+//		 * invocation redirectOutput (Redirect.to(file)).
+//		 * 
+//		 * @param file
+//		 *            - the new standard output destination Returns: this
+//		 *            process builder
+//		 */
+//		public ProcessBuilder redirectError(File file) {
+//			return null;
+//		}
+//
+//		/**
+//		 * Returns this process builder's standard error destination.
+//		 * Subprocesses subsequently started by this object's start() method
+//		 * redirect their standard error to this destination. The initial value
+//		 * is Redirect.PIPE. Returns: this process builder's standard error
+//		 * destination
+//		 */
+//		public ProcessBuilder.Redirect redirectError() {
+//			return null;
+//		}
+//
+//		/**
+//		 * Tells whether this process builder merges standard error and standard
+//		 * output. If this property is true, then any error output generated by
+//		 * subprocesses subsequently started by this object's start() method
+//		 * will be merged with the standard output, so that both can be read
+//		 * using the Process.getInputStream() method. This makes it easier to
+//		 * correlate error messages with the corresponding output. The initial
+//		 * value is false.
+//		 * 
+//		 * @return this process builder's redirectErrorStream property
+//		 */
+//		public boolean redirectErrorStream() {
+//			return false;
+//		}
+//
+//		/**
+//		 * Sets this process builder's redirectErrorStream property. If this
+//		 * property is true, then any error output generated by subprocesses
+//		 * subsequently started by this object's start() method will be merged
+//		 * with the standard output, so that both can be read using the
+//		 * Process.getInputStream() method. This makes it easier to correlate
+//		 * error messages with the corresponding output. The initial value is
+//		 * false.
+//		 * 
+//		 * @param redirectErrorStream
+//		 *            - the new property value Returns: this process builder
+//		 */
+//		public ProcessBuilder redirectErrorStream(boolean redirectErrorStream) {
+//			return null;
+//		}
+//
+//		/**
+//		 * Sets this process builder's standard input source. Subprocesses
+//		 * subsequently started by this object's start() method obtain their
+//		 * standard input from this source. If the source is Redirect.PIPE (the
+//		 * initial value), then the standard input of a subprocess can be
+//		 * written to using the output stream returned by
+//		 * Process.getOutputStream(). If the source is set to any other value,
+//		 * then Process.getOutputStream() will return a null output stream.
+//		 * 
+//		 * <p>
+//		 * Parameter: source - the new standard input source Returns: this
+//		 * process builder Throws: IllegalArgumentException - if the redirect
+//		 * does not correspond to a valid source of data, that is, has type
+//		 * WRITE or APPEND
+//		 */
+//		public ProcessBuilder redirectOutput(ProcessBuilder.Redirect destination) {
+//			return null;
+//		}
+//
+//		/**
+//		 * Sets this process builder's standard output destination. Subprocesses
+//		 * subsequently started by this object's start() method send their
+//		 * standard output to this destination. If the destination is
+//		 * Redirect.PIPE (the initial value), then the standard output of a
+//		 * subprocess can be read using the input stream returned by
+//		 * Process.getInputStream(). If the destination is set to any other
+//		 * value, then Process.getInputStream() will return a null input stream.
+//		 * 
+//		 * @param destination
+//		 *            - the new standard output destination Returns: this
+//		 *            process builder Throws: IllegalArgumentException - if the
+//		 *            redirect does not correspond to a valid destination of
+//		 *            data, that is, has type READ
+//		 */
+//		public ProcessBuilder redirectError(ProcessBuilder.Redirect destination) {
+//			return null;
+//		}
+//
+//		/**
+//		 * Sets the source and destination for subprocess standard I/O to be the
+//		 * same as those of the current Java process. This is a convenience
+//		 * method. An invocation of the form
+//		 * 
+//		 * <p>
+//		 * pb.inheritIO()
+//		 * 
+//		 * <p>
+//		 * behaves in exactly the same way as the invocation
+//		 * pb.redirectInput(Redirect.INHERIT) .redirectOutput(Redirect.INHERIT)
+//		 * .redirectError(Redirect.INHERIT)
+//		 * 
+//		 * <p>
+//		 * This gives behavior equivalent to most operating system command
+//		 * interpreters, or the standard C library function system(). Returns:
+//		 * this process builder
+//		 */
+//		public ProcessBuilder inheritIo() {
+//			return null;
+//		}
+//
+//		/**
+//		 * Starts a new process using the attributes of this process builder.
+//		 * The new process will invoke the command and arguments given by
+//		 * command(), in a working directory as given by directory(), with a
+//		 * process environment as given by environment().
+//		 * 
+//		 * <p>
+//		 * This method checks that the command is a valid operating system
+//		 * command. Which commands are valid is system-dependent, but at the
+//		 * very least the command must be a non-empty list of non-null strings.
+//		 * 
+//		 * <p>
+//		 * A minimal set of system dependent environment variables may be
+//		 * required to start a process on some operating systems. As a result,
+//		 * the subprocess may inherit additional environment variable settings
+//		 * beyond those in the process builder's environment().
+//		 * 
+//		 * <p>
+//		 * If there is a security manager, its checkExec method is called with
+//		 * the first component of this object's command array as its argument.
+//		 * This may result in a SecurityException being thrown.
+//		 * 
+//		 * <p>
+//		 * Starting an operating system process is highly system-dependent.
+//		 * Among the many things that can go wrong are:
+//		 * 
+//		 * <p>
+//		 * The operating system program file was not found. Access to the
+//		 * program file was denied. The working directory does not exist. In
+//		 * such cases an exception will be thrown. The exact nature of the
+//		 * exception is system-dependent, but it will always be a subclass of
+//		 * IOException.
+//		 * 
+//		 * <p>
+//		 * Subsequent modifications to this process builder will not affect the
+//		 * returned Process.
+//		 * 
+//		 * @return a new Process object for managing the subprocess Throws:
+//		 *         NullPointerException - if an element of the command list is
+//		 *         null IndexOutOfBoundsException - if the command is an empty
+//		 *         list (has size 0) SecurityException - if a security manager
+//		 *         exists and its checkExec method doesn't allow creation of the
+//		 *         subprocess, or the standard input to the subprocess was
+//		 *         redirected from a file and the security manager's checkRead
+//		 *         method denies read access to the file, or the standard output
+//		 *         or standard error of the subprocess was redirected to a file
+//		 *         and the security manager's checkWrite method denies write
+//		 *         access to the file IOException - if an I/O error occurs See
+//		 *         Also: Runtime.exec(String[], String[], java.io.File)
+//		 */
+//		public Process start() throws IOException {
+//			return null;
+//		}
+//
+//	}
 }
-
