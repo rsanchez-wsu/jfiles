@@ -92,7 +92,6 @@ public class Gui {
 		// Populates box with current path
 		String currentPath = JFilesServer.sendPath();
 		pathDisplay.append(currentPath);
-		pane.add(pathDisplay);
 		pane.add(pathDisplay, BorderLayout.NORTH);
 		
 		// This creates a box with changeable text that can be scrolled through.
@@ -202,7 +201,7 @@ public class Gui {
 			filePanel.add(iconLabel);
 		}
 	}
-
+	
 	/**
 	 * Main class of GUI.
 	 * 

@@ -21,6 +21,12 @@
 
 package edu.wright.cs.jfiles.client;
 
+import java.awt.BorderLayout;
+
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+import edu.wright.cs.jfiles.server.JFilesServer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -33,6 +39,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
@@ -266,7 +273,28 @@ public class ClientSideGui extends Application {
 		createButton.setContentDisplay(ContentDisplay.TOP);
 		createButton.setStyle("-fx-font-size: 15px;" + "-fx-font-family: 'Currier New' ;"
 				+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
-
+		
+//		//////////////////////////////////////////////////////////////////////
+//		// This code block will implement the old functionality of the output
+		// Region and the path display. Placement of the text field and
+		// scrollpane will change when a better layout is made.
+//		// Creates a box for the current path to be displayed in.
+//		TextField pathDisplay = new TextField();
+//		pathDisplay.setEditable(false);
+//		// Populates box with current path
+//		String currentPath = JFilesServer.sendPath();
+//		pathDisplay.appendText(currentPath);
+//		//currently sets at bottom of pane to test it functions properly, this will change
+//		basePane.setBottom(pathDisplay);
+//		
+//		// This creates a box with changeable text that can be scrolled through.
+//		// Must be initialized before file panel is populated to contain event information
+//		TextField consoleOutput = new TextField();
+//		ScrollPane scrollPane = new ScrollPane(consoleOutput);
+//		consoleOutput.setEditable(false);
+//		//basePane.setBottom(scrollPane);
+//		//////////////////////////////////////////////////////////////////////
+		
 		HBox toolsHbox = new HBox();
 		toolsHbox.setPadding(new Insets(10, 10, 10, 10));
 		toolsHbox.setSpacing(10);
