@@ -71,6 +71,19 @@ public class XmlHandler {
 	}
 	
 	/**
+	 * Constructor for sending XML.
+	 * @param path that you want to XMLify
+	 * @param str stream to send XML to
+	 * @throws IOException  if path object is inaccesible
+	 */
+	public XmlHandler(String path, OutputStreamWriter str) throws IOException {
+		this.currentPath = path;
+		arrlist = new ArrayList<FileStruct>();
+		populateArray();
+		sendXml(str);
+	}
+	
+	/**
 	 * Helper method to populate the ArrayList.
 	 * @throws IOException If Path object is inaccessible
 	 */
