@@ -576,7 +576,7 @@ public class JFileManager {
 			return workingDirectory.getContents();
 		} catch (Exception e) {
 			// TODO: Add logging methods.
-			return null;
+			return null; // Null indicates error
 		}
 	}
 
@@ -593,7 +593,7 @@ public class JFileManager {
 			return workingDirectory.list();
 		} catch (Exception e) {
 			// TODO: Add logging methods.
-			return null;
+			return null; // Null indicates error
 		}
 	}
 

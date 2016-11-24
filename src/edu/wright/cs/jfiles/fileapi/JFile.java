@@ -154,11 +154,11 @@ public class JFile implements Cloneable, Serializable {
 	 * @param directory
 	 *            directory in which the file moves to.
 	 */
-	protected void moveTo(String directory) {
+	protected boolean moveTo(String directory) {
 		if (System.getProperty("os.name").contains("Windows")) {
-			file.renameTo(new File(directory + "\\" + file.getName()));
+			return file.renameTo(new File(directory + "\\" + file.getName()));
 		} else {
-			file.renameTo(new File(directory + "/" + file.getName()));
+			return file.renameTo(new File(directory + "/" + file.getName()));
 		}
 
 	}
@@ -415,11 +415,10 @@ public class JFile implements Cloneable, Serializable {
 				}
 
 			}
-
 		} else {
 			file.delete();
 		}
-
+		
 		return true;
 	}
 
@@ -455,12 +454,12 @@ public class JFile implements Cloneable, Serializable {
 			} else {
 				logger.warn("File was determined to be a file; system attempted to"
 						+ "call list method on a file.\nReturning null value.");
-				return null;
+				return null; // Null indicates a non-directory
 			}
 		} catch (Exception e) {
-			logger.error("System caught an exception while attempting to " + "list file contents.",
+			logger.error("System caught an exception while attempting to list file contents.",
 					e);
-			return null;
+			return null; // Null indicates an error
 		}
 	}
 
@@ -510,16 +509,18 @@ public class JFile implements Cloneable, Serializable {
 					return output;
 				} else {
 					// TODO: Add logging methods.
-					return null;
+					return new JFile[0]; // Empty array indicates it is a folder, but is empty
 				}
 
 			} else {
 				// TODO: Add logging methods.
-				return null;
+				return null; // Null indicates a non-directory
 			}
+		} catch (RuntimeException e) {
+			throw e; // Necessary for FindBugs
 		} catch (Exception e) {
 			// TODO: Add logging methods.
-			return null;
+			return null; // Null indicates error
 		}
 	}
 

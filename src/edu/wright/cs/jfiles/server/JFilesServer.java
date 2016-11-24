@@ -76,7 +76,8 @@ public class JFilesServer implements Runnable {
 				BufferedWriter out = new BufferedWriter(osw);
 				String[] baseCommand = cmd.split(" ");
 				if ("LIST".equalsIgnoreCase(baseCommand[0])) {
-					try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir))) {
+					try (DirectoryStream<Path> directoryStream = 
+							Files.newDirectoryStream(Paths.get(dir))) {
 						for (Path path : directoryStream) {
 							out.write(path.toString() + "\n");
 						}
@@ -84,7 +85,8 @@ public class JFilesServer implements Runnable {
 				}
 				// start Search block
 				if ("FIND".equalsIgnoreCase(baseCommand[0])) {
-					try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir))) {
+					try (DirectoryStream<Path> directoryStream = 
+							Files.newDirectoryStream(Paths.get(dir))) {
 						for (Path path : directoryStream) {
 							// out.write(path.toString() + "\n");
 							if (path.toString().contains(baseCommand[1])) {
