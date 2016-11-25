@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
- * 
+ *
  * Roberto C. Sánchez <roberto.sanchez@wright.edu>
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ import java.util.Scanner;
 
 /**
  * The main class of the JFiles client application.
- * 
+ *
  * @author Roberto C. Sánchez &lt;roberto.sanchez@wright.edu&gt;
  *
  */

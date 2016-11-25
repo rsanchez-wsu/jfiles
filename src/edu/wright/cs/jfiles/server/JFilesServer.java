@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
- * 
+ *
  * Roberto C. Sánchez <roberto.sanchez@wright.edu>
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the
  * GNU General Public License as published by the Free Software Foundation, either version 3 of the
@@ -38,7 +38,7 @@ import java.util.Locale;
 
 /**
  * The main class of the JFiles server application.
- * 
+ *
  * @author Roberto C. Sánchez &lt;roberto.sanchez@wright.edu&gt;
  *
  */
@@ -55,7 +55,7 @@ public class JFilesServer implements Runnable {
 
 	/**
 	 * Handles allocating resources needed for the server.
-	 * 
+	 *
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
@@ -254,16 +254,16 @@ public class JFilesServer implements Runnable {
 	}
 
 	/**
-	 * Find Command function. Method for the find command. Writes results found within current
-	 * directory. Search supports glob patterns
+	 * Find Command function. Method for the find command. Writes results found
+	 * within current directory. Search supports glob patterns
 	 * 
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
 	private void findCmd(String dir, int id, String searchTerm) {
 		int findCount = 0;
-		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir),
-				searchTerm)) {
+		try (DirectoryStream<Path> directoryStream =
+				Files.newDirectoryStream(Paths.get(dir), searchTerm)) {
 			for (Path path : directoryStream) {
 				// out.write(path.toString() + "\n");
 				clients[findClient(id)].send(path.toString() + "\n");
@@ -279,9 +279,9 @@ public class JFilesServer implements Runnable {
 	}
 
 	/**
-	 * Recursive find Command function. Method for the recursive option of the find command. Calls
-	 * itself if a child directory is found, otherwise calls findCmd to get results from current
-	 * directory.
+	 * Recursive find Command function. Method for the recursive option of the
+	 * find command. Calls itself if a child directory is found, otherwise calls
+	 * findCmd to get results from current directory.
 	 * 
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
