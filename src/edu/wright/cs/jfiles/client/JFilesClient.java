@@ -65,7 +65,6 @@ public class JFilesClient implements Runnable {
 	 */
 	private static void init() throws IOException {
 		Properties prop = new Properties();
-		FileInputStream fis = null;
 		File config = null;
 
 		// Array of strings containing possible paths to check for config files
@@ -89,16 +88,11 @@ public class JFilesClient implements Runnable {
 		} else {
 			logger.info("Config file found in " + config.getPath());
 			// Read file
-			try {
+			try (FileInputStream fis = new FileInputStream(config)) {
 				// Reads xmlfile into prop object as key value pairs
-				fis = new FileInputStream(config);
 				prop.loadFromXML(fis);
 			} catch (IOException e) {
 				logger.error("IOException occured when trying to access the server config", e);
-			} finally {
-				if (fis != null) {
-					fis.close();
-				}
 			}
 		}
 
