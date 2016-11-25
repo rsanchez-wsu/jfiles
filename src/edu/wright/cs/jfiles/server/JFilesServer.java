@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
- * 
+ *
  * Roberto C. Sánchez <roberto.sanchez@wright.edu>
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ import javax.xml.transform.stream.StreamResult;
 
 /**
  * The main class of the JFiles server application.
- * 
+ *
  * @author Roberto C. Sánchez &lt;roberto.sanchez@wright.edu&gt;
  *
  */
@@ -69,7 +69,7 @@ public class JFilesServer implements Runnable {
 
 	/**
 	 * Handles allocating resources needed for the server.
-	 * 
+	 *
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
@@ -127,7 +127,7 @@ public class JFilesServer implements Runnable {
 
 	/**
 	 * This is a Javadoc comment to statisfy Checkstyle.
-	 * 
+	 *
 	 * @throws IOException
 	 *             When bad things happen
 	 */
@@ -137,7 +137,7 @@ public class JFilesServer implements Runnable {
 
 	/**
 	 * Creates an XML file.
-	 * 
+	 *
 	 * @throws TransformerFactoryConfigurationError
 	 *             error in configuration
 	 * @throws TransformerException
@@ -178,7 +178,7 @@ public class JFilesServer implements Runnable {
 
 	/**
 	 * Create an xml node.
-	 * 
+	 *
 	 * @param doc
 	 *            document to create node for
 	 * @param name
@@ -239,7 +239,7 @@ public class JFilesServer implements Runnable {
 
 	/**
 	 * The main entry point to the program.
-	 * 
+	 *
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */

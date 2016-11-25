@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
- * 
+ *
  * Roberto C. Sánchez <roberto.sanchez@wright.edu>
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ import javafx.stage.Stage;
 /**
  * This class will form the body of the JFiles client side GUI application. This
  * is a JavaFX application.
- * 
+ *
  * @author Jason Phares &lt;phares.705@gmail.com&gt;
  * @author Roberto C. Sánchez &lt;roberto.sanchez@wright.edu&gt; (I used some of
  *         his code.)
@@ -222,7 +222,7 @@ public class ClientSideGui extends Application {
 	/**
 	 * Description: This method creates a Login Screen Label with the passed
 	 * parameters.
-	 * 
+	 *
 	 * @param name
 	 *            : The label's name
 	 * @param font
@@ -243,7 +243,7 @@ public class ClientSideGui extends Application {
 	/**
 	 * Description: This method creates a Error Label with the passed
 	 * parameters.
-	 * 
+	 *
 	 * @param name
 	 *            : The label's name
 	 * @param visible
@@ -262,10 +262,10 @@ public class ClientSideGui extends Application {
 	/**
 	 * Main method. This method is where the program starts in this class. It
 	 * launches the GUI.
-	 * 
+	 *
 	 * @param args
 	 *            The command-line arguments
-	 * 
+	 *
 	 */
 	public static void main(String[] args) {
 

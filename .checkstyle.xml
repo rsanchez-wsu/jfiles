@@ -171,6 +171,11 @@ Based on the Google CheckStyle configuration.
       <property name="message" value="Indent must use tab characters"/>
       <property name="ignoreComments" value="true"/>
     </module>
+    <module name="Regexp">
+      <property name="format" value="[ \t]+$"/>
+      <property name="illegalPattern" value="true"/>
+      <property name="message" value="Trailing whitespace"/>
+    </module>
   </module>
   <module name="FileTabCharacter">
     <property name="severity" value="ignore"/>

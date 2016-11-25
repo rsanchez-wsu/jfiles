@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
- * 
+ *
  * Roberto C. Sánchez <roberto.sanchez@wright.edu>
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ import java.util.Properties;
 
 /**
  * The main class of the JFiles client application.
- * 
+ *
  * @author Roberto C. Sánchez &lt;roberto.sanchez@wright.edu&gt;
  *
  */
@@ -50,7 +50,7 @@ public class JFilesClient implements Runnable {
 
 	/**
 	 * Handles allocating resources needed for the client.
-	 * 
+	 *
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
@@ -59,7 +59,7 @@ public class JFilesClient implements Runnable {
 
 	/**
 	 * Handles allocating resources needed for the server.
-	 * 
+	 *
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
@@ -136,7 +136,7 @@ public class JFilesClient implements Runnable {
 
 	/**
 	 * The main entry point to the program.
-	 * 
+	 *
 	 * @param args
 	 *            The command-line arguments
 	 */
