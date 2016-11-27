@@ -252,7 +252,7 @@ public class FileTest {
 	 * @param args Place holder text.
 	 */
 	public static void main(String[] args) {
-		Scanner in = new Scanner(System.in);
+		Scanner in = new Scanner(System.in, "UTF-8");
 		String tmp;
 
 		System.out.println("Please enter the absolute path to a file that you want to copy");

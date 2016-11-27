@@ -26,7 +26,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -280,7 +283,11 @@ public class JFile implements Cloneable, Serializable {
 
 					return file.getName().substring(file.getName().indexOf('.') + 1);
 				} else {
-					try (BufferedReader in = new BufferedReader(new FileReader(file))) {
+					// This needs to be tested. This was done to ensure that the UTF-8 encoding
+					// paradigm is used.
+					InputStreamReader osw = new InputStreamReader(new FileInputStream(file),
+							"UTF-8");
+					try (BufferedReader in = new BufferedReader(osw)) {
 						String tmp = in.readLine();
 
 						if (tmp != null && tmp.contains("#!")) {
