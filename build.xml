@@ -142,6 +142,15 @@
 		description="Runs CheckStyle; fails if violations are found">
 
 		<mkdir dir="${build.dir}/checkstyle" />
+		<!--
+                The samedir property is used in the .checkstyle.xml configuration
+		because the Eclipse CheckStyle plugin requires an absolute or
+		anchored path (i.e., just the filename alone won't cut it).  Within
+		Eclipse, ${samedir} gets expanded to the current directory (".").
+		We set it here so that the same configuration file will work for
+		command line builds without additional modification.
+		-->
+		<property name="samedir" value="." />
 
 		<checkstyle config="${basedir}/.checkstyle.xml">
 			<fileset dir="${src.dir}" includes="**/*.java" />

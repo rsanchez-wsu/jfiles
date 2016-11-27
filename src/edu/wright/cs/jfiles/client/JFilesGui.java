@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
- * 
+ *
  * Roberto C. Sánchez <roberto.sanchez@wright.edu>
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ import javafx.stage.Stage;
 /**
  * The main class of the JFiles client GUI application. This is a JavaFX
  * application.
- * 
+ *
  * @author Roberto C. Sánchez &lt;roberto.sanchez@wright.edu&gt;
  *
  */
@@ -76,7 +76,7 @@ public class JFilesGui extends Application {
 
 	/**
 	 * The main entry point to the program.
-	 * 
+	 *
 	 * @param args
 	 *            The command-line arguments
 	 */
