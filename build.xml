@@ -57,8 +57,7 @@
 		depends="resolve"
 		description="Initialize the build environment">
 		
-		<mkdir dir="doc/javadoc
-			"/>
+		<mkdir dir="doc/javadoc"/>
 
 		<taskdef name="checkstyle"
 			classname="com.puppycrawl.tools.checkstyle.ant.CheckstyleAntTask"
