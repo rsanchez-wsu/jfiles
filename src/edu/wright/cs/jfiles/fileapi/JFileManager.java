@@ -560,6 +560,7 @@ public class JFileManager {
 	}
 
 	/**
+	 * <p>
 	 * This method gets the contents of the working directory as an array of
 	 * JFiles. This is suitable for use listing the contents of the working
 	 * directory in a UI. Though the listWorkingDirectoryContents method is
@@ -567,6 +568,13 @@ public class JFileManager {
 	 * working directory, this method s necessary for doing anything meaningful,
 	 * such as getting absolute paths, file sizes and types, and for easily
 	 * getting the JFile to pass it into a method, such as cut, copy, or paste.
+	 * </p>
+	 * <p>
+	 * This method returns null if it encounters an exception or the getContents
+	 * method it calls encounters an exception. It will also return null if the
+	 * working directory is somehow assigned something that is not a directory.
+	 * If the current working directory is empty, it returns an array of length 0.
+	 * </p>
 	 *
 	 * @return The contents of the working directory as an array of JFiles.
 	 */
@@ -581,9 +589,17 @@ public class JFileManager {
 	}
 
 	/**
+	 * <p>
 	 * This method returns the names of the contents of the working directory as
 	 * an array of abstract path names. For anything more advanced, the
 	 * getWorkingDirectoryContents method must be called.
+	 * </p>
+	 * <p>
+	 * This method returns null if it encounters an exception or the getContents
+	 * method it calls encounters an exception. It will also return null if the
+	 * working directory is somehow assigned something that is not a directory.
+	 * If the current working directory is empty, it returns an array of length 0.
+	 * </p>
 	 *
 	 * @return An abstract listing of the contents of the working directory.
 	 */

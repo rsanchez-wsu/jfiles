@@ -27,9 +27,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -453,7 +451,9 @@ public class JFile implements Cloneable, Serializable {
 	 *
 	 * <p>
 	 * It functions as closely to the File.list() method as possible, to ensure
-	 * easy transition.
+	 * easy transition. It returns null if there's an error or if this method
+	 * is called on something that is not a directory. It returns an array with
+	 * 0 elements if it is called on a folder that is empty.
 	 * </p>
 	 *
 	 * @return A string list of the abstract names of the contents of the JFile.
@@ -487,6 +487,12 @@ public class JFile implements Cloneable, Serializable {
 	 * Then, we have to use those to make JFiles. In order to make the abstract
 	 * path names absolute, we also have to determine what separator to use, so
 	 * we have to determine what OS we're in.
+	 * </p>
+	 * <p>
+	 * Similarly to the list method, this method returns an array of 0 elements
+	 * if the method is called on a folder with no contents and null if the
+	 * method is either called on something that is not a directory or if it
+	 * encounters an error.
 	 * </p>
 	 */
 	public JFile[] getContents() {
