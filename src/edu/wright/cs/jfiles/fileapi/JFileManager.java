@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
- * 
+ *
  * Roberto C. Sánchez <roberto.sanchez@wright.edu>
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ import java.util.Map;
  * Examples of things this class is in charge of will be copying, deleting,
  * moving, renaming, and pasting JFiles.
  * </p>
- * 
+ *
  * <p>
  * It is the goal of this class to work as a medium of communication between
  * <b>security</b> (such as authentication, authorization, and accounting),
@@ -58,7 +58,7 @@ import java.util.Map;
  * CLIs, and searching algorithms), and <b>JFiles</b>, by incorporating the
  * methods of all of these other APIs into the File API of JFiles.
  * </p>
- * 
+ *
  * <p>
  * In other words, this exist to both keep the duties of front-end and back-end
  * APIs separate by being a middle-ground for them to communicate. This also
@@ -66,7 +66,7 @@ import java.util.Map;
  * create a new GUI, this system should be able to accommodate that. Likewise,
  * the same could be said for a different security API.
  * </p>
- * 
+ *
  * <p>
  * This also exists to separate the methods involved with manipulating JFiles
  * from an external point of view from JFiles themselves. This is done for both
@@ -74,16 +74,16 @@ import java.util.Map;
  * delete, or move itself. Creating the commands in this way also means that
  * this system can be modular.
  * </p>
- * 
+ *
  * <p>
  * It is also important to note that this method does not hold JFiles. If there
  * is a need for such an object, a JFolder object will be made. This method is
  * not intended for instantiation, and, as a result, has no constructors. This
  * method just provides functions to unify different APIs.
  * </p>
- * 
- * 
- * 
+ *
+ *
+ *
  * @author <b>Team 5:</b>
  * @author John Wintersohle II
  *         <<a href="mailto:Dorkatron199@aol.com">Dorkatron199@aol.com</a>>
@@ -97,11 +97,11 @@ public class JFileManager {
 	 * done by this class. This can be done either through info or error
 	 * logging.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * Logging generally follows this process:
 	 * </p>
-	 * 
+	 *
 	 * <ol>
 	 * <b>
 	 * <li>Startup log</b> (before try block) <b>
@@ -110,7 +110,7 @@ public class JFileManager {
 	 * <li>Catch Block Starts</b> <b>
 	 * <li>Error log</b> (in catch block)
 	 * </ol>
-	 * 
+	 *
 	 * @see Logger
 	 * @see LogManager
 	 */
@@ -122,7 +122,7 @@ public class JFileManager {
 	 * This is the clipboard used when copying JFiles. It is capable of copying
 	 * and pasting multiple JFiles at a time. It is made private so that it can
 	 * only be accessed via the JFileManager methods for the sake of security.
-	 * 
+	 *
 	 */
 	private static ArrayList<JFile> clipboard = new ArrayList<>();
 
@@ -141,13 +141,13 @@ public class JFileManager {
 	 * <p>
 	 * Cuts the file passed in.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * This method calls copy then delete on the file being passed in. Copies
 	 * the files selected to the clipboard then moves the files to the trash
 	 * directory set up during configuration.
 	 * </p>
-	 * 
+	 *
 	 * @param files
 	 *            The files being cut.
 	 */
@@ -169,10 +169,10 @@ public class JFileManager {
 	 * This needs to be made into a deep copy so that the contents of the
 	 * clipboard can still be accessed even of the user later deletes the files.
 	 * I will work on this later.
-	 * 
+	 *
 	 * Though the clone method is used, I am not happy until its exact
 	 * functionality is defined in JFile...
-	 * 
+	 *
 	 ******************************
 	 * NOTE ABOUT STATIC FUNCTIONS
 	 ******************************
@@ -188,10 +188,10 @@ public class JFileManager {
 
 	/**
 	 * This method copies all of the files passed in to the clipboard.
-	 * 
+	 *
 	 * @param files
 	 *            The files being copied to the clipboard.
-	 * 
+	 *
 	 */
 	public static void copy(JFile[] files) {
 		logger.info("Copying");
@@ -214,7 +214,7 @@ public class JFileManager {
 	/**
 	 * This method will copy the contents of the clipboard into the directory at
 	 * a specified location name.
-	 * 
+	 *
 	 * @param dirName
 	 *            The name of the directory being pasted to.
 	 */
@@ -250,7 +250,7 @@ public class JFileManager {
 	 * paste is independent of the clipboard, which is important because we want
 	 * the move method to be independent of the clipboard because the use may
 	 * not expect the move command to mess with the clipboard.
-	 * 
+	 *
 	 * <p>
 	 * This method should be used when files need to be moved from one location
 	 * to another without affecting the clipboard. It is important to note that
@@ -258,7 +258,7 @@ public class JFileManager {
 	 * should not delete those files. The deletion is to be handled in the
 	 * actual move method.
 	 * </p>
-	 * 
+	 *
 	 * @param files
 	 *            The files being duplicated into a directory.
 	 * @param dirName
@@ -299,10 +299,10 @@ public class JFileManager {
 	 * Tests what OS the JFM is on, then loops through to check where the
 	 * file(s) are located.
 	 * </p>
-	 * 
+	 *
 	 * @param files
 	 *            The files being deleted.
-	 * 
+	 *
 	 */
 	public static void delete(JFile[] files) {
 		logger.info("Deleting File(s)");
@@ -333,12 +333,12 @@ public class JFileManager {
 		 * move files to recycle bin } }
 		 * logger.info("OS determined to be \"Windows\"."); } else if
 		 * (System.getProperty("os.name").contains("Macintosh")) {
-		 * 
+		 *
 		 * logger.info("OS determined to be \"Macintosh\"."); } else if
 		 * (System.getProperty("os.name").contains("Linux")) {
-		 * 
+		 *
 		 * logger.info("OS determined to be \"Linux\"."); } else {
-		 * 
+		 *
 		 * logger.info("OS determined to be \"Unknown\"."); }
 		 * logger.info("Successfully Deleted " + Arrays.toString(files)); }
 		 * catch (Exception e) { e.printStackTrace();
@@ -359,22 +359,22 @@ public class JFileManager {
 	 * make sense for copying to the clip board. The danger in this is that the
 	 * user may lose what they currently have on the clipboard as a result,
 	 * since they would not be expecting it to override what is currently in it.
-	 * 
+	 *
 	 * One way to get around this is to use a temporary variable in the method
 	 * and do all of the swapping around internally. It will make the method a
 	 * bit longer, but may make the functionality closer to what we want.
-	 * 
+	 *
 	 * I suggest we discuss this at some point.
-	 * 
+	 *
 	 * *************************************************************************
-	 * 
+	 *
 	 * Collaborate with team 1 on this method. They are developing a way to
 	 * transfer objects from one machine to another.
 	 */
 
 	/**
 	 * This method moves a file or list of files from one location to another.
-	 * 
+	 *
 	 * @param files
 	 *            The files being moved.
 	 * @param dirName
@@ -397,12 +397,12 @@ public class JFileManager {
 	 */
 	/**
 	 * Renames a file.
-	 * 
+	 *
 	 * @param oldName
 	 *            The location of the file being renamed.
 	 * @param newName
 	 *            The name that the file is changing to.
-	 * 
+	 *
 	 */
 	public static void rename(String oldName, String newName) {
 		logger.info("Renaming File");
@@ -421,10 +421,10 @@ public class JFileManager {
 	 * Opens the file with the name passed in using the default application
 	 * associated with this kind of file. How this is determined will be
 	 * different for each operating system.
-	 * 
+	 *
 	 * @param name
 	 *            The file being opened.
-	 * 
+	 *
 	 */
 	public static void open(String name) {
 
@@ -436,19 +436,19 @@ public class JFileManager {
 		 * acts accordingly. It is, however, system-dependent, so it will
 		 * function differently for different OSs, so we will have to create a
 		 * selection statement for different OSs. This has already been done.
-		 * 
+		 *
 		 * How exactly this works will have to be investigated. If it
 		 * effectively put a command into the command line, we need to figure
 		 * out how different operating systems open files via the command line.
 		 * This may mean getting help from Brand will be wise. If it isn't like
 		 * that, then we need to find out how this works.
-		 * 
+		 *
 		 * If nothing else, this gives us a starting point to do research. And
 		 * after looking into it a bit, it seems like we will have a bit of
 		 * research and tinkering to do.
-		 * 
+		 *
 		 * - John Wintersohle
-		 * 
+		 *
 		 * (This comment is temporary and will be removed when this issue is
 		 * solved.)
 		 */
@@ -481,10 +481,10 @@ public class JFileManager {
 	/**
 	 * Opens the file passed in with a particular application which is also
 	 * passed in.
-	 * 
+	 *
 	 * @param name
 	 *            The name of the file being opened.
-	 * 
+	 *
 	 */
 
 	public static void openWith(String name/* , Application app */) {
@@ -543,7 +543,7 @@ public class JFileManager {
 
 	/**
 	 * This method gets the current working directory as a JFile.
-	 * 
+	 *
 	 * @return The current working directory as a JFile.
 	 */
 	public static JFile getWorkingDirectory() {
@@ -567,7 +567,7 @@ public class JFileManager {
 	 * working directory, this method s necessary for doing anything meaningful,
 	 * such as getting absolute paths, file sizes and types, and for easily
 	 * getting the JFile to pass it into a method, such as cut, copy, or paste.
-	 * 
+	 *
 	 * @return The contents of the working directory as an array of JFiles.
 	 */
 	public static JFile[] getWorkingDirectoryContents() {
@@ -584,7 +584,7 @@ public class JFileManager {
 	 * This method returns the names of the contents of the working directory as
 	 * an array of abstract path names. For anything more advanced, the
 	 * getWorkingDirectoryContents method must be called.
-	 * 
+	 *
 	 * @return An abstract listing of the contents of the working directory.
 	 */
 	public static String[] listWorkingDirectoryContents() {
@@ -603,7 +603,7 @@ public class JFileManager {
 	/**
 	 * Returns the type of the file passed in. This method's functionality will
 	 * change depending on which OS the user is using.
-	 * 
+	 *
 	 */
 	public static void getType(String name) {
 		logger.info("Requesting file type");

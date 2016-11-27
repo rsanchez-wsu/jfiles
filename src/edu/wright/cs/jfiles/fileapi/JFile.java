@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
- * 
+ *
  * Roberto C. Sánchez <roberto.sanchez@wright.edu>
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ import java.util.Map;
 /**
  * This is the Class of holding and managing the actual content of files. It is
  * use by the JFileManager class to manipulate files.
- * 
+ *
  * @author Brand Allred
  * @author Team 5
  *
@@ -60,7 +60,7 @@ public class JFile implements Cloneable, Serializable {
 
 	/**
 	 * This is the file for storing files in the JFile object.
-	 * 
+	 *
 	 * @param file
 	 *            The file being stored in the JFile object.
 	 */
@@ -78,7 +78,7 @@ public class JFile implements Cloneable, Serializable {
 	/**
 	 * Stores the given file and the Map of tags associated with the file. Can
 	 * be given any map type.
-	 * 
+	 *
 	 * @param file
 	 *            The file being stored in the JFile object.
 	 * @param tags
@@ -98,7 +98,7 @@ public class JFile implements Cloneable, Serializable {
 
 	/**
 	 * Stores the file as given by the string.
-	 * 
+	 *
 	 * @param path
 	 *            Path to wanted file.
 	 */
@@ -115,7 +115,7 @@ public class JFile implements Cloneable, Serializable {
 
 	/**
 	 * Renames the file.
-	 * 
+	 *
 	 * @param name
 	 *            The new name of the file.
 	 * @return true is the name given doesn't have any illegal characters, false
@@ -137,7 +137,7 @@ public class JFile implements Cloneable, Serializable {
 	/**
 	 * This method is so that the JFM can access the .renameTo() method to move
 	 * the file into a different directory.
-	 * 
+	 *
 	 * <p>
 	 * NOTE: the .renameTo() method in File objects cannot rename things across
 	 * different filesystems. I (Brand) have tried to use the method to try to
@@ -145,12 +145,12 @@ public class JFile implements Cloneable, Serializable {
 	 * the file that I used to test with DID NOT get put into the right place.
 	 * The file instead sat in it's original directory.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * Note: the JFM handles if the given string is a directory or not, int the
 	 * paste method.
 	 * </p>
-	 * 
+	 *
 	 * @param directory
 	 *            directory in which the file moves to.
 	 */
@@ -165,7 +165,7 @@ public class JFile implements Cloneable, Serializable {
 
 	/**
 	 * Tests whether or not the given key value is within the map
-	 * 
+	 *
 	 * @param key
 	 *            The given key to look for.
 	 * @return True if the key is in the map, false if it not.
@@ -179,7 +179,7 @@ public class JFile implements Cloneable, Serializable {
 
 	/**
 	 * Tests whether or not the given value is within the map
-	 * 
+	 *
 	 * @param value
 	 *            The given value to look for.
 	 * @return True if the given value is in the map, false if it is not.
@@ -193,7 +193,7 @@ public class JFile implements Cloneable, Serializable {
 
 	/**
 	 * Gets the value stored at the key location from the map.
-	 * 
+	 *
 	 * @param key
 	 *            The given key for the key value pair.
 	 * @return The value from the key value pair.
@@ -204,7 +204,7 @@ public class JFile implements Cloneable, Serializable {
 
 	/**
 	 * Gives the file a key value pair to put into the map.
-	 * 
+	 *
 	 * @param key
 	 *            String to identify the value with
 	 * @param value
@@ -216,7 +216,7 @@ public class JFile implements Cloneable, Serializable {
 
 	/**
 	 * This function is so that the name of the file is easily retrievable.
-	 * 
+	 *
 	 * @return The name of the current file.
 	 */
 	public String getName() {
@@ -225,7 +225,7 @@ public class JFile implements Cloneable, Serializable {
 
 	/**
 	 * Gets the absolute path of the file and returns a Path object.
-	 * 
+	 *
 	 * @return the absolute path of the file and gives it back as a Path object.
 	 */
 	public Path getPath() {
@@ -234,7 +234,7 @@ public class JFile implements Cloneable, Serializable {
 
 	/**
 	 * Takes away the tag specified by a string.
-	 * 
+	 *
 	 * @param key
 	 *            String to find the tag with.
 	 * @return True if there is a similar tag, false otherwise.
@@ -249,7 +249,7 @@ public class JFile implements Cloneable, Serializable {
 
 	/**
 	 * gets the file's type. TODO: getType()
-	 * 
+	 *
 	 * @return String of what the file is. Example: JFile.java returns java
 	 */
 	public String getType() {
@@ -305,6 +305,8 @@ public class JFile implements Cloneable, Serializable {
 				logger.info("OS determined to be \"Unknown\".");
 
 			}
+		} catch (RuntimeException e) {
+			throw e; // Needs to be done to appease FindBugs
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error getting type.", e);
@@ -315,7 +317,7 @@ public class JFile implements Cloneable, Serializable {
 
 	/**
 	 * Gets the raw size of the current file.
-	 * 
+	 *
 	 * @return A long that represents the raw size of the file.
 	 */
 	public long getFileSize() {
@@ -324,7 +326,7 @@ public class JFile implements Cloneable, Serializable {
 
 	/**
 	 * Determines whether the file is a directory.
-	 * 
+	 *
 	 * @return Try if he file in this JFile object is a directory; false is not.
 	 */
 	public boolean isDirectory() {
@@ -333,7 +335,7 @@ public class JFile implements Cloneable, Serializable {
 
 	/**
 	 * Determines whether the file is a file.
-	 * 
+	 *
 	 * @return Try if he file in this JFile object is a file; false is not.
 	 */
 	public boolean isFile() {
@@ -343,13 +345,13 @@ public class JFile implements Cloneable, Serializable {
 	/**
 	 * Deletes the actual file contents. Will loop through and delete files if
 	 * the given file is actually a folder that has content in it.
-	 * 
+	 *
 	 * <p>
 	 * TODO: Revise method so that there is less complexity.
 	 * </p>
-	 * 
+	 *
 	 * <b>Meant to be used with a JFM</b>
-	 * 
+	 *
 	 * @return true if the file was able to be deleted; false otherwise.
 	 */
 	protected boolean deleteContents() {
@@ -399,8 +401,13 @@ public class JFile implements Cloneable, Serializable {
 					// if it is a file, delete it, and move where you are
 					// looking at.
 				} else {
-
-					fileArr.get(location).delete();
+					// This if/then statement exists so that the result of
+					// delete() is used to appease FindBugs
+					if (fileArr.get(location).delete()) {
+						logger.info("File deleted.");
+					} else {
+						logger.warn("File not deleted!");
+					}
 					fileArr.remove(location);
 					location--;
 
@@ -416,16 +423,16 @@ public class JFile implements Cloneable, Serializable {
 
 			}
 		} else {
-			file.delete();
+			return file.delete();
 		}
-		
+
 		return true;
 	}
 
 	/**
 	 * Tells whether the file is hidden or not. The method in File is OS-aware,
 	 * so this method is inherently OS-aware.
-	 * 
+	 *
 	 * @return true if the file is hidden; false otherwise
 	 */
 	public boolean isHidden() {
@@ -436,12 +443,12 @@ public class JFile implements Cloneable, Serializable {
 	 * This method passes the File.list() method to the JFile so that other
 	 * teams that may have used this method in scripting can more easily convert
 	 * to JFile objects.
-	 * 
+	 *
 	 * <p>
 	 * It functions as closely to the File.list() method as possible, to ensure
 	 * easy transition.
 	 * </p>
-	 * 
+	 *
 	 * @return A string list of the abstract names of the contents of the JFile.
 	 */
 	public String[] list() {
@@ -467,7 +474,7 @@ public class JFile implements Cloneable, Serializable {
 	 * This method returns the contents of the JFile as JFiles. Since the File
 	 * command is not friendly to this, and doesn't even have a nice method for
 	 * listing the absolute file paths, we have to recreate this functionality.
-	 * 
+	 *
 	 * <p>
 	 * To this end, we have to first turn the abstract path names to absolute.
 	 * Then, we have to use those to make JFiles. In order to make the abstract
@@ -526,7 +533,7 @@ public class JFile implements Cloneable, Serializable {
 
 	/**
 	 * Returns a deep copy of the JFile being clones.
-	 * 
+	 *
 	 */
 	@Override
 	public JFile clone() {

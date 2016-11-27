@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
- * 
+ *
  * Roberto C. Sánchez <roberto.sanchez@wright.edu>
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ import java.util.Scanner;
  * the JFileManager (JFM) and in JFile. Where applicable, these methods should
  * use files made explicitly for testing purposes and return them to heir
  * original state at the end of the method.
- * 
+ *
  * <p>
  * This class' methods also should have the initialize method called in all
  * exception calls in case the test fails and a file is left renamed, not
@@ -46,7 +46,7 @@ public class FileTest {
 	 * testCopy. This is because the cut method just calls these two methods, so
 	 * the primary purpose of this method should be to test how the cut method
 	 * puts the two together.
-	 * 
+	 *
 	 * <p>
 	 * This method shall test cut method from the JFM. As opposed to testing the
 	 * copy and delete methods independently, this method tests the final result
@@ -69,7 +69,7 @@ public class FileTest {
 	 * to the clipboard and display the results in the console. This method
 	 * should then use the compareFiles method to verify that the files in the
 	 * clipboard have the same contents as the files in the system.
-	 * 
+	 *
 	 * <p>
 	 * After copying to the clipboard, the system shall remove the contents from
 	 * the clipboard so that the system is returned to its starting state.
@@ -85,7 +85,7 @@ public class FileTest {
 	 * This method shall arbitrarily assign an array of test files to the
 	 * clipboard and then test the paste method by calling it and using the
 	 * compareFiles method to verify that the files are the same.
-	 * 
+	 *
 	 * <p>
 	 * After the file is created, the file shall be deleted to return the system
 	 * to its starting state.
@@ -103,7 +103,7 @@ public class FileTest {
 	 * need to come up with a way of singling out the this part of the move
 	 * method. This method tests the final result of the move method, but also
 	 * functions as the test for that version of the paste method.
-	 * 
+	 *
 	 * <p>
 	 * -------------------------------------------------------------------------
 	 * </p>
@@ -139,7 +139,7 @@ public class FileTest {
 	 * system shall also verify that the file was successfully replaced. Though
 	 * this reflects on the testing software, not the actual JFM, this should
 	 * still be checked.
-	 * 
+	 *
 	 * <p>
 	 * If the file used for testing this method is already deleted from some
 	 * reason, the file will be made and then the test will be ran. With that
@@ -171,7 +171,7 @@ public class FileTest {
 	 * registered to be opened with some application that is guaranteed to be on
 	 * any system. The only thing that fits this is JFiles itself, so this
 	 * method shall use JFiles until further notice.
-	 * 
+	 *
 	 * <p>
 	 * To make sure the connection to the correct file is tested, this custom
 	 * file type must be on the same configuration file that all of the other
@@ -221,7 +221,7 @@ public class FileTest {
 	 * may be done by a separate method that goes character by character and
 	 * checks to see if they are equal. If a better way is known, it shall be
 	 * used and the doc updated to reflect the change.
-	 * 
+	 *
 	 * <p>
 	 * The order of which file is first and second should not be relevant to the
 	 * result.
@@ -249,12 +249,12 @@ public class FileTest {
 
 	/**
 	 * Place holder text.
-	 * @param args Place holder text. 
+	 * @param args Place holder text.
 	 */
 	public static void main(String[] args) {
 		Scanner in = new Scanner(System.in);
 		String tmp;
-				
+
 		System.out.println("Please enter the absolute path to a file that you want to copy");
 		System.out.println("Remeber to escape the backslash if you are on windows:");
 		tmp = in.nextLine();
@@ -263,7 +263,7 @@ public class FileTest {
 		System.out.println("****************************************************");
 		System.out.println("Copy & paste test finished.");
 		System.out.println("****************************************************");
-		
+
 		JFile[] tmpArr = {null, null};
 		System.out.println("\nPlease enter the absolute path to a file that you want to delete");
 		System.out.println("Remeber to escape the backslash if you are on windows:");
@@ -275,7 +275,7 @@ public class FileTest {
 		System.out.println("****************************************************");
 		System.out.println("Delete test finished.");
 		System.out.println("****************************************************");
-		
+
 		in.close();
 	}
 }
