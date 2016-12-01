@@ -35,7 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Data Struct for XML generation.
+ * Data Struct for XML generation. No logger as that adds too much overhead.
  * @author brian
  *
  */
@@ -80,18 +80,17 @@ public class FileStruct implements Serializable {
 	private Type type;
 	
 	/**
-	 * An attempt was made.
+	 * Zero argument constructor.
 	 */
 	public FileStruct() {
 		
 	}
 	
 	/**
-	 * This method accepts a File object, any type including directories, and creates an array
-	 * of JFile objects wrapped in a class to support serialization. 
-	 * 
+	 * This method accepts a Path object, any type including directories, and populates a Map with
+	 * file attributes. 
 	 * @param input Input file or path to generate JFile(s) from
-	 * @throws IOException Throws IOException when file at path cannot be accessed
+	 * @throws IOException Throws IOException when file at path cannot be read
 	 */
 	public FileStruct(Path input) throws IOException {
 		populateArray(input);
@@ -99,13 +98,13 @@ public class FileStruct implements Serializable {
 	
 	/**
 	 * Helper method to populate the attribute array.
-	 * @throws IOException If object passed is inaccessible
+	 * @throws IOException Throws IOException when file at path cannot be read
 	 */
 	private void populateArray(Path path) throws IOException {
 		if (path == null) {
 			return;
 		}
-		//Populates each JFile with a complete K/V map of all basic file attributes	
+		//Populates Type variable
 		if (Files.isRegularFile(path)) {
 			this.setType(Type.FILE);
 		} else if (Files.isDirectory(path)) {
@@ -116,6 +115,7 @@ public class FileStruct implements Serializable {
 			this.setType(Type.OTHER);
 		}
 		
+		//Basic file attributes
 		attrList.put("name", path.toFile().getName());
 		attrList.put("lastModifiedTime", Files.getAttribute(path, "lastModifiedTime").toString());
 		attrList.put("lastAccessTime", Files.getAttribute(path, "lastAccessTime").toString());
@@ -155,6 +155,7 @@ public class FileStruct implements Serializable {
 	 */
 	private String stringifyPermissions(Path path, PosixFileAttributes attrs) {
 		String permissions = "";
+		
 		if (Files.isDirectory(path)) {
 			permissions += "d";
 		} else if (Files.isSymbolicLink(path)) {
@@ -165,52 +166,16 @@ public class FileStruct implements Serializable {
 			permissions += " ";
 		}
 		
-		if (attrs.permissions().contains(PosixFilePermission.OWNER_READ)) {
-			permissions += "r";
-		} else {
-			permissions += "-";
-		}
-		if (attrs.permissions().contains(PosixFilePermission.OWNER_WRITE)) {
-			permissions += "w";
-		} else {
-			permissions += "-";
-		}
-		if (attrs.permissions().contains(PosixFilePermission.OWNER_EXECUTE)) {
-			permissions += "x";
-		} else {
-			permissions += "-";
-		}
-		if (attrs.permissions().contains(PosixFilePermission.GROUP_READ)) {
-			permissions += "r";
-		} else {
-			permissions += "-";
-		}
-		if (attrs.permissions().contains(PosixFilePermission.GROUP_WRITE)) {
-			permissions += "w";
-		} else {
-			permissions += "-";
-		}
-		if (attrs.permissions().contains(PosixFilePermission.GROUP_EXECUTE)) {
-			permissions += "x";
-		} else {
-			permissions += "-";
-		}
-		if (attrs.permissions().contains(PosixFilePermission.OTHERS_READ)) {
-			permissions += "r";
-		} else {
-			permissions += "-";
-		}
-		if (attrs.permissions().contains(PosixFilePermission.OTHERS_WRITE)) {
-			permissions += "w";
-		} else {
-			permissions += "-";
-		}
-		if (attrs.permissions().contains(PosixFilePermission.OTHERS_EXECUTE)) {
-			permissions += "x";
-		} else {
-			permissions += "-";
-		}
-		
+		permissions += attrs.permissions().contains(PosixFilePermission.OWNER_READ) ? "r" : "-";
+		permissions += attrs.permissions().contains(PosixFilePermission.OWNER_WRITE) ? "r" : "-";
+		permissions += attrs.permissions().contains(PosixFilePermission.OWNER_EXECUTE) ? "r" : "-";
+		permissions += attrs.permissions().contains(PosixFilePermission.GROUP_READ) ? "r" : "-";
+		permissions += attrs.permissions().contains(PosixFilePermission.GROUP_WRITE) ? "r" : "-";
+		permissions += attrs.permissions().contains(PosixFilePermission.GROUP_EXECUTE) ? "r" : "-";
+		permissions += attrs.permissions().contains(PosixFilePermission.OTHERS_READ) ? "r" : "-";
+		permissions += attrs.permissions().contains(PosixFilePermission.OTHERS_WRITE) ? "r" : "-";
+		permissions += attrs.permissions().contains(PosixFilePermission.OTHERS_EXECUTE) ? "r" : "-";
+	
 		return permissions;
 	}
 
@@ -247,7 +212,7 @@ public class FileStruct implements Serializable {
 	}
 
 	/**
-	 * getValue searches the attrList for an attribute corresponding to the given string
+	 * Searches the attrList for an attribute corresponding to the given string
 	 * @param name is the key to search for an attribute
 	 * @return the corresponding value if the attribute exists. Otherwise returns an empty string
 	 */
@@ -260,8 +225,8 @@ public class FileStruct implements Serializable {
 	}
 	
 	/**
-	 * getKeys returns an array of its keys.
-	 * @return an array of the keys of the attList.
+	 * Returns an array of the keys.
+	 * @return an array of the keys of the attrList.
 	 */
 	public String[] getKeys() {
 		Collection<String> attNames = attrList.keySet();
@@ -270,7 +235,7 @@ public class FileStruct implements Serializable {
 	}
 	
 	/**
-	 * contains determines if the attrList has a value for the given key.
+	 * Determines if the attrList has a value for the given key.
 	 * @param name is the key to search for a value
 	 * @return true or false depending on if a value is found
 	 */

@@ -23,6 +23,9 @@ package edu.wright.cs.jfiles.common;
 
 import com.thoughtworks.xstream.XStream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,7 +35,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 /**
- * This class encapsulates the XMLStruct class in an ArrayList and provides methods to read and 
+ * This class encapsulates the FileStruct class in an ArrayList and provides methods to read and 
  * write to data streams.
  * @author brian
  *
@@ -42,6 +45,7 @@ public class XmlHandler {
 	private String currentPath;
 	private ArrayList<FileStruct> arrlist;
 	private static transient XStream xstream = new XStream();
+	static final transient Logger logger = LogManager.getLogger(XmlHandler.class);
 	
 	//Static init block to configure XStream
 	static {
@@ -51,6 +55,7 @@ public class XmlHandler {
 		xstream.aliasAttribute(FileStruct.class, "attrList", "attributeList");
 		xstream.useAttributeFor(FileStruct.class, "type");
 		xstream.omitField(XStream.class, "xstream");
+		xstream.omitField(XStream.class, "logger");
 	}
 	
 	/**
@@ -60,23 +65,25 @@ public class XmlHandler {
 	}
 	
 	/**
-	 * Constructor for sending XML.
+	 * Constructs an ArrayList of FileStruct objects. If passed a path with
+	 * a trailing slash in the path, list only the directory. Otherwise, list the contents of the
+	 * directory.
 	 * @param path path that you want to XMLify
-	 * @throws IOException If Path object is inaccessible 
 	 */
-	public XmlHandler(String path) throws IOException {
+	public XmlHandler(String path) {
 		this.currentPath = path;
 		arrlist = new ArrayList<FileStruct>();
 		populateArray();	
 	}
 	
 	/**
-	 * Constructor for sending XML.
+	 * Constructs an ArrayList of FileStruct objects and sends it as XML. If passed a path with
+	 * a trailing slash in the path, list only the directory. Otherwise, list the contents of the
+	 * directory.
 	 * @param path that you want to XMLify
 	 * @param str stream to send XML to
-	 * @throws IOException  if path object is inaccesible
 	 */
-	public XmlHandler(String path, OutputStreamWriter str) throws IOException {
+	public XmlHandler(String path, OutputStreamWriter str) {
 		this.currentPath = path;
 		arrlist = new ArrayList<FileStruct>();
 		populateArray();
@@ -87,23 +94,34 @@ public class XmlHandler {
 	 * Helper method to populate the ArrayList.
 	 * @throws IOException If Path object is inaccessible
 	 */
-	private void populateArray() throws IOException {
+	private void populateArray() {
 		String ts = currentPath.substring(currentPath.length() - 1);
 		
 		//If passed a directory with a trailing slash in the path only list the directory
 		//Else list the content of the directory
+		//Kind of trailing slash is dependent on the server OS
 		if (Files.isDirectory(Paths.get(currentPath)) 
 				&& ts.equals(System.getProperty("file.separator"))) {
-			arrlist.add(new FileStruct(Paths.get(currentPath)));
+			try {
+				arrlist.add(new FileStruct(Paths.get(currentPath)));
+			} catch (IOException e) {
+				logger.error(Error.IOEXCEPTION3.toString() + currentPath, e);
+			}
 		} else {
-			//Tried this with an iterator and it blew up
 			File[] temp = new File(currentPath).listFiles();
 			
+			//Terminates if the folder is empty. Otherwise XML gets weird.
 			if (temp == null) {
 				return;
 			}
+			
+			//Add the contents of the directory to the ArrayList
 			for (int i = 0; i < temp.length; i++) {
-				arrlist.add(new FileStruct(temp[i].toPath()));	
+				try {
+					arrlist.add(new FileStruct(temp[i].toPath()));
+				} catch (IOException e) {
+					logger.error(Error.IOEXCEPTION3.toString() + temp[i].getAbsolutePath(), e);
+				}
 			}
 		}
 	}
@@ -111,9 +129,8 @@ public class XmlHandler {
 	/**
 	 * Method to serialize an object and write XML to an output stream.
 	 * @param osw OutputStreamWriter to write to
-	 * @throws IOException If output stream can't be read from
 	 */
-	public void sendXml(OutputStreamWriter osw) throws IOException {
+	public void sendXml(OutputStreamWriter osw) {
 		xstream.toXML(this, osw);
 	}
 	

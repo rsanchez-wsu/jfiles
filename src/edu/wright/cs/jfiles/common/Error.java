@@ -33,7 +33,8 @@ public enum Error {
 	IOEXCEPTION1(1, "IOException occured when trying to access the server config."),
 	IOEXCEPTION2(2, "IOException occured when trying to access the client config."),
 	UNKNOWN_COMMAND(3,"Unknown commad was sent by the client."),
-	SQL_INIT_ERROR(4,"Error in SQL init.");
+	SQL_INIT_ERROR(4,"Error in SQL init."),
+	IOEXCEPTION3(5, "An error occured processing file ");
 	
 	private final int code;
 	private final String description;
