@@ -167,14 +167,14 @@ public class FileStruct implements Serializable {
 		}
 		
 		permissions += attrs.permissions().contains(PosixFilePermission.OWNER_READ) ? "r" : "-";
-		permissions += attrs.permissions().contains(PosixFilePermission.OWNER_WRITE) ? "r" : "-";
-		permissions += attrs.permissions().contains(PosixFilePermission.OWNER_EXECUTE) ? "r" : "-";
+		permissions += attrs.permissions().contains(PosixFilePermission.OWNER_WRITE) ? "w" : "-";
+		permissions += attrs.permissions().contains(PosixFilePermission.OWNER_EXECUTE) ? "x" : "-";
 		permissions += attrs.permissions().contains(PosixFilePermission.GROUP_READ) ? "r" : "-";
-		permissions += attrs.permissions().contains(PosixFilePermission.GROUP_WRITE) ? "r" : "-";
-		permissions += attrs.permissions().contains(PosixFilePermission.GROUP_EXECUTE) ? "r" : "-";
+		permissions += attrs.permissions().contains(PosixFilePermission.GROUP_WRITE) ? "w" : "-";
+		permissions += attrs.permissions().contains(PosixFilePermission.GROUP_EXECUTE) ? "x" : "-";
 		permissions += attrs.permissions().contains(PosixFilePermission.OTHERS_READ) ? "r" : "-";
-		permissions += attrs.permissions().contains(PosixFilePermission.OTHERS_WRITE) ? "r" : "-";
-		permissions += attrs.permissions().contains(PosixFilePermission.OTHERS_EXECUTE) ? "r" : "-";
+		permissions += attrs.permissions().contains(PosixFilePermission.OTHERS_WRITE) ? "w" : "-";
+		permissions += attrs.permissions().contains(PosixFilePermission.OTHERS_EXECUTE) ? "x" : "-";
 	
 		return permissions;
 	}
