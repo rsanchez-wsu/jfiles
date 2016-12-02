@@ -28,6 +28,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -35,6 +36,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -174,7 +177,7 @@ public class ClientSideGui extends Application {
 		// Pane Creation
 		BorderPane basePane = new BorderPane();
 		// Sets basePane's color
-		basePane.setStyle("-fx-background-color: LIGHTGREY;");
+		// basePane.setStyle("-fx-background-color: LIGHTGREY;");
 
 		// Create MenuBar on window Top
 		MenuBar headderMenuBar = new MenuBar();
@@ -205,6 +208,72 @@ public class ClientSideGui extends Application {
 
 		// Add the menus to the menu bar
 		headderMenuBar.getMenus().addAll(fileMenu, editMenu);
+
+		// Tools Area
+		final int imageHeight = 30;
+		final int imageWidth = 30;
+
+		Image copyImage = new Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
+		ImageView copyImageView = new ImageView(copyImage);
+		copyImageView.setFitHeight(imageHeight);
+		copyImageView.setFitWidth(imageWidth);
+		Button copyButton = new Button("Copy", copyImageView);
+		copyButton.setContentDisplay(ContentDisplay.TOP);
+		copyButton.setStyle("-fx-font-size: 15px;" + "-fx-font-family: 'Currier New' ;"
+				+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
+
+		Image pasteImage = new Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
+		ImageView pasteImageView = new ImageView(pasteImage);
+		pasteImageView.setFitHeight(imageHeight);
+		pasteImageView.setFitWidth(imageWidth);
+		Button pasteButton = new Button("Copy", pasteImageView);
+		pasteButton.setContentDisplay(ContentDisplay.TOP);
+		pasteButton.setStyle("-fx-font-size: 15px;" + "-fx-font-family: 'Currier New' ;"
+				+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
+
+		Image cutImage = new Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
+		ImageView cutImageView = new ImageView(cutImage);
+		cutImageView.setFitHeight(imageHeight);
+		cutImageView.setFitWidth(imageWidth);
+		Button cutButton = new Button("Copy", cutImageView);
+		cutButton.setContentDisplay(ContentDisplay.TOP);
+		cutButton.setStyle("-fx-font-size: 15px;" + "-fx-font-family: 'Currier New' ;"
+				+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
+
+		Image deleteImage = new Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
+		ImageView deleteImageView = new ImageView(deleteImage);
+		deleteImageView.setFitHeight(imageHeight);
+		deleteImageView.setFitWidth(imageWidth);
+		Button deleteButton = new Button("Copy", deleteImageView);
+		deleteButton.setContentDisplay(ContentDisplay.TOP);
+		deleteButton.setStyle("-fx-font-size: 15px;" + "-fx-font-family: 'Currier New' ;"
+				+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
+
+		Image openImage = new Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
+		ImageView openImageView = new ImageView(openImage);
+		openImageView.setFitHeight(imageHeight);
+		openImageView.setFitWidth(imageWidth);
+		Button openButton = new Button("Copy", openImageView);
+		openButton.setContentDisplay(ContentDisplay.TOP);
+		openButton.setStyle("-fx-font-size: 15px;" + "-fx-font-family: 'Currier New' ;"
+				+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
+
+		Image createImage = new Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
+		ImageView createImageView = new ImageView(createImage);
+		createImageView.setFitHeight(imageHeight);
+		createImageView.setFitWidth(imageWidth);
+		Button createButton = new Button("Copy", createImageView);
+		createButton.setContentDisplay(ContentDisplay.TOP);
+		createButton.setStyle("-fx-font-size: 15px;" + "-fx-font-family: 'Currier New' ;"
+				+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
+
+		HBox toolsHbox = new HBox();
+		toolsHbox.setPadding(new Insets(10, 10, 10, 10));
+		toolsHbox.setSpacing(10);
+		toolsHbox.setStyle("-fx-background-color: LIGHTBLUE;");
+		toolsHbox.getChildren().addAll(copyButton, pasteButton, cutButton, deleteButton, openButton,
+				createButton);
+		basePane.setCenter(toolsHbox);
 
 		// Scene Creation. Put the basePane on the scene.
 		Scene scene = new Scene(basePane, 1200, 600, Color.WHITE);

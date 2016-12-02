@@ -62,8 +62,7 @@ import javax.xml.transform.stream.StreamResult;
 public class JFilesServer implements Runnable {
 
 	static final Logger logger = LogManager.getLogger(JFilesServer.class);
-	private static int PORT;
-	private static int MAXTHREADS;
+	private static int PORT = 9786;
 	private final ServerSocket serverSocket;
 	private static final String UTF_8 = "UTF-8";
 
@@ -115,15 +114,18 @@ public class JFilesServer implements Runnable {
 		PORT = Integer.parseInt(prop.getProperty("Port", "9786"));
 		logger.info("Config set to port " + PORT);
 
-		MAXTHREADS = Integer.parseInt(prop.getProperty("maxThreads", "10"));
-		logger.info("Config set max threads to " + MAXTHREADS);
+		int maxThreads = Integer.parseInt(prop.getProperty("maxThreads", "10"));
+		logger.info("Config set max threads to " + maxThreads);
 	}
 
 	/**
-	 * This is a Javadoc comment to statisfy Checkstyle.
+	/**
+	/**
+	/**
+	 * Handles allocating resources needed for the server.
 	 *
 	 * @throws IOException
-	 *             When bad things happen
+	 *             If there is a problem binding to the socket
 	 */
 	public JFilesServer() throws IOException {
 		serverSocket = new ServerSocket(PORT);
@@ -254,5 +256,13 @@ public class JFilesServer implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Sends path that contains displayed items to the GUI.
+	 */
+	public static String sendPath() {
+		String dir = System.getProperty("user.dir");
+		return dir;
 	}
 }
