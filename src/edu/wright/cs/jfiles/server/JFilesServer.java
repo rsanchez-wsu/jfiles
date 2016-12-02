@@ -215,7 +215,7 @@ public class JFilesServer implements Runnable {
 			init();
 			
 			/*
-			XmlHandler test1 = new XmlHandler("/home/brian/git/jfiles/");
+			XmlHandler test1 = new XmlHandler("/home/brian/git/");
 			OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(
 					new File("test.xml")));
 			test1.sendXml(osw);		

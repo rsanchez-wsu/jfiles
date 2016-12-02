@@ -76,7 +76,7 @@ public class FileStruct implements Serializable {
 	}
 	
 	private static final long serialVersionUID = -5456733342924856091L;
-	private Map<String, String> attrList = new HashMap<>();
+	private Map<String, Object> attrList = new HashMap<>();
 	private Type type;
 	
 	/**
@@ -117,10 +117,10 @@ public class FileStruct implements Serializable {
 		
 		//Basic file attributes
 		attrList.put("name", path.toFile().getName());
-		attrList.put("lastModifiedTime", Files.getAttribute(path, "lastModifiedTime").toString());
-		attrList.put("lastAccessTime", Files.getAttribute(path, "lastAccessTime").toString());
-		attrList.put("creationTime", Files.getAttribute(path, "creationTime").toString());
-		attrList.put("size", Files.getAttribute(path, "size").toString());
+		attrList.put("lastModifiedTime", Files.getAttribute(path, "lastModifiedTime"));
+		attrList.put("lastAccessTime", Files.getAttribute(path, "lastAccessTime"));
+		attrList.put("creationTime", Files.getAttribute(path, "creationTime"));
+		attrList.put("size", Files.getAttribute(path, "size"));
 		
 		//Populates with DOS or POSIX attributes
 		if (Files.getFileStore(path).supportsFileAttributeView(DosFileAttributeView.class)) {
@@ -183,7 +183,7 @@ public class FileStruct implements Serializable {
 	 * Default.
 	 * @return the attrList
 	 */
-	protected Map<String, String> getAttrList() {
+	protected Map<String, Object> getAttrList() {
 		return attrList;
 	}
 	
@@ -191,7 +191,7 @@ public class FileStruct implements Serializable {
 	 * Default.
 	 * @param attrList the attrList to set
 	 */
-	protected void setAttrList(Map<String, String> attrList) {
+	protected void setAttrList(Map<String, Object> attrList) {
 		this.attrList = attrList;
 	}
 	
@@ -216,8 +216,8 @@ public class FileStruct implements Serializable {
 	 * @param name is the key to search for an attribute
 	 * @return the corresponding value if the attribute exists. Otherwise returns an empty string
 	 */
-	public String getValue(String name) {
-		String attribute = "";
+	public Object getValue(String name) {
+		Object attribute = "";
 		if (attrList.containsKey(name)) {
 			attribute = attrList.get(name);
 		}
