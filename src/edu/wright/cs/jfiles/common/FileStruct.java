@@ -141,6 +141,8 @@ public class FileStruct implements Serializable {
 			attrList.put("group", attrs.group().getName());
 			attrList.put("owner", attrs.owner().getName());
 			attrList.put("permissions", stringifyPermissions(path, attrs));
+			attrList.put("numericpermissions", getNumericPermissions());
+			
 		//Catching weird behavior	
 		} else {
 			attrList.put("system", "Unknown");
@@ -218,7 +220,7 @@ public class FileStruct implements Serializable {
 	 */
 	public Object getValue(String name) {
 		Object attribute = "";
-		if (attrList.containsKey(name)) {
+		if (attrList.containsKey(name.toLowerCase())) {
 			attribute = attrList.get(name);
 		}
 		return attribute;
@@ -245,5 +247,28 @@ public class FileStruct implements Serializable {
 			truth = true;
 		}
 		return truth;
+	}
+	
+	/**
+	 * A method to calculate the numeric representation of POSIX permissions.
+	 * @return A string of 3 numbers
+	 */
+	public String getNumericPermissions() {
+		String permissions = "";
+		String temp = (String) this.getValue("permissions");
+		
+		int single = 0;
+		
+		for (int i = 1; i < 10; i++) {
+			single += temp.charAt(i) == 'r' ? 4 : 0;
+			single += temp.charAt(i) == 'w' ? 2 : 0;
+			single += temp.charAt(i) == 'x' ? 1 : 0;
+			//Every third loop add the single value to the string and reset
+			if (i % 3 == 0) {
+				permissions += Integer.toString(single);
+				single = 0;
+			}
+		}
+		return permissions;	
 	}
 }

@@ -56,6 +56,7 @@ public class XmlHandler {
 		xstream.useAttributeFor(FileStruct.class, "type");
 		xstream.omitField(XStream.class, "xstream");
 		xstream.omitField(XStream.class, "logger");
+		xstream.registerConverter(new MapEntryConverter());
 	}
 	
 	/**
