@@ -21,10 +21,9 @@
 
 package edu.wright.cs.jfiles.socketmanagement;
 
+import edu.wright.cs.jfiles.common.NetUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import edu.wright.cs.jfiles.common.NetUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
