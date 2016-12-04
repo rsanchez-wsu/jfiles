@@ -1,20 +1,37 @@
+/*
+ * Copyright (C) 2016 - WSU students.
+ * Copyright stuff.
+ */
+
 package edu.wright.cs.jfiles.client;
 
-import java.net.*;
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.net.Socket;
 
+/**
+ * THe main class.
+ */
 public class JFilesClientThread extends Thread {
 	private Socket socket = null;
 	private JFilesClient client = null;
 	private DataInputStream streamIn = null;
 
-	public JFilesClientThread(JFilesClient _client, Socket _socket) {
-		client = _client;
-		socket = _socket;
+	/**
+	 * Constructor.
+	 * @param mclient The client.
+	 * @param msocket The socket.
+	 */
+	public JFilesClientThread(JFilesClient mclient, Socket msocket) {
+		client = mclient;
+		socket = msocket;
 		open();
 		start();
 	}
 
+	/**
+	 * Open the stream.
+	 */
 	public void open() {
 		try {
 			streamIn = new DataInputStream(socket.getInputStream());
@@ -24,15 +41,22 @@ public class JFilesClientThread extends Thread {
 		}
 	}
 
+	/**
+	 * Close the stream.
+	 */
 	public void close() {
 		try {
-			if (streamIn != null)
+			if (streamIn != null) {
 				streamIn.close();
+			}
 		} catch (IOException ioe) {
 			System.out.println("Error closing input stream: " + ioe);
 		}
 	}
 
+	/**
+	 * Start everything Basically.
+	 */
 	public void run() {
 		while (true) {
 			try {

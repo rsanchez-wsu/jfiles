@@ -16,21 +16,16 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * 
  */
 
 package edu.wright.cs.jfiles.client;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Scanner;
 
 /**
  * The main class of the JFiles client application.
@@ -46,9 +41,9 @@ public class JFilesClient implements Runnable {
 	private JFilesClientThread client = null;
 
 	/**
-	 * 
-	 * @param serverName
-	 * @param serverPort
+	 * The main Class.
+	 * @param serverName The name of the server.
+	 * @param serverPort The port number of the server.
 	 */
 	public JFilesClient(String serverName, int serverPort) {
 		System.out.println("Establishing connection. Please wait ...");
@@ -64,7 +59,7 @@ public class JFilesClient implements Runnable {
 	}
 
 	/**
-	 * 
+	 *.
 	 */
 	public void run() {
 		System.out.print(">");
@@ -85,8 +80,8 @@ public class JFilesClient implements Runnable {
 	}
 
 	/**
-	 * 
-	 * @param msg
+	 * This method handles the message.
+	 * @param msg The message to handle.
 	 */
 	public void handle(String msg) {
 		if (msg.equals(".exit")) {
@@ -98,8 +93,7 @@ public class JFilesClient implements Runnable {
 	}
 
 	/**
-	 * 
-	 * @throws IOException
+	 * Start the connection.
 	 */
 	public void start() throws IOException {
 		console = new DataInputStream(System.in);
@@ -112,7 +106,7 @@ public class JFilesClient implements Runnable {
 	}
 
 	/**
-	 * 
+	 * Stops the thread.
 	 */
 	public void stop() {
 		if (thread != null) {
@@ -135,10 +129,9 @@ public class JFilesClient implements Runnable {
 	}
 
 	/**
-	 * 
-	 * @param args
+	 * The main method.
 	 */
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		JFilesClient client = null;
 		client = new JFilesClient("localhost", 9786);
 	}

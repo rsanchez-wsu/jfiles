@@ -3,7 +3,6 @@
  *
  * Roberto C. Sánchez <roberto.sanchez@wright.edu>
  *
- *
  * This program is free software: you can redistribute it and/or modify it under the terms of the
  * GNU General Public License as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
@@ -28,6 +27,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.RandomAccessFile;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.DirectoryStream;
@@ -72,8 +72,6 @@ public class JFilesServer implements Runnable {
 
 	/**
 	 * .
-	 * 
-	 *
 	 */
 	public void run() {
 		while (true) {
@@ -89,8 +87,6 @@ public class JFilesServer implements Runnable {
 
 	/**
 	 * .
-	 * 
-	 *
 	 */
 	public void start() {
 		if (thread == null) {
@@ -101,8 +97,6 @@ public class JFilesServer implements Runnable {
 
 	/**
 	 * This method stops the thread.
-	 * 
-	 *
 	 */
 	public void stop() {
 		if (thread != null) {
@@ -113,8 +107,6 @@ public class JFilesServer implements Runnable {
 
 	/**
 	 * This method searches for the client based on the id number.
-	 * 
-	 *
 	 */
 	private int findClient(int id) {
 		for (int i = 0; i < clientCount; i++) {
@@ -127,27 +119,29 @@ public class JFilesServer implements Runnable {
 
 	/**
 	 * This method handles all the activities the thread will do.
-	 * 
-	 *
 	 */
 	public synchronized void handle(int id, String input) throws IOException {
 
 		// logger.info("Received connection from" +
 		// server.getRemoteSocketAddress());
 		String dir = System.getProperty("user.dir");
-		File history = new File("SearchHistory.txt");
-		PrintWriter hstWrt;
+		File history = new File("Search History.txt");
+		File cmdHistory = new File("Command History.txt");
+		PrintWriter schHstWrt;
+		PrintWriter cmdHstWrt;
 
-		if (history.exists()) { // determines if the word need to be appended
-			hstWrt = new PrintWriter(new FileWriter(history, true));
+		if (history.exists() && cmdHistory.exists()) { // determines if the word need to be appended
+			schHstWrt = new PrintWriter(new FileWriter(history, true));
+			cmdHstWrt = new PrintWriter(new FileWriter(cmdHistory, true));
 		} else {
-			hstWrt = new PrintWriter(history);
+			schHstWrt = new PrintWriter(history);
+			cmdHstWrt = new PrintWriter(cmdHistory);
 		}
 
 		Locale.setDefault(new Locale("English"));
 
 		String[] baseCommand = input.split(" ");
-
+		cmdHstWrt.println(baseCommand[0]);
 		switch (baseCommand[0].toUpperCase(Locale.ENGLISH)) {
 		case "LIST":
 			List cmd = new List(clients[findClient(id)]);
@@ -155,7 +149,7 @@ public class JFilesServer implements Runnable {
 
 			break;
 		case "FIND":
-			hstWrt.println(baseCommand[1]);
+			schHstWrt.println(baseCommand[1]);
 			if (isValid(baseCommand)) {
 				findCmd(dir, id, baseCommand[1]);
 			} else {
@@ -166,7 +160,7 @@ public class JFilesServer implements Runnable {
 
 			break;
 		case "FINDR":
-			hstWrt.println(baseCommand[1]);
+			schHstWrt.println(baseCommand[1]);
 			if (isValid(baseCommand)) {
 				recursiveFindCmd(dir, id, baseCommand[1]);
 			} else {
@@ -187,15 +181,15 @@ public class JFilesServer implements Runnable {
 
 		// out.flush();
 		clients[findClient(id)].send(">");
-		hstWrt.flush();
-		hstWrt.close();
+		schHstWrt.flush();
+		schHstWrt.close();
+		cmdHstWrt.flush();
+		cmdHstWrt.close();
 
 	}
 
 	/**
 	 * This method handles removing a thread.
-	 * 
-	 *
 	 */
 	public synchronized void remove(int id) {
 		int pos = findClient(id);
@@ -220,8 +214,6 @@ public class JFilesServer implements Runnable {
 
 	/**
 	 * This method handles adding a new thread.
-	 * 
-	 *
 	 */
 	private void addThread(Socket socket) {
 		if (clientCount < clients.length) {
@@ -241,8 +233,6 @@ public class JFilesServer implements Runnable {
 
 	/**
 	 * Checks to make sure the command input is valid.
-	 * 
-	 *
 	 */
 	boolean isValid(String[] command) {
 		if (command.length <= 1) { // used for handling invalid error
@@ -256,7 +246,6 @@ public class JFilesServer implements Runnable {
 	/**
 	 * Find Command function. Method for the find command. Writes results found
 	 * within current directory. Search supports glob patterns
-	 * 
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
@@ -272,8 +261,6 @@ public class JFilesServer implements Runnable {
 			System.out.println("Found " + findCount + " file(s) in " + dir + " that contains \""
 					+ searchTerm + "\"\n");
 		} catch (IOException e) {
-			// TODO AUto-generated catch block
-			// e.printStackTrace();
 			logger.error("Some error occured", e);
 		}
 	}
@@ -282,7 +269,6 @@ public class JFilesServer implements Runnable {
 	 * Recursive find Command function. Method for the recursive option of the
 	 * find command. Calls itself if a child directory is found, otherwise calls
 	 * findCmd to get results from current directory.
-	 * 
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
@@ -294,8 +280,7 @@ public class JFilesServer implements Runnable {
 				}
 			}
 		} catch (IOException e) {
-			// TODO AUto-generated catch block
-			// e.printStackTrace();
+
 			logger.error("Some error occured", e);
 		}
 		findCmd(dir, id, searchTerm);
@@ -303,7 +288,6 @@ public class JFilesServer implements Runnable {
 
 	/**
 	 * The main entry point to the program.
-	 * 
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
