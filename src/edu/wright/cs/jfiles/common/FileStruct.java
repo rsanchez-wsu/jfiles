@@ -112,6 +112,7 @@ public class FileStruct implements Serializable {
 		} else if (Files.isSymbolicLink(path)) {
 			this.setType(Type.SYMBOLICLINK);
 		} else {
+			//Should never get here hopefully
 			this.setType(Type.OTHER);
 		}
 		
@@ -124,24 +125,28 @@ public class FileStruct implements Serializable {
 		
 		//Populates with DOS or POSIX attributes
 		if (Files.getFileStore(path).supportsFileAttributeView(DosFileAttributeView.class)) {
+			//Creates a DOS file attribute view from the file
 			DosFileAttributes attrs = Files.getFileAttributeView(
 					path, DosFileAttributeView.class).readAttributes();
 			
+			//Populates DOS specific file attributes
 			attrList.put("system", "DOS");
 			attrList.put("readOnly", String.valueOf(attrs.isReadOnly()));
 			attrList.put("hidden", String.valueOf(attrs.isHidden()));
 			attrList.put("system", String.valueOf(attrs.isSystem()));
 			attrList.put("archive", String.valueOf(attrs.isArchive()));				
-		} else if (Files.getFileStore(path)
-				.supportsFileAttributeView(PosixFileAttributeView.class)) {
+		} else if (Files.getFileStore(path).supportsFileAttributeView(
+				PosixFileAttributeView.class)) {
+			//Creates a POSIX file attribute from the file
 			PosixFileAttributes attrs = Files.getFileAttributeView(
 					path, PosixFileAttributeView.class).readAttributes();
 			
+			//Populates POSIX specific file attributes
 			attrList.put("system", "POSIX");
 			attrList.put("group", attrs.group().getName());
 			attrList.put("owner", attrs.owner().getName());
 			attrList.put("permissions", stringifyPermissions(path, attrs));
-			attrList.put("numericpermissions", getNumericPermissions());
+			attrList.put("numericPermissions", getNumericPermissions());
 			
 		//Catching weird behavior	
 		} else {
@@ -158,6 +163,7 @@ public class FileStruct implements Serializable {
 	private String stringifyPermissions(Path path, PosixFileAttributes attrs) {
 		String permissions = "";
 		
+		//Type descriptor
 		if (Files.isDirectory(path)) {
 			permissions += "d";
 		} else if (Files.isSymbolicLink(path)) {
@@ -168,6 +174,7 @@ public class FileStruct implements Serializable {
 			permissions += " ";
 		}
 		
+		//Permissions
 		permissions += attrs.permissions().contains(PosixFilePermission.OWNER_READ) ? "r" : "-";
 		permissions += attrs.permissions().contains(PosixFilePermission.OWNER_WRITE) ? "w" : "-";
 		permissions += attrs.permissions().contains(PosixFilePermission.OWNER_EXECUTE) ? "x" : "-";
@@ -259,10 +266,12 @@ public class FileStruct implements Serializable {
 		
 		int single = 0;
 		
+		//i =  1 because the first character is the type descriptor
 		for (int i = 1; i < 10; i++) {
 			single += temp.charAt(i) == 'r' ? 4 : 0;
 			single += temp.charAt(i) == 'w' ? 2 : 0;
 			single += temp.charAt(i) == 'x' ? 1 : 0;
+			
 			//Every third loop add the single value to the string and reset
 			if (i % 3 == 0) {
 				permissions += Integer.toString(single);

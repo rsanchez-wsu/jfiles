@@ -215,15 +215,13 @@ public class JFilesServer implements Runnable {
 			init();
 			
 			/*
-			XmlHandler test1 = new XmlHandler("/etc");
+			XmlHandler test1 = new XmlHandler("/home/brian/git/jfiles");
 			OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(
 					new File("test.xml")));
 			test1.sendXml(osw);		
 			XmlHandler test2 = new XmlHandler();
 			ArrayList<FileStruct> arr = test2.readXml(new InputStreamReader(new FileInputStream(
 					new File("test.xml"))));
-			@SuppressWarnings("unused")
-			String sss = arr.get(0).getNumericPermissions();
 			*/
 			
 			logger.info("Starting the server");

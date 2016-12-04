@@ -96,34 +96,27 @@ public class XmlHandler {
 	 * @throws IOException If Path object is inaccessible
 	 */
 	private void populateArray() {
-		String ts = currentPath.substring(currentPath.length() - 1);
+		String lastCharacter = currentPath.substring(currentPath.length() - 1);
 		
-		//If passed a directory with a trailing slash in the path only list the directory
-		//Else list the content of the directory
-		//Kind of trailing slash is dependent on the server OS
-		if (Files.isDirectory(Paths.get(currentPath)) 
-				&& ts.equals(System.getProperty("file.separator"))) {
-			try {
-				arrlist.add(new FileStruct(Paths.get(currentPath)));
-			} catch (IOException e) {
-				logger.error(Error.IOEXCEPTION3.toString() + currentPath, e);
-			}
-		} else {
-			File[] temp = new File(currentPath).listFiles();
-			
-			//Terminates if the folder is empty. Otherwise XML gets weird.
-			if (temp == null) {
-				return;
-			}
-			
-			//Add the contents of the directory to the ArrayList
-			for (int i = 0; i < temp.length; i++) {
-				try {
+		try {
+			if (Files.isDirectory(Paths.get(currentPath)) 
+					&& !lastCharacter.equals(System.getProperty("file.separator"))) {
+				//If passed a directory without a trailing slash list contents of the path
+				
+				File[] temp = new File(currentPath).listFiles();		
+				//Terminates if the folder is empty. Otherwise XML gets weird.
+				if (temp == null) {
+					return;
+				}		
+				//Add the contents of the directory to the ArrayList
+				for (int i = 0; i < temp.length; i++) {
 					arrlist.add(new FileStruct(temp[i].toPath()));
-				} catch (IOException e) {
-					logger.error(Error.IOEXCEPTION3.toString() + temp[i].getAbsolutePath(), e);
 				}
+			} else {
+				arrlist.add(new FileStruct(Paths.get(currentPath)));
 			}
+		} catch (IOException e) {
+			logger.error(Error.IOEXCEPTION3.toString() + currentPath, e);
 		}
 	}
 	

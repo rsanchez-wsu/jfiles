@@ -29,12 +29,12 @@ package edu.wright.cs.jfiles.common;
 public enum Error {
 	//List error messages here.  <ERROR_NAME>(<number>, <description>)
 	//End each line with comma and new line.  Last error should end with a semicolon.
-	IOEXCEPTION(0, "The file cannot be read."),
-	IOEXCEPTION1(1, "IOException occured when trying to access the server config."),
-	IOEXCEPTION2(2, "IOException occured when trying to access the client config."),
-	UNKNOWN_COMMAND(3,"Unknown commad was sent by the client."),
-	SQL_INIT_ERROR(4,"Error in SQL init."),
-	IOEXCEPTION3(5, "An error occured processing file ");
+	IOEXCEPTION(0, "The file cannot be read"),
+	IOEXCEPTION1(1, "IOException occured when trying to access the server config"),
+	IOEXCEPTION2(2, "IOException occured when trying to access the client config"),
+	UNKNOWN_COMMAND(3,"Unknown commad was sent by the client"),
+	SQL_INIT_ERROR(4,"Error in SQL init"),
+	IOEXCEPTION3(5,"An error occured processing the path ");
 	
 	private final int code;
 	private final String description;
