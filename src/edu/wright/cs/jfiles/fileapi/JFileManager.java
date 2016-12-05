@@ -398,16 +398,18 @@ public class JFileManager {
 	/**
 	 * Renames a file.
 	 *
-	 * @param oldName
+	 * @param file
 	 *            The location of the file being renamed.
 	 * @param newName
 	 *            The name that the file is changing to.
 	 *
 	 */
-	public static void rename(String oldName, String newName) {
+	public static void rename(JFile file, String newName) {
 		logger.info("Renaming File");
 		try {
-			logger.info("Renamed " + oldName + " to " + newName);
+			String tmp = file.getName();
+			file.rename(newName);
+			logger.info("Renamed " + tmp + " to " + newName);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("Error Renaming File", e);

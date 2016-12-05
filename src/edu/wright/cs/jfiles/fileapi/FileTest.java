@@ -159,8 +159,8 @@ public class FileTest {
 	 * change the name of the file back to prepare the file for the next call to
 	 * this method.
 	 */
-	public static void testRename() {
-
+	public static void testRename(JFile file, String newName) {
+		JFileManager.rename(file, newName);
 	}
 
 	/**
@@ -266,16 +266,20 @@ public class FileTest {
 
 		JFile[] tmpArr = {null, null};
 		System.out.println("\nPlease enter the absolute path to a file that you want to delete");
-		System.out.println("Remeber to escape the backslash if you are on windows:");
 		tmpArr[0] = new JFile(in.nextLine());
 		System.out.println("Please enter another absolute path to a file that you want to delete");
-		System.out.println("Remeber to escape the backslash if you are on windows:");
 		tmpArr[1] = new JFile(in.nextLine());
 		testDelete(tmpArr);
 		System.out.println("****************************************************");
 		System.out.println("Delete test finished.");
 		System.out.println("****************************************************");
 
+		System.out.println("Please enter the file/directory you wish to change the name of,"
+				+ " along with the full path:");
+		tmp = in.nextLine();
+		System.out.println("Please enter the name myou want to switch the file to:");
+		testRename(new JFile(tmp), in.nextLine());
+		System.out.println("Please check your directory to see if they were changed.");
 		in.close();
 	}
 }

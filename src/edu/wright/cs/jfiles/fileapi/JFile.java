@@ -131,7 +131,11 @@ public class JFile implements Cloneable, Serializable {
 		}
 
 		logger.info("Successful rename of " + name);
-		return file.renameTo(new File(file.getParent() + name));
+		if (System.getProperty("os.name").contains("Windows")) {
+			return file.renameTo(new File(file.getParent() + "\\" + name));
+		}
+
+		return file.renameTo(new File(file.getParent() + "/" + name));
 
 	}
 
