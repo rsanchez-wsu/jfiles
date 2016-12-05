@@ -32,6 +32,7 @@ import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -227,7 +228,7 @@ public class FileStruct implements Serializable {
 	 */
 	public Object getValue(String name) {
 		Object attribute = "";
-		if (attrList.containsKey(name.toLowerCase())) {
+		if (attrList.containsKey(name.toLowerCase(Locale.ENGLISH))) {
 			attribute = attrList.get(name);
 		}
 		return attribute;
@@ -261,6 +262,7 @@ public class FileStruct implements Serializable {
 	 * @return A string of 3 numbers
 	 */
 	public String getNumericPermissions() {
+		StringBuffer buffer = new StringBuffer();
 		String permissions = "";
 		String temp = (String) this.getValue("permissions");
 		
@@ -274,10 +276,11 @@ public class FileStruct implements Serializable {
 			
 			//Every third loop add the single value to the string and reset
 			if (i % 3 == 0) {
-				permissions += Integer.toString(single);
+				buffer.append(Integer.toString(single));
 				single = 0;
 			}
 		}
+		permissions = buffer.toString();
 		return permissions;	
 	}
 }
