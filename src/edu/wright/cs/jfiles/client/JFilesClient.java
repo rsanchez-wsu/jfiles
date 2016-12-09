@@ -16,7 +16,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
  */
 
 package edu.wright.cs.jfiles.client;
@@ -42,8 +41,10 @@ public class JFilesClient implements Runnable {
 
 	/**
 	 * The main Class.
-	 * @param serverName The name of the server.
-	 * @param serverPort The port number of the server.
+	 * @param serverName
+	 *            The name of the server.
+	 * @param serverPort
+	 *            The port number of the server.
 	 */
 	public JFilesClient(String serverName, int serverPort) {
 		System.out.println("Establishing connection. Please wait ...");
@@ -59,7 +60,7 @@ public class JFilesClient implements Runnable {
 	}
 
 	/**
-	 *.
+	 * .
 	 */
 	public void run() {
 		System.out.print(">");
@@ -81,7 +82,8 @@ public class JFilesClient implements Runnable {
 
 	/**
 	 * This method handles the message.
-	 * @param msg The message to handle.
+	 * @param msg
+	 *            The message to handle.
 	 */
 	public void handle(String msg) {
 		if (msg.equals(".exit")) {

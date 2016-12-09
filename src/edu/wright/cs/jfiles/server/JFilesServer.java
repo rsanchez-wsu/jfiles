@@ -27,13 +27,15 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.RandomAccessFile;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Locale;
 
 /**
@@ -47,11 +49,12 @@ public class JFilesServer implements Runnable {
 	static final Logger logger = LogManager.getLogger(JFilesServer.class);
 	private static final int PORT = 9786;
 	// private final ServerSocket serverSocket;
-	private static final String UTF_8 = "UTF-8";
 	private JFilesServerThread[] clients = new JFilesServerThread[50];
 	private ServerSocket server = null;
 	private Thread thread = null;
 	private int clientCount = 0;
+	DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
+	private Calendar theDate;
 
 	/**
 	 * Handles allocating resources needed for the server.
@@ -130,7 +133,8 @@ public class JFilesServer implements Runnable {
 		PrintWriter schHstWrt;
 		PrintWriter cmdHstWrt;
 
-		if (history.exists() && cmdHistory.exists()) { // determines if the word need to be appended
+		if (history.exists() && cmdHistory.exists()) { // determines if the word
+														// need to be appended
 			schHstWrt = new PrintWriter(new FileWriter(history, true));
 			cmdHstWrt = new PrintWriter(new FileWriter(cmdHistory, true));
 		} else {
@@ -141,7 +145,8 @@ public class JFilesServer implements Runnable {
 		Locale.setDefault(new Locale("English"));
 
 		String[] baseCommand = input.split(" ");
-		cmdHstWrt.println(baseCommand[0]);
+		theDate = Calendar.getInstance();
+		cmdHstWrt.println(baseCommand[0] + "\t\t" + dateFormat.format(theDate.getTime()));
 		switch (baseCommand[0].toUpperCase(Locale.ENGLISH)) {
 		case "LIST":
 			List cmd = new List(clients[findClient(id)]);
@@ -149,7 +154,8 @@ public class JFilesServer implements Runnable {
 
 			break;
 		case "FIND":
-			schHstWrt.println(baseCommand[1]);
+			theDate = Calendar.getInstance();
+			schHstWrt.println(baseCommand[1] + "\t\t" + dateFormat.format(theDate.getTime()));
 			if (isValid(baseCommand)) {
 				findCmd(dir, id, baseCommand[1]);
 			} else {
@@ -160,7 +166,8 @@ public class JFilesServer implements Runnable {
 
 			break;
 		case "FINDR":
-			schHstWrt.println(baseCommand[1]);
+			theDate = Calendar.getInstance();
+			schHstWrt.println(baseCommand[1] + "\t\t" + dateFormat.format(theDate.getTime()));
 			if (isValid(baseCommand)) {
 				recursiveFindCmd(dir, id, baseCommand[1]);
 			} else {
@@ -246,6 +253,7 @@ public class JFilesServer implements Runnable {
 	/**
 	 * Find Command function. Method for the find command. Writes results found
 	 * within current directory. Search supports glob patterns
+	 * 
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
@@ -269,6 +277,7 @@ public class JFilesServer implements Runnable {
 	 * Recursive find Command function. Method for the recursive option of the
 	 * find command. Calls itself if a child directory is found, otherwise calls
 	 * findCmd to get results from current directory.
+	 * 
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
@@ -288,6 +297,7 @@ public class JFilesServer implements Runnable {
 
 	/**
 	 * The main entry point to the program.
+	 * 
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
