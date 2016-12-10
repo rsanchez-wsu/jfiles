@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
- * 
+ *
  * Roberto C. Sánchez <roberto.sanchez@wright.edu>
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,36 +21,13 @@
 
 package edu.wright.cs.jfiles.client;
 
-import java.awt.BorderLayout;
-//import java.awt.Image;
-import java.awt.event.MouseAdapter;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-
-import edu.wright.cs.jfiles.gui.Gui;
 import edu.wright.cs.jfiles.gui.Item;
 import edu.wright.cs.jfiles.gui.Parser;
-import edu.wright.cs.jfiles.server.JFilesServer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
@@ -58,7 +35,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
@@ -74,10 +50,25 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+
+
 /**
  * This class will form the body of the JFiles client side GUI application. This
  * is a JavaFX application.
- * 
+ *
  * @author Jason Phares &lt;phares.705@gmail.com&gt;
  * @author Roberto C. Sánchez &lt;roberto.sanchez@wright.edu&gt; (I used some
  *         of his code.)
@@ -106,11 +97,12 @@ public class ClientSideGui extends Application {
 
 	/**
 	 * This method is where most visual elements are created and manipulated.
-	 * 
-	 * @throws IOException
-	 * @throws SAXException
-	 * @throws ParserConfigurationException
-	 * @throws XPathExpressionException
+	 *
+	 * @throws IOException Thrown if parsing fails.
+	 * @throws SAXException  Thrown if parsing fails.
+	 * @throws ParserConfigurationException Thrown if parsing fails.
+	 * @throws XPathExpressionException Thrown when XPath counting elements when parsing,
+	 * 									compiling, or evaluating fails.
 	 */
 	@Override
 	public void start(Stage primaryStage) throws ParserConfigurationException, SAXException,
@@ -297,7 +289,7 @@ public class ClientSideGui extends Application {
 		 * copyButton.setStyle("-fx-font-size: 15px;" +
 		 * "-fx-font-family: 'Currier New' ;" + "-fx-text-fill: black;" +
 		 * "-fx-base: #85C1E9;");
-		 * 
+		 *
 		 * Image pasteImage = new
 		 * Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
 		 * ImageView pasteImageView = new ImageView(pasteImage);
@@ -308,7 +300,7 @@ public class ClientSideGui extends Application {
 		 * pasteButton.setStyle("-fx-font-size: 15px;" +
 		 * "-fx-font-family: 'Currier New' ;" + "-fx-text-fill: black;" +
 		 * "-fx-base: #85C1E9;");
-		 * 
+		 *
 		 * Image cutImage = new
 		 * Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
 		 * ImageView cutImageView = new ImageView(cutImage);
@@ -319,7 +311,7 @@ public class ClientSideGui extends Application {
 		 * cutButton.setStyle("-fx-font-size: 15px;" +
 		 * "-fx-font-family: 'Currier New' ;" + "-fx-text-fill: black;" +
 		 * "-fx-base: #85C1E9;");
-		 * 
+		 *
 		 * Image deleteImage = new
 		 * Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
 		 * ImageView deleteImageView = new ImageView(deleteImage);
@@ -330,7 +322,7 @@ public class ClientSideGui extends Application {
 		 * deleteButton.setStyle("-fx-font-size: 15px;" +
 		 * "-fx-font-family: 'Currier New' ;" + "-fx-text-fill: black;" +
 		 * "-fx-base: #85C1E9;");
-		 * 
+		 *
 		 * Image openImage = new
 		 * Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
 		 * ImageView openImageView = new ImageView(openImage);
@@ -341,7 +333,7 @@ public class ClientSideGui extends Application {
 		 * openButton.setStyle("-fx-font-size: 15px;" +
 		 * "-fx-font-family: 'Currier New' ;" + "-fx-text-fill: black;" +
 		 * "-fx-base: #85C1E9;");
-		 * 
+		 *
 		 * Image createImage = new
 		 * Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
 		 * ImageView createImageView = new ImageView(createImage);
@@ -390,7 +382,7 @@ public class ClientSideGui extends Application {
 
 		for (int i = 0; i < items.size(); i++) {
 			Item item = items.get(i);
-			String fileName = item.getName() + item.getExt();
+
 			String fileType = item.getType();
 			ImageView openImageView = new ImageView();
 			openImageView.setFitHeight(imageHeight);
@@ -403,6 +395,7 @@ public class ClientSideGui extends Application {
 				openImageView.setImage(fileImage);
 			}
 
+			String fileName = item.getName() + item.getExt();
 			Button file = new Button(fileName, openImageView);
 			file.setContentDisplay(ContentDisplay.TOP);
 			file.setStyle("-fx-font-size: 15px;" + "-fx-font-family: 'Currier New' ;"
@@ -428,7 +421,7 @@ public class ClientSideGui extends Application {
 	/**
 	 * Description: This method creates a Login Screen Label with the passed
 	 * parameters.
-	 * 
+	 *
 	 * @param name
 	 *            : The label's name
 	 * @param font
@@ -449,7 +442,7 @@ public class ClientSideGui extends Application {
 	/**
 	 * Description: This method creates a Error Label with the passed
 	 * parameters.
-	 * 
+	 *
 	 * @param name
 	 *            : The label's name
 	 * @param visible
@@ -468,10 +461,10 @@ public class ClientSideGui extends Application {
 	/**
 	 * Main method. This method is where the program starts in this class. It
 	 * launches the GUI.
-	 * 
+	 *
 	 * @param args
 	 *            The command-line arguments
-	 * 
+	 *
 	 */
 	public static void main(String[] args) {
 

@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
- * 
  *
- * 
+ * Roberto C. Sánchez <roberto.sanchez@wright.edu>
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,18 +58,19 @@ public class Gui {
 
 	/**
 	 * Creates frame the components of the GUI will be places on.
-	 * @throws IOException 						IOException handler
-	 * @throws SAXException 					SAXException handler
-	 * @throws ParserConfigurationException 	Parser exception handler
-	 * @throws XPathExpressionException 		XPatchException handler
+	 * @throws IOException 						Thrown if parsing fails.
+	 * @throws SAXException 					Thrown if parsing fails.
+	 * @throws ParserConfigurationException 	Thrown if parsing fails.
+	 * @throws XPathExpressionException 		Thrown when XPath counting elements when parsing,
+	 * 											compiling, or evaluating fails.
 	 */
-	static void createGui() throws XPathExpressionException, 
+	static void createGui() throws XPathExpressionException,
 		ParserConfigurationException, SAXException, IOException {
 		JFrame frame = new JFrame();
 		// Ends program when you close the window
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.setSize(450, 350);
-		
+
 		addComponents(frame);
 		frame.setVisible(true);
 	}
@@ -77,12 +78,13 @@ public class Gui {
 	/**
 	 * Adds different parts of the GUI to the frame.
 	 * @param pane Passes the frame to add components to.
-	 * @throws IOException 						IOException handler
-	 * @throws SAXException 					SAXException handler
-	 * @throws ParserConfigurationException 	Parser exception handler
-	 * @throws XPathExpressionException 		XPatchException handler
+	 * @throws IOException 						Thrown if parsing fails.
+	 * @throws SAXException 					Thrown if parsing fails.
+	 * @throws ParserConfigurationException 	Thrown if parsing fails.
+	 * @throws XPathExpressionException 		Thrown when XPath counting elements when parsing,
+	 * 											compiling, or evaluating fails.
 	 */
-	static void addComponents(Container pane) throws XPathExpressionException, 
+	static void addComponents(Container pane) throws XPathExpressionException,
 		ParserConfigurationException, SAXException, IOException {
 
 		// Creates a box for the current path to be displayed in.
@@ -93,14 +95,14 @@ public class Gui {
 		String currentPath = JFilesServer.sendPath();
 		pathDisplay.append(currentPath);
 		pane.add(pathDisplay, BorderLayout.NORTH);
-		
+
 		// This creates a box with changeable text that can be scrolled through.
 		// Must be initialized before file panel is populated to contain event information
 		JTextArea consoleOutput = new JTextArea();
 		JScrollPane scrollPane = new JScrollPane(consoleOutput);
 		consoleOutput.setEditable(false);
 		pane.add(scrollPane, BorderLayout.SOUTH);
-		
+
 		// Creates panel to add buttons to. This keeps it separate from other components.
 		JPanel filePanel = new JPanel();
 		JScrollPane fileScroller = new JScrollPane(filePanel);
@@ -108,7 +110,6 @@ public class Gui {
 		filePanel.setLayout(new GridLayout(0, 2));
 		addFiles(filePanel, consoleOutput);
 		pane.add(fileScroller, BorderLayout.CENTER);
-		
 
 	}
 
@@ -116,12 +117,13 @@ public class Gui {
 	 * Creates and populates the passed panel with files.
 	 * @param filePanel							Pass the panel to populate files with
 	 * @param consoleOutput						Pass area to output text in console
-	 * @throws ParserConfigurationException		Parser exception handler
-	 * @throws SAXException						SAXException handler
-	 * @throws IOException						IOException handler
-	 * @throws XPathExpressionException			XPatchException handler
+	 * @throws ParserConfigurationException		Thrown if parsing fails.
+	 * @throws SAXException						Thrown if parsing fails.
+	 * @throws IOException						Thrown if parsing fails.
+	 * @throws XPathExpressionException			Thrown when XPath counting elements when parsing,
+	 * 									compiling, or evaluating fails.
 	 */
-	static void addFiles(Container filePanel, JComponent consoleOutput) throws 
+	static void addFiles(Container filePanel, JComponent consoleOutput) throws
 		ParserConfigurationException, SAXException, IOException, XPathExpressionException {
 
 		// Icon width and height variables
@@ -147,7 +149,7 @@ public class Gui {
 		// issue #17)
 		String testXml = "<?xml version=\"1.0\"?>" + "<items>"
 				+ "<item><name>Test</name><ext>.txt</ext><type>file</type></item>"
-				+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>" 
+				+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>"
 				+ "<item><name>Folder</name><ext></ext><type>folder</type></item>" + "</items>";
 
 		ArrayList<Item> items = new ArrayList<Item>();
@@ -165,11 +167,11 @@ public class Gui {
 			XPathExpression getFileName = xpath.compile("/items/item[" + i + "]/name");
 			XPathExpression getFileExt = xpath.compile("/items/item[" + i + "]/ext");
 			XPathExpression getFileType = xpath.compile("/items/item[" + i + "]/type");
-			
+
 			String fileName = getFileName.evaluate(doc, XPathConstants.STRING).toString();
 			String fileExt = getFileExt.evaluate(doc, XPathConstants.STRING).toString();
 			String fileType = getFileType.evaluate(doc, XPathConstants.STRING).toString();
-			
+
 			Item item = new Item(fileName, fileExt, fileType);
 
 			items.add(item);
@@ -179,14 +181,14 @@ public class Gui {
 			Item item = items.get(i);
 			String fileName = item.getName() + item.getExt();
 			String fileType = item.getType();
-			
+
 			JLabel iconLabel = new JLabel(fileName, JLabel.CENTER);
 			iconLabel.setVerticalTextPosition(JLabel.BOTTOM);
 			iconLabel.setHorizontalTextPosition(JLabel.CENTER);
-			
+
 			if (fileType.equals("folder")) {
 				iconLabel.setIcon(folderIcon);
-				
+
 			} else {
 				iconLabel.setIcon(fileIcon);
 			}
@@ -201,19 +203,20 @@ public class Gui {
 			filePanel.add(iconLabel);
 		}
 	}
-	
+
 	/**
 	 * Main class of GUI.
-	 * 
+	 *
 	 * @param args								The command line argument
-	 * @throws IOException 						IOException handler
-	 * @throws SAXException 					SAXException handler
-	 * @throws ParserConfigurationException 	Parser exception handler
-	 * @throws XPathExpressionException			XPatchException handler
+	 * @throws IOException 						Thrown if parsing fails.
+	 * @throws SAXException 					Thrown if parsing fails.
+	 * @throws ParserConfigurationException 	Thrown if parsing fails.
+	 * @throws XPathExpressionException			Thrown when XPath counting elements when parsing,
+	 * 											compiling, or evaluating fails.
 	 */
 	public static void main(String[] args) throws XPathExpressionException,
 		ParserConfigurationException, SAXException, IOException {
-		
+
 		createGui();
 	}
 }
