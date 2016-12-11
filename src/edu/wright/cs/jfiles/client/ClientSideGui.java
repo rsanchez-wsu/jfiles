@@ -256,13 +256,16 @@ public class ClientSideGui extends Application {
 		// XML Parsing object
 		Parser parser = new Parser();
 
+		// Parsed document
 		Document doc = parser.parse(testXml);
 
+		// Count of items in the /items/item XML struct
 		int itemCount = parser.countElements(doc, "/items/item");
 
 		XPathFactory factory = XPathFactory.newInstance();
 		XPath xpath = factory.newXPath();
 
+		// Gather each name, extension, and type of each item in /items
 		for (int i = 1; i <= itemCount; i++) {
 			XPathExpression getFileName = xpath.compile("/items/item[" + i + "]/name");
 			XPathExpression getFileExt = xpath.compile("/items/item[" + i + "]/ext");
@@ -277,74 +280,6 @@ public class ClientSideGui extends Application {
 			items.add(item);
 		}
 
-
-		/*
-		 * Image copyImage = new
-		 * Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
-		 * ImageView copyImageView = new ImageView(copyImage);
-		 * copyImageView.setFitHeight(imageHeight);
-		 * copyImageView.setFitWidth(imageWidth); Button copyButton = new
-		 * Button("Copy", copyImageView);
-		 * copyButton.setContentDisplay(ContentDisplay.TOP);
-		 * copyButton.setStyle("-fx-font-size: 15px;" +
-		 * "-fx-font-family: 'Currier New' ;" + "-fx-text-fill: black;" +
-		 * "-fx-base: #85C1E9;");
-		 *
-		 * Image pasteImage = new
-		 * Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
-		 * ImageView pasteImageView = new ImageView(pasteImage);
-		 * pasteImageView.setFitHeight(imageHeight);
-		 * pasteImageView.setFitWidth(imageWidth); Button pasteButton = new
-		 * Button("Copy", pasteImageView);
-		 * pasteButton.setContentDisplay(ContentDisplay.TOP);
-		 * pasteButton.setStyle("-fx-font-size: 15px;" +
-		 * "-fx-font-family: 'Currier New' ;" + "-fx-text-fill: black;" +
-		 * "-fx-base: #85C1E9;");
-		 *
-		 * Image cutImage = new
-		 * Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
-		 * ImageView cutImageView = new ImageView(cutImage);
-		 * cutImageView.setFitHeight(imageHeight);
-		 * cutImageView.setFitWidth(imageWidth); Button cutButton = new
-		 * Button("Copy", cutImageView);
-		 * cutButton.setContentDisplay(ContentDisplay.TOP);
-		 * cutButton.setStyle("-fx-font-size: 15px;" +
-		 * "-fx-font-family: 'Currier New' ;" + "-fx-text-fill: black;" +
-		 * "-fx-base: #85C1E9;");
-		 *
-		 * Image deleteImage = new
-		 * Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
-		 * ImageView deleteImageView = new ImageView(deleteImage);
-		 * deleteImageView.setFitHeight(imageHeight);
-		 * deleteImageView.setFitWidth(imageWidth); Button deleteButton = new
-		 * Button("Copy", deleteImageView);
-		 * deleteButton.setContentDisplay(ContentDisplay.TOP);
-		 * deleteButton.setStyle("-fx-font-size: 15px;" +
-		 * "-fx-font-family: 'Currier New' ;" + "-fx-text-fill: black;" +
-		 * "-fx-base: #85C1E9;");
-		 *
-		 * Image openImage = new
-		 * Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
-		 * ImageView openImageView = new ImageView(openImage);
-		 * openImageView.setFitHeight(imageHeight);
-		 * openImageView.setFitWidth(imageWidth); Button openButton = new
-		 * Button("Copy", openImageView);
-		 * openButton.setContentDisplay(ContentDisplay.TOP);
-		 * openButton.setStyle("-fx-font-size: 15px;" +
-		 * "-fx-font-family: 'Currier New' ;" + "-fx-text-fill: black;" +
-		 * "-fx-base: #85C1E9;");
-		 *
-		 * Image createImage = new
-		 * Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
-		 * ImageView createImageView = new ImageView(createImage);
-		 * createImageView.setFitHeight(imageHeight);
-		 * createImageView.setFitWidth(imageWidth); Button createButton = new
-		 * Button("Copy", createImageView);
-		 * createButton.setContentDisplay(ContentDisplay.TOP);
-		 * createButton.setStyle("-fx-font-size: 15px;" +
-		 * "-fx-font-family: 'Currier New' ;" + "-fx-text-fill: black;" +
-		 * "-fx-base: #85C1E9;");
-		 */
 
 		// //////////////////////////////////////////////////////////////////////
 		// // This code block will implement the old functionality of the output
@@ -374,12 +309,10 @@ public class ClientSideGui extends Application {
 		toolsHbox.setPadding(new Insets(10, 10, 10, 10));
 		toolsHbox.setSpacing(10);
 		toolsHbox.setStyle("-fx-background-color: LIGHTBLUE;");
-		/*
-		 * toolsHbox.getChildren().addAll(copyButton, pasteButton, cutButton,
-		 * deleteButton, openButton, createButton);
-		 */
 		basePane.setCenter(toolsHbox);
 
+		// This for loop loops through the items parsed from the XML string
+		// and puts them into the GUI with an image and name
 		for (int i = 0; i < items.size(); i++) {
 			Item item = items.get(i);
 
@@ -388,6 +321,7 @@ public class ClientSideGui extends Application {
 			openImageView.setFitHeight(imageHeight);
 			openImageView.setFitWidth(imageWidth);
 
+			// If block to determine if item is a folder or a file
 			if (fileType.equals("folder")) {
 				openImageView.setImage(folderImage);
 
