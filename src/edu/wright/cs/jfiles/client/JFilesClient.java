@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
- * 
+ *
  * Roberto C. Sánchez <roberto.sanchez@wright.edu>
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ import java.util.Properties;
 
 /**
  * The main class of the JFiles client application.
- * 
+ *
  * @author Roberto C. Sánchez &lt;roberto.sanchez@wright.edu&gt;
  *
  */
@@ -50,7 +50,7 @@ public class JFilesClient implements Runnable {
 
 	/**
 	 * Handles allocating resources needed for the client.
-	 * 
+	 *
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
@@ -59,13 +59,12 @@ public class JFilesClient implements Runnable {
 
 	/**
 	 * Handles allocating resources needed for the server.
-	 * 
+	 *
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
 	private static void init() throws IOException {
 		Properties prop = new Properties();
-		FileInputStream fis = null;
 		File config = null;
 
 		// Array of strings containing possible paths to check for config files
@@ -89,16 +88,11 @@ public class JFilesClient implements Runnable {
 		} else {
 			logger.info("Config file found in " + config.getPath());
 			// Read file
-			try {
+			try (FileInputStream fis = new FileInputStream(config)) {
 				// Reads xmlfile into prop object as key value pairs
-				fis = new FileInputStream(config);
 				prop.loadFromXML(fis);
 			} catch (IOException e) {
 				logger.error("IOException occured when trying to access the server config", e);
-			} finally {
-				if (fis != null) {
-					fis.close();
-				}
 			}
 		}
 
@@ -136,7 +130,7 @@ public class JFilesClient implements Runnable {
 
 	/**
 	 * The main entry point to the program.
-	 * 
+	 *
 	 * @param args
 	 *            The command-line arguments
 	 */

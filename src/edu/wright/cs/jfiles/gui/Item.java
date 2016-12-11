@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
- * 
  *
- * 
+ *
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ package edu.wright.cs.jfiles.gui;
  * Each file / folder is stored as an object.
  */
 public class Item {
-	
+
 	/**
 	 * Item Constructor.
 	 */
@@ -34,28 +34,28 @@ public class Item {
 		this.ext = ext;
 		this.type = type;
 	}
-	
+
 	/**
 	 * Getter for file / folder name.
 	 */
 	public String getName() {
 		return name;
 	}
-	
+
 	/**
 	 * Getter for file / folder Extension.
 	 */
 	public String getExt() {
 		return ext;
 	}
-	
+
 	/**
 	 * Getter for file / folder type.
 	 */
 	public String getType() {
 		return type;
 	}
-	
+
 	private String name;
 	private String ext;
 	private String type;
