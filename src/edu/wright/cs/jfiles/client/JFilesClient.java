@@ -62,6 +62,7 @@ public class JFilesClient implements Runnable {
 	/**
 	 * .
 	 */
+	@SuppressWarnings("deprecation")
 	public void run() {
 		System.out.print(">");
 		while (thread != null) {
@@ -110,6 +111,7 @@ public class JFilesClient implements Runnable {
 	/**
 	 * Stops the thread.
 	 */
+	@SuppressWarnings("deprecation")
 	public void stop() {
 		if (thread != null) {
 			thread.stop();

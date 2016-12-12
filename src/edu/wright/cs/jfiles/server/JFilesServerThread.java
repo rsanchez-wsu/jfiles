@@ -33,6 +33,7 @@ public class JFilesServerThread extends Thread {
 		return id;
 	}
 
+	@SuppressWarnings("deprecation")
 	public void run() {
 		System.out.println("Server Thread " + id + " running.");
 		while (true) {

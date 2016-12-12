@@ -101,6 +101,7 @@ public class JFilesServer implements Runnable {
 	/**
 	 * This method stops the thread.
 	 */
+	@SuppressWarnings("deprecation")
 	public void stop() {
 		if (thread != null) {
 			thread.stop();
@@ -198,6 +199,7 @@ public class JFilesServer implements Runnable {
 	/**
 	 * This method handles removing a thread.
 	 */
+	@SuppressWarnings("deprecation")
 	public synchronized void remove(int id) {
 		int pos = findClient(id);
 		if (pos >= 0) {
