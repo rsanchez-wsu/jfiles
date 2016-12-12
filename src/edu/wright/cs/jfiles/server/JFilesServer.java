@@ -73,7 +73,6 @@ public class JFilesServer implements Runnable {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-
 	private static void init() throws IOException {
 		Properties prop = new Properties();
 		File config = null;
