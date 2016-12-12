@@ -136,7 +136,6 @@ public class JFilesClient implements Runnable {
 	 * The main method.
 	 */
 	public static void main(String[] args) {
-		JFilesClient client = null;
-		client = new JFilesClient("localhost", 9786);
+		JFilesClient client = new JFilesClient("localhost", 9786);
 	}
 }
