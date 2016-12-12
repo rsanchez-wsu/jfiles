@@ -255,9 +255,6 @@ public class JFilesServer implements Runnable {
 	/**
 	 * Find Command function. Method for the find command. Writes results found
 	 * within current directory. Search supports glob patterns
-	 * 
-	 * @throws IOException
-	 *             If there is a problem binding to the socket
 	 */
 	private void findCmd(String dir, int id, String searchTerm) {
 		int findCount = 0;
@@ -279,9 +276,6 @@ public class JFilesServer implements Runnable {
 	 * Recursive find Command function. Method for the recursive option of the
 	 * find command. Calls itself if a child directory is found, otherwise calls
 	 * findCmd to get results from current directory.
-	 * 
-	 * @throws IOException
-	 *             If there is a problem binding to the socket
 	 */
 	private void recursiveFindCmd(String dir, int id, String searchTerm) {
 		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir))) {
@@ -299,15 +293,9 @@ public class JFilesServer implements Runnable {
 
 	/**
 	 * The main entry point to the program.
-	 * 
-	 * @throws IOException
-	 *             If there is a problem binding to the socket
 	 */
 	public static void main(String[] args) {
-		JFilesServer server = null;
-		int porter = 5050;
-
-		server = new JFilesServer(porter);
+		JFilesServer server = new JFilesServer(PORT);;
 	}
 
 }

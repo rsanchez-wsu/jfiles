@@ -3,6 +3,7 @@ package edu.wright.cs.jfiles.server;
 import java.net.*;
 import java.io.*;
 
+
 public class JFilesServerThread extends Thread {
 	private JFilesServer server = null;
 	private Socket socket = null;
@@ -10,13 +11,19 @@ public class JFilesServerThread extends Thread {
 	private DataInputStream streamIn = null;
 	private DataOutputStream streamOut = null;
 
-	public JFilesServerThread(JFilesServer _server, Socket _socket) {
+	/**
+	 *  .
+	 */
+	public JFilesServerThread(JFilesServer parmServer, Socket parmSocket) {
 		super();
-		server = _server;
-		socket = _socket;
+		server = parmServer;
+		socket = parmSocket;
 		id = socket.getPort();
 	}
 
+	/**
+	 *  .
+	 */
 	@SuppressWarnings("deprecation") // .interrupt();
 	public void send(String msg) {
 		try {
@@ -29,10 +36,16 @@ public class JFilesServerThread extends Thread {
 		}
 	}
 
+	/**
+	 * .
+	 */
 	public int getid() {
 		return id;
 	}
 
+	/**
+	 * .
+	 */
 	@SuppressWarnings("deprecation")
 	public void run() {
 		System.out.println("Server Thread " + id + " running.");
@@ -47,11 +60,17 @@ public class JFilesServerThread extends Thread {
 		}
 	}
 
+	/**
+	 * .
+	 */
 	public void open() throws IOException {
 		streamIn = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
 		streamOut = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 	}
 
+	/**
+	 * .
+	 */
 	public void close() throws IOException {
 		if (socket != null) {
 			socket.close();
