@@ -1,9 +1,37 @@
+/*
+ * Copyright (C) 2016 - WSU CEG3120 Students
+ *
+ * Roberto C. Sánchez <roberto.sanchez@wright.edu>
+ *
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package edu.wright.cs.jfiles.server;
 
-import java.net.*;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
 
-
+/**
+ * Thread class for the server.
+ *
+ */
 public class JFilesServerThread extends Thread {
 	private JFilesServer server = null;
 	private Socket socket = null;
@@ -12,7 +40,7 @@ public class JFilesServerThread extends Thread {
 	private DataOutputStream streamOut = null;
 
 	/**
-	 *  .
+	 * .
 	 */
 	public JFilesServerThread(JFilesServer parmServer, Socket parmSocket) {
 		super();
@@ -22,7 +50,7 @@ public class JFilesServerThread extends Thread {
 	}
 
 	/**
-	 *  .
+	 * .
 	 */
 	@SuppressWarnings("deprecation") // .interrupt();
 	public void send(String msg) {

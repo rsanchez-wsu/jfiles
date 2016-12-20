@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
- * 
- * Roberto C. SÃ¡nchez <roberto.sanchez@wright.edu>
- * 
+ *
+ * Roberto C. Sánchez <roberto.sanchez@wright.edu>
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,14 +21,12 @@
 
 package edu.wright.cs.jfiles.core;
 
-import edu.wright.cs.jfiles.exception.ShellException;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Basic arguments class to hold many arguments for a given command.
- * 
+ *
  */
 public class Arguments {
 
@@ -36,7 +34,7 @@ public class Arguments {
 
 	/**
 	 * Add an argument to the current list of arguments.
-	 * 
+	 *
 	 * @param argument
 	 *            the argument to add
 	 * @return true if added
@@ -50,7 +48,7 @@ public class Arguments {
 
 	/**
 	 * Add an argument to the current list of arguments.
-	 * 
+	 *
 	 * @param arg
 	 *            the argument to add
 	 * @return true if added
@@ -61,7 +59,7 @@ public class Arguments {
 
 	/**
 	 * Gets the size of the current argument list.
-	 * 
+	 *
 	 * @return the number of arguments
 	 */
 	public int size() {
@@ -70,7 +68,7 @@ public class Arguments {
 
 	/**
 	 * Gets the argument at the specified index.
-	 * 
+	 *
 	 * @param index
 	 *            the index to retrieve
 	 * @return the argument
@@ -81,7 +79,7 @@ public class Arguments {
 
 	/**
 	 * Gets the current list of arguments.
-	 * 
+	 *
 	 * @return the list of arguments
 	 */
 	public List<Argument> getArgs() {
@@ -90,16 +88,13 @@ public class Arguments {
 
 	/**
 	 * Gets the last argument in the list.
-	 * 
+	 *
 	 * @return the last argument
 	 */
 	public Argument getLast() {
 		int argCount = args.size();
 
-		if (argCount > 0) {
-			return args.get(argCount - 1);
-		}
+		return args.get(argCount - 1);
 
-		throw new ShellException("No arguments present");
 	}
 }

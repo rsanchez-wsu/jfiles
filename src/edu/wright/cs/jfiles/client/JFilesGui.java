@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
  *
- * Roberto C. SÃ¡nchez <roberto.sanchez@wright.edu>
+ * Roberto C. Sánchez <roberto.sanchez@wright.edu>
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -84,5 +84,4 @@ public class JFilesGui extends Application {
 		System.out.println("Starting the GUI");
 		launch(args);
 	}
-
 }

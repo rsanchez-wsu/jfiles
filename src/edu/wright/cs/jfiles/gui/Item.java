@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
  *
- * Roberto C. Sánchez <roberto.sanchez@wright.edu>
+ *
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,37 +19,44 @@
  *
  */
 
-package edu.wright.cs.jfiles.core;
+package edu.wright.cs.jfiles.gui;
 
 /**
- * Basic argument class meant to hold an argument for a given command.
- *
+ * Each file / folder is stored as an object.
  */
-public class Argument {
-
-	private String argument;
+public class Item {
 
 	/**
-	 * Creates a single argument.
-	 *
-	 * @param argument
-	 *            the argument string
+	 * Item Constructor.
 	 */
-	public Argument(String argument) {
-		this.argument = argument;
+	public Item(String name, String ext, String type) {
+		this.name = name;
+		this.ext = ext;
+		this.type = type;
 	}
 
 	/**
-	 * Gets the current argument.
-	 *
-	 * @return the current argument
+	 * Getter for file / folder name.
 	 */
-	public String getArgument() {
-		return argument;
+	public String getName() {
+		return name;
 	}
 
-	@Override
-	public String toString() {
-		return argument;
+	/**
+	 * Getter for file / folder Extension.
+	 */
+	public String getExt() {
+		return ext;
 	}
+
+	/**
+	 * Getter for file / folder type.
+	 */
+	public String getType() {
+		return type;
+	}
+
+	private String name;
+	private String ext;
+	private String type;
 }

@@ -1,6 +1,22 @@
 /*
- * Copyright (C) 2016 - WSU students.
- * Copyright stuff.
+ * Copyright (C) 2016 - WSU CEG3120 Students
+ *
+ * Roberto C. Sánchez <roberto.sanchez@wright.edu>
+ *
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package edu.wright.cs.jfiles.client;
@@ -19,14 +35,16 @@ public class JFilesClientThread extends Thread {
 
 	/**
 	 * Constructor.
-	 * @param mclient The client.
-	 * @param msocket The socket.
+	 *
+	 * @param mclient
+	 *            The client.
+	 * @param msocket
+	 *            The socket.
 	 */
 	public JFilesClientThread(JFilesClient mclient, Socket msocket) {
 		client = mclient;
 		socket = msocket;
 		open();
-		start();
 	}
 
 	/**
@@ -66,5 +84,12 @@ public class JFilesClientThread extends Thread {
 				client.stop();
 			}
 		}
+	}
+
+	/**
+	 * Starts the thread.
+	 */
+	public void init() {
+		this.start();
 	}
 }
