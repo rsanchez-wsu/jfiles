@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
  *
- * Roberto C. SÃ¡nchez <roberto.sanchez@wright.edu>
+ * Roberto C. Sánchez <roberto.sanchez@wright.edu>
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,26 +21,33 @@
 
 package edu.wright.cs.jfiles.server;
 
+import edu.wright.cs.jfiles.core.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.Properties;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -63,7 +70,15 @@ public class JFilesServer implements Runnable {
 
 	static final Logger logger = LogManager.getLogger(JFilesServer.class);
 	private static int PORT = 9786;
-	private final ServerSocket serverSocket;
+	// private final ServerSocket serverSocket;
+	private JFilesServerThread[] clients = new JFilesServerThread[50];
+	private ServerSocket server = null;
+	private Thread thread = null;
+	private int clientCount = 0;
+	DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
+	private Calendar theDate;
+	// private final ServerSocket serverSocket;
+	@SuppressWarnings("unused")
 	private static final String UTF_8 = "UTF-8";
 
 	/**
@@ -73,7 +88,7 @@ public class JFilesServer implements Runnable {
 	 *             If there is a problem binding to the socket
 	 */
 
-	private static void init() throws IOException {
+	private void setup() throws IOException {
 		Properties prop = new Properties();
 		File config = null;
 
@@ -111,24 +126,38 @@ public class JFilesServer implements Runnable {
 		// Default values are require as they are used if the config file cannot
 		// be found OR if
 		// the config file doesn't contain the key.
-		PORT = Integer.parseInt(prop.getProperty("Port", "9786"));
-		logger.info("Config set to port " + PORT);
+		// PORT = Integer.parseInt(prop.getProperty("Port", "9786"));
+		// logger.info("Config set to port " + PORT);
 
 		int maxThreads = Integer.parseInt(prop.getProperty("maxThreads", "10"));
 		logger.info("Config set max threads to " + maxThreads);
+		start();
 	}
 
-	/**
-	/**
-	/**
 	/**
 	 * Handles allocating resources needed for the server.
 	 *
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	public JFilesServer() throws IOException {
-		serverSocket = new ServerSocket(PORT);
+	JFilesServer(int port) {
+		try {
+			System.out.println("Binding to port " + PORT + ", please wait  ...");
+			server = new ServerSocket(PORT);
+			System.out.println("Server started: " + server);
+			try {
+				createXml();
+			} catch (TransformerFactoryConfigurationError e) {
+				// TODO Auto-generated catch block
+				// e.printStackTrace();
+			} catch (TransformerException e) {
+				// TODO Auto-generated catch block
+				// e.printStackTrace();
+			}
+			setup();
+		} catch (IOException ioe) {
+			System.out.println("Can not bind to port " + PORT + ": " + ioe.getMessage());
+		}
 	}
 
 	/**
@@ -181,81 +210,247 @@ public class JFilesServer implements Runnable {
 	 *            name of node that should be created
 	 * @return returns a Node element
 	 */
-	private Node createNode(Document doc, String name) {
+	private static Node createNode(Document doc, String name) {
 		Element node = doc.createElement(name);
 		return node;
 	}
 
 	@Override
 	public void run() {
+		while (true) {
+			try {
+				System.out.println("Waiting for a client ...");
+				addThread(server.accept());
+			} catch (IOException ioe) {
+				System.out.println("Server accept error: " + ioe);
+				stop();
+			}
+		}
+	}
+
+	/**
+	 * .
+	 */
+	public void start() {
+		if (thread == null) {
+			thread = new Thread(this);
+			thread.start();
+		}
+	}
+
+	/**
+	 * This method stops the thread.
+	 */
+	@SuppressWarnings("deprecation")
+	public void stop() {
+		if (thread != null) {
+			thread.stop();
+			thread = null;
+		}
+	}
+
+	/**
+	 * This method searches for the client based on the id number.
+	 */
+	private int findClient(int id) {
+		for (int i = 0; i < clientCount; i++) {
+			if (clients[i].getid() == id) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * This method handles all the activities the thread will do.
+	 */
+	public synchronized void handle(int id, String input) {
+
+		// logger.info("Received connection from" +
+		// server.getRemoteSocketAddress());
 		String dir = System.getProperty("user.dir");
-		try (Socket server = serverSocket.accept()) {
-			logger.info("Received connection from" + server.getRemoteSocketAddress());
-			InputStreamReader isr = new InputStreamReader(server.getInputStream(), UTF_8);
-			BufferedReader in = new BufferedReader(isr);
-			String cmd;
-			while (null != (cmd = in.readLine())) {
-				if ("".equals(cmd)) {
-					break;
-				}
-				OutputStreamWriter osw = new OutputStreamWriter(server.getOutputStream(), UTF_8);
+		File history = new File("Search History.txt");
+		File cmdHistory = new File("Command History.txt");
+		PrintWriter schHstWrt = null;
+		PrintWriter cmdHstWrt = null;
 
-				BufferedWriter out = new BufferedWriter(osw);
-				String[] baseCommand = cmd.split(" ");
-				if ("LIST".equalsIgnoreCase(baseCommand[0])) {
-					try (DirectoryStream<Path> directoryStream = Files
-							.newDirectoryStream(Paths.get(dir))) {
-						for (Path path : directoryStream) {
-							out.write(path.toString() + "\n");
-						}
-					}
-				}
-				// start Search block
-				if ("FIND".equalsIgnoreCase(baseCommand[0])) {
+		try {
+			if (history.exists() && cmdHistory.exists()) { // determines if the
+															// word
+															// need to be
+															// appended
+				schHstWrt =
+						new PrintWriter(new OutputStreamWriter(new FileOutputStream(history, true),
+								StandardCharsets.UTF_8));
+				cmdHstWrt = new PrintWriter(new OutputStreamWriter(
+						new FileOutputStream(cmdHistory, true), StandardCharsets.UTF_8));
+			} else {
+				schHstWrt = new PrintWriter(history, UTF_8);
+				cmdHstWrt = new PrintWriter(cmdHistory, UTF_8);
+			}
 
-					try (DirectoryStream<Path> directoryStream = Files
-							.newDirectoryStream(Paths.get(dir))) {
-						for (Path path : directoryStream) {
-							// out.write(path.toString() + "\n");
-							if (path.toString().contains(baseCommand[1])) {
-								out.write(path.toString() + "\n");
-							}
-						}
-					}
-				} else { // End search block
-					logger.error("Unknown command");
+			Locale.setDefault(new Locale("English"));
+
+			String[] baseCommand = input.split(" ");
+			theDate = Calendar.getInstance();
+			cmdHstWrt.println(baseCommand[0] + "\t\t" + dateFormat.format(theDate.getTime()));
+			switch (baseCommand[0].toUpperCase(Locale.ENGLISH)) {
+			case "LIST":
+				List cmd = new List(clients[findClient(id)]);
+				cmd.executeCommand();
+
+				break;
+			case "FIND":
+				theDate = Calendar.getInstance();
+				schHstWrt.println(baseCommand[1] + "\t\t" + dateFormat.format(theDate.getTime()));
+				if (isValid(baseCommand)) {
+					findCmd(dir, id, baseCommand[1]);
+				} else {
+
+					clients[findClient(id)].send("Invaild Command\n");
+
 				}
-				out.flush();
+
+				break;
+			case "FINDR":
+				theDate = Calendar.getInstance();
+				schHstWrt.println(baseCommand[1] + "\t\t" + dateFormat.format(theDate.getTime()));
+				if (isValid(baseCommand)) {
+					recursiveFindCmd(dir, id, baseCommand[1]);
+				} else {
+					clients[findClient(id)].send("Invaild Command\n");
+				}
+
+				break;
+			case "FILE":
+				break;
+			case "EXIT":
+				clients[findClient(id)].send(".exit");
+				remove(id);
+				break;
+			default:
+				logger.info("Hit default switch." + System.lineSeparator());
+				break;
 			}
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			// e.printStackTrace();
+		} finally {
+
+			// out.flush();
+			clients[findClient(id)].send(">");
+			if (schHstWrt != null) {
+				schHstWrt.flush();
+				schHstWrt.close();
+			}
+			if (cmdHstWrt != null) {
+				cmdHstWrt.flush();
+				cmdHstWrt.close();
+			}
+		}
+
+	}
+
+	/**
+	 * This method handles removing a thread.
+	 */
+	@SuppressWarnings("deprecation")
+	public synchronized void remove(int id) {
+		int pos = findClient(id);
+		if (pos >= 0) {
+			JFilesServerThread toTerminate = clients[pos];
+			System.out.println("Removing client thread " + id + " at " + pos);
+			if (pos < clientCount - 1) {
+				for (int i = pos + 1; i < clientCount; i++) {
+					clients[i - 1] = clients[i];
+				}
+				clientCount--;
+			}
+
+			try {
+				toTerminate.close();
+			} catch (IOException ioe) {
+				System.out.println("Error closing thread: " + ioe);
+			}
+			toTerminate.stop();
+		}
+	}
+
+	/**
+	 * This method handles adding a new thread.
+	 */
+	private void addThread(Socket socket) {
+		if (clientCount < clients.length) {
+			System.out.println("Client accepted: " + socket);
+			clients[clientCount] = new JFilesServerThread(this, socket);
+			try {
+				clients[clientCount].open();
+				clients[clientCount].start();
+				clientCount++;
+			} catch (IOException ioe) {
+				System.out.println("Error opening thread: " + ioe);
+			}
+		} else {
+			System.out.println("Client refused: maximum " + clients.length + " reached.");
+		}
+	}
+
+	/**
+	 * Checks to make sure the command input is valid.
+	 */
+	boolean isValid(String[] command) {
+		if (command.length <= 1) { // used for handling invalid error
+			logger.error("Invalid Input, nothing to find");
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	/**
+	 * Find Command function. Method for the find command. Writes results found
+	 * within current directory. Search supports glob patterns
+	 */
+	private void findCmd(String dir, int id, String searchTerm) {
+		int findCount = 0;
+		try (DirectoryStream<Path> directoryStream =
+				Files.newDirectoryStream(Paths.get(dir), searchTerm)) {
+			for (Path path : directoryStream) {
+				// out.write(path.toString() + "\n");
+				clients[findClient(id)].send(path.toString() + "\n");
+				findCount++;
+			}
+			System.out.println("Found " + findCount + " file(s) in " + dir + " that contains \""
+					+ searchTerm + "\"\n");
+		} catch (IOException e) {
 			logger.error("Some error occured", e);
 		}
 	}
 
 	/**
+	 * Recursive find Command function. Method for the recursive option of the
+	 * find command. Calls itself if a child directory is found, otherwise calls
+	 * findCmd to get results from current directory.
+	 */
+	private void recursiveFindCmd(String dir, int id, String searchTerm) {
+		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir))) {
+			for (Path path : directoryStream) {
+				if (path.toFile().isDirectory()) {
+					recursiveFindCmd(path.toString(), id, searchTerm);
+				}
+			}
+		} catch (IOException e) {
+			// e.printStackTrace();
+			logger.error("Some error occured", e);
+		}
+		findCmd(dir, id, searchTerm);
+	}
+
+	/**
 	 * The main entry point to the program.
-	 *
-	 * @throws IOException
-	 *             If there is a problem binding to the socket
 	 */
 	public static void main(String[] args) {
-		try {
-			init();
-			logger.info("Starting the server");
-			JFilesServer jf = new JFilesServer();
-			try {
-				jf.createXml();
-			} catch (TransformerFactoryConfigurationError e) {
-				e.printStackTrace();
-			} catch (TransformerException e) {
-				e.printStackTrace();
-			}
-			// Thread thread = new Thread(jf);
-			// thread.start();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		new JFilesServer(PORT);
 	}
 
 	/**

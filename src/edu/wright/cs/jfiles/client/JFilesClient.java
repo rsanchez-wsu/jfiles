@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
  *
- * Roberto C. SÃ¡nchez <roberto.sanchez@wright.edu>
+ * Roberto C. Sánchez <roberto.sanchez@wright.edu>
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,13 +24,11 @@ package edu.wright.cs.jfiles.client;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Properties;
@@ -42,19 +40,35 @@ import java.util.Properties;
  *
  */
 public class JFilesClient implements Runnable {
-
 	static final Logger logger = LogManager.getLogger(JFilesClient.class);
+	private Socket socket = null;
+	private Thread thread = null;
+	private DataInputStream console = null;
+	private DataOutputStream streamOut = null;
+	private JFilesClientThread client = null;
 	private static String host = "localhost";
 	private static int port = 9786;
-	private static final String UTF_8 = "UTF-8";
 
 	/**
-	 * Handles allocating resources needed for the client.
+	 * The main Class.
 	 *
-	 * @throws IOException
-	 *             If there is a problem binding to the socket
+	 * @param serverName
+	 *            The name of the server.
+	 * @param serverPort
+	 *            The port number of the server.
 	 */
-	public JFilesClient() {
+	public JFilesClient(String serverName, int serverPort) {
+		System.out.println("Establishing connection. Please wait ...");
+		try {
+			socket = new Socket("localhost", 9786);
+			System.out.println("Connected: " + socket);
+			setup();
+			start();
+		} catch (UnknownHostException uhe) {
+			System.out.println("Host unknown: " + uhe.getMessage());
+		} catch (IOException ioe) {
+			System.out.println("Unexpected exception: " + ioe.getMessage());
+		}
 	}
 
 	/**
@@ -63,7 +77,7 @@ public class JFilesClient implements Runnable {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	private static void init() throws IOException {
+	private static void setup() throws IOException {
 		Properties prop = new Properties();
 		File config = null;
 
@@ -108,41 +122,81 @@ public class JFilesClient implements Runnable {
 		logger.info("Config set max threads to " + host);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {
-		try (Socket socket = new Socket(host, port)) {
-			OutputStreamWriter osw = new OutputStreamWriter(socket.getOutputStream(), UTF_8);
-			BufferedWriter out = new BufferedWriter(osw);
-			out.write("LIST\n");
-			out.flush();
-			InputStreamReader isr = new InputStreamReader(socket.getInputStream(), UTF_8);
-			BufferedReader in = new BufferedReader(isr);
-			String line;
-			while ((line = in.readLine()) != null) {
-				System.out.println(line);
+		System.out.print(">");
+		while (thread != null) {
+			try {
+
+				streamOut.writeUTF(console.readLine());
+
+				streamOut.flush();
+
+			} catch (IOException ioe) {
+				System.out.println("Sending error: " + ioe.getMessage());
+				stop();
 			}
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * This method handles the message.
+	 *
+	 * @param msg
+	 *            The message to handle.
+	 */
+	public void handle(String msg) {
+		if (msg.equals(".exit")) {
+			System.out.println("Good bye. Press RETURN to exit ...");
+			stop();
+		} else {
+			System.out.print(msg);
 		}
 	}
 
 	/**
-	 * The main entry point to the program.
-	 *
-	 * @param args
-	 *            The command-line arguments
+	 * Start the connection.
+	 */
+	public void start() throws IOException {
+		console = new DataInputStream(System.in);
+		streamOut = new DataOutputStream(socket.getOutputStream());
+		if (thread == null) {
+			client = new JFilesClientThread(this, socket);
+			thread = new Thread(this);
+			thread.start();
+		}
+	}
+
+	/**
+	 * Stops the thread.
+	 */
+	@SuppressWarnings("deprecation")
+	public void stop() {
+		if (thread != null) {
+			thread.stop();
+			thread = null;
+		}
+		try {
+			if (console != null) {
+				console.close();
+			} else if (streamOut != null) {
+				streamOut.close();
+			} else if (socket != null) {
+				socket.close();
+			}
+		} catch (IOException ioe) {
+			System.out.println("Error closing ...");
+		}
+		client.close();
+		client.stop();
+	}
+
+	/**
+	 * The main method.
 	 */
 	public static void main(String[] args) {
-		logger.info("Starting the client");
-		try {
-			init();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		JFilesClient jf = new JFilesClient();
-		Thread thread = new Thread(jf);
-		thread.start();
+		new JFilesClient("localhost", 9786);
 	}
 }

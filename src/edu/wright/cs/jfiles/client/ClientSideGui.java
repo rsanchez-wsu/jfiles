@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
  *
- * Roberto C. Sánchez <roberto.sanchez@wright.edu>
+ * Roberto C. S�nchez <roberto.sanchez@wright.edu>
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -53,8 +53,8 @@ import javafx.stage.Stage;
  * is a JavaFX application.
  *
  * @author Jason Phares &lt;phares.705@gmail.com&gt;
- * @author Roberto C. Sánchez &lt;roberto.sanchez@wright.edu&gt; (I used some of
- *         his code.)
+ * @author Roberto C. Sánchez &lt;roberto.sanchez@wright.edu&gt; (I used some
+ *         of his code.)
  *
  */
 public class ClientSideGui extends Application {
@@ -89,12 +89,12 @@ public class ClientSideGui extends Application {
 
 		// Error Labels
 		noConnectionLabel = createErrorLabel("No Connection Detected.", false, "#FF0000");
-		invalidLabel = createErrorLabel("Incorrect Username & Password Combination.", false,
-				"#FF0000");
-		emptyUsernameFieldLabel = createErrorLabel("Username Field Must Be Filled In.", false,
-				"#FF0000");
-		emptyPasswordFieldLabel = createErrorLabel("Password Field Must Be Filled In.", false,
-				"#FF0000");
+		invalidLabel =
+				createErrorLabel("Incorrect Username & Password Combination.", false, "#FF0000");
+		emptyUsernameFieldLabel =
+				createErrorLabel("Username Field Must Be Filled In.", false, "#FF0000");
+		emptyPasswordFieldLabel =
+				createErrorLabel("Password Field Must Be Filled In.", false, "#FF0000");
 
 		// Text Field Creation
 		usernameTextField = new TextField();
