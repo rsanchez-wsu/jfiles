@@ -32,7 +32,9 @@ import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -462,13 +464,14 @@ public class JFile implements Cloneable, Serializable {
 	 *
 	 * @return A string list of the abstract names of the contents of the JFile.
 	 */
-	public String[] list() {
+	public List<String> list() {
 		logger.info("Attempting to list the abstract names of " + getPath());
 		try {
 			logger.info("Checking to see if the file is a directory.");
 			if (file.isDirectory()) {
 				logger.info("File was determined to be a directory.\n" + "   Returning list...");
-				return file.list();
+				String[] fileList = file.list();
+				return (fileList != null) ? Arrays.asList(fileList) : null;
 			} else {
 				logger.warn("File was determined to be a file; system attempted to"
 						+ "call list method on a file.\nReturning null value.");
@@ -499,52 +502,46 @@ public class JFile implements Cloneable, Serializable {
 	 * encounters an error.
 	 * </p>
 	 */
-	public JFile[] getContents() {
-		try {
-			if (file.isDirectory()) {
-				String[] fileNames = file.list();
-				// This if-then statement has to be kept to appease
-				// FindBugs. It is concerned that file.list() may
-				// return null, even though this is actually covered
-				// by the outer if-then statement in theory.
-				if (fileNames != null) {
-					JFile[] output = new JFile[fileNames.length];
-					String separator = "";
-					if (System.getProperty("os.name").contains("Windows")) {
-						logger.info("OS determined to be \"Windows\".");
-						separator = "\\";
-					} else if (System.getProperty("os.name").contains("Macintosh")) {
-						logger.info("OS determined to be \"Macintosh\".");
-						// TODO: Determine separator for Mac.
-						separator = "";
-					} else if (System.getProperty("os.name").contains("Linux")) {
-						logger.info("OS determined to be \"Linux\".");
-						// TODO: Determine separator for Linux.
-						separator = "";
-					} else {
-						// TODO ??? Error maybe?
-						logger.info("OS determined to be \"Unknown\".");
-					}
-					for (int i = 0; i < fileNames.length; i++) {
-						String temp = file.getAbsolutePath() + separator + fileNames[i];
-						output[i] = new JFile(temp);
-					}
-					// TODO: Add logging methods.
-					return output;
+	public List<JFile> getContents() {
+		if (file.isDirectory()) {
+			String[] fileNames = file.list();
+			// This if-then statement has to be kept to appease
+			// FindBugs. It is concerned that file.list() may
+			// return null, even though this is actually covered
+			// by the outer if-then statement in theory.
+			if (fileNames != null) {
+				List<JFile> output = new ArrayList<>(fileNames.length);
+				String separator = "";
+				if (System.getProperty("os.name").contains("Windows")) {
+					logger.info("OS determined to be \"Windows\".");
+					separator = "\\";
+				} else if (System.getProperty("os.name").contains("Macintosh")) {
+					logger.info("OS determined to be \"Macintosh\".");
+					// TODO: Determine separator for Mac.
+					separator = "";
+				} else if (System.getProperty("os.name").contains("Linux")) {
+					logger.info("OS determined to be \"Linux\".");
+					// TODO: Determine separator for Linux.
+					separator = "";
 				} else {
-					// TODO: Add logging methods.
-					return new JFile[0]; // Empty array indicates it is a folder, but is empty
+					// TODO ??? Error maybe?
+					logger.info("OS determined to be \"Unknown\".");
 				}
-
+				for (String fileName : fileNames) {
+					String temp = file.getAbsolutePath() + separator + fileName;
+					output.add(new JFile(temp));
+				}
+				// TODO: Add logging methods.
+				return output;
 			} else {
 				// TODO: Add logging methods.
-				return null; // Null indicates a non-directory
+				// Empty array indicates it is a folder, but is empty
+				return Collections.<JFile>emptyList();
 			}
-		} catch (RuntimeException e) {
-			throw e; // Necessary for FindBugs
-		} catch (Exception e) {
+
+		} else {
 			// TODO: Add logging methods.
-			return null; // Null indicates error
+			return null; // Null indicates a non-directory
 		}
 	}
 

@@ -580,7 +580,7 @@ public class JFileManager {
 	 *
 	 * @return The contents of the working directory as an array of JFiles.
 	 */
-	public static JFile[] getWorkingDirectoryContents() {
+	public static List<JFile> getWorkingDirectoryContents() {
 		try {
 			// TODO: Add logging methods.
 			return workingDirectory.getContents();
@@ -605,7 +605,7 @@ public class JFileManager {
 	 *
 	 * @return An abstract listing of the contents of the working directory.
 	 */
-	public static String[] listWorkingDirectoryContents() {
+	public static List<String> listWorkingDirectoryContents() {
 		try {
 			// TODO: Add logging methods.
 			return workingDirectory.list();
