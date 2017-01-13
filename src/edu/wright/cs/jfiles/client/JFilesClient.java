@@ -60,7 +60,7 @@ public class JFilesClient implements Runnable {
 	public JFilesClient(String serverName, int serverPort) {
 		System.out.println("Establishing connection. Please wait ...");
 		try {
-			socket = new Socket(host, port);
+			socket = new Socket(serverName, serverPort);
 			System.out.println("Connected: " + socket);
 			start();
 		} catch (UnknownHostException uhe) {
