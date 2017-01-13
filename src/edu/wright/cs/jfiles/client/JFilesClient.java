@@ -60,9 +60,8 @@ public class JFilesClient implements Runnable {
 	public JFilesClient(String serverName, int serverPort) {
 		System.out.println("Establishing connection. Please wait ...");
 		try {
-			socket = new Socket("localhost", 9786);
+			socket = new Socket(host, port);
 			System.out.println("Connected: " + socket);
-			setup();
 			start();
 		} catch (UnknownHostException uhe) {
 			System.out.println("Host unknown: " + uhe.getMessage());
@@ -77,7 +76,7 @@ public class JFilesClient implements Runnable {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	private static void setup() throws IOException {
+	private static void setupConfig() throws IOException {
 		Properties prop = new Properties();
 		File config = null;
 
@@ -125,14 +124,11 @@ public class JFilesClient implements Runnable {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {
-		System.out.print(">");
+		System.out.print("> ");
 		while (thread != null) {
 			try {
-
 				streamOut.writeUTF(console.readLine());
-
 				streamOut.flush();
-
 			} catch (IOException ioe) {
 				System.out.println("Sending error: " + ioe.getMessage());
 				stop();
@@ -197,6 +193,12 @@ public class JFilesClient implements Runnable {
 	 * The main method.
 	 */
 	public static void main(String[] args) {
-		new JFilesClient("localhost", 9786);
+		try {
+			setupConfig();
+		} catch (IOException e) {
+			System.out.println("Error with IO");
+			e.printStackTrace();
+		}
+		new JFilesClient(host, port);
 	}
 }
