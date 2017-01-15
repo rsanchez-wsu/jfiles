@@ -21,8 +21,6 @@
 
 package edu.wright.cs.jfiles.core;
 
-import edu.wright.cs.jfiles.exception.EnvironmentException;
-
 import java.util.Properties;
 
 /**
@@ -108,9 +106,11 @@ public class Environment {
 	 */
 	public void setProperty(String key, String value) {
 		if (key == null || value == null) {
-			throw new EnvironmentException("Property key and property value cannot be null");
+			
+			// throw new EnvironmentException("Property key and property value cannot be null");
+		} else {
+			properties.setProperty(key, value);
 		}
-		properties.setProperty(key, value);
 	}
 
 	/**

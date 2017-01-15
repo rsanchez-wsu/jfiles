@@ -21,8 +21,6 @@
 
 package edu.wright.cs.jfiles.core;
 
-import edu.wright.cs.jfiles.exception.ShellException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -98,8 +96,10 @@ public class Arguments {
 
 		if (argCount > 0) {
 			return args.get(argCount - 1);
+		} else {
+			return new Argument("");
 		}
 
-		throw new ShellException("No arguments present");
+//		throw new ShellException("No arguments present");
 	}
 }
