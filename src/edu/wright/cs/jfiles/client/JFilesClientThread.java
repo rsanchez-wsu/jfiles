@@ -42,7 +42,6 @@ public class JFilesClientThread extends Thread {
 		client = mclient;
 		socket = msocket;
 		open();
-		start();
 	}
 
 	/**

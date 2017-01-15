@@ -27,11 +27,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,6 +42,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+
 
 /**
  * The main class of the JFiles server application.
@@ -127,76 +130,87 @@ public class JFilesServer implements Runnable {
 	/**
 	 * This method handles all the activities the thread will do.
 	 */
-	public synchronized void handle(int id, String input) throws IOException {
+	public synchronized void handle(int id, String input) {
 
 		// logger.info("Received connection from" +
 		// server.getRemoteSocketAddress());
 		String dir = System.getProperty("user.dir");
 		File history = new File("Search History.txt");
 		File cmdHistory = new File("Command History.txt");
-		PrintWriter schHstWrt;
-		PrintWriter cmdHstWrt;
+		PrintWriter schHstWrt = null;
+		PrintWriter cmdHstWrt = null;
 
-		if (history.exists() && cmdHistory.exists()) { // determines if the word
-														// need to be appended
-			schHstWrt = new PrintWriter(new FileWriter(history, true));
-			cmdHstWrt = new PrintWriter(new FileWriter(cmdHistory, true));
-		} else {
-			schHstWrt = new PrintWriter(history);
-			cmdHstWrt = new PrintWriter(cmdHistory);
-		}
-
-		Locale.setDefault(new Locale("English"));
-
-		String[] baseCommand = input.split(" ");
-		theDate = Calendar.getInstance();
-		cmdHstWrt.println(baseCommand[0] + "\t\t" + dateFormat.format(theDate.getTime()));
-		switch (baseCommand[0].toUpperCase(Locale.ENGLISH)) {
-		case "LIST":
-			List cmd = new List(clients[findClient(id)]);
-			cmd.executeCommand();
-
-			break;
-		case "FIND":
-			theDate = Calendar.getInstance();
-			schHstWrt.println(baseCommand[1] + "\t\t" + dateFormat.format(theDate.getTime()));
-			if (isValid(baseCommand)) {
-				findCmd(dir, id, baseCommand[1]);
+		try {
+			if (history.exists() && cmdHistory.exists()) { // determines if the word
+															// need to be appended
+				schHstWrt = new PrintWriter(new OutputStreamWriter(
+						new FileOutputStream(history, true), StandardCharsets.UTF_8));
+				cmdHstWrt = new PrintWriter(new OutputStreamWriter(
+						new FileOutputStream(cmdHistory, true), StandardCharsets.UTF_8));
 			} else {
-
-				clients[findClient(id)].send("Invaild Command\n");
-
+				schHstWrt = new PrintWriter(history, "UTF-8");
+				cmdHstWrt = new PrintWriter(cmdHistory, "UTF-8");
 			}
 
-			break;
-		case "FINDR":
+			Locale.setDefault(new Locale("English"));
+
+			String[] baseCommand = input.split(" ");
 			theDate = Calendar.getInstance();
-			schHstWrt.println(baseCommand[1] + "\t\t" + dateFormat.format(theDate.getTime()));
-			if (isValid(baseCommand)) {
-				recursiveFindCmd(dir, id, baseCommand[1]);
-			} else {
-				clients[findClient(id)].send("Invaild Command\n");
+			cmdHstWrt.println(baseCommand[0] + "\t\t" + dateFormat.format(theDate.getTime()));
+			switch (baseCommand[0].toUpperCase(Locale.ENGLISH)) {
+			case "LIST":
+				List cmd = new List(clients[findClient(id)]);
+				cmd.executeCommand();
+
+				break;
+			case "FIND":
+				theDate = Calendar.getInstance();
+				schHstWrt.println(baseCommand[1] + "\t\t" + dateFormat.format(theDate.getTime()));
+				if (isValid(baseCommand)) {
+					findCmd(dir, id, baseCommand[1]);
+				} else {
+
+					clients[findClient(id)].send("Invaild Command\n");
+
+				}
+
+				break;
+			case "FINDR":
+				theDate = Calendar.getInstance();
+				schHstWrt.println(baseCommand[1] + "\t\t" + dateFormat.format(theDate.getTime()));
+				if (isValid(baseCommand)) {
+					recursiveFindCmd(dir, id, baseCommand[1]);
+				} else {
+					clients[findClient(id)].send("Invaild Command\n");
+				}
+
+				break;
+			case "FILE":
+				break;
+			case "EXIT":
+				clients[findClient(id)].send(".exit");
+				remove(id);
+				break;
+			default:
+				logger.info("Hit default switch." + System.lineSeparator());
+				break;
 			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
+		} finally {
 
-			break;
-		case "FILE":
-			break;
-		case "EXIT":
-			clients[findClient(id)].send(".exit");
-			remove(id);
-			break;
-		default:
-			logger.info("Hit default switch." + System.lineSeparator());
-			break;
+			// out.flush();
+			clients[findClient(id)].send(">");
+			if (schHstWrt != null) {
+				schHstWrt.flush();
+				schHstWrt.close();
+			}
+			if (cmdHstWrt != null) {
+				cmdHstWrt.flush();
+				cmdHstWrt.close();
+			}
 		}
-
-		// out.flush();
-		clients[findClient(id)].send(">");
-		schHstWrt.flush();
-		schHstWrt.close();
-		cmdHstWrt.flush();
-		cmdHstWrt.close();
-
 	}
 
 	/**
@@ -298,7 +312,7 @@ public class JFilesServer implements Runnable {
 	 * The main entry point to the program.
 	 */
 	public static void main(String[] args) {
-		JFilesServer server = new JFilesServer(PORT);;
+		new JFilesServer(PORT);
 	}
 
 }

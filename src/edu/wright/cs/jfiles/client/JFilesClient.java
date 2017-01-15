@@ -104,6 +104,7 @@ public class JFilesClient implements Runnable {
 		streamOut = new DataOutputStream(socket.getOutputStream());
 		if (thread == null) {
 			client = new JFilesClientThread(this, socket);
+			client.start();
 			thread = new Thread(this);
 			thread.start();
 		}
@@ -137,6 +138,6 @@ public class JFilesClient implements Runnable {
 	 * The main method.
 	 */
 	public static void main(String[] args) {
-		JFilesClient client = new JFilesClient("localhost", 9786);
+		new JFilesClient("localhost", 9786);
 	}
 }
