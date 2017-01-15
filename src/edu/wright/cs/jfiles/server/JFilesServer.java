@@ -60,6 +60,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+
 /**
  * The main class of the JFiles server application.
  *
@@ -77,9 +78,6 @@ public class JFilesServer implements Runnable {
 	private int clientCount = 0;
 	DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
 	private Calendar theDate;
-	// private final ServerSocket serverSocket;
-	@SuppressWarnings("unused")
-	private static final String UTF_8 = "UTF-8";
 
 	/**
 	 * Handles allocating resources needed for the server.
@@ -275,18 +273,15 @@ public class JFilesServer implements Runnable {
 		PrintWriter cmdHstWrt = null;
 
 		try {
-			if (history.exists() && cmdHistory.exists()) { // determines if the
-															// word
-															// need to be
-															// appended
-				schHstWrt =
-						new PrintWriter(new OutputStreamWriter(new FileOutputStream(history, true),
-								StandardCharsets.UTF_8));
+			if (history.exists() && cmdHistory.exists()) { // determines if the word
+															// need to be appended
+				schHstWrt = new PrintWriter(new OutputStreamWriter(
+						new FileOutputStream(history, true), StandardCharsets.UTF_8));
 				cmdHstWrt = new PrintWriter(new OutputStreamWriter(
 						new FileOutputStream(cmdHistory, true), StandardCharsets.UTF_8));
 			} else {
-				schHstWrt = new PrintWriter(history, UTF_8);
-				cmdHstWrt = new PrintWriter(cmdHistory, UTF_8);
+				schHstWrt = new PrintWriter(history, "UTF-8");
+				cmdHstWrt = new PrintWriter(cmdHistory, "UTF-8");
 			}
 
 			Locale.setDefault(new Locale("English"));
@@ -306,9 +301,7 @@ public class JFilesServer implements Runnable {
 				if (isValid(baseCommand)) {
 					findCmd(dir, id, baseCommand[1]);
 				} else {
-
 					clients[findClient(id)].send("Invaild Command\n");
-
 				}
 
 				break;
@@ -348,7 +341,6 @@ public class JFilesServer implements Runnable {
 				cmdHstWrt.close();
 			}
 		}
-
 	}
 
 	/**

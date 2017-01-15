@@ -94,7 +94,10 @@ public class Arguments {
 	public Argument getLast() {
 		int argCount = args.size();
 
-		return args.get(argCount - 1);
-
+		if (argCount > 0) {
+			return args.get(argCount - 1);
+		} else {
+			return new Argument("");
+		}
 	}
 }
