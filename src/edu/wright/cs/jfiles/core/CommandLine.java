@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
- * 
+ *
  * Roberto C. Sánchez <roberto.sanchez@wright.edu>
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ public class CommandLine {
 
 	/**
 	 * Sets the current command from the command line.
-	 * 
+	 *
 	 * @param command
 	 *            the parsed command
 	 */
@@ -43,7 +43,7 @@ public class CommandLine {
 
 	/**
 	 * Gets the current command.
-	 * 
+	 *
 	 * @return the command
 	 */
 	public String getCommand() {
@@ -52,7 +52,7 @@ public class CommandLine {
 
 	/**
 	 * Sets the arguments for the command.
-	 * 
+	 *
 	 * @param arguments
 	 *            the arguments that were parsed
 	 */
@@ -62,7 +62,7 @@ public class CommandLine {
 
 	/**
 	 * Gets the list of arguments for the current command.
-	 * 
+	 *
 	 * @return the arguments
 	 */
 	public Arguments getArguments() {

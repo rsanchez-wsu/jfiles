@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
- * 
+ *
  * Roberto C. Sánchez <roberto.sanchez@wright.edu>
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ package edu.wright.cs.jfiles.core;
 
 /**
  * Basic argument class meant to hold an argument for a given command.
- * 
+ *
  */
 public class Argument {
 
@@ -31,7 +31,7 @@ public class Argument {
 
 	/**
 	 * Creates a single argument.
-	 * 
+	 *
 	 * @param argument
 	 *            the argument string
 	 */
@@ -41,7 +41,7 @@ public class Argument {
 
 	/**
 	 * Gets the current argument.
-	 * 
+	 *
 	 * @return the current argument
 	 */
 	public String getArgument() {

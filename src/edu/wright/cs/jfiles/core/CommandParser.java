@@ -1,19 +1,21 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
- * 
+ *
  * Roberto C. Sánchez <roberto.sanchez@wright.edu>
- * 
  *
- * This program is free software: you can redistribute it and/or modify it under the terms of the
- * GNU General Public License as published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * You should have received a copy of the GNU General Public License along with this program. If
- * not, see <http://www.gnu.org/licenses/>.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
@@ -43,7 +45,7 @@ public class CommandParser {
 
 	/**
 	 * Creates a CommandParser with the given environment.
-	 * 
+	 *
 	 * @param environment
 	 *            the environment to use for the CommandParser
 	 */
@@ -53,10 +55,10 @@ public class CommandParser {
 
 	/**
 	 * Parses the command from the client input.
-	 * 
+	 *
 	 * <p>Reads in the entire command line string and parses out the command and any/all arguments
 	 * that go with the command.
-	 * 
+	 *
 	 * @param commandLineString
 	 *            the command line to parse.
 	 * @return populated command line.
@@ -83,7 +85,7 @@ public class CommandParser {
 
 	/**
 	 * Parses an argument that has an effect on the environment.
-	 * 
+	 *
 	 * @param arg
 	 *            the environment argument
 	 * @return the argument
@@ -111,7 +113,7 @@ public class CommandParser {
 
 	/**
 	 * Generates a stack with the list of arguments.
-	 * 
+	 *
 	 * @param commandLine
 	 *            the current parsed command line
 	 * @return a stack populated with the arguments for the command
