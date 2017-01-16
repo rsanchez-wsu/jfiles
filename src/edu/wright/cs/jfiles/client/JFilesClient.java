@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
- * 
+ *
  * Roberto C. Sánchez <roberto.sanchez@wright.edu>
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,173 +21,185 @@
 
 package edu.wright.cs.jfiles.client;
 
-import edu.wright.cs.jfiles.common.Error;
-
-import org.apache.commons.dbutils.DbUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Properties;
 
 /**
  * The main class of the JFiles client application.
- * 
+ *
  * @author Roberto C. Sánchez &lt;roberto.sanchez@wright.edu&gt;
  *
  */
 public class JFilesClient implements Runnable {
-
 	static final Logger logger = LogManager.getLogger(JFilesClient.class);
-	private static String host;
-	private static int port;
-	private static final String UTF_8 = "UTF-8";
+	private Socket socket = null;
+	private Thread thread = null;
+	private DataInputStream console = null;
+	private DataOutputStream streamOut = null;
+	private JFilesClientThread client = null;
+	private static String host = "localhost";
+	private static int port = 9786;
 
 	/**
-	 * Handles allocating resources needed for the client.
-	 * 
-	 * @throws IOException
-	 *             If there is a problem binding to the socket
+	 * The main Class.
+	 *
+	 * @param serverName
+	 *            The name of the server.
+	 * @param serverPort
+	 *            The port number of the server.
 	 */
-	public JFilesClient() {
+	public JFilesClient(String serverName, int serverPort) {
+		System.out.println("Establishing connection. Please wait ...");
+		try {
+			socket = new Socket(serverName, serverPort);
+			System.out.println("Connected: " + socket);
+			start();
+		} catch (UnknownHostException uhe) {
+			System.out.println("Host unknown: " + uhe.getMessage());
+		} catch (IOException ioe) {
+			System.out.println("Unexpected exception: " + ioe.getMessage());
+		}
 	}
 
 	/**
 	 * Handles allocating resources needed for the server.
-	 * 
+	 *
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	private static void init() throws IOException {
-		//Array of strings containing possible paths to check for config files
-		ArrayList<String> configPaths = new ArrayList<String>();
-		configPaths.add("/usr/local/etc/jfiles/clientConfig.xml");
-		configPaths.add("/usr/local/etc/jfiles/clientConfig.xml");
-		configPaths.add("/opt/etc/jfiles/clientConfig.xml");
-		configPaths.add("/etc/jfiles/serverConfig.xml");
-		configPaths.add(System.getProperty("user.home") + "/jfiles/clientConfig.xml");
-		configPaths.add(System.getProperty("user.home") + "/.jfiles/clientConfig.xml");
-		
-		FileInputStream fis = null;
+	private static void setupConfig() throws IOException {
+		Properties prop = new Properties();
 		File config = null;
-				
-		//Checking location(s) for the config file);
-		for (int i = 0; i < configPaths.size(); i++) {
-			if (new File(configPaths.get(i)).exists()) {
-				config = new File(configPaths.get(i));
+
+		// Array of strings containing possible paths to check for config files
+		String[] configPaths = { "$HOME/.jfiles/clientConfig.xml",
+				"/usr/local/etc/jfiles/clientConfig.xml", "/opt/etc/jfiles/clientConfig.xml",
+				"/etc/jfiles/clientConfig.xml", "%PROGRAMFILES%/jFiles/etc/clientConfig.xml",
+				"%APPDATA%/jFiles/etc/clientConfig.xml" };
+
+		// Checking location(s) for the config file);
+		for (int i = 0; i < configPaths.length; i++) {
+			if (new File(configPaths[i]).exists()) {
+				config = new File(configPaths[i]);
 				break;
 			}
 		}
-		
-		Properties prop = new Properties();
-		
-		//Output location where the config file was found. Otherwise warn and use defaults.
-		if (config == null) {		
+
+		// Output location where the config file was found. Otherwise warn and
+		// use defaults.
+		if (config == null) {
 			logger.info("No config file found. Using default values.");
 		} else {
 			logger.info("Config file found in " + config.getPath());
-			//Read file
-			try {
-				//Reads xmlfile into prop object as key value pairs
-				fis = new FileInputStream(config);
-				prop.loadFromXML(fis);			
+			// Read file
+			try (FileInputStream fis = new FileInputStream(config)) {
+				// Reads xmlfile into prop object as key value pairs
+				prop.loadFromXML(fis);
 			} catch (IOException e) {
-				logger.error(Error.IOEXCEPTION2.toString(), e);
-			} finally {
-				if (fis != null) {
-					fis.close();
-				}
+				logger.error("IOException occured when trying to access the server config", e);
 			}
 		}
-	
-		//Add setters here. First value is the key name and second is the default value.
-		//Default values are require as they are used if the config file cannot be found OR if
-		// the config file doesn't contain the key.
-		port = Integer.parseInt(prop.getProperty("port","9786"));
-		logger.info("Config set to port " + port);
-		
-		host = prop.getProperty("host","localhost");
-		logger.info("Config set max threads to " + host);	
-		
-		// Create a Derby database in memory called jFiles
-		String jfilesCachedb = "jdbc:derby:memory:jFiles;create=true";
-		
-		Connection conn = null;
-		Statement stmt = null;
-		
-		try {
-			conn = DriverManager.getConnection(jfilesCachedb);
-			logger.info("Database connection successful");
-			
-			// Added so Eclipse won't complain about not using the Connection object
-			conn.getMetaData();
-			
-			stmt = conn.createStatement();
 
-			int result = stmt.executeUpdate("CREATE TABLE cache (filePath VARCHAR(260), "
-					+ "content BLOB, time TIME)");
-			logger.info("Table cache result: " + result);			
-		} catch (SQLException e) {
-			logger.error(Error.SQL_INIT_ERROR.toString(),e);
-		} finally {
-			DbUtils.closeQuietly(conn);
-			DbUtils.closeQuietly(stmt);
-		}
+		// Add setters here. First value is the key name and second is the
+		// default value.
+		// Default values are require as they are used if the config file cannot
+		// be found OR if
+		// the config file doesn't contain the key.
+		port = Integer.parseInt(prop.getProperty("port", "9786"));
+		logger.info("Config set to port " + port);
+
+		host = prop.getProperty("host", "localhost");
+		logger.info("Config set max threads to " + host);
 	}
-	
-	
+
+	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {
-		try (Socket socket = new Socket(host, port)) {
-			OutputStreamWriter osw = new OutputStreamWriter(socket.getOutputStream(), UTF_8);
-			BufferedWriter out = new BufferedWriter(osw);
-			out.write("LIST\n");
-			out.flush();
-			InputStreamReader isr = new InputStreamReader(socket.getInputStream(), UTF_8);
-			BufferedReader in = new BufferedReader(isr);
-			String line;
-			while ((line = in.readLine()) != null) {
-				System.out.println(line);
+		System.out.print("> ");
+		while (thread != null) {
+			try {
+				streamOut.writeUTF(console.readLine());
+				streamOut.flush();
+			} catch (IOException ioe) {
+				System.out.println("Sending error: " + ioe.getMessage());
+				stop();
 			}
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * This method handles the message.
+	 *
+	 * @param msg
+	 *            The message to handle.
+	 */
+	public void handle(String msg) {
+		if (msg.equals(".exit")) {
+			System.out.println("Good bye. Press RETURN to exit ...");
+			stop();
+		} else {
+			System.out.print(msg);
 		}
 	}
 
 	/**
-	 * The main entry point to the program.
-	 * 
-	 * @param args
-	 *            The command-line arguments
+	 * Start the connection.
+	 */
+	public void start() throws IOException {
+		console = new DataInputStream(System.in);
+		streamOut = new DataOutputStream(socket.getOutputStream());
+		if (thread == null) {
+			client = new JFilesClientThread(this, socket);
+			client.start();
+			thread = new Thread(this);
+			thread.start();
+		}
+	}
+
+	/**
+	 * Stops the thread.
+	 */
+	@SuppressWarnings("deprecation")
+	public void stop() {
+		if (thread != null) {
+			thread.stop();
+			thread = null;
+		}
+		try {
+			if (console != null) {
+				console.close();
+			} else if (streamOut != null) {
+				streamOut.close();
+			} else if (socket != null) {
+				socket.close();
+			}
+		} catch (IOException ioe) {
+			System.out.println("Error closing ...");
+		}
+		client.close();
+		client.stop();
+	}
+
+	/**
+	 * The main method.
 	 */
 	public static void main(String[] args) {
-		logger.info("Starting the client");
 		try {
-			init();
+			setupConfig();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.out.println("Error with IO");
 			e.printStackTrace();
 		}
-		JFilesClient jf = new JFilesClient();
-		Thread thread = new Thread(jf);
-		thread.start();
+		new JFilesClient(host, port);
 	}
 }
-
