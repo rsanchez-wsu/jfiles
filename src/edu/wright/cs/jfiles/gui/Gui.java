@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
+ * 
  *
- *
- *
+ * 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,27 +23,27 @@ package edu.wright.cs.jfiles.gui;
 
 import edu.wright.cs.jfiles.server.JFilesServer;
 
-import org.w3c.dom.Document;
+import javafx.application.Application;
+import javafx.event.EventHandler;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
+import javafx.stage.Stage;
 
+
+import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.WindowConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -51,94 +51,87 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+
+
+
 /**
  * Gui class file that creates a frame and adds components to it.
  */
-public class Gui {
-
-	/**
-	 * Creates frame the components of the GUI will be places on.
-	 * @throws IOException 						Thrown if parsing fails.
-	 * @throws SAXException 					Thrown if parsing fails.
-	 * @throws ParserConfigurationException 	Thrown if parsing fails.
-	 * @throws XPathExpressionException 		Thrown when XPath counting elements when parsing,
-	 * 											compiling, or evaluating fails.
-	 */
-	static void createGui() throws XPathExpressionException,
-		ParserConfigurationException, SAXException, IOException {
-		JFrame frame = new JFrame();
-		// Ends program when you close the window
-		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		frame.setSize(450, 350);
-
-		addComponents(frame);
-		frame.setVisible(true);
+public class Gui extends Application {
+	
+	@Override
+	public void start(Stage mainStage) throws Exception {
+		
+		BorderPane mainPane = new BorderPane();
+		
+		addComponents(mainPane);
+		
+		Scene scene = new Scene(mainPane, 800, 500);
+		mainStage.setScene(scene);
+		mainStage.setTitle("JFiles");
+		mainStage.show();
 	}
 
 	/**
 	 * Adds different parts of the GUI to the frame.
-	 * @param pane Passes the frame to add components to.
-	 * @throws IOException 						Thrown if parsing fails.
-	 * @throws SAXException 					Thrown if parsing fails.
-	 * @throws ParserConfigurationException 	Thrown if parsing fails.
-	 * @throws XPathExpressionException 		Thrown when XPath counting elements when parsing,
-	 * 											compiling, or evaluating fails.
+	 * @param pane Passes the main pane to add components to.
+	 * @throws IOException 						IOException handler
+	 * @throws SAXException 					SAXException handler
+	 * @throws ParserConfigurationException 	Parser exception handler
+	 * @throws XPathExpressionException 		XPatchException handler
 	 */
-	static void addComponents(Container pane) throws XPathExpressionException,
+	static void addComponents(BorderPane pane) throws XPathExpressionException, 
 		ParserConfigurationException, SAXException, IOException {
-
+		
 		// Creates a box for the current path to be displayed in.
-		JTextArea pathDisplay = new JTextArea();
+		TextField pathDisplay = new TextField();
 		pathDisplay.setEditable(false);
 
 		// Populates box with current path
 		String currentPath = JFilesServer.sendPath();
-		pathDisplay.append(currentPath);
-		pane.add(pathDisplay, BorderLayout.NORTH);
+		pathDisplay.appendText(currentPath);
 
+		// Adds path display to the top of pane 
+		pane.setTop(pathDisplay);
+		
 		// This creates a box with changeable text that can be scrolled through.
 		// Must be initialized before file panel is populated to contain event information
-		JTextArea consoleOutput = new JTextArea();
-		JScrollPane scrollPane = new JScrollPane(consoleOutput);
+		TextArea consoleOutput = new TextArea();
 		consoleOutput.setEditable(false);
-		pane.add(scrollPane, BorderLayout.SOUTH);
-
+		consoleOutput.setMaxHeight(40);
+		pane.setBottom(consoleOutput);
+		
 		// Creates panel to add buttons to. This keeps it separate from other components.
-		JPanel filePanel = new JPanel();
-		JScrollPane fileScroller = new JScrollPane(filePanel);
+		FlowPane filePane = new FlowPane();
+		filePane.setHgap(5);
+		filePane.setVgap(5);
+		
+		ScrollPane fileScroller = new ScrollPane(filePane);
+		fileScroller.setFitToHeight(true);
+		fileScroller.setFitToWidth(true);
+		
 		// Where files will be place (rows, columns)
-		filePanel.setLayout(new GridLayout(0, 2));
-		addFiles(filePanel, consoleOutput);
-		pane.add(fileScroller, BorderLayout.CENTER);
+		addFiles(filePane, consoleOutput);
+		pane.setCenter(fileScroller);
 
 	}
 
 	/**
 	 * Creates and populates the passed panel with files.
-	 * @param filePanel							Pass the panel to populate files with
+	 * @param filePane							Pass the pane to populate files with
 	 * @param consoleOutput						Pass area to output text in console
-	 * @throws ParserConfigurationException		Thrown if parsing fails.
-	 * @throws SAXException						Thrown if parsing fails.
-	 * @throws IOException						Thrown if parsing fails.
-	 * @throws XPathExpressionException			Thrown when XPath counting elements when parsing,
-	 * 									compiling, or evaluating fails.
+	 * @throws ParserConfigurationException		Parser exception handler
+	 * @throws SAXException						SAXException handler
+	 * @throws IOException						IOException handler
+	 * @throws XPathExpressionException			XPatchException handler
 	 */
-	static void addFiles(Container filePanel, JComponent consoleOutput) throws
+	static void addFiles(FlowPane filePane, TextArea consoleOutput) throws 
 		ParserConfigurationException, SAXException, IOException, XPathExpressionException {
 
 		// Icon width and height variables
-		final int IconWidth = 100;
+		final int iconWidth = 100;
 		final int iconHeight = 100;
-
-		// Specifies a new image icon and resizes it
-		ImageIcon fileIcon = new ImageIcon(new ImageIcon(Gui.class.getResource("img/file_icon.png"))
-				.getImage().getScaledInstance(IconWidth, iconHeight, Image.SCALE_DEFAULT));
-
-		// Reserved for folder icon when we can use it
-		ImageIcon folderIcon = new ImageIcon(
-				new ImageIcon(Gui.class.getResource("img/folder_icon.png")).getImage()
-						.getScaledInstance(IconWidth, iconHeight, Image.SCALE_DEFAULT));
-
+						
 		/*
 		 * Some initial testing for parsing XML for file names and types. Uses
 		 * fake data for now, assuming this will come later. Simply logs file
@@ -148,9 +141,14 @@ public class Gui {
 		// String containing fake XML for parsing testing (output from server
 		// issue #17)
 		String testXml = "<?xml version=\"1.0\"?>" + "<items>"
-				+ "<item><name>Test</name><ext>.txt</ext><type>file</type></item>"
-				+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>"
-				+ "<item><name>Folder</name><ext></ext><type>folder</type></item>" + "</items>";
+				+ "<item><name>Test1</name><ext>.txt</ext><type>file</type></item>"
+				+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>" 
+				+ "<item><name>Test3</name><ext>.png</ext><type>file</type></item>" 
+				+ "<item><name>Test4</name><ext>.png</ext><type>file</type></item>" 
+				+ "<item><name>Folder 1</name><ext></ext><type>folder</type></item>"
+				+ "<item><name>Folder 2</name><ext></ext><type>folder</type></item>" 
+				+ "<item><name>Folder 3</name><ext></ext><type>folder</type></item>" 
+				+ "<item><name>Folder 4</name><ext></ext><type>folder</type></item>" + "</items>";
 
 		ArrayList<Item> items = new ArrayList<Item>();
 
@@ -167,11 +165,11 @@ public class Gui {
 			XPathExpression getFileName = xpath.compile("/items/item[" + i + "]/name");
 			XPathExpression getFileExt = xpath.compile("/items/item[" + i + "]/ext");
 			XPathExpression getFileType = xpath.compile("/items/item[" + i + "]/type");
-
+			
 			String fileName = getFileName.evaluate(doc, XPathConstants.STRING).toString();
 			String fileExt = getFileExt.evaluate(doc, XPathConstants.STRING).toString();
 			String fileType = getFileType.evaluate(doc, XPathConstants.STRING).toString();
-
+			
 			Item item = new Item(fileName, fileExt, fileType);
 
 			items.add(item);
@@ -179,44 +177,52 @@ public class Gui {
 
 		for (int i = 0; i < items.size(); i++) {
 			Item item = items.get(i);
-			String fileName = item.getName() + item.getExt();
-			String fileType = item.getType();
-
-			JLabel iconLabel = new JLabel(fileName, JLabel.CENTER);
-			iconLabel.setVerticalTextPosition(JLabel.BOTTOM);
-			iconLabel.setHorizontalTextPosition(JLabel.CENTER);
-
+			final String fileName = item.getName() + item.getExt();
+			final String fileType = item.getType();
+			
+			BorderPane iconPane = new BorderPane();
+			
+			Label iconLabel = new Label(fileName);
+			iconLabel.prefWidthProperty().bind(iconPane.widthProperty());
+			iconLabel.setAlignment(Pos.CENTER);
+			
+			iconPane.setBottom(iconLabel);
+			
+			ImageView icon;
 			if (fileType.equals("folder")) {
-				iconLabel.setIcon(folderIcon);
-
+				icon = new ImageView("file:src/edu/wright/cs/jfiles/gui/img/folder_icon_2.png");
 			} else {
-				iconLabel.setIcon(fileIcon);
+				icon = new ImageView("file:src/edu/wright/cs/jfiles/gui/img/file_icon_2.png");
 			}
-
-			iconLabel.addMouseListener(new MouseAdapter() {
-				public void mouseClicked(MouseEvent event) {
-					((JTextArea) consoleOutput).append("You clicked " + fileName + "\n");
+			icon.setFitWidth(iconWidth);
+			icon.setFitHeight(iconHeight);
+			
+			iconPane.setCenter(icon);
+			
+			iconPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					consoleOutput.appendText("You clicked " + fileName + "\n");
 				}
 			});
-
-			// Puts the icon in the panel according to grid
-			filePanel.add(iconLabel);
+			
+			filePane.getChildren().add(iconPane);
+			
 		}
 	}
 
 	/**
 	 * Main class of GUI.
-	 *
+	 * 
 	 * @param args								The command line argument
-	 * @throws IOException 						Thrown if parsing fails.
-	 * @throws SAXException 					Thrown if parsing fails.
-	 * @throws ParserConfigurationException 	Thrown if parsing fails.
-	 * @throws XPathExpressionException			Thrown when XPath counting elements when parsing,
-	 * 											compiling, or evaluating fails.
+	 * @throws IOException 						IOException handler
+	 * @throws SAXException 					SAXException handler
+	 * @throws ParserConfigurationException 	Parser exception handler
+	 * @throws XPathExpressionException			XPatchException handler
 	 */
 	public static void main(String[] args) throws XPathExpressionException,
 		ParserConfigurationException, SAXException, IOException {
-
-		createGui();
+		
+		launch(args);
 	}
 }
