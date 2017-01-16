@@ -21,6 +21,8 @@
 
 package edu.wright.cs.jfiles.client;
 
+import edu.wright.cs.jfiles.gui.Item;
+import edu.wright.cs.jfiles.gui.Parser;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -48,6 +50,21 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+
+
 /**
  * This class will form the body of the JFiles client side GUI application. This
  * is a JavaFX application.
@@ -71,11 +88,25 @@ public class ClientSideGui extends Application {
 	TextField usernameTextField;
 	TextField passwordTextField;
 
+	// String containing fake XML for parsing testing (output from server
+	// issue #17)
+	String testXml = "<?xml version=\"1.0\"?>" + "<items>"
+			+ "<item><name>Test</name><ext>.txt</ext><type>file</type></item>"
+			+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>"
+			+ "<item><name>Folder</name><ext></ext><type>folder</type></item>" + "</items>";
+
 	/**
 	 * This method is where most visual elements are created and manipulated.
+	 *
+	 * @throws IOException Thrown if parsing fails.
+	 * @throws SAXException  Thrown if parsing fails.
+	 * @throws ParserConfigurationException Thrown if parsing fails.
+	 * @throws XPathExpressionException Thrown when XPath counting elements when parsing,
+	 * 									compiling, or evaluating fails.
 	 */
 	@Override
-	public void start(Stage primaryStage) {
+	public void start(Stage primaryStage) throws ParserConfigurationException, SAXException,
+			IOException, XPathExpressionException {
 
 		// Login Window Construction
 
@@ -213,67 +244,100 @@ public class ClientSideGui extends Application {
 		final int imageHeight = 30;
 		final int imageWidth = 30;
 
-		Image copyImage = new Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
-		ImageView copyImageView = new ImageView(copyImage);
-		copyImageView.setFitHeight(imageHeight);
-		copyImageView.setFitWidth(imageWidth);
-		Button copyButton = new Button("Copy", copyImageView);
-		copyButton.setContentDisplay(ContentDisplay.TOP);
-		copyButton.setStyle("-fx-font-size: 15px;" + "-fx-font-family: 'Currier New' ;"
-				+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
+		// Specifies a new image icon and resizes it
+		Image fileImage = new Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon.png");
 
-		Image pasteImage = new Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
-		ImageView pasteImageView = new ImageView(pasteImage);
-		pasteImageView.setFitHeight(imageHeight);
-		pasteImageView.setFitWidth(imageWidth);
-		Button pasteButton = new Button("Copy", pasteImageView);
-		pasteButton.setContentDisplay(ContentDisplay.TOP);
-		pasteButton.setStyle("-fx-font-size: 15px;" + "-fx-font-family: 'Currier New' ;"
-				+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
+		// Reserved for folder icon when we can use it
+		Image folderImage = new Image("file:src/edu/wright/cs/jfiles/gui/img/folder_icon.png");
 
-		Image cutImage = new Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
-		ImageView cutImageView = new ImageView(cutImage);
-		cutImageView.setFitHeight(imageHeight);
-		cutImageView.setFitWidth(imageWidth);
-		Button cutButton = new Button("Copy", cutImageView);
-		cutButton.setContentDisplay(ContentDisplay.TOP);
-		cutButton.setStyle("-fx-font-size: 15px;" + "-fx-font-family: 'Currier New' ;"
-				+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
+		// ArrayList of item objects to hold files or folders
+		ArrayList<Item> items = new ArrayList<Item>();
 
-		Image deleteImage = new Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
-		ImageView deleteImageView = new ImageView(deleteImage);
-		deleteImageView.setFitHeight(imageHeight);
-		deleteImageView.setFitWidth(imageWidth);
-		Button deleteButton = new Button("Copy", deleteImageView);
-		deleteButton.setContentDisplay(ContentDisplay.TOP);
-		deleteButton.setStyle("-fx-font-size: 15px;" + "-fx-font-family: 'Currier New' ;"
-				+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
+		// XML Parsing object
+		Parser parser = new Parser();
 
-		Image openImage = new Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
-		ImageView openImageView = new ImageView(openImage);
-		openImageView.setFitHeight(imageHeight);
-		openImageView.setFitWidth(imageWidth);
-		Button openButton = new Button("Copy", openImageView);
-		openButton.setContentDisplay(ContentDisplay.TOP);
-		openButton.setStyle("-fx-font-size: 15px;" + "-fx-font-family: 'Currier New' ;"
-				+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
+		// Parsed document
+		Document doc = parser.parse(testXml);
 
-		Image createImage = new Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
-		ImageView createImageView = new ImageView(createImage);
-		createImageView.setFitHeight(imageHeight);
-		createImageView.setFitWidth(imageWidth);
-		Button createButton = new Button("Copy", createImageView);
-		createButton.setContentDisplay(ContentDisplay.TOP);
-		createButton.setStyle("-fx-font-size: 15px;" + "-fx-font-family: 'Currier New' ;"
-				+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
+		// Count of items in the /items/item XML struct
+		int itemCount = parser.countElements(doc, "/items/item");
+
+		XPathFactory factory = XPathFactory.newInstance();
+		XPath xpath = factory.newXPath();
+
+		// Gather each name, extension, and type of each item in /items
+		for (int i = 1; i <= itemCount; i++) {
+			XPathExpression getFileName = xpath.compile("/items/item[" + i + "]/name");
+			XPathExpression getFileExt = xpath.compile("/items/item[" + i + "]/ext");
+			XPathExpression getFileType = xpath.compile("/items/item[" + i + "]/type");
+
+			String fileName = getFileName.evaluate(doc, XPathConstants.STRING).toString();
+			String fileExt = getFileExt.evaluate(doc, XPathConstants.STRING).toString();
+			String fileType = getFileType.evaluate(doc, XPathConstants.STRING).toString();
+
+			Item item = new Item(fileName, fileExt, fileType);
+
+			items.add(item);
+		}
+
+
+		// //////////////////////////////////////////////////////////////////////
+		// // This code block will implement the old functionality of the output
+		// Region and the path display. Placement of the text field and
+		// scrollpane will change when a better layout is made.
+		// // Creates a box for the current path to be displayed in.
+		// TextField pathDisplay = new TextField();
+		// pathDisplay.setEditable(false);
+		// // Populates box with current path
+		// String currentPath = JFilesServer.sendPath();
+		// pathDisplay.appendText(currentPath);
+		// //currently sets at bottom of pane to test it functions properly,
+		// this will change
+		// basePane.setBottom(pathDisplay);
+		//
+		// // This creates a box with changeable text that can be scrolled
+		// through.
+		// // Must be initialized before file panel is populated to contain
+		// event information
+		// TextField consoleOutput = new TextField();
+		// ScrollPane scrollPane = new ScrollPane(consoleOutput);
+		// consoleOutput.setEditable(false);
+		// //basePane.setBottom(scrollPane);
+		// //////////////////////////////////////////////////////////////////////
 
 		HBox toolsHbox = new HBox();
 		toolsHbox.setPadding(new Insets(10, 10, 10, 10));
 		toolsHbox.setSpacing(10);
 		toolsHbox.setStyle("-fx-background-color: LIGHTBLUE;");
-		toolsHbox.getChildren().addAll(copyButton, pasteButton, cutButton, deleteButton, openButton,
-				createButton);
 		basePane.setCenter(toolsHbox);
+
+		// This for loop loops through the items parsed from the XML string
+		// and puts them into the GUI with an image and name
+		for (int i = 0; i < items.size(); i++) {
+			Item item = items.get(i);
+
+			String fileType = item.getType();
+			ImageView openImageView = new ImageView();
+			openImageView.setFitHeight(imageHeight);
+			openImageView.setFitWidth(imageWidth);
+
+			// If block to determine if item is a folder or a file
+			if (fileType.equals("folder")) {
+				openImageView.setImage(folderImage);
+
+			} else {
+				openImageView.setImage(fileImage);
+			}
+
+			String fileName = item.getName() + item.getExt();
+			Button file = new Button(fileName, openImageView);
+			file.setContentDisplay(ContentDisplay.TOP);
+			file.setStyle("-fx-font-size: 15px;" + "-fx-font-family: 'Currier New' ;"
+					+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
+
+			// Puts the button in frame
+			toolsHbox.getChildren().add(file);
+		}
 
 		// Scene Creation. Put the basePane on the scene.
 		Scene scene = new Scene(basePane, 1200, 600, Color.WHITE);
