@@ -1,9 +1,9 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
- * 
+ *
  * Roberto C. Sánchez <roberto.sanchez@wright.edu>
  * Matthew T. Trippel <trippel.3@wright.edu>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -35,10 +35,10 @@ public enum Error {
 	UNKNOWN_COMMAND(3,"Unknown commad was sent by the client"),
 	SQL_INIT_ERROR(4,"Error in SQL init"),
 	IOEXCEPTION3(5,"An error occured processing the path ");
-	
+
 	private final int code;
 	private final String description;
-	
+
 	/**
 	 * Constructor for error codes.
 	 * @param code Integer value error number
@@ -48,7 +48,7 @@ public enum Error {
 		this.code = code;
 		this.description = description;
 	}
-	
+
 	/**
 	 * Returns error code description.
 	 * @return Text of the error message
@@ -56,7 +56,7 @@ public enum Error {
 	public String getDescription() {
 		return description;
 	}
-	
+
 	/**
 	 * Returns error code number.
 	 * @return Int value of the error code
@@ -64,7 +64,7 @@ public enum Error {
 	public int getCode() {
 		return code;
 	}
-	
+
 	@Override
 	public String toString() {
 		return code + ": " + description;

@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
- * 
+ *
  * Brian Denlinger <brian.denlinger1@gmail.com>
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,18 +35,18 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 /**
- * This class encapsulates the FileStruct class in an ArrayList and provides methods to read and 
+ * This class encapsulates the FileStruct class in an ArrayList and provides methods to read and
  * write to data streams.
  * @author brian
  *
  */
 public class XmlHandler {
-	
+
 	private String currentPath;
 	private ArrayList<FileStruct> arrlist;
 	private static transient XStream xstream = new XStream();
 	static final transient Logger logger = LogManager.getLogger(XmlHandler.class);
-	
+
 	//Static init block to configure XStream
 	static {
 		xstream.alias("fileObject", FileStruct.class);
@@ -58,13 +58,13 @@ public class XmlHandler {
 		xstream.omitField(XStream.class, "logger");
 		xstream.registerConverter(new MapEntryConverter());
 	}
-	
+
 	/**
 	 * Zero argument constructor.
 	 */
 	public XmlHandler() {
 	}
-	
+
 	/**
 	 * Constructs an ArrayList of FileStruct objects. If passed a path with
 	 * a trailing slash in the path, list only the directory. Otherwise, list the contents of the
@@ -74,9 +74,9 @@ public class XmlHandler {
 	public XmlHandler(String path) {
 		this.currentPath = path;
 		arrlist = new ArrayList<FileStruct>();
-		populateArray();	
+		populateArray();
 	}
-	
+
 	/**
 	 * Constructs an ArrayList of FileStruct objects and sends it as XML. If passed a path with
 	 * a trailing slash in the path, list only the directory. Otherwise, list the contents of the
@@ -90,24 +90,24 @@ public class XmlHandler {
 		populateArray();
 		sendXml(str);
 	}
-	
+
 	/**
 	 * Helper method to populate the ArrayList.
 	 * @throws IOException If Path object is inaccessible
 	 */
 	private void populateArray() {
 		String lastCharacter = currentPath.substring(currentPath.length() - 1);
-		
+
 		try {
-			if (Files.isDirectory(Paths.get(currentPath)) 
+			if (Files.isDirectory(Paths.get(currentPath))
 					&& !lastCharacter.equals(System.getProperty("file.separator"))) {
 				//If passed a directory without a trailing slash list contents of the path
-				
-				File[] temp = new File(currentPath).listFiles();		
+
+				File[] temp = new File(currentPath).listFiles();
 				//Terminates if the folder is empty. Otherwise XML gets weird.
 				if (temp == null) {
 					return;
-				}		
+				}
 				//Add the contents of the directory to the ArrayList
 				for (int i = 0; i < temp.length; i++) {
 					arrlist.add(new FileStruct(temp[i].toPath()));
@@ -119,7 +119,7 @@ public class XmlHandler {
 			logger.error(Error.IOEXCEPTION3.toString() + currentPath, e);
 		}
 	}
-	
+
 	/**
 	 * Method to serialize an object and write XML to an output stream.
 	 * @param osw OutputStreamWriter to write to
@@ -127,7 +127,7 @@ public class XmlHandler {
 	public void sendXml(OutputStreamWriter osw) {
 		xstream.toXML(this, osw);
 	}
-	
+
 	/**
 	 * Method to read XML and deserialize to an object.
 	 * @param isr InputStreamReader to read from
@@ -135,6 +135,6 @@ public class XmlHandler {
 	 */
 	public ArrayList<FileStruct> readXml(InputStreamReader isr) {
 		XmlHandler temp = (XmlHandler) xstream.fromXML(isr);
-		return temp.arrlist;	
+		return temp.arrlist;
 	}
 }
