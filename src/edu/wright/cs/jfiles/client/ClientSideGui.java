@@ -23,32 +23,6 @@ package edu.wright.cs.jfiles.client;
 
 import edu.wright.cs.jfiles.gui.Item;
 import edu.wright.cs.jfiles.gui.Parser;
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.TextField;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.stage.Stage;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -62,6 +36,33 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.TextField;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.stage.Stage;
 
 
 
@@ -92,6 +93,11 @@ public class ClientSideGui extends Application {
 	// issue #17)
 	String testXml = "<?xml version=\"1.0\"?>" + "<items>"
 			+ "<item><name>Test</name><ext>.txt</ext><type>file</type></item>"
+			+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>"
+			+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>"
+			+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>"
+			+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>"
+			+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>"
 			+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>"
 			+ "<item><name>Folder</name><ext></ext><type>folder</type></item>" + "</items>";
 
@@ -305,11 +311,9 @@ public class ClientSideGui extends Application {
 		// //basePane.setBottom(scrollPane);
 		// //////////////////////////////////////////////////////////////////////
 
-		HBox toolsHbox = new HBox();
-		toolsHbox.setPadding(new Insets(10, 10, 10, 10));
-		toolsHbox.setSpacing(10);
-		toolsHbox.setStyle("-fx-background-color: LIGHTBLUE;");
-		basePane.setCenter(toolsHbox);
+		FlowPane filePane = new FlowPane();
+		filePane.setStyle("-fx-background-color: LIGHTBLUE;");
+		basePane.setCenter(filePane);
 
 		// This for loop loops through the items parsed from the XML string
 		// and puts them into the GUI with an image and name
@@ -324,19 +328,22 @@ public class ClientSideGui extends Application {
 			// If block to determine if item is a folder or a file
 			if (fileType.equals("folder")) {
 				openImageView.setImage(folderImage);
-
 			} else {
 				openImageView.setImage(fileImage);
 			}
 
 			String fileName = item.getName() + item.getExt();
-			Button file = new Button(fileName, openImageView);
-			file.setContentDisplay(ContentDisplay.TOP);
-			file.setStyle("-fx-font-size: 15px;" + "-fx-font-family: 'Currier New' ;"
-					+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
+			BorderPane file = new BorderPane();
+			file.setBottom(new Label(fileName));
+			file.setCenter(openImageView);
+			file.setStyle("-fx-font-size: 15px;"
+					+ "-fx-font-family: 'Currier New' ;"
+					+ "-fx-text-fill: black;"
+					+ "-fx-base: #85C1E9;");
 
 			// Puts the button in frame
-			toolsHbox.getChildren().add(file);
+			filePane.getChildren().add(file);
+			FlowPane.setMargin(file, new Insets(5, 5, 5, 5));
 		}
 
 		// Scene Creation. Put the basePane on the scene.
