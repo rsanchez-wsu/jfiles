@@ -24,33 +24,6 @@ package edu.wright.cs.jfiles.client;
 import edu.wright.cs.jfiles.gui.Item;
 import edu.wright.cs.jfiles.gui.Parser;
 
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.TextField;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.stage.Stage;
-
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -63,6 +36,36 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.TextField;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.stage.PopupWindow.AnchorLocation;
+import javafx.stage.Stage;
 
 
 
@@ -88,6 +91,7 @@ public class ClientSideGui extends Application {
 	Label emptyPasswordFieldLabel;
 	TextField usernameTextField;
 	TextField passwordTextField;
+	ContextMenu contextMenu;
 
 	// String containing fake XML for parsing testing (output from server
 	// issue #17)
@@ -340,6 +344,24 @@ public class ClientSideGui extends Application {
 					+ "-fx-font-family: 'Currier New' ;"
 					+ "-fx-text-fill: black;"
 					+ "-fx-base: #85C1E9;");
+
+			file.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+				@Override
+				public void handle(ContextMenuEvent event) {
+					if (contextMenu == null) {
+						contextMenu = new ContextMenu();
+						contextMenu.getItems().addAll(
+								openMenuItem,
+								new SeparatorMenuItem(),
+								cutMenuItem,
+								copyMenuItem,
+								pasteMenuItem,
+								new SeparatorMenuItem(),
+								deleteMenuItem);
+					}
+					contextMenu.show(file, event.getScreenX(), event.getScreenY());
+				}
+			});
 
 			// Puts the button in frame
 			filePane.getChildren().add(file);
