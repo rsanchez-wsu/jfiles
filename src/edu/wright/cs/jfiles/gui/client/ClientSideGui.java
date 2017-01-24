@@ -19,10 +19,10 @@
  *
  */
 
-package edu.wright.cs.jfiles.client;
+package edu.wright.cs.jfiles.gui.client;
 
-import edu.wright.cs.jfiles.gui.Item;
-import edu.wright.cs.jfiles.gui.Parser;
+import edu.wright.cs.jfiles.gui.common.Item;
+import edu.wright.cs.jfiles.gui.common.Parser;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -254,10 +254,12 @@ public class ClientSideGui extends Application {
 		final int imageWidth = 30;
 
 		// Specifies a new image icon and resizes it
-		Image fileImage = new Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon.png");
+		Image fileImage = new Image(
+				"file:src/edu/wright/cs/jfiles/resources/images/file_icon.png");
 
 		// Reserved for folder icon when we can use it
-		Image folderImage = new Image("file:src/edu/wright/cs/jfiles/gui/img/folder_icon.png");
+		Image folderImage = new Image(
+				"file:src/edu/wright/cs/jfiles/resources/images/folder_icon.png");
 
 		// ArrayList of item objects to hold files or folders
 		ArrayList<Item> items = new ArrayList<Item>();

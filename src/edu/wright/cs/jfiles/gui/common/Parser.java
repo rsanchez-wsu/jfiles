@@ -19,7 +19,7 @@
  *
  */
 
-package edu.wright.cs.jfiles.gui;
+package edu.wright.cs.jfiles.gui.common;
 
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;

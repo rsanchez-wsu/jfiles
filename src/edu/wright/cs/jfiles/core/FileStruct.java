@@ -19,7 +19,7 @@
  *
  */
 
-package edu.wright.cs.jfiles.common;
+package edu.wright.cs.jfiles.core;
 
 import java.io.IOException;
 import java.io.Serializable;
