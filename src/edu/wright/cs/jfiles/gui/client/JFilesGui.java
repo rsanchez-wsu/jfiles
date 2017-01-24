@@ -19,7 +19,7 @@
  *
  */
 
-package edu.wright.cs.jfiles.client;
+package edu.wright.cs.jfiles.gui.client;
 
 import javafx.application.Application;
 import javafx.scene.Scene;

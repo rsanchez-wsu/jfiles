@@ -19,7 +19,7 @@
  *
  */
 
-package edu.wright.cs.jfiles.common;
+package edu.wright.cs.jfiles.core;
 
 /**
  * Class to abstract error codes from source code.

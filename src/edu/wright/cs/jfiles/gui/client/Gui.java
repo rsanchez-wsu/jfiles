@@ -19,8 +19,10 @@
  *
  */
 
-package edu.wright.cs.jfiles.gui;
+package edu.wright.cs.jfiles.gui.client;
 
+import edu.wright.cs.jfiles.gui.common.Item;
+import edu.wright.cs.jfiles.gui.common.Parser;
 import edu.wright.cs.jfiles.server.JFilesServer;
 
 import javafx.application.Application;

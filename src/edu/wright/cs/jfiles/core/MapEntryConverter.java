@@ -19,7 +19,7 @@
  *
  */
 
-package edu.wright.cs.jfiles.common;
+package edu.wright.cs.jfiles.core;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
