@@ -137,4 +137,13 @@ public class XmlHandler {
 		XmlHandler temp = (XmlHandler) xstream.fromXML(isr);
 		return temp.arrlist;
 	}
+
+	/**
+	 * Gets a copy of the contents.
+	 *
+	 * @return copy of arrlist
+	 */
+	public ArrayList<FileStruct> getFiles() {
+		return new ArrayList<FileStruct>(arrlist);
+	}
 }

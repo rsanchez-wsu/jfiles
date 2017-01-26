@@ -47,7 +47,7 @@ public class FileStruct implements Serializable {
 	 * @author brian
 	 *
 	 */
-	enum Type {
+	public enum Type {
 		FILE("file"), DIRECTORY("directory"), SYMBOLICLINK("symbolicLink"), OTHER("other");
 		private String type;
 
