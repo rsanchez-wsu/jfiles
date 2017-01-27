@@ -21,6 +21,8 @@
 
 package edu.wright.cs.jfiles.server;
 
+import edu.wright.cs.jfiles.commands.Command;
+import edu.wright.cs.jfiles.commands.Commands;
 import edu.wright.cs.jfiles.core.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -265,7 +267,18 @@ public class JFilesServer implements Runnable {
 	 * This method handles all the activities the thread will do.
 	 */
 	public synchronized void handle(int id, String input) {
-
+		
+		System.out.println("Got the input: " + input);
+		
+		Command cmd = Commands.getNewInstance(input.split(" ")[0], input);
+		
+		if (cmd != null) {
+			System.out.println(cmd.execute());
+		} else {
+			// Command not found!
+			System.out.println("Command not found!");
+		}
+		
 		/*
 		// logger.info("Received connection from" +
 		// server.getRemoteSocketAddress());
