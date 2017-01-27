@@ -28,4 +28,8 @@ package edu.wright.cs.jfiles.commands;
  */
 public class Parser {
 
+	Parser(String args) {
+		
+	}
+	
 }
