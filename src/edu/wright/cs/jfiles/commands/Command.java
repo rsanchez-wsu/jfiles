@@ -39,7 +39,5 @@ public abstract class Command {
 	 * Abstract execute command.
 	 * @return The output of the command.
 	 */
-	public String execute() {
-		return "";
-	}
+	public abstract String execute();
 }
