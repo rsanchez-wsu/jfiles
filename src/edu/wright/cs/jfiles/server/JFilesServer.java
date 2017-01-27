@@ -272,12 +272,7 @@ public class JFilesServer implements Runnable {
 
 		Command cmd = Commands.getNewInstance(input.split(" ")[0], input);
 
-		if (cmd != null) {
-			System.out.println(cmd.execute());
-		} else {
-			// Command not found!
-			System.out.println("Command not found!");
-		}
+		System.out.println(cmd.execute());
 
 		/*
 		// logger.info("Received connection from" +
