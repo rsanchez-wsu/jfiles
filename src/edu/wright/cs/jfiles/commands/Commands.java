@@ -21,6 +21,7 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import java.util.Locale;
 import java.util.function.Function;
 
 /**
@@ -59,7 +60,7 @@ public enum Commands {
 	 */
 	public static Command getNewInstance(String cmdName, String args) {
 		// Find command in enum
-		Commands cmd = findCommand(cmdName.toUpperCase());
+		Commands cmd = findCommand(cmdName.toUpperCase(Locale.ENGLISH));
 		// Return a new instance if found, else null.
 		return cmd != null ? cmd.getLam().apply(args) : null;
 	}
