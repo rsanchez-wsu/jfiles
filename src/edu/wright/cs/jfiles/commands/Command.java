@@ -20,11 +20,16 @@
  */
 
 package edu.wright.cs.jfiles.commands;
+
 /*
  * This is the master interface for all commands.
  */
-public interface Command {
-	//Command(Parser p);
+public abstract class Command {
+	private Parser parser;
+	
+	public Command(Parser p) {
+		this.parser = p;
+	}
 
-    String Execute();
+    public abstract String Execute();
 }
