@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
- * 
+ *
  * Roberto C. Sánchez <roberto.sanchez@wright.edu>
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,15 +21,23 @@
 
 package edu.wright.cs.jfiles.commands;
 
-/*
- * This is the master interface for all commands.
+/**
+ *  This is the master class for all commands.
  */
 public abstract class Command {
 	private Parser parser;
-	
-	public Command(Parser p) {
-		this.parser = p;
+
+	/**
+	 * Default constructor.
+	 * @param parser Command Parser
+	 */
+	public Command(Parser parser) {
+		this.parser = parser;
 	}
 
-    public abstract String Execute();
+	/**
+	 * Abstract execute command.
+	 * @return The output of the command.
+	 */
+	public abstract String execute();
 }

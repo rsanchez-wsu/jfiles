@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
- * 
+ *
  * Roberto C. Sánchez <roberto.sanchez@wright.edu>
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,11 @@
  */
 
 package edu.wright.cs.jfiles.commands;
-/*
- * The parser class will be a class dedicated to parsing the given string from the user. 
- * An example would be given: "FIND -r:true -time:10h *.txt", the Parser class will
- * automatically parse out the arguments and flags. 
+
+/**
+ *  The parser class will be a class dedicated to parsing the given string from the user.
+ *  An example would be given: "FIND -r:true -time:10h *.txt", the Parser class will
+ *  automatically parse out the arguments and flags.
  */
 public class Parser {
 
