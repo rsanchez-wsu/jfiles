@@ -33,6 +33,9 @@ import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 
 /**
  * This class encapsulates the FileStruct class in an ArrayList and provides methods to read and
@@ -143,7 +146,7 @@ public class XmlHandler {
 	 *
 	 * @return copy of arrlist
 	 */
-	public ArrayList<FileStruct> getFiles() {
-		return new ArrayList<FileStruct>(arrlist);
+	public List<FileStruct> getFiles() {
+		return Collections.unmodifiableList(arrlist);
 	}
 }
