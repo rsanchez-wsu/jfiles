@@ -28,8 +28,12 @@ package edu.wright.cs.jfiles.commands;
  */
 public class Parser {
 
+	/**
+	 * Inits a new parser.
+	 * @param args The arguments to parse.
+	 */
 	Parser(String args) {
-		
+
 	}
-	
+
 }

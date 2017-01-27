@@ -23,14 +23,18 @@ package edu.wright.cs.jfiles.commands;
 
 import java.util.function.Function;
 
+/**
+ * Commands enum used to hold a list of commands
+ * and easily get a new instance of a command.
+ */
 public enum Commands {
-	
+
 	QUIT((String args) -> {
 		return new Quit(args);
 	});
-	
+
 	private Function<String, Command> lam;
-	
+
 	/**
 	 * The function that returns an instance of the command.
 	 * @return A function that returns a Command instance.
@@ -38,7 +42,7 @@ public enum Commands {
 	private Function<String, Command> getLam() {
 		return this.lam;
 	}
-	
+
 	/**
 	 * Inits a new enum.
 	 * @param lam The function that creates a new instance of the command.
@@ -46,7 +50,7 @@ public enum Commands {
 	Commands(Function<String, Command> lam) {
 		this.lam = lam;
 	}
-	
+
 	/**
 	 * Gets a new instance of the command.
 	 * @param cmdName The name of the command.
@@ -59,7 +63,7 @@ public enum Commands {
 		// Return a new instance if found, else null.
 		return cmd != null ? cmd.getLam().apply(args) : null;
 	}
-	
+
 	/**
 	 * Finds the command in the enum based on the name.
 	 * @param cmdName The name of the command to find in the enum.
@@ -68,10 +72,14 @@ public enum Commands {
 	private static Commands findCommand(String cmdName) {
 		Commands fcmd = null;
 
-		for (Commands cmd : Commands.values())
-			if (cmd.name().equals(cmdName)) fcmd = cmd;
+		for (Commands cmd : Commands.values()) {
+			if (cmd.name().equals(cmdName)) {
+				fcmd = cmd;
+				break;
+			}
+		}
 
 		return fcmd;
 	}
-	
+
 }

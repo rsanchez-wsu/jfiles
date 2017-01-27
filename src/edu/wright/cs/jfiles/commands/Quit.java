@@ -34,7 +34,7 @@ public class Quit extends Command {
 
 	/**
 	 * Calls super.
-	 * @param parser Command's args.
+	 * @param args Command's args.
 	 */
 	public Quit(String args) {
 		super(args);
