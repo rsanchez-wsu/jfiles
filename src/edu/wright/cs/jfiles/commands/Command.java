@@ -29,15 +29,17 @@ public abstract class Command {
 
 	/**
 	 * Default constructor.
-	 * @param parser Command Parser
+	 * @param args Command Parser
 	 */
-	public Command(Parser parser) {
-		this.parser = parser;
+	public Command(String args) {
+		this.parser = new Parser(args);
 	}
 
 	/**
 	 * Abstract execute command.
 	 * @return The output of the command.
 	 */
-	public abstract String execute();
+	public String execute() {
+		return "";
+	}
 }
