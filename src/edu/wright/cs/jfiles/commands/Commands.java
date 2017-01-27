@@ -56,13 +56,14 @@ public enum Commands {
 	 * Gets a new instance of the command.
 	 * @param cmdName The name of the command.
 	 * @param args The arguments of the command.
-	 * @return Returns a new instance of the command. If not found, returns null.
+	 * @return Returns a new instance of the command.
+	 *         If not found, returns new CommandNotFound.
 	 */
 	public static Command getNewInstance(String cmdName, String args) {
 		// Find command in enum
 		Commands cmd = findCommand(cmdName.toUpperCase(Locale.ENGLISH));
 		// Return a new instance if found, else null.
-		return cmd != null ? cmd.getLam().apply(args) : null;
+		return cmd != null ? cmd.getLam().apply(args) : new CommandNotFound("");
 	}
 
 	/**
