@@ -30,7 +30,9 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.layout.FlowPane;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,7 +81,8 @@ public class JDirectoryIconView extends FlowPane {
 	public void populateRemote(String xml) {
 		// Build xml for given directory
 		XmlHandler xmlHandler = new XmlHandler();
-		xmlHandler.readXml(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())));
+		InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
+		xmlHandler.readXml(new InputStreamReader(stream, StandardCharsets.UTF_8));
 
 		populate(xmlHandler);
 	}

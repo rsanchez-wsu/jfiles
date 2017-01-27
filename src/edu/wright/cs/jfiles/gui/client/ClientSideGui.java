@@ -79,18 +79,6 @@ public class ClientSideGui extends Application {
 	TextField usernameTextField;
 	TextField passwordTextField;
 
-	// String containing fake XML for parsing testing (output from server
-	// issue #17)
-	String testXml = "<?xml version=\"1.0\"?>" + "<items>"
-			+ "<item><name>Test</name><ext>.txt</ext><type>file</type></item>"
-			+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>"
-			+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>"
-			+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>"
-			+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>"
-			+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>"
-			+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>"
-			+ "<item><name>Folder</name><ext></ext><type>folder</type></item>" + "</items>";
-
 	/**
 	 * This method is where most visual elements are created and manipulated.
 	 *

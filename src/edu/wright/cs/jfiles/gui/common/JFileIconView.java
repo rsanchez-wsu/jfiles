@@ -46,8 +46,8 @@ public class JFileIconView extends BorderPane {
 
 	private ContextMenu contextMenu;
 
-	private final int height = 80;
-	private final int width = 80;
+	private final int height;
+	private final int width;
 
 	private static Image fileImage;
 	private static Image directoryImage;
@@ -78,6 +78,9 @@ public class JFileIconView extends BorderPane {
 	 */
 	public JFileIconView(String name, String ext, FileStruct.Type type) {
 		super();
+
+		height = 80;
+		width = 80;
 
 		this.name = name;
 		this.ext = ext;

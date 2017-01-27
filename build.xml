@@ -98,6 +98,7 @@
 			debug="on"
 			deprecation="on">
 
+			<compilerarg value="-Xlint:-processing" />
 			<compilerarg value="-Xlint:all" />
 			<compilerarg value="-Xlint:-path" />
 			<compilerarg value="-Werror" />
