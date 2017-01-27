@@ -36,15 +36,15 @@ public class Quit extends Command {
 	 * Calls super.
 	 * @param parser Command's args.
 	 */
-	public Quit(Parser parser) {
-		super(parser);
+	public Quit(String args) {
+		super(args);
 	}
 
 	/**
 	 *  @return Nothing.
 	 */
 	public String execute() {
-		return "";
+		return "Quitting...";
 	}
 
 }
