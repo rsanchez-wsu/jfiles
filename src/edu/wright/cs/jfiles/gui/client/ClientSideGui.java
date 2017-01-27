@@ -42,8 +42,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -63,8 +66,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
-
 
 /**
  * This class will form the body of the JFiles client side GUI application. This
@@ -104,11 +105,15 @@ public class ClientSideGui extends Application {
 	/**
 	 * This method is where most visual elements are created and manipulated.
 	 *
-	 * @throws IOException Thrown if parsing fails.
-	 * @throws SAXException  Thrown if parsing fails.
-	 * @throws ParserConfigurationException Thrown if parsing fails.
-	 * @throws XPathExpressionException Thrown when XPath counting elements when parsing,
-	 * 									compiling, or evaluating fails.
+	 * @throws IOException
+	 *             Thrown if parsing fails.
+	 * @throws SAXException
+	 *             Thrown if parsing fails.
+	 * @throws ParserConfigurationException
+	 *             Thrown if parsing fails.
+	 * @throws XPathExpressionException
+	 *             Thrown when XPath counting elements when parsing, compiling,
+	 *             or evaluating fails.
 	 */
 	@Override
 	public void start(Stage primaryStage) throws ParserConfigurationException, SAXException,
@@ -209,16 +214,37 @@ public class ClientSideGui extends Application {
 		// Displays the start Stage and its contents.
 		loginStage.show();
 
-		// Main Window Creation
+		// Creates a box for the search area
+		TextField searchArea = new TextField();
+
+		// Creates a button to collect the search
+		Button searchButton = new Button();
+		searchButton.setText("Search");
+
+		// Create MenuBar For Menu Items
+		MenuBar headderMenuBar = new MenuBar();
+
+		// Create GridPane to organize the objects
+		GridPane gridPane = new GridPane();
+
+		// Add objects to GridPane
+		gridPane.add(headderMenuBar, 0, 0, 2, 1);
+		gridPane.add(searchArea, 0, 1);
+		gridPane.add(searchButton, 1, 1);
+
+		// Add Column Constraints to make the GridPane look nice
+		ColumnConstraints column1 = new ColumnConstraints();
+		column1.setHgrow(Priority.ALWAYS);
+		gridPane.getColumnConstraints().add(column1);
 
 		// Pane Creation
 		BorderPane basePane = new BorderPane();
+
+		// Add GridPane to top of BasePane
+		basePane.setTop(gridPane);
+
 		// Sets basePane's color
 		// basePane.setStyle("-fx-background-color: LIGHTGREY;");
-
-		// Create MenuBar on window Top
-		MenuBar headderMenuBar = new MenuBar();
-		basePane.setTop(headderMenuBar);
 
 		// Create Menus
 		Menu fileMenu = new Menu("File");
@@ -251,12 +277,11 @@ public class ClientSideGui extends Application {
 		final int imageWidth = 30;
 
 		// Specifies a new image icon and resizes it
-		Image fileImage = new Image(
-				"file:src/edu/wright/cs/jfiles/resources/images/file_icon.png");
+		Image fileImage = new Image("file:src/edu/wright/cs/jfiles/resources/images/file_icon.png");
 
 		// Reserved for folder icon when we can use it
-		Image folderImage = new Image(
-				"file:src/edu/wright/cs/jfiles/resources/images/folder_icon.png");
+		Image folderImage =
+				new Image("file:src/edu/wright/cs/jfiles/resources/images/folder_icon.png");
 
 		// ArrayList of item objects to hold files or folders
 		ArrayList<Item> items = new ArrayList<Item>();
@@ -287,7 +312,6 @@ public class ClientSideGui extends Application {
 
 			items.add(item);
 		}
-
 
 		// //////////////////////////////////////////////////////////////////////
 		// // This code block will implement the old functionality of the output
@@ -338,10 +362,8 @@ public class ClientSideGui extends Application {
 			BorderPane file = new BorderPane();
 			file.setBottom(new Label(fileName));
 			file.setCenter(openImageView);
-			file.setStyle("-fx-font-size: 15px;"
-					+ "-fx-font-family: 'Currier New' ;"
-					+ "-fx-text-fill: black;"
-					+ "-fx-base: #85C1E9;");
+			file.setStyle("-fx-font-size: 15px;" + "-fx-font-family: 'Currier New' ;"
+					+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
 
 			// Puts the button in frame
 			filePane.getChildren().add(file);
