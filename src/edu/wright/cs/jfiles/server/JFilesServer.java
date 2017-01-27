@@ -266,6 +266,7 @@ public class JFilesServer implements Runnable {
 	 */
 	public synchronized void handle(int id, String input) {
 
+		/*
 		// logger.info("Received connection from" +
 		// server.getRemoteSocketAddress());
 		String dir = System.getProperty("user.dir");
@@ -348,7 +349,7 @@ public class JFilesServer implements Runnable {
 				cmdHstWrt.close();
 			}
 		}
-
+		*/
 	}
 
 	/**
