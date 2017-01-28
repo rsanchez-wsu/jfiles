@@ -33,6 +33,13 @@ public abstract class Command {
 	 */
 	public Command(String args) {
 		this.parser = new Parser(args);
+
+		/*
+		 * FindBugs says parser variable is 'unused' in abstract class.
+		 * Can't suppresswarning without something else complaining.
+		 * So the solution is to call a method that does nothing.
+		 */
+		parser.shutupFindBugs();
 	}
 
 	/**
