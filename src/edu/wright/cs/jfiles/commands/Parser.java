@@ -21,6 +21,11 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  *  The parser class will be a class dedicated to parsing the given string from the user.
  *  An example would be given: "FIND -r:true -time:10h *.txt", the Parser class will
@@ -28,11 +33,59 @@ package edu.wright.cs.jfiles.commands;
  */
 public class Parser {
 
+	private final String[] args;
+	private final Map<String, String> flags;
+
 	/**
 	 * Inits a new parser.
 	 * @param args The arguments to parse.
 	 */
 	Parser(String args) {
+		List<String> tempArgs = new ArrayList<String>();
+		this.flags = new HashMap<String, String>();
+
+		for (String arg : args.split(" ")) {
+			if (arg.startsWith("-")) {
+				arg = arg.substring(1);
+				String[] tokens = arg.split(":", 2);
+
+				if (tokens.length > 1) {
+					this.flags.put(tokens[0], tokens[1]);
+				} else {
+					this.flags.put(tokens[0], "");
+				}
+			} else {
+				if (arg.length() > 0) {
+					tempArgs.add(arg);
+				}
+			}
+		}
+
+		this.args = tempArgs.toArray(new String[tempArgs.size()]);
+	}
+
+	/**
+	 * Gets the arguments.
+	 * @return The arguments
+	 */
+	public String[] getArguments() {
+		return this.args.clone();
+	}
+
+	/**
+	 * Gets the flags.
+	 * @return The flags.
+	 */
+	public Map<String, String> getFlags() {
+		return this.flags;
+	}
+
+	/**
+	 * FindBugs says parser variable is 'unused' in abstract class.
+	 * Can't suppresswarning without something else complaining.
+	 * So the solution is to call a method that does nothing.
+	 */
+	public void shutupFindBugs() {
 
 	}
 
