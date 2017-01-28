@@ -23,6 +23,7 @@ package edu.wright.cs.jfiles.gui.client;
 
 import edu.wright.cs.jfiles.gui.common.Item;
 import edu.wright.cs.jfiles.gui.common.Parser;
+import edu.wright.cs.jfiles.server.JFilesServer;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -214,28 +215,42 @@ public class ClientSideGui extends Application {
 		// Displays the start Stage and its contents.
 		loginStage.show();
 
+		// Create MenuBar For Menu Items
+		MenuBar headderMenuBar = new MenuBar();
+		
+		// Creates a label for path and text field to display path
+		Label pathLabel = new Label("Current Directory: ");
+		TextField pathDisplay = new TextField();
+		pathDisplay.setEditable(false);
+		pathDisplay.setPromptText("File Path");
+		
+		// Populates text field with path
+		String currentPath = JFilesServer.sendPath();
+		pathDisplay.appendText(currentPath);
+		
 		// Creates a box for the search area
 		TextField searchArea = new TextField();
 
 		// Creates a button to collect the search
 		Button searchButton = new Button();
 		searchButton.setText("Search");
-
-		// Create MenuBar For Menu Items
-		MenuBar headderMenuBar = new MenuBar();
+		searchButton.setMinWidth(100);
 
 		// Create GridPane to organize the objects
 		GridPane gridPane = new GridPane();
 
 		// Add objects to GridPane
 		gridPane.add(headderMenuBar, 0, 0, 2, 1);
-		gridPane.add(searchArea, 0, 1);
-		gridPane.add(searchButton, 1, 1);
+		gridPane.add(pathLabel, 0, 1);
+		gridPane.add(pathDisplay, 1, 1);
+		gridPane.add(searchArea, 1, 2);
+		gridPane.add(searchButton, 0, 2);
 
-		// Add Column Constraints to make the GridPane look nice
+		// Add Column Constraints to get areas even
 		ColumnConstraints column1 = new ColumnConstraints();
-		column1.setHgrow(Priority.ALWAYS);
-		gridPane.getColumnConstraints().add(column1);
+		ColumnConstraints column2 = new ColumnConstraints();
+		column2.setHgrow(Priority.ALWAYS);
+		gridPane.getColumnConstraints().addAll(column1, column2);
 
 		// Pane Creation
 		BorderPane basePane = new BorderPane();
