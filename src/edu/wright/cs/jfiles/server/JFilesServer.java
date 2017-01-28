@@ -23,6 +23,7 @@ package edu.wright.cs.jfiles.server;
 
 import edu.wright.cs.jfiles.commands.Command;
 import edu.wright.cs.jfiles.commands.Commands;
+import edu.wright.cs.jfiles.commands.Quit;
 import edu.wright.cs.jfiles.core.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -272,7 +273,11 @@ public class JFilesServer implements Runnable {
 
 		Command cmd = Commands.getNewInstance(input.split(" ")[0], input);
 
-		System.out.println(cmd.execute());
+		clients[findClient(id)].send(cmd.execute());
+
+		if (cmd instanceof Quit) {
+			remove(id);
+		}
 
 		/*
 		// logger.info("Received connection from" +
