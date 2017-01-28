@@ -30,6 +30,9 @@ import java.util.function.Function;
  */
 public enum Commands {
 
+	PING((String args) -> {
+		return new Ping(args);
+	}),
 	QUIT((String args) -> {
 		return new Quit(args);
 	});
