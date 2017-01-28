@@ -25,7 +25,7 @@ package edu.wright.cs.jfiles.commands;
  *  This is the master class for all commands.
  */
 public abstract class Command {
-	private Parser parser;
+	protected Parser parser;
 
 	/**
 	 * Default constructor.
