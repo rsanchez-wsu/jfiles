@@ -130,7 +130,7 @@ public class JFilesClient implements Runnable {
 				streamOut.writeUTF(console.readLine());
 				streamOut.flush();
 			} catch (IOException ioe) {
-				System.out.println("Sending error: " + ioe.getMessage());
+				System.out.println("\r\nSending error: " + ioe.getMessage());
 				stop();
 			}
 		}
@@ -148,7 +148,8 @@ public class JFilesClient implements Runnable {
 			System.out.println("Good bye. Press RETURN to exit ...");
 			stop();
 		} else {
-			System.out.print(msg);
+			System.out.println(msg);
+			System.out.print("> ");
 		}
 	}
 
