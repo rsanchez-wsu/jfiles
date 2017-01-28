@@ -44,7 +44,7 @@ public class Quit extends Command {
 	 *  @return Nothing.
 	 */
 	public String execute() {
-		return "Quitting...";
+		return ".exit";
 	}
 
 }
