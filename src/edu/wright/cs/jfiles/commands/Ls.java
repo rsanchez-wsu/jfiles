@@ -29,13 +29,13 @@ package edu.wright.cs.jfiles.commands;
  *      - None.
  *  Example:
  */
-public class Is extends Command {
+public class Ls extends Command {
 
 	/**
 	 * Calls super.
 	 * @param args Command's args.
 	 */
-	public Is(String args) {
+	public Ls(String args) {
 		super(args);
 	}
 
@@ -44,7 +44,7 @@ public class Is extends Command {
 	 *  @return Nothing.
 	 */
 	public String execute() {
-		return "IS: " + "";
+		return "LS: " + "";
 	}
 
 }
