@@ -296,24 +296,32 @@ public class JFilesServer implements Runnable {
 
 				break;
 			case "FIND":
-				theDate = Calendar.getInstance();
-				schHstWrt.println(baseCommand[1] + "\t\t" + dateFormat.format(theDate.getTime()));
-				if (isValid(baseCommand)) {
-					findCmd(dir, id, baseCommand[1]);
-				} else {
-					clients[findClient(id)].send("Invaild Command\n");
+				try {
+					theDate = Calendar.getInstance();
+					schHstWrt.println(baseCommand[1]
+							+ "\t\t" + dateFormat.format(theDate.getTime()));
+					if (isValid(baseCommand)) {
+						findCmd(dir, id, baseCommand[1]);
+					} else {
+						clients[findClient(id)].send("Invaild Command\n");
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {
+					break;
 				}
-
 				break;
 			case "FINDR":
-				theDate = Calendar.getInstance();
-				schHstWrt.println(baseCommand[1] + "\t\t" + dateFormat.format(theDate.getTime()));
-				if (isValid(baseCommand)) {
-					recursiveFindCmd(dir, id, baseCommand[1]);
-				} else {
-					clients[findClient(id)].send("Invaild Command\n");
+				try {
+					theDate = Calendar.getInstance();
+					schHstWrt.println(baseCommand[1]
+							+ "\t\t" + dateFormat.format(theDate.getTime()));
+					if (isValid(baseCommand)) {
+						recursiveFindCmd(dir, id, baseCommand[1]);
+					} else {
+						clients[findClient(id)].send("Invaild Command\n");
+					}
+				} catch (ArrayIndexOutOfBoundsException e) {
+					break;
 				}
-
 				break;
 			case "FILE":
 				break;
