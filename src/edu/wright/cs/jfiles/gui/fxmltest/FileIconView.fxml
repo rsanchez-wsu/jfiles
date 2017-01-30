@@ -6,11 +6,11 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<BorderPane fx:id="root" onMouseClicked="#handleMouseClick" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wright.cs.jfiles.gui.fxmltest.FileIconViewController">
+<BorderPane fx:id="root" onMouseClicked="#handleMouseClick" stylesheets="@FileIconView.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wright.cs.jfiles.gui.fxmltest.FileIconViewController">
    <center>
-      <ImageView fx:id="image" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+      <ImageView fx:id="image" fitHeight="150.0" fitWidth="200.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
    </center>
    <bottom>
-      <Label fx:id="label" text="Label" BorderPane.alignment="CENTER" />
+      <Label fx:id="label" mouseTransparent="true" text="Label" BorderPane.alignment="CENTER" />
    </bottom>
 </BorderPane>

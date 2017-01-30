@@ -9,7 +9,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<BorderPane fx:id="root" prefHeight="600.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wright.cs.jfiles.gui.fxmltest.AppViewController">
+<BorderPane fx:id="root" prefHeight="600.0" prefWidth="1200.0" stylesheets="@AppView.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wright.cs.jfiles.gui.fxmltest.AppViewController">
    <top>
       <MenuBar prefHeight="0.0" prefWidth="0.0" BorderPane.alignment="CENTER">
         <menus>
@@ -20,7 +20,10 @@
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
             <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
+              <MenuItem mnemonicParsing="false" onAction="#cut" text="Cut" />
+                  <MenuItem mnemonicParsing="false" onAction="#copy" text="Copy" />
+                  <MenuItem mnemonicParsing="false" onAction="#paste" text="Paste" />
+                  <MenuItem mnemonicParsing="false" onAction="#delete" text="Delete" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
@@ -37,7 +40,7 @@
             <TreeView fx:id="treeView" BorderPane.alignment="CENTER" />
          </left>
          <center>
-            <FlowPane fx:id="flowPane" rowValignment="TOP" BorderPane.alignment="CENTER" />
+            <FlowPane fx:id="flowPane" onContextMenuRequested="#contextMenuRequested" onMouseClicked="#handleMouseClicked" rowValignment="TOP" BorderPane.alignment="CENTER" />
          </center>
       </BorderPane>
    </center>
