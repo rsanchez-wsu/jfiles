@@ -130,7 +130,8 @@ public class JFilesClient implements Runnable {
 				streamOut.writeUTF(console.readLine());
 				streamOut.flush();
 			} catch (IOException ioe) {
-				System.out.println("\r\nSending error: " + ioe.getMessage());
+				System.out.println(System.getProperty("line.separator")
+						+ "Sending error: " + ioe.getMessage());
 				stop();
 			}
 		}
