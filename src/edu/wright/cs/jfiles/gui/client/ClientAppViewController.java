@@ -21,6 +21,7 @@
 
 package edu.wright.cs.jfiles.gui.client;
 
+import edu.wright.cs.jfiles.client.JFilesClient;
 import edu.wright.cs.jfiles.core.FileStruct;
 import edu.wright.cs.jfiles.core.XmlHandler;
 import edu.wright.cs.jfiles.gui.common.FileIconViewController;
@@ -36,9 +37,13 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
@@ -53,6 +58,8 @@ import java.util.ResourceBundle;
  *
  */
 public class ClientAppViewController implements Initializable {
+
+	private JFilesClient client;
 
 	private FileStruct selectedFile;
 	private Map<FileStruct, Parent> contents;
@@ -105,6 +112,7 @@ public class ClientAppViewController implements Initializable {
 	 */
 	public void setSelectedFile(FileStruct fs) {
 		selectedFile = fs;
+		System.out.println(selectedFile.getValue("path"));
 		for (Entry<FileStruct, Parent> entry : contents.entrySet()) {
 			if (entry.getKey().equals(fs)) {
 				entry.getValue().getStyleClass().add("selected");
@@ -180,7 +188,12 @@ public class ClientAppViewController implements Initializable {
 	 */
 	@FXML
 	public void cut() {
-		System.out.println("Cut");
+		// if (clipboard.hasfiles()) {
+		// client.send(new Command(Type.COPY, source, dest));
+		// } else {
+		// clipboard.add(file);
+		// client.send(new Command(Type.REMOVE, target));
+		// }
 	}
 
 	/**
@@ -188,7 +201,7 @@ public class ClientAppViewController implements Initializable {
 	 */
 	@FXML
 	public void copy() {
-		System.out.println("Copy");
+		// clipboard.add(selectefile);
 	}
 
 	/**
@@ -196,7 +209,7 @@ public class ClientAppViewController implements Initializable {
 	 */
 	@FXML
 	public void paste() {
-		System.out.println("Paste");
+		// client.send(new Command(Type.COPY, source, dest));
 	}
 
 	/**
@@ -204,7 +217,7 @@ public class ClientAppViewController implements Initializable {
 	 */
 	@FXML
 	public void delete() {
-		System.out.println("Delete");
+		// client.send(new Command(Type.REMOVE, target));
 	}
 
 	/**
@@ -215,6 +228,52 @@ public class ClientAppViewController implements Initializable {
 		fileContextMenu.hide();
 		// folderContextMenu.hide();
 		viewContextMenu.hide();
+	}
+
+	/**
+	 * Handles dragging files over the view.
+	 *
+	 * @param event
+	 *            drag event
+	 */
+	@FXML
+	public void onDragOver(DragEvent event) {
+		event.acceptTransferModes(TransferMode.COPY);
+	}
+
+	/**
+	 * Handles dropping files on the view.
+	 *
+	 * @param event
+	 *            drag event
+	 */
+	@FXML
+	public void onDragDrop(DragEvent event) {
+		root.getScene().getWindow().requestFocus();
+
+		Dragboard dragboard = event.getDragboard();
+		if (dragboard.hasFiles()) {
+			for (File file : dragboard.getFiles()) {
+				try {
+					FileStruct fileStruct = new FileStruct(file.toPath());
+					System.out.println(fileStruct.getValue("path") + " added");
+					FXMLLoader loader = new FXMLLoader(
+							FileIconViewController.class.getResource("FileIconView.fxml"));
+					final Parent view = loader.load();
+					FileIconViewController controller = loader.getController();
+
+					controller.setFileStruct(fileStruct);
+					controller.setSize(Size.MEDIUM);
+					controller.registerAppController(this);
+
+					flowPane.getChildren().add(view);
+					contents.put(fileStruct, view);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+
+		}
 	}
 
 	/**
@@ -236,6 +295,7 @@ public class ClientAppViewController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		contents = new HashMap<>();
+		client = new JFilesClient("localhost", 9786);
 		loadDirectory("./src/edu/wright/cs/jfiles/core");
 		fileContextMenu = buildFileContextMenu();
 		viewContextMenu = buildViewContextMenu();

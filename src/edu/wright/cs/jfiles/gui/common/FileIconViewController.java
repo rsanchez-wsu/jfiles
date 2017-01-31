@@ -44,6 +44,15 @@ import java.util.ResourceBundle;
  */
 public class FileIconViewController implements Initializable {
 
+	private static Image fileImage;
+	private static Image directoryImage;
+
+	static {
+		fileImage = new Image("file:src/edu/wright/cs/jfiles/resources/images/file_icon.png");
+		directoryImage =
+				new Image("file:src/edu/wright/cs/jfiles/resources/images/folder_icon.png");
+	}
+
 	/**
 	 * The model for this view.
 	 */
@@ -104,7 +113,16 @@ public class FileIconViewController implements Initializable {
 	 */
 	private void populate() {
 		label.setText((String) fileStruct.getValue("name"));
-		image.setImage(new Image("file:src/edu/wright/cs/jfiles/resources/images/file_icon.png"));
+		switch (fileStruct.getType()) {
+		case FILE:
+			image.setImage(fileImage);
+			break;
+		case DIRECTORY:
+			image.setImage(directoryImage);
+			break;
+		default:
+			image.setImage(fileImage);
+		}
 	}
 
 	/**
