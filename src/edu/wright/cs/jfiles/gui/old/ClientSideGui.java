@@ -19,10 +19,9 @@
  *
  */
 
-package edu.wright.cs.jfiles.gui.client;
+package edu.wright.cs.jfiles.gui.old;
 
-import edu.wright.cs.jfiles.gui.common.Item;
-import edu.wright.cs.jfiles.gui.common.Parser;
+import edu.wright.cs.jfiles.core.FileStruct.Type;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -31,6 +30,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -38,11 +38,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -51,20 +48,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
-import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
-
 
 /**
  * This class will form the body of the JFiles client side GUI application. This
@@ -88,18 +77,6 @@ public class ClientSideGui extends Application {
 	Label emptyPasswordFieldLabel;
 	TextField usernameTextField;
 	TextField passwordTextField;
-
-	// String containing fake XML for parsing testing (output from server
-	// issue #17)
-	String testXml = "<?xml version=\"1.0\"?>" + "<items>"
-			+ "<item><name>Test</name><ext>.txt</ext><type>file</type></item>"
-			+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>"
-			+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>"
-			+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>"
-			+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>"
-			+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>"
-			+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>"
-			+ "<item><name>Folder</name><ext></ext><type>folder</type></item>" + "</items>";
 
 	/**
 	 * This method is where most visual elements are created and manipulated.
@@ -220,23 +197,22 @@ public class ClientSideGui extends Application {
 		MenuBar headderMenuBar = new MenuBar();
 		basePane.setTop(headderMenuBar);
 
-		// Create Menus
-		Menu fileMenu = new Menu("File");
-		Menu editMenu = new Menu("Edit");
-
 		// Create File Menu Items
-		MenuItem openFileMenuItem = new MenuItem("Open");
+		MenuItem openMenuItem = new MenuItem("Open");
 		MenuItem closeMenuItem = new MenuItem("Close");
 		// Create Edit Menu Items
 		MenuItem createMenuItem = new MenuItem("Create");
-		MenuItem openMenuItem = new MenuItem("Open");
 		MenuItem deleteMenuItem = new MenuItem("Delete");
 		MenuItem copyMenuItem = new MenuItem("Copy");
 		MenuItem pasteMenuItem = new MenuItem("Paste");
 		MenuItem cutMenuItem = new MenuItem("Cut");
 
+		// Create Menus
+		Menu fileMenu = new Menu("File");
+		Menu editMenu = new Menu("Edit");
+
 		// Add Menu Items and a Separator to Menu.
-		fileMenu.getItems().addAll(openFileMenuItem, new SeparatorMenuItem(), closeMenuItem);
+		fileMenu.getItems().addAll(openMenuItem, new SeparatorMenuItem(), closeMenuItem);
 		editMenu.getItems().addAll(createMenuItem, openMenuItem, deleteMenuItem, copyMenuItem,
 				pasteMenuItem, cutMenuItem);
 
@@ -246,107 +222,27 @@ public class ClientSideGui extends Application {
 		// Add the menus to the menu bar
 		headderMenuBar.getMenus().addAll(fileMenu, editMenu);
 
-		// Tools Area
-		final int imageHeight = 30;
-		final int imageWidth = 30;
+		// Build Context menus
+		ContextMenu fileContextMenu = new ContextMenu();
 
-		// Specifies a new image icon and resizes it
-		Image fileImage = new Image(
-				"file:src/edu/wright/cs/jfiles/resources/images/file_icon.png");
+		// Create menu Items
+		MenuItem openContextMenuItem = new MenuItem("Open");
+		// MenuItem closeContextMenuItem = new MenuItem("Close");
+		// MenuItem newContextMenuItem = new MenuItem("Create");
+		MenuItem deleteContextMenuItem = new MenuItem("Delete");
+		MenuItem copyContextMenuItem = new MenuItem("Copy");
+		MenuItem pasteContextMenuItem = new MenuItem("Paste");
+		MenuItem cutContextMenuItem = new MenuItem("Cut");
 
-		// Reserved for folder icon when we can use it
-		Image folderImage = new Image(
-				"file:src/edu/wright/cs/jfiles/resources/images/folder_icon.png");
+		fileContextMenu.getItems().addAll(openContextMenuItem, new SeparatorMenuItem(),
+				cutContextMenuItem, copyContextMenuItem, pasteContextMenuItem,
+				new SeparatorMenuItem(), deleteContextMenuItem);
 
-		// ArrayList of item objects to hold files or folders
-		ArrayList<Item> items = new ArrayList<Item>();
-
-		// XML Parsing object
-		Parser parser = new Parser();
-
-		// Parsed document
-		Document doc = parser.parse(testXml);
-
-		// Count of items in the /items/item XML struct
-		int itemCount = parser.countElements(doc, "/items/item");
-
-		XPathFactory factory = XPathFactory.newInstance();
-		XPath xpath = factory.newXPath();
-
-		// Gather each name, extension, and type of each item in /items
-		for (int i = 1; i <= itemCount; i++) {
-			XPathExpression getFileName = xpath.compile("/items/item[" + i + "]/name");
-			XPathExpression getFileExt = xpath.compile("/items/item[" + i + "]/ext");
-			XPathExpression getFileType = xpath.compile("/items/item[" + i + "]/type");
-
-			String fileName = getFileName.evaluate(doc, XPathConstants.STRING).toString();
-			String fileExt = getFileExt.evaluate(doc, XPathConstants.STRING).toString();
-			String fileType = getFileType.evaluate(doc, XPathConstants.STRING).toString();
-
-			Item item = new Item(fileName, fileExt, fileType);
-
-			items.add(item);
-		}
-
-
-		// //////////////////////////////////////////////////////////////////////
-		// // This code block will implement the old functionality of the output
-		// Region and the path display. Placement of the text field and
-		// scrollpane will change when a better layout is made.
-		// // Creates a box for the current path to be displayed in.
-		// TextField pathDisplay = new TextField();
-		// pathDisplay.setEditable(false);
-		// // Populates box with current path
-		// String currentPath = JFilesServer.sendPath();
-		// pathDisplay.appendText(currentPath);
-		// //currently sets at bottom of pane to test it functions properly,
-		// this will change
-		// basePane.setBottom(pathDisplay);
-		//
-		// // This creates a box with changeable text that can be scrolled
-		// through.
-		// // Must be initialized before file panel is populated to contain
-		// event information
-		// TextField consoleOutput = new TextField();
-		// ScrollPane scrollPane = new ScrollPane(consoleOutput);
-		// consoleOutput.setEditable(false);
-		// //basePane.setBottom(scrollPane);
-		// //////////////////////////////////////////////////////////////////////
-
-		FlowPane filePane = new FlowPane();
-		filePane.setStyle("-fx-background-color: LIGHTBLUE;");
-		basePane.setCenter(filePane);
-
-		// This for loop loops through the items parsed from the XML string
-		// and puts them into the GUI with an image and name
-		for (int i = 0; i < items.size(); i++) {
-			Item item = items.get(i);
-
-			String fileType = item.getType();
-			ImageView openImageView = new ImageView();
-			openImageView.setFitHeight(imageHeight);
-			openImageView.setFitWidth(imageWidth);
-
-			// If block to determine if item is a folder or a file
-			if (fileType.equals("folder")) {
-				openImageView.setImage(folderImage);
-			} else {
-				openImageView.setImage(fileImage);
-			}
-
-			String fileName = item.getName() + item.getExt();
-			BorderPane file = new BorderPane();
-			file.setBottom(new Label(fileName));
-			file.setCenter(openImageView);
-			file.setStyle("-fx-font-size: 15px;"
-					+ "-fx-font-family: 'Currier New' ;"
-					+ "-fx-text-fill: black;"
-					+ "-fx-base: #85C1E9;");
-
-			// Puts the button in frame
-			filePane.getChildren().add(file);
-			FlowPane.setMargin(file, new Insets(5, 5, 5, 5));
-		}
+		// Creates directory view and adds to center of screen
+		JDirectoryIconView directoryView = new JDirectoryIconView();
+		directoryView.populateLocal("./src/edu/wright/cs/jfiles/core");
+		directoryView.addContextMenu(fileContextMenu, Type.FILE);
+		basePane.setCenter(directoryView);
 
 		// Scene Creation. Put the basePane on the scene.
 		Scene scene = new Scene(basePane, 1200, 600, Color.WHITE);

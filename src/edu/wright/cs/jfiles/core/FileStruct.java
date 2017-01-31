@@ -47,7 +47,7 @@ public class FileStruct implements Serializable {
 	 * @author brian
 	 *
 	 */
-	enum Type {
+	public enum Type {
 		FILE("file"), DIRECTORY("directory"), SYMBOLICLINK("symbolicLink"), OTHER("other");
 		private String type;
 
@@ -56,7 +56,7 @@ public class FileStruct implements Serializable {
 		 * @param input Type of object
 		 */
 		Type(String input) {
-			setType(input);
+			type = input;
 		}
 
 		/**
@@ -65,14 +65,6 @@ public class FileStruct implements Serializable {
 		 */
 		public String getType() {
 			return type;
-		}
-
-		/**
-		 * Public setter for type.
-		 * @param type type of object
-		 */
-		public void setType(String type) {
-			this.type = type;
 		}
 	}
 
