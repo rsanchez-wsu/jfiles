@@ -19,7 +19,7 @@
  *
  */
 
-package edu.wright.cs.jfiles.gui.fxmltest;
+package edu.wright.cs.jfiles.gui.client;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -33,11 +33,12 @@ import javafx.stage.Stage;
  * @author Matt
  *
  */
-public class App extends Application {
+public class ClientApp extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		FXMLLoader loader = new FXMLLoader(AppViewController.class.getResource("AppView.fxml"));
+		FXMLLoader loader =
+				new FXMLLoader(ClientAppViewController.class.getResource("ClientAppView.fxml"));
 		Parent appView = loader.load();
 		Scene scene = new Scene(appView);
 		stage.setScene(scene);

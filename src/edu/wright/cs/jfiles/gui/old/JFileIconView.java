@@ -19,7 +19,7 @@
  *
  */
 
-package edu.wright.cs.jfiles.gui.common;
+package edu.wright.cs.jfiles.gui.old;
 
 import edu.wright.cs.jfiles.core.FileStruct;
 

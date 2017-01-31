@@ -19,9 +19,10 @@
  *
  */
 
-package edu.wright.cs.jfiles.gui.fxmltest;
+package edu.wright.cs.jfiles.gui.common;
 
 import edu.wright.cs.jfiles.core.FileStruct;
+import edu.wright.cs.jfiles.gui.client.ClientAppViewController;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -51,7 +52,7 @@ public class FileIconViewController implements Initializable {
 	/**
 	 * The main app view controller.
 	 */
-	private AppViewController appController;
+	private ClientAppViewController appController;
 
 	// These are injected automatically by the FXML loading system when the view
 	// associated with this controller is loaded.
@@ -94,7 +95,7 @@ public class FileIconViewController implements Initializable {
 	 * @param controller
 	 *            the main app controller
 	 */
-	public void registerAppController(AppViewController controller) {
+	public void registerAppController(ClientAppViewController controller) {
 		appController = controller;
 	}
 

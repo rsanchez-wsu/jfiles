@@ -19,11 +19,12 @@
  *
  */
 
-package edu.wright.cs.jfiles.gui.fxmltest;
+package edu.wright.cs.jfiles.gui.client;
 
 import edu.wright.cs.jfiles.core.FileStruct;
 import edu.wright.cs.jfiles.core.XmlHandler;
-import edu.wright.cs.jfiles.gui.fxmltest.FileIconViewController.Size;
+import edu.wright.cs.jfiles.gui.common.FileIconViewController;
+import edu.wright.cs.jfiles.gui.common.FileIconViewController.Size;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -51,7 +52,7 @@ import java.util.ResourceBundle;
  * @author Matt
  *
  */
-public class AppViewController implements Initializable {
+public class ClientAppViewController implements Initializable {
 
 	private FileStruct selectedFile;
 	private Map<FileStruct, Parent> contents;

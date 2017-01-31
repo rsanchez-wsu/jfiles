@@ -9,7 +9,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<BorderPane fx:id="root" prefHeight="600.0" prefWidth="1200.0" stylesheets="@AppView.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wright.cs.jfiles.gui.fxmltest.AppViewController">
+<BorderPane fx:id="root" prefHeight="600.0" prefWidth="1200.0" stylesheets="@ClientAppView.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wright.cs.jfiles.gui.client.ClientAppViewController">
    <top>
       <MenuBar prefHeight="0.0" prefWidth="0.0" BorderPane.alignment="CENTER">
         <menus>
