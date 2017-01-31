@@ -28,7 +28,7 @@ package edu.wright.cs.jfiles.commands;
  *  Flags:
  *      - None.
  *  Example:
- *      PWD 
+ *      PWD
  */
 public class Pwd extends Command {
 
