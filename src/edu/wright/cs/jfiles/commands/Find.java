@@ -53,11 +53,13 @@ public class Find extends Command {
 		File folder = new File(directory);
 		File[] listOfFiles = folder.listFiles();
 
-		for (File f : listOfFiles) {
-			if (f.isFile() && f.getName().contains(filename)) {
-				res.add(f.getAbsolutePath());
-			} else if (f.isDirectory() && this.parser.doesFlagExist("R")) {
-				res.addAll(findFiles(filename, f.getAbsolutePath()));
+		if (folder.isDirectory() && listOfFiles != null) {
+			for (File f : listOfFiles) {
+				if (f.isFile() && f.getName().contains(filename)) {
+					res.add(f.getAbsolutePath());
+				} else if (f.isDirectory() && this.parser.doesFlagExist("R")) {
+					res.addAll(findFiles(filename, f.getAbsolutePath()));
+				}
 			}
 		}
 
@@ -70,9 +72,7 @@ public class Find extends Command {
 	private String getFiles(String filename, String directory) {
 		String dir = directory != null ? directory : ".";
 
-		List<String> res = findFiles(filename, dir);
-
-		return atos(res);
+		return atos(findFiles(filename, dir));
 	}
 
 	/**
