@@ -21,9 +21,9 @@
 
 package edu.wright.cs.jfiles.commands;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *  The Close command closes the connection.
@@ -43,10 +43,13 @@ public class Find extends Command {
 	public Find(String args) {
 		super(args);
 	}
-	
+
+	/**
+	 * @return The list of files that match filename.
+	 */
 	private List<String> findFiles(String filename, String directory) {
 		List<String> res = new ArrayList<String>();
-		
+
 		File folder = new File(directory);
 		File[] listOfFiles = folder.listFiles();
 
@@ -57,15 +60,18 @@ public class Find extends Command {
 				res.addAll(findFiles(filename, f.getAbsolutePath()));
 			}
 		}
-		
+
 		return res;
 	}
 
+	/**
+	 * @return The list of files that match filename as a string.
+	 */
 	private String getFiles(String filename, String directory) {
 		String dir = directory != null ? directory : ".";
-		
+
 		List<String> res = findFiles(filename, dir);
-		
+
 		return atos(res);
 	}
 
@@ -79,9 +85,9 @@ public class Find extends Command {
 		String filename = this.parser.next();
 		String directory = this.parser.next();
 
-		return filename != null ? 
-				getFiles(filename, directory) :
-				new Error("Missing filename. Syntax: FIND <filename> [directory]").execute();
+		return filename != null
+				? getFiles(filename, directory)
+				: new Error("Missing filename. Syntax: FIND <filename> [directory]").execute();
 	}
 
 }

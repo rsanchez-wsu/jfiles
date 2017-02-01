@@ -269,7 +269,7 @@ public class JFilesServer implements Runnable {
 	public synchronized void handle(int id, String input) {
 
 		System.out.println("Got the input: " + input);
-		
+
 		logger.info("[Server] Recv command: " + input);
 
 		Command cmd = Commands.getNewInstance(input.split(" ")[0], input);

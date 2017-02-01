@@ -87,9 +87,12 @@ public class Parser {
 	public Map<String, String> getFlags() {
 		return this.flags;
 	}
-	
-	public boolean doesFlagExist(String f) {
-		return this.flags.containsKey(f);
+
+	/**
+	 * @return If flag exists.
+	 */
+	public boolean doesFlagExist(String flag) {
+		return this.flags.containsKey(flag);
 	}
 
 	/**
