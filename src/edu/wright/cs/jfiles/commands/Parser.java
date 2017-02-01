@@ -35,6 +35,7 @@ public class Parser {
 
 	private final String[] args;
 	private final Map<String, String> flags;
+	private int currentArg = 1;
 
 	/**
 	 * Inits a new parser.
@@ -65,6 +66,13 @@ public class Parser {
 	}
 
 	/**
+	 * stuff.
+	 */
+	public String next() {
+		return currentArg < args.length ? args[currentArg++] : null;
+	}
+
+	/**
 	 * Gets the arguments.
 	 * @return The arguments
 	 */
@@ -78,6 +86,10 @@ public class Parser {
 	 */
 	public Map<String, String> getFlags() {
 		return this.flags;
+	}
+	
+	public boolean doesFlagExist(String f) {
+		return this.flags.containsKey(f);
 	}
 
 	/**
