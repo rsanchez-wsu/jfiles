@@ -24,7 +24,6 @@ package edu.wright.cs.jfiles.server;
 import edu.wright.cs.jfiles.commands.Command;
 import edu.wright.cs.jfiles.commands.Commands;
 import edu.wright.cs.jfiles.commands.Quit;
-import edu.wright.cs.jfiles.core.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -270,6 +269,8 @@ public class JFilesServer implements Runnable {
 	public synchronized void handle(int id, String input) {
 
 		System.out.println("Got the input: " + input);
+		
+		logger.info("[Server] Recv command: " + input);
 
 		Command cmd = Commands.getNewInstance(input.split(" ")[0], input);
 
@@ -278,91 +279,6 @@ public class JFilesServer implements Runnable {
 		if (cmd instanceof Quit) {
 			remove(id);
 		}
-
-		/*
-		// logger.info("Received connection from" +
-		// server.getRemoteSocketAddress());
-		String dir = System.getProperty("user.dir");
-		File history = new File("Search History.txt");
-		File cmdHistory = new File("Command History.txt");
-		PrintWriter schHstWrt = null;
-		PrintWriter cmdHstWrt = null;
-
-		try {
-			if (history.exists() && cmdHistory.exists()) { // determines if the
-															// word
-															// need to be
-															// appended
-				schHstWrt =
-						new PrintWriter(new OutputStreamWriter(new FileOutputStream(history, true),
-								StandardCharsets.UTF_8));
-				cmdHstWrt = new PrintWriter(new OutputStreamWriter(
-						new FileOutputStream(cmdHistory, true), StandardCharsets.UTF_8));
-			} else {
-				schHstWrt = new PrintWriter(history, UTF_8);
-				cmdHstWrt = new PrintWriter(cmdHistory, UTF_8);
-			}
-
-			Locale.setDefault(new Locale("English"));
-
-			String[] baseCommand = input.split(" ");
-			theDate = Calendar.getInstance();
-			cmdHstWrt.println(baseCommand[0] + "\t\t" + dateFormat.format(theDate.getTime()));
-			switch (baseCommand[0].toUpperCase(Locale.ENGLISH)) {
-			case "LIST":
-				List cmd = new List(clients[findClient(id)]);
-				cmd.executeCommand();
-
-				break;
-			case "FIND":
-				theDate = Calendar.getInstance();
-				schHstWrt.println(baseCommand[1] + "\t\t" + dateFormat.format(theDate.getTime()));
-				if (isValid(baseCommand)) {
-					findCmd(dir, id, baseCommand[1]);
-				} else {
-
-					clients[findClient(id)].send("Invaild Command\n");
-
-				}
-
-				break;
-			case "FINDR":
-				theDate = Calendar.getInstance();
-				schHstWrt.println(baseCommand[1] + "\t\t" + dateFormat.format(theDate.getTime()));
-				if (isValid(baseCommand)) {
-					recursiveFindCmd(dir, id, baseCommand[1]);
-				} else {
-					clients[findClient(id)].send("Invaild Command\n");
-				}
-
-				break;
-			case "FILE":
-				break;
-			case "EXIT":
-				clients[findClient(id)].send(".exit");
-				remove(id);
-				break;
-			default:
-				logger.info("Hit default switch." + System.lineSeparator());
-				break;
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			// e.printStackTrace();
-		} finally {
-
-			// out.flush();
-			clients[findClient(id)].send(">");
-			if (schHstWrt != null) {
-				schHstWrt.flush();
-				schHstWrt.close();
-			}
-			if (cmdHstWrt != null) {
-				cmdHstWrt.flush();
-				cmdHstWrt.close();
-			}
-		}
-		*/
 	}
 
 	/**
