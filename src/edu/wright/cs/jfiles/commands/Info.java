@@ -22,13 +22,13 @@
 package edu.wright.cs.jfiles.commands;
 
 /**
- *  The Close command closes the connection.
+ *  The Info command sends extra information to the client.
  *  Syntax:
- *      INFO
+ *      INFO message...
  *  Flags:
  *      - None.
  *  Example:
- *      INFO
+ *      INFO Last logged in 10 minutes ago
  */
 public class Info extends Command {
 

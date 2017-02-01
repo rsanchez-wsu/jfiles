@@ -24,11 +24,11 @@ package edu.wright.cs.jfiles.commands;
 /**
  *  The Recv command returns "Execute in progress".
  *  Syntax:
- *      RECV
+ *      RECV filename contents... EOF
  *  Flags:
  *      - None.
  *  Example:
- *      RECV
+ *      RECV test.txt This is the contents of our test file! EOF
  */
 
 public class Recv extends Command {

@@ -28,7 +28,7 @@ package edu.wright.cs.jfiles.commands;
  *  Flags:
  *      - None.
  *  Example:
- *      RMDIR TESTFOLDER
+ *      RMDIR testfolder
  */
 
 public class Rmdir extends Command {

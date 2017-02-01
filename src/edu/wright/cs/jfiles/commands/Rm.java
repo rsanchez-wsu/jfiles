@@ -20,6 +20,7 @@
  */
 
 package edu.wright.cs.jfiles.commands;
+
 /**
  * The rm command removes a file.
  * Syntax:
@@ -29,7 +30,6 @@ package edu.wright.cs.jfiles.commands;
  * Example:
  * 		RM *.xml
  */
-
 public class Rm extends Command {
 
 	/**
@@ -41,10 +41,9 @@ public class Rm extends Command {
 	}
 
 	/**
-	 *	TODO: return a new-line delimited list of files that match [filename] and were removed.
-	 *	@return list.
+	 *	@return A new-line delimited list of files that match [filename] and
+	 *  			were removed.
 	 */
-
 	@Override
 	public String execute() {
 		return "a list";

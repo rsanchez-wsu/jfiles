@@ -24,7 +24,7 @@ package edu.wright.cs.jfiles.commands;
 /**
  *  The Send command returns ".send".
  *  Syntax:
- *      SEND
+ *      SEND filename
  *  Flags:
  *      - None.
  *  Example:
@@ -42,7 +42,7 @@ public class Send extends Command {
 
 	/**
 	 * TODO: Program file send.
-	 * @return Nothing yet but a stub.
+	 * @return RECV to sender of SEND.
 	 */
 	@Override
 	public String execute() {

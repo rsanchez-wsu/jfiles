@@ -25,11 +25,11 @@ package edu.wright.cs.jfiles.commands;
 /**
  *  The MKDIR command returns ".mkdir".
  *  Syntax:
- *      MKDIR
+ *      MKDIR directory
  *  Flags:
  *      - None.
  *  Example:
- *      MKDIR
+ *      MKDIR testfolder
  */
 
 public class Mkdir extends Command {

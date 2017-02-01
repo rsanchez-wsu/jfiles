@@ -24,11 +24,11 @@ package edu.wright.cs.jfiles.commands;
 /**
  *  The Close command closes the connection.
  *  Syntax:
- *      CD
+ *      CD directoryName
  *  Flags:
  *      - None.
  *  Example:
- *      CD Downloads
+ *      CD src
  */
 public class Cd extends Command {
 

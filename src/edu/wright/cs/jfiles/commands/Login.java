@@ -24,11 +24,11 @@ package edu.wright.cs.jfiles.commands;
 /**
  *  The Close command closes the connection.
  *  Syntax:
- *      LOGIN
+ *      LOGIN username [password]
  *  Flags:
  *      - None.
  *  Example:
- *      LOGIN examplehost.com
+ *      LOGIN bob
  */
 public class Login extends Command {
 
@@ -45,7 +45,7 @@ public class Login extends Command {
 	 *  @return Nothing.
 	 */
 	public String execute() {
-		return "Login: " + "hostexample.com";
+		return "Login:";
 	}
 
 }

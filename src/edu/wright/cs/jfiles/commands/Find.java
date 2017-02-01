@@ -24,9 +24,9 @@ package edu.wright.cs.jfiles.commands;
 /**
  *  The Close command closes the connection.
  *  Syntax:
- *      FIND
+ *      FIND filename [directory]
  *  Flags:
- *      - None.
+ *      - R - recursively search through [directory]s.
  *  Example:
  *      FIND *.xml
  */
@@ -42,7 +42,9 @@ public class Find extends Command {
 
 	/**
 	 *  TODO: Returning findings
-	 *  @return Nothing.
+	 *  @return A new-line delimited list of files that match filename in
+	 *          [directory]. If no [directory] is given, the current working
+	 *          directory is used.
 	 */
 	public String execute() {
 		return "FIND: " + "file name and extension";

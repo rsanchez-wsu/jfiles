@@ -20,6 +20,7 @@
  */
 
 package edu.wright.cs.jfiles.commands;
+
 /**
  * The mv command moves or renames a file.
  * Syntax:
@@ -27,7 +28,6 @@ package edu.wright.cs.jfiles.commands;
  * Example:
  * 		MV build.xml builds.xml
  */
-
 public class Mv extends Command {
 
 	/**
@@ -40,7 +40,7 @@ public class Mv extends Command {
 
 	/**
 	 *  TODO: Program for MV.
-	 *  @return Not much yet.
+	 *  @return Nothing.
 	 */
 	@Override
 	public String execute() {

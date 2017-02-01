@@ -24,10 +24,11 @@ package edu.wright.cs.jfiles.commands;
 /**
  *  The Close command closes the connection.
  *  Syntax:
- *      Is
+ *      LS [directory]
  *  Flags:
  *      - None.
  *  Example:
+ *      LS src
  */
 public class Ls extends Command {
 
@@ -40,8 +41,9 @@ public class Ls extends Command {
 	}
 
 	/**
-	 *  TODO: Provide IS
-	 *  @return Nothing.
+	 *  TODO: Provide LS
+	 *  @return A new-line delimited list of files in the [directory]. If no
+	 *  	    [directory] is given, the current working directory is used.
 	 */
 	public String execute() {
 		return "LS: " + "";

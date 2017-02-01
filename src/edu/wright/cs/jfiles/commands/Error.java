@@ -24,11 +24,11 @@ package edu.wright.cs.jfiles.commands;
 /**
  *  The Close command closes the connection.
  *  Syntax:
- *      ERROR
+ *      ERROR message...
  *  Flags:
  *      - None.
  *  Example:
- *      ERROR
+ *      ERROR File not found.
  */
 public class Error extends Command {
 
