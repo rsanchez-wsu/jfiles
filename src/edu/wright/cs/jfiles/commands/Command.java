@@ -21,6 +21,9 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import java.util.List;
+import java.lang.StringBuilder;
+
 /**
  *  This is the master class for all commands.
  */
@@ -47,4 +50,19 @@ public abstract class Command {
 	 * @return The output of the command.
 	 */
 	public abstract String execute();
+	
+	/**
+	 * Turns a List into a string seperated by new lines.
+	 * @return A List into a string seperated by new lines.
+	 */
+	protected String atos(List<String> l) {
+		StringBuilder b = new StringBuilder();
+		
+		for (String s : l) {
+			b.append(s);
+			b.append(System.getProperty("line.separator"));
+		}
+		
+		return b.toString();
+	}
 }
