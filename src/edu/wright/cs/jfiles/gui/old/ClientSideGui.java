@@ -19,10 +19,9 @@
  *
  */
 
-package edu.wright.cs.jfiles.gui.client;
+package edu.wright.cs.jfiles.gui.old;
 
 import edu.wright.cs.jfiles.core.FileStruct.Type;
-import edu.wright.cs.jfiles.gui.common.JDirectoryIconView;
 
 import javafx.application.Application;
 import javafx.application.Platform;
