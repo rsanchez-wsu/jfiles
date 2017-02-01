@@ -21,6 +21,10 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.io.File;
+
 /**
  *  The Close command closes the connection.
  *  Syntax:
@@ -39,6 +43,31 @@ public class Find extends Command {
 	public Find(String args) {
 		super(args);
 	}
+	
+	private List<String> findFiles(String filename, String directory) {
+		List<String> res = new ArrayList<String>();
+		
+		File folder = new File(directory);
+		File[] listOfFiles = folder.listFiles();
+
+		for (File f : listOfFiles) {
+			if (f.isFile() && f.getName().contains(filename)) {
+				res.add(f.getAbsolutePath());
+			} else if (f.isDirectory() && this.parser.doesFlagExist("R")) {
+				res.addAll(findFiles(filename, f.getAbsolutePath()));
+			}
+		}
+		
+		return res;
+	}
+
+	private String getFiles(String filename, String directory) {
+		String dir = directory != null ? directory : ".";
+		
+		List<String> res = findFiles(filename, dir);
+		
+		return atos(res);
+	}
 
 	/**
 	 *  TODO: Returning findings
@@ -47,7 +76,12 @@ public class Find extends Command {
 	 *          directory is used.
 	 */
 	public String execute() {
-		return "FIND: " + "file name and extension";
+		String filename = this.parser.next();
+		String directory = this.parser.next();
+
+		return filename != null ? 
+				getFiles(filename, directory) :
+				new Error("Missing filename. Syntax: FIND <filename> [directory]").execute();
 	}
 
 }
