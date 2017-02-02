@@ -21,6 +21,8 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import edu.wright.cs.jfiles.core.XmlHandler;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,8 +77,12 @@ public class Ls extends Command {
 	 */
 	private String getFiles(String directory) {
 		String dir = directory != null ? directory : ".";
+		
+		XmlHandler handler = new XmlHandler(dir);
 
-		return atos(findFiles(dir));
+		return handler.xmlToString();
+		
+//		return atos(findFiles(dir));
 	}
 
 	/**

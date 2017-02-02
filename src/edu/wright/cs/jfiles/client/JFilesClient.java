@@ -21,12 +21,6 @@
 
 package edu.wright.cs.jfiles.client;
 
-import edu.wright.cs.jfiles.commands.Command;
-import edu.wright.cs.jfiles.commands.Commands;
-import edu.wright.cs.jfiles.commands.Find;
-import edu.wright.cs.jfiles.commands.Mv;
-import edu.wright.cs.jfiles.commands.Ping;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

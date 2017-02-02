@@ -23,6 +23,7 @@ package edu.wright.cs.jfiles.gui.client;
 
 import edu.wright.cs.jfiles.client.JFilesClient;
 import edu.wright.cs.jfiles.core.FileStruct;
+import edu.wright.cs.jfiles.core.SocketClient;
 import edu.wright.cs.jfiles.core.XmlHandler;
 import edu.wright.cs.jfiles.gui.common.FileIconViewController;
 import edu.wright.cs.jfiles.gui.common.FileIconViewController.Size;
@@ -59,7 +60,7 @@ import java.util.ResourceBundle;
  */
 public class ClientAppViewController implements Initializable {
 
-	private JFilesClient client;
+	private SocketClient client;
 
 	private FileStruct selectedFile;
 	private Map<FileStruct, Parent> contents;
@@ -84,8 +85,9 @@ public class ClientAppViewController implements Initializable {
 	 *            the path to load
 	 */
 	private void loadDirectory(String path) {
+		client.send("ls " + path);
 		XmlHandler handler = new XmlHandler(path);
-		for (FileStruct file : handler.getFiles()) {
+		for (FileStruct file : handler.readXmlString(client.read())) {
 			FXMLLoader loader =
 					new FXMLLoader(FileIconViewController.class.getResource("FileIconView.fxml"));
 			try {
@@ -295,8 +297,8 @@ public class ClientAppViewController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		contents = new HashMap<>();
-		client = new JFilesClient("localhost", 9786);
-		loadDirectory("./src/edu/wright/cs/jfiles/core");
+		client = new SocketClient();
+		loadDirectory("./src/edu/wright/cs/jfiles");
 		fileContextMenu = buildFileContextMenu();
 		viewContextMenu = buildViewContextMenu();
 	}

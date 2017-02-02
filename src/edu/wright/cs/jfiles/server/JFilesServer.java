@@ -252,7 +252,11 @@ public class JFilesServer {
 		Command cmd = Commands.getNewInstance(sinput[0],
 					Arrays.copyOfRange(sinput, 1, sinput.length));
 
-		clients[findClient(id)].send(cmd.execute());
+		String cont = cmd.execute();
+		
+		System.out.println("Sending back: " + cont);
+		
+		clients[findClient(id)].send(cont);
 
 		if (cmd instanceof Quit) {
 			remove(id);

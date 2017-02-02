@@ -131,6 +131,10 @@ public class XmlHandler {
 		xstream.toXML(this, osw);
 	}
 
+	public String xmlToString() {
+		return xstream.toXML(this);
+	}
+	
 	/**
 	 * Method to read XML and deserialize to an object.
 	 * @param isr InputStreamReader to read from
@@ -138,6 +142,11 @@ public class XmlHandler {
 	 */
 	public ArrayList<FileStruct> readXml(InputStreamReader isr) {
 		XmlHandler temp = (XmlHandler) xstream.fromXML(isr);
+		return temp.arrlist;
+	}
+	
+	public ArrayList<FileStruct> readXmlString(String strxml) {
+		XmlHandler temp = (XmlHandler) xstream.fromXML(strxml);
 		return temp.arrlist;
 	}
 
