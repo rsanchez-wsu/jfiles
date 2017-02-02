@@ -24,6 +24,7 @@ package edu.wright.cs.jfiles.gui.client;
 import edu.wright.cs.jfiles.client.JFilesClient;
 import edu.wright.cs.jfiles.commands.Mv;
 import edu.wright.cs.jfiles.core.FileStruct;
+import edu.wright.cs.jfiles.core.SocketClient;
 import edu.wright.cs.jfiles.core.XmlHandler;
 import edu.wright.cs.jfiles.gui.common.FileIconViewController;
 import edu.wright.cs.jfiles.gui.common.FileIconViewController.Size;
@@ -67,7 +68,7 @@ import java.util.ResourceBundle;
  */
 public class ClientAppViewController implements Initializable {
 
-	private JFilesClient client;
+	private SocketClient client;
 
 	private FileStruct selectedFile;
 	private String currentDirectory;
@@ -316,7 +317,7 @@ public class ClientAppViewController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		contents = new HashMap<>();
 		clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		client = new JFilesClient("localhost", 9786);
+		client = new SocketClient();
 		currentDirectory = "./src/edu/wright/cs/jfiles/core";
 		loadDirectory(currentDirectory);
 		fileContextMenu = buildFileContextMenu();
