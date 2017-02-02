@@ -21,7 +21,10 @@
 
 package edu.wright.cs.jfiles.client;
 
+import edu.wright.cs.jfiles.commands.Command;
 import edu.wright.cs.jfiles.commands.Commands;
+import edu.wright.cs.jfiles.commands.Find;
+import edu.wright.cs.jfiles.commands.Mv;
 import edu.wright.cs.jfiles.commands.Ping;
 
 import org.apache.logging.log4j.LogManager;
@@ -130,10 +133,7 @@ public class JFilesClient implements Runnable {
 		System.out.print("> ");
 		while (thread != null) {
 			try {
-				console.readLine();
-//				streamOut.writeUTF(console.readLine());
-//				streamOut.flush();
-				streamOut.writeUTF(Commands.getNewInstance("mv", new String[] { "", "" }).toString());
+				streamOut.writeUTF(console.readLine());
 				streamOut.flush();
 			} catch (IOException ioe) {
 				System.out.println(System.getProperty("line.separator")
