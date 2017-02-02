@@ -120,16 +120,12 @@ public enum Commands {
 			cmdName = "_" + cmdName;
 		}
 
-		System.out.println("Searching for: " + cmdName);
-
 		for (Commands cmd : Commands.values()) {
 			if (cmd.name().equals(cmdName)) {
 				fcmd = cmd;
 				break;
 			}
 		}
-
-		System.out.println("Sended with: " + fcmd);
 
 		return fcmd;
 	}

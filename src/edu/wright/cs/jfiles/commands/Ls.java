@@ -21,6 +21,10 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *  The Close command closes the connection.
  *  Syntax:
@@ -41,12 +45,49 @@ public class Ls extends Command {
 	}
 
 	/**
+	 * @return The list of files that match filename.
+	 */
+	private List<String> findFiles(String directory) {
+		List<String> res = new ArrayList<String>();
+
+		File folder = new File(directory);
+		File[] listOfFiles = folder.listFiles();
+
+		if (folder.isDirectory() && listOfFiles != null) {
+			for (File f : listOfFiles) {
+				if (f.isFile()) {
+					res.add(f.getAbsolutePath());
+				} else if (f.isDirectory()) {
+					res.add(f.getAbsolutePath());
+
+					if (this.parser.doesFlagExist("R")) {
+						res.addAll(findFiles(f.getAbsolutePath()));
+					}
+				}
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * @return The list of files that match filename as a string.
+	 */
+	private String getFiles(String directory) {
+		String dir = directory != null ? directory : ".";
+
+		return atos(findFiles(dir));
+	}
+
+	/**
 	 *  TODO: Provide LS
 	 *  @return A new-line delimited list of files in the [directory]. If no
 	 *  	    [directory] is given, the current working directory is used.
 	 */
 	public String execute() {
-		return "LS: " + "";
+		String directory = this.parser.next();
+
+		return getFiles(directory);
 	}
 
 }

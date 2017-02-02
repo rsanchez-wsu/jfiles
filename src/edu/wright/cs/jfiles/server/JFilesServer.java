@@ -70,17 +70,15 @@ import javax.xml.transform.stream.StreamResult;
  * @author Roberto C. Sánchez &lt;roberto.sanchez@wright.edu&gt;
  *
  */
-public class JFilesServer implements Runnable {
+public class JFilesServer {
 
 	static final Logger logger = LogManager.getLogger(JFilesServer.class);
 	private static int PORT = 9786;
 	// private final ServerSocket serverSocket;
 	private JFilesServerThread[] clients = new JFilesServerThread[50];
 	private ServerSocket server = null;
-	private Thread thread = null;
 	private int clientCount = 0;
 	DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
-	private Calendar theDate;
 
 	/**
 	 * Handles allocating resources needed for the server.
@@ -216,8 +214,10 @@ public class JFilesServer implements Runnable {
 		return node;
 	}
 
-	@Override
-	public void run() {
+	/**
+	 * .
+	 */
+	public void start() {
 		while (true) {
 			try {
 				System.out.println("Waiting for a client ...");
@@ -230,24 +230,10 @@ public class JFilesServer implements Runnable {
 	}
 
 	/**
-	 * .
-	 */
-	public void start() {
-		if (thread == null) {
-			thread = new Thread(this);
-			thread.start();
-		}
-	}
-
-	/**
 	 * This method stops the thread.
 	 */
-	@SuppressWarnings("deprecation")
 	public void stop() {
-		if (thread != null) {
-			thread.stop();
-			thread = null;
-		}
+
 	}
 
 	/**
@@ -273,8 +259,8 @@ public class JFilesServer implements Runnable {
 
 		String[] sinput = input.split(" ");
 
-		Command cmd =
-				Commands.getNewInstance(sinput[0], Arrays.copyOfRange(sinput, 1, sinput.length));
+		Command cmd = Commands.getNewInstance(sinput[0],
+					Arrays.copyOfRange(sinput, 1, sinput.length));
 
 		clients[findClient(id)].send(cmd.execute());
 
@@ -286,7 +272,6 @@ public class JFilesServer implements Runnable {
 	/**
 	 * This method handles removing a thread.
 	 */
-	@SuppressWarnings("deprecation")
 	public synchronized void remove(int id) {
 		int pos = findClient(id);
 		if (pos >= 0) {
@@ -304,7 +289,7 @@ public class JFilesServer implements Runnable {
 			} catch (IOException ioe) {
 				System.out.println("Error closing thread: " + ioe);
 			}
-			toTerminate.stop();
+			toTerminate.interrupt();
 		}
 	}
 
@@ -328,68 +313,9 @@ public class JFilesServer implements Runnable {
 	}
 
 	/**
-	 * Checks to make sure the command input is valid.
-	 */
-	boolean isValid(String[] command) {
-		if (command.length <= 1) { // used for handling invalid error
-			logger.error("Invalid Input, nothing to find");
-			return false;
-		} else {
-			return true;
-		}
-	}
-
-	/**
-	 * Find Command function. Method for the find command. Writes results found
-	 * within current directory. Search supports glob patterns
-	 */
-	private void findCmd(String dir, int id, String searchTerm) {
-		int findCount = 0;
-		try (DirectoryStream<Path> directoryStream =
-				Files.newDirectoryStream(Paths.get(dir), searchTerm)) {
-			for (Path path : directoryStream) {
-				// out.write(path.toString() + "\n");
-				clients[findClient(id)].send(path.toString() + "\n");
-				findCount++;
-			}
-			System.out.println("Found " + findCount + " file(s) in " + dir + " that contains \""
-					+ searchTerm + "\"\n");
-		} catch (IOException e) {
-			logger.error("Some error occured", e);
-		}
-	}
-
-	/**
-	 * Recursive find Command function. Method for the recursive option of the
-	 * find command. Calls itself if a child directory is found, otherwise calls
-	 * findCmd to get results from current directory.
-	 */
-	private void recursiveFindCmd(String dir, int id, String searchTerm) {
-		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(dir))) {
-			for (Path path : directoryStream) {
-				if (path.toFile().isDirectory()) {
-					recursiveFindCmd(path.toString(), id, searchTerm);
-				}
-			}
-		} catch (IOException e) {
-			// e.printStackTrace();
-			logger.error("Some error occured", e);
-		}
-		findCmd(dir, id, searchTerm);
-	}
-
-	/**
 	 * The main entry point to the program.
 	 */
 	public static void main(String[] args) {
 		new JFilesServer(PORT);
-	}
-
-	/**
-	 * Sends path that contains displayed items to the GUI.
-	 */
-	public static String sendPath() {
-		String dir = System.getProperty("user.dir");
-		return dir;
 	}
 }

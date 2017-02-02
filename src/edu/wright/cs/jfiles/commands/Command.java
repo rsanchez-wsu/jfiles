@@ -31,6 +31,9 @@ import java.util.Locale;
 public abstract class Command {
 	protected Parser parser;
 
+	/**
+	 * Command constructor.
+	 */
 	public Command() {
 		this.parser = new Parser();
 	}
@@ -79,8 +82,13 @@ public abstract class Command {
 		return sbr.toString();
 	}
 
+
+	/**
+	 * Converts cmd to string.
+	 */
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName().toUpperCase(Locale.ENGLISH) + " " + parser.toString();
+		return this.getClass().getSimpleName()
+					.toUpperCase(Locale.ENGLISH) + " " + parser.toString();
 	}
 }
