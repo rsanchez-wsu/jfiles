@@ -77,11 +77,11 @@ public class Ls extends Command {
 	 */
 	private String getFiles(String directory) {
 		String dir = directory != null ? directory : ".";
-		
+
 		XmlHandler handler = new XmlHandler(dir);
 
 		return handler.xmlToString();
-		
+
 //		return atos(findFiles(dir));
 	}
 
@@ -90,6 +90,7 @@ public class Ls extends Command {
 	 *  @return A new-line delimited list of files in the [directory]. If no
 	 *  	    [directory] is given, the current working directory is used.
 	 */
+	@Override
 	public String execute() {
 		String directory = this.parser.next();
 

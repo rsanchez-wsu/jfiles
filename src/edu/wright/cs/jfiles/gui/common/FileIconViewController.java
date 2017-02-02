@@ -114,16 +114,16 @@ public class FileIconViewController implements Initializable {
 	private void populate() {
 		label.setText((String) fileStruct.getValue("name"));
 		switch (fileStruct.getType()) {
-        case FILE:
-            // TODO: Check file extension
-            image.setImage(fileImage);
-            break;
-        case DIRECTORY:
-            image.setImage(directoryImage);
-            break;
-        default:
-            // image.setImage(fileImage);
-        }
+		case FILE:
+			// TODO: Check file extension
+			image.setImage(fileImage);
+			break;
+		case DIRECTORY:
+			image.setImage(directoryImage);
+			break;
+		default:
+			// image.setImage(fileImage);
+		}
 	}
 
 	/**
