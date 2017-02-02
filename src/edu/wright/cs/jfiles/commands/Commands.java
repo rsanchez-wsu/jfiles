@@ -30,6 +30,28 @@ import java.util.function.Function;
  */
 public enum Commands {
 
+	// CheckStyle fails if enum name is 2 letters or less.
+	// So if it's 2 letters, we add an _. The client
+	// Can still send "cd" for example and it will find and
+	// return _CD.
+	TOUCH((String args) -> {
+		return new Touch(args);
+	}),
+	SEND((String args) -> {
+		return new Send(args);
+	}),
+	_CD((String args) -> {
+		return new Cd(args);
+	}),
+	RMDIR((String args) -> {
+		return new Rmdir(args);
+	}),
+	RECV((String args) -> {
+		return new Recv(args);
+	}),
+	_RM((String args) -> {
+		return new Rm(args);
+	}),
 	FIND((String args) -> {
 		return new Find(args);
 	}),
@@ -38,6 +60,18 @@ public enum Commands {
 	}),
 	QUIT((String args) -> {
 		return new Quit(args);
+	}),
+	MKDIR((String args) -> {
+		return new Mkdir(args);
+	}),
+	_MV((String args) -> {
+		return new Mv(args);
+	}),
+	_LS((String args) -> {
+		return new Ls(args);
+	}),
+	LOGIN((String args) -> {
+		return new Login(args);
 	});
 
 	private Function<String, Command> lam;
@@ -79,6 +113,12 @@ public enum Commands {
 	 */
 	private static Commands findCommand(String cmdName) {
 		Commands fcmd = null;
+
+		// CheckStyle fails if enum name is 2 letters or less.
+		// So if it's 2 letters, we add an _.
+		if (cmdName.length() == 2) {
+			cmdName = "_" + cmdName;
+		}
 
 		for (Commands cmd : Commands.values()) {
 			if (cmd.name().equals(cmdName)) {
