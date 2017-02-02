@@ -64,7 +64,7 @@ import javax.xml.xpath.XPathExpressionException;
  *
  */
 
-public class ClientSideGui extends Application{
+public class ClientSideGui extends Application {
 
 	// Variables. They are private for Javabeans
 	private String username = "";
@@ -77,13 +77,13 @@ public class ClientSideGui extends Application{
 	private Label emptyPasswordFieldLabel;
 	private TextField usernameTextField;
 	private TextField passwordTextField;
-	
+
 	/**
 	 * Constructor.
 	 */
 	public ClientSideGui(){
 	}
-	
+
 	/**
 	 * This method is where most visual elements are created and manipulated.
 	 *
