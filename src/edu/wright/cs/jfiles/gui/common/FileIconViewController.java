@@ -116,12 +116,13 @@ public class FileIconViewController implements Initializable {
 		switch (fileStruct.getType()) {
 		case FILE:
 			// TODO: Check file extension
+			image.setImage(fileImage);
 			break;
 		case DIRECTORY:
 			image.setImage(directoryImage);
 			break;
 		default:
-			image.setImage(fileImage);
+			// image.setImage(fileImage);
 		}
 	}
 
@@ -135,6 +136,9 @@ public class FileIconViewController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		assert image != null : "image not injected";
+		assert label != null : "label not injected";
+
 		setSize(Size.MEDIUM);
 
 		label.setWrapText(true);

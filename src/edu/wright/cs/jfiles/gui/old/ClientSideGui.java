@@ -51,8 +51,6 @@ import javafx.stage.Stage;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
-import java.io.Serializable;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
@@ -67,6 +65,7 @@ import javax.xml.xpath.XPathExpressionException;
  */
 
 public class ClientSideGui extends Application{
+
 	// Variables. They are private for Javabeans
 	private String username = "";
 	private String password = "";
@@ -78,11 +77,13 @@ public class ClientSideGui extends Application{
 	private Label emptyPasswordFieldLabel;
 	private TextField usernameTextField;
 	private TextField passwordTextField;
+	
 	/**
 	 * Constructor.
 	 */
 	public ClientSideGui(){
 	}
+	
 	/**
 	 * This method is where most visual elements are created and manipulated.
 	 *
