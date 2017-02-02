@@ -21,6 +21,8 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import edu.wright.cs.jfiles.core.XmlHandler;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,9 +76,16 @@ public class Ls extends Command {
 	 * @return The list of files that match filename as a string.
 	 */
 	private String getFiles(String directory) {
-		String dir = directory != null ? directory : ".";
-
-		return atos(findFiles(dir));
+		return atos(findFiles(directory));
+	}
+	
+	/**
+	 * Returns the files in xml format.
+	 * @param directory The directory to return.
+	 * @return The directory in XML.
+	 */
+	private String getXmlFiles(String directory) {
+		return (new XmlHandler(directory)).xmlToString();
 	}
 
 	/**
@@ -86,8 +95,9 @@ public class Ls extends Command {
 	 */
 	public String execute() {
 		String directory = this.parser.next();
+		directory = directory != null ? directory : ".";
 
-		return getFiles(directory);
+		return !parser.doesFlagExist("XML") ? getFiles(directory) : getXmlFiles(directory);
 	}
 
 }

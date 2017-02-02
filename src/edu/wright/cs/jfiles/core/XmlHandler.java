@@ -140,6 +140,10 @@ public class XmlHandler {
 		XmlHandler temp = (XmlHandler) xstream.fromXML(isr);
 		return temp.arrlist;
 	}
+	
+	public String xmlToString() {
+		return xstream.toXML(this);
+	}
 
 	/**
 	 * Gets a copy of the contents.
