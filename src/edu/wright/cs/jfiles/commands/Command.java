@@ -23,6 +23,7 @@ package edu.wright.cs.jfiles.commands;
 
 import java.lang.StringBuilder;
 import java.util.List;
+import java.util.Locale;
 
 /**
  *  This is the master class for all commands.
@@ -34,7 +35,7 @@ public abstract class Command {
 	 * Default constructor.
 	 * @param args Command Parser
 	 */
-	public Command(String args) {
+	public Command(String... args) {
 		this.parser = new Parser(args);
 
 		/*
@@ -64,5 +65,10 @@ public abstract class Command {
 		}
 
 		return sbr.toString();
+	}
+	
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName().toUpperCase(Locale.ENGLISH) + " " + parser.toString();
 	}
 }

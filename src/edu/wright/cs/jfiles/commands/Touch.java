@@ -33,7 +33,7 @@ public class Touch extends Command {
 	 * Calls super.
 	 * @param args Command's args.
 	 */
-	public Touch(String args) {
+	public Touch(String... args) {
 		super(args);
 	}
 

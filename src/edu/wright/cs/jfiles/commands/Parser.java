@@ -35,17 +35,17 @@ public class Parser {
 
 	private final String[] args;
 	private final Map<String, String> flags;
-	private int currentArg = 1;
+	private int currentArg = 0;
 
 	/**
 	 * Inits a new parser.
 	 * @param args The arguments to parse.
 	 */
-	Parser(String args) {
+	Parser(String[] args) {
 		List<String> tempArgs = new ArrayList<String>();
 		this.flags = new HashMap<String, String>();
 
-		for (String arg : args.split(" ")) {
+		for (String arg : args) {
 			if (arg.startsWith("-")) {
 				arg = arg.substring(1);
 				String[] tokens = arg.split(":", 2);
@@ -102,6 +102,21 @@ public class Parser {
 	 */
 	public void shutupFindBugs() {
 
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder end = new StringBuilder();
+		
+		for (String arg : args) {
+			end.append(arg + " ");
+		}
+		
+		if (end.length() > 0) {
+			end.deleteCharAt(end.length() - 1);
+		}
+		
+		return end.toString();
 	}
 
 }

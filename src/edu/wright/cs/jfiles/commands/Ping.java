@@ -36,7 +36,7 @@ public class Ping extends Command {
 	 * Calls super.
 	 * @param args Command's args.
 	 */
-	public Ping(String args) {
+	public Ping(String... args) {
 		super(args);
 	}
 

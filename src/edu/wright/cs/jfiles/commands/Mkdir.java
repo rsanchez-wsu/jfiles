@@ -38,7 +38,7 @@ public class Mkdir extends Command {
 	 * Calls super.
 	 * @param args Command's args.
 	 */
-	public Mkdir(String args) {
+	public Mkdir(String... args) {
 		super(args);
 	}
 

@@ -21,6 +21,9 @@
 
 package edu.wright.cs.jfiles.client;
 
+import edu.wright.cs.jfiles.commands.Commands;
+import edu.wright.cs.jfiles.commands.Ping;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -127,7 +130,10 @@ public class JFilesClient implements Runnable {
 		System.out.print("> ");
 		while (thread != null) {
 			try {
-				streamOut.writeUTF(console.readLine());
+				console.readLine();
+//				streamOut.writeUTF(console.readLine());
+//				streamOut.flush();
+				streamOut.writeUTF(Commands.getNewInstance("mv", new String[] { "", "" }).toString());
 				streamOut.flush();
 			} catch (IOException ioe) {
 				System.out.println(System.getProperty("line.separator")

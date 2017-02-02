@@ -36,7 +36,7 @@ public class Rmdir extends Command {
 	 * Calls super.
 	 * @param args Command's args.
 	 */
-	public Rmdir(String args) {
+	public Rmdir(String... args) {
 		super(args);
 	}
 

@@ -36,7 +36,7 @@ public class Rm extends Command {
 	 * Calls super.
 	 * @param args Command's args.
 	 */
-	public Rm(String args) {
+	public Rm(String... args) {
 		super(args);
 	}
 

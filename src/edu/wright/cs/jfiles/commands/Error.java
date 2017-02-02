@@ -36,7 +36,7 @@ public class Error extends Command {
 	 * Calls super.
 	 * @param args Command's args.
 	 */
-	public Error(String args) {
+	public Error(String... args) {
 		super(args);
 	}
 

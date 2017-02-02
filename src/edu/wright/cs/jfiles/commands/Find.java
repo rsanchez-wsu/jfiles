@@ -40,7 +40,7 @@ public class Find extends Command {
 	 * Calls super.
 	 * @param args Command's args.
 	 */
-	public Find(String args) {
+	public Find(String... args) {
 		super(args);
 	}
 

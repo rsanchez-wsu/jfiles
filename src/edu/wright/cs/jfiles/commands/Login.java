@@ -36,7 +36,7 @@ public class Login extends Command {
 	 * Calls super.
 	 * @param args Command's args.
 	 */
-	public Login(String args) {
+	public Login(String... args) {
 		super(args);
 	}
 

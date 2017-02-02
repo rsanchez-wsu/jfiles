@@ -36,7 +36,7 @@ public class Ls extends Command {
 	 * Calls super.
 	 * @param args Command's args.
 	 */
-	public Ls(String args) {
+	public Ls(String... args) {
 		super(args);
 	}
 

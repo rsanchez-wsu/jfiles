@@ -36,7 +36,7 @@ public class Pwd extends Command {
 	 * Calls super.
 	 * @param args Command's args.
 	 */
-	public Pwd(String args) {
+	public Pwd(String... args) {
 		super(args);
 	}
 

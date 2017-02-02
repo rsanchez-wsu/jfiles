@@ -36,7 +36,7 @@ public class Send extends Command {
 	 * Calls super.
 	 * @param args Command's args.
 	 */
-	public Send(String args) {
+	public Send(String... args) {
 		super(args);
 	}
 

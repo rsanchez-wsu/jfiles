@@ -46,6 +46,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.Properties;
@@ -269,8 +270,10 @@ public class JFilesServer implements Runnable {
 		System.out.println("Got the input: " + input);
 
 		logger.info("[Server] Recv command: " + input);
+		
+		String[] sinput = input.split(" ");
 
-		Command cmd = Commands.getNewInstance(input.split(" ")[0], input);
+		Command cmd = Commands.getNewInstance(sinput[0], Arrays.copyOfRange(sinput, 1, sinput.length));
 
 		clients[findClient(id)].send(cmd.execute());
 

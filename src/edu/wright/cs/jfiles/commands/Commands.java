@@ -34,53 +34,53 @@ public enum Commands {
 	// So if it's 2 letters, we add an _. The client
 	// Can still send "cd" for example and it will find and
 	// return _CD.
-	TOUCH((String args) -> {
+	TOUCH((String[] args) -> {
 		return new Touch(args);
 	}),
-	SEND((String args) -> {
+	SEND((String[] args) -> {
 		return new Send(args);
 	}),
-	_CD((String args) -> {
+	_CD((String[] args) -> {
 		return new Cd(args);
 	}),
-	RMDIR((String args) -> {
+	RMDIR((String[] args) -> {
 		return new Rmdir(args);
 	}),
-	RECV((String args) -> {
+	RECV((String[] args) -> {
 		return new Recv(args);
 	}),
-	_RM((String args) -> {
+	_RM((String[] args) -> {
 		return new Rm(args);
 	}),
-	FIND((String args) -> {
+	FIND((String[] args) -> {
 		return new Find(args);
 	}),
-	PING((String args) -> {
+	PING((String[] args) -> {
 		return new Ping(args);
 	}),
-	QUIT((String args) -> {
+	QUIT((String[] args) -> {
 		return new Quit(args);
 	}),
-	MKDIR((String args) -> {
+	MKDIR((String[] args) -> {
 		return new Mkdir(args);
 	}),
-	_MV((String args) -> {
+	_MV((String[] args) -> {
 		return new Mv(args);
 	}),
-	_LS((String args) -> {
+	_LS((String[] args) -> {
 		return new Ls(args);
 	}),
-	LOGIN((String args) -> {
+	LOGIN((String[] args) -> {
 		return new Login(args);
 	});
 
-	private Function<String, Command> lam;
+	private Function<String[], Command> lam;
 
 	/**
 	 * The function that returns an instance of the command.
 	 * @return A function that returns a Command instance.
 	 */
-	private Function<String, Command> getLam() {
+	private Function<String[], Command> getLam() {
 		return this.lam;
 	}
 
@@ -88,7 +88,7 @@ public enum Commands {
 	 * Inits a new enum.
 	 * @param lam The function that creates a new instance of the command.
 	 */
-	Commands(Function<String, Command> lam) {
+	Commands(Function<String[], Command> lam) {
 		this.lam = lam;
 	}
 
@@ -99,7 +99,7 @@ public enum Commands {
 	 * @return Returns a new instance of the command.
 	 *         If not found, returns new CommandNotFound.
 	 */
-	public static Command getNewInstance(String cmdName, String args) {
+	public static Command getNewInstance(String cmdName, String... args) {
 		// Find command in enum
 		Commands cmd = findCommand(cmdName.toUpperCase(Locale.ENGLISH));
 		// Return a new instance if found, else null.
@@ -119,6 +119,8 @@ public enum Commands {
 		if (cmdName.length() == 2) {
 			cmdName = "_" + cmdName;
 		}
+		
+		System.out.println("Searching for: " + cmdName);
 
 		for (Commands cmd : Commands.values()) {
 			if (cmd.name().equals(cmdName)) {
@@ -126,6 +128,8 @@ public enum Commands {
 				break;
 			}
 		}
+		
+		System.out.println("Sended with: " + fcmd);
 
 		return fcmd;
 	}

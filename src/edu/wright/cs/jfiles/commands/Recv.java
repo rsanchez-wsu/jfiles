@@ -37,7 +37,7 @@ public class Recv extends Command {
 	 * Calls super.
 	 * @param args Command's args.
 	 */
-	public Recv(String args) {
+	public Recv(String... args) {
 		super(args);
 	}
 

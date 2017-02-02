@@ -36,7 +36,7 @@ public class Info extends Command {
 	 * Calls super.
 	 * @param args Command's args.
 	 */
-	public Info(String args) {
+	public Info(String... args) {
 		super(args);
 	}
 

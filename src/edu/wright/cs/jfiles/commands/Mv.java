@@ -34,7 +34,7 @@ public class Mv extends Command {
 	 * Calls super.
 	 * @param args Command's args.
 	 */
-	public Mv(String args) {
+	public Mv(String... args) {
 		super(args);
 	}
 

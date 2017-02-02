@@ -36,7 +36,7 @@ public class Cd extends Command {
 	 * Calls super.
 	 * @param args Command's args.
 	 */
-	public Cd(String args) {
+	public Cd(String... args) {
 		super(args);
 	}
 
