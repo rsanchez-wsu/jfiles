@@ -21,10 +21,22 @@
 
 package edu.wright.cs.jfiles.gui.client;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
 import edu.wright.cs.jfiles.gui.common.Item;
 import edu.wright.cs.jfiles.gui.common.Parser;
 import edu.wright.cs.jfiles.server.JFilesServer;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -54,19 +66,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-
-import java.io.IOException;
-import java.util.ArrayList;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 /**
  * This class will form the body of the JFiles client side GUI application. This
@@ -217,33 +216,37 @@ public class ClientSideGui extends Application {
 
 		// Create MenuBar For Menu Items
 		MenuBar headderMenuBar = new MenuBar();
-		
+
 		// Creates a label for path and text field to display path
 		Label pathLabel = new Label("Current Directory: ");
+
+		// Create GridPane to organize the objects
+		GridPane gridPane = new GridPane();
+		gridPane.add(pathLabel, 0, 1);
+		gridPane.add(headderMenuBar, 0, 0, 2, 1);
+
 		TextField pathDisplay = new TextField();
 		pathDisplay.setEditable(false);
 		pathDisplay.setPromptText("File Path");
-		
+
 		// Populates text field with path
 		String currentPath = JFilesServer.sendPath();
 		pathDisplay.appendText(currentPath);
-		
+
+
 		// Creates a box for the search area
 		TextField searchArea = new TextField();
+		gridPane.add(searchArea, 1, 2);
+
 
 		// Creates a button to collect the search
 		Button searchButton = new Button();
 		searchButton.setText("Search");
 		searchButton.setMinWidth(100);
 
-		// Create GridPane to organize the objects
-		GridPane gridPane = new GridPane();
 
 		// Add objects to GridPane
-		gridPane.add(headderMenuBar, 0, 0, 2, 1);
-		gridPane.add(pathLabel, 0, 1);
 		gridPane.add(pathDisplay, 1, 1);
-		gridPane.add(searchArea, 1, 2);
 		gridPane.add(searchButton, 0, 2);
 
 		// Add Column Constraints to get areas even
@@ -355,6 +358,14 @@ public class ClientSideGui extends Application {
 		FlowPane filePane = new FlowPane();
 		filePane.setStyle("-fx-background-color: LIGHTBLUE;");
 		basePane.setCenter(filePane);
+
+		Label outputArea = new Label();
+		outputArea.setText("Test");
+		outputArea.setTextFill(Color.web("#FF0000"));
+		outputArea.setLayoutX(basePane.getLayoutX());;
+		outputArea.setLayoutY(basePane.getLayoutY());
+		basePane.setCenter(filePane);
+		filePane.getChildren().add(outputArea);
 
 		// This for loop loops through the items parsed from the XML string
 		// and puts them into the GUI with an image and name
