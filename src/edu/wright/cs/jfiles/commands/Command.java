@@ -31,6 +31,10 @@ import java.util.Locale;
 public abstract class Command {
 	protected Parser parser;
 
+	public Command() {
+		this.parser = new Parser();
+	}
+	
 	/**
 	 * Default constructor.
 	 * @param args Command Parser
@@ -46,6 +50,14 @@ public abstract class Command {
 		parser.shutupFindBugs();
 	}
 
+	/**
+	 * Adds an argument to the end of command.
+	 * @param arg The argument to add.
+	 */
+	public void add(String arg) {
+		this.parser.add(arg);
+	}
+	
 	/**
 	 * Abstract execute command.
 	 * @return The output of the command.

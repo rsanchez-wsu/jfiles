@@ -24,6 +24,7 @@ package edu.wright.cs.jfiles.commands;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -33,7 +34,7 @@ import java.util.Map;
  */
 public class Parser {
 
-	private final String[] args;
+	private final List<String> args;
 	private final Map<String, String> flags;
 	private int currentArg = 0;
 
@@ -42,34 +43,48 @@ public class Parser {
 	 * @param args The arguments to parse.
 	 */
 	Parser(String[] args) {
-		List<String> tempArgs = new ArrayList<String>();
-		this.flags = new HashMap<String, String>();
+		this();
 
 		for (String arg : args) {
-			if (arg.startsWith("-")) {
-				arg = arg.substring(1);
-				String[] tokens = arg.split(":", 2);
-
-				if (tokens.length > 1) {
-					this.flags.put(tokens[0], tokens[1]);
-				} else {
-					this.flags.put(tokens[0], "");
-				}
+			add(arg);
+		}
+	}
+	
+	/**
+	 * Inits flag and args.
+	 */
+	Parser() {
+		flags = new HashMap<String, String>();
+		args = new ArrayList<String>();
+	}
+	
+	/**
+	 * Adds arg to end of parser.
+	 * @param arg The arg to add to parser.
+	 */
+	public void add(String arg) {
+		if (arg.startsWith("-")) {
+			arg = arg.substring(1);
+			String[] tokens = arg.split(":", 2);
+			String flagName = tokens[0].toUpperCase(Locale.ENGLISH);
+			
+			if (tokens.length > 1) {
+				this.flags.put(flagName, tokens[1]);
 			} else {
-				if (arg.length() > 0) {
-					tempArgs.add(arg);
-				}
+				this.flags.put(flagName, "");
+			}
+		} else {
+			if (arg.length() > 0) {
+				this.args.add(arg);
 			}
 		}
-
-		this.args = tempArgs.toArray(new String[tempArgs.size()]);
 	}
 
 	/**
 	 * stuff.
 	 */
 	public String next() {
-		return currentArg < args.length ? args[currentArg++] : null;
+		return currentArg < args.size() ? args.get(currentArg++) : null;
 	}
 
 	/**
@@ -77,7 +92,7 @@ public class Parser {
 	 * @return The arguments
 	 */
 	public String[] getArguments() {
-		return this.args.clone();
+		return args.toArray(new String[args.size()]);
 	}
 
 	/**
@@ -107,6 +122,19 @@ public class Parser {
 	@Override
 	public String toString() {
 		StringBuilder end = new StringBuilder();
+		
+		for (Map.Entry<String, String> entry : flags.entrySet()) {
+		    String key = entry.getKey();
+		    String value = entry.getValue();
+		    
+		    end.append("-" + key);
+		    
+		    if (value.length() > 0) {
+		    	end.append(":" + value);
+		    }
+		    
+		    end.append(" ");
+		}
 		
 		for (String arg : args) {
 			end.append(arg + " ");
