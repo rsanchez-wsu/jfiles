@@ -21,6 +21,8 @@
 
 package edu.wright.cs.jfiles.gui.client;
 
+import edu.wright.cs.jfiles.client.JFilesClient;
+import edu.wright.cs.jfiles.commands.Mv;
 import edu.wright.cs.jfiles.core.FileStruct;
 import edu.wright.cs.jfiles.core.XmlHandler;
 import edu.wright.cs.jfiles.gui.common.FileIconViewController;
@@ -36,9 +38,20 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
@@ -54,8 +67,13 @@ import java.util.ResourceBundle;
  */
 public class ClientAppViewController implements Initializable {
 
+	private JFilesClient client;
+
 	private FileStruct selectedFile;
+	private String currentDirectory;
 	private Map<FileStruct, Parent> contents;
+
+	private Clipboard clipboard;
 
 	private ContextMenu fileContextMenu;
 	// private ContextMenu folderContextMenu;
@@ -146,6 +164,8 @@ public class ClientAppViewController implements Initializable {
 		Menu view = new Menu("View");
 		Menu sort = new Menu("Sort");
 
+		MenuItem paste = new MenuItem("Paste");
+
 		MenuItem largeIcons = new MenuItem("Large Icons");
 		MenuItem mediumIcons = new MenuItem("Medium Icons");
 		MenuItem smallIcons = new MenuItem("Small Icons");
@@ -159,7 +179,9 @@ public class ClientAppViewController implements Initializable {
 
 		MenuItem newFile = new MenuItem("New");
 
-		menu.getItems().addAll(view, sort, newFile);
+		menu.getItems().addAll(paste, view, sort, newFile);
+
+		paste.setOnAction(event -> paste());
 
 		largeIcons.setOnAction(event -> System.out.println("Large Icons"));
 		mediumIcons.setOnAction(event -> System.out.println("Medium Icons"));
@@ -180,7 +202,8 @@ public class ClientAppViewController implements Initializable {
 	 */
 	@FXML
 	public void cut() {
-		System.out.println("Cut");
+		StringSelection source = new StringSelection((String) selectedFile.getValue("path"));
+		clipboard.setContents(source, source);
 	}
 
 	/**
@@ -188,7 +211,7 @@ public class ClientAppViewController implements Initializable {
 	 */
 	@FXML
 	public void copy() {
-		System.out.println("Copy");
+		// Add selected file to clipboard
 	}
 
 	/**
@@ -196,7 +219,17 @@ public class ClientAppViewController implements Initializable {
 	 */
 	@FXML
 	public void paste() {
-		System.out.println("Paste");
+		Transferable content = clipboard.getContents(this);
+		if (content != null) {
+			try {
+				String source = (String) content.getTransferData(DataFlavor.stringFlavor);
+				client.sendCommand(new Mv(source, currentDirectory));
+			} catch (UnsupportedFlavorException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**
@@ -204,17 +237,63 @@ public class ClientAppViewController implements Initializable {
 	 */
 	@FXML
 	public void delete() {
-		System.out.println("Delete");
+		// client.sendCommand(new rm(""));
 	}
 
 	/**
-	 * Mouse clicked in flowPane action.
+	 * Mouse clicked in flowPane.
 	 */
 	@FXML
 	public void handleMouseClicked() {
 		fileContextMenu.hide();
 		// folderContextMenu.hide();
 		viewContextMenu.hide();
+	}
+
+	/**
+	 * Handles dragging files over the view.
+	 *
+	 * @param event
+	 *            drag event
+	 */
+	@FXML
+	public void onDragOver(DragEvent event) {
+		event.acceptTransferModes(TransferMode.COPY);
+	}
+
+	/**
+	 * Handles dropping files on the view.
+	 *
+	 * @param event
+	 *            drag event
+	 */
+	@FXML
+	public void onDragDrop(DragEvent event) {
+		root.getScene().getWindow().requestFocus();
+
+		Dragboard dragboard = event.getDragboard();
+		if (dragboard.hasFiles()) {
+			for (File file : dragboard.getFiles()) {
+				try {
+					FileStruct fileStruct = new FileStruct(file.toPath());
+					System.out.println(fileStruct.getValue("path") + " added");
+					FXMLLoader loader = new FXMLLoader(
+							FileIconViewController.class.getResource("FileIconView.fxml"));
+					final Parent view = loader.load();
+					FileIconViewController controller = loader.getController();
+
+					controller.setFileStruct(fileStruct);
+					controller.setSize(Size.MEDIUM);
+					controller.registerAppController(this);
+
+					flowPane.getChildren().add(view);
+					contents.put(fileStruct, view);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+
+		}
 	}
 
 	/**
@@ -236,7 +315,10 @@ public class ClientAppViewController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		contents = new HashMap<>();
-		loadDirectory("./src/edu/wright/cs/jfiles/core");
+		clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		client = new JFilesClient("localhost", 9786);
+		currentDirectory = "./src/edu/wright/cs/jfiles/core";
+		loadDirectory(currentDirectory);
 		fileContextMenu = buildFileContextMenu();
 		viewContextMenu = buildViewContextMenu();
 	}

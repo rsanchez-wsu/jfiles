@@ -40,7 +40,7 @@
             <TreeView fx:id="treeView" BorderPane.alignment="CENTER" />
          </left>
          <center>
-            <FlowPane fx:id="flowPane" onContextMenuRequested="#contextMenuRequested" onMouseClicked="#handleMouseClicked" rowValignment="TOP" BorderPane.alignment="CENTER" />
+            <FlowPane fx:id="flowPane" onContextMenuRequested="#contextMenuRequested" onDragDropped="#onDragDrop" onDragOver="#onDragOver" onMouseClicked="#handleMouseClicked" rowValignment="TOP" BorderPane.alignment="CENTER" />
          </center>
       </BorderPane>
    </center>

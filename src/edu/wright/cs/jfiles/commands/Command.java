@@ -82,6 +82,7 @@ public abstract class Command {
 		return sbr.toString();
 	}
 
+
 	/**
 	 * Converts cmd to string.
 	 */
