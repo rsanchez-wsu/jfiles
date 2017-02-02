@@ -33,22 +33,12 @@ import org.w3c.dom.Node;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Locale;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -70,17 +60,15 @@ import javax.xml.transform.stream.StreamResult;
  * @author Roberto C. Sánchez &lt;roberto.sanchez@wright.edu&gt;
  *
  */
-public class JFilesServer implements Runnable {
+public class JFilesServer {
 
 	static final Logger logger = LogManager.getLogger(JFilesServer.class);
 	private static int PORT = 9786;
 	// private final ServerSocket serverSocket;
 	private JFilesServerThread[] clients = new JFilesServerThread[50];
 	private ServerSocket server = null;
-	private Thread thread = null;
 	private int clientCount = 0;
 	DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
-	private Calendar theDate;
 
 	/**
 	 * Handles allocating resources needed for the server.
@@ -216,8 +204,10 @@ public class JFilesServer implements Runnable {
 		return node;
 	}
 
-	@Override
-	public void run() {
+	/**
+	 * .
+	 */
+	public void start() {
 		while (true) {
 			try {
 				System.out.println("Waiting for a client ...");
@@ -230,24 +220,10 @@ public class JFilesServer implements Runnable {
 	}
 
 	/**
-	 * .
-	 */
-	public void start() {
-		if (thread == null) {
-			thread = new Thread(this);
-			thread.start();
-		}
-	}
-
-	/**
 	 * This method stops the thread.
 	 */
-	@SuppressWarnings("deprecation")
 	public void stop() {
-		if (thread != null) {
-			thread.stop();
-			thread = null;
-		}
+
 	}
 
 	/**
@@ -286,7 +262,6 @@ public class JFilesServer implements Runnable {
 	/**
 	 * This method handles removing a thread.
 	 */
-	@SuppressWarnings("deprecation")
 	public synchronized void remove(int id) {
 		int pos = findClient(id);
 		if (pos >= 0) {
@@ -304,7 +279,7 @@ public class JFilesServer implements Runnable {
 			} catch (IOException ioe) {
 				System.out.println("Error closing thread: " + ioe);
 			}
-			toTerminate.stop();
+			toTerminate.interrupt();
 		}
 	}
 
