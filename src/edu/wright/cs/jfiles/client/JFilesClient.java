@@ -21,6 +21,12 @@
 
 package edu.wright.cs.jfiles.client;
 
+import edu.wright.cs.jfiles.commands.Command;
+import edu.wright.cs.jfiles.commands.Commands;
+import edu.wright.cs.jfiles.commands.Find;
+import edu.wright.cs.jfiles.commands.Mv;
+import edu.wright.cs.jfiles.commands.Ping;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -130,7 +136,8 @@ public class JFilesClient implements Runnable {
 				streamOut.writeUTF(console.readLine());
 				streamOut.flush();
 			} catch (IOException ioe) {
-				System.out.println("Sending error: " + ioe.getMessage());
+				System.out.println(System.getProperty("line.separator")
+						+ "Sending error: " + ioe.getMessage());
 				stop();
 			}
 		}
@@ -148,7 +155,8 @@ public class JFilesClient implements Runnable {
 			System.out.println("Good bye. Press RETURN to exit ...");
 			stop();
 		} else {
-			System.out.print(msg);
+			System.out.println(msg);
+			System.out.print("> ");
 		}
 	}
 
