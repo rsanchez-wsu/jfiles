@@ -119,8 +119,6 @@ public enum Commands {
 		if (cmdName.length() == 2) {
 			cmdName = "_" + cmdName;
 		}
-		
-		System.out.println("Searching for: " + cmdName);
 
 		for (Commands cmd : Commands.values()) {
 			if (cmd.name().equals(cmdName)) {
@@ -128,8 +126,6 @@ public enum Commands {
 				break;
 			}
 		}
-		
-		System.out.println("Sended with: " + fcmd);
 
 		return fcmd;
 	}

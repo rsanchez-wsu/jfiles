@@ -270,10 +270,11 @@ public class JFilesServer implements Runnable {
 		System.out.println("Got the input: " + input);
 
 		logger.info("[Server] Recv command: " + input);
-		
+
 		String[] sinput = input.split(" ");
 
-		Command cmd = Commands.getNewInstance(sinput[0], Arrays.copyOfRange(sinput, 1, sinput.length));
+		Command cmd = Commands.getNewInstance(sinput[0],
+					Arrays.copyOfRange(sinput, 1, sinput.length));
 
 		clients[findClient(id)].send(cmd.execute());
 

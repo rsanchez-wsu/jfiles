@@ -49,7 +49,7 @@ public class Parser {
 			add(arg);
 		}
 	}
-	
+
 	/**
 	 * Inits flag and args.
 	 */
@@ -57,7 +57,7 @@ public class Parser {
 		flags = new HashMap<String, String>();
 		args = new ArrayList<String>();
 	}
-	
+
 	/**
 	 * Adds arg to end of parser.
 	 * @param arg The arg to add to parser.
@@ -67,7 +67,7 @@ public class Parser {
 			arg = arg.substring(1);
 			String[] tokens = arg.split(":", 2);
 			String flagName = tokens[0].toUpperCase(Locale.ENGLISH);
-			
+
 			if (tokens.length > 1) {
 				this.flags.put(flagName, tokens[1]);
 			} else {
@@ -118,32 +118,32 @@ public class Parser {
 	public void shutupFindBugs() {
 
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder end = new StringBuilder();
-		
+
 		for (Map.Entry<String, String> entry : flags.entrySet()) {
-		    String key = entry.getKey();
-		    String value = entry.getValue();
-		    
-		    end.append("-" + key);
-		    
-		    if (value.length() > 0) {
-		    	end.append(":" + value);
-		    }
-		    
-		    end.append(" ");
+			String key = entry.getKey();
+			String value = entry.getValue();
+
+			end.append("-" + key);
+
+			if (value.length() > 0) {
+				end.append(":" + value);
+			}
+
+			end.append(" ");
 		}
-		
+
 		for (String arg : args) {
 			end.append(arg + " ");
 		}
-		
+
 		if (end.length() > 0) {
 			end.deleteCharAt(end.length() - 1);
 		}
-		
+
 		return end.toString();
 	}
 
