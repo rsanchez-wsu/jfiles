@@ -97,8 +97,7 @@ public class ClientAppViewController implements Initializable {
 	 */
 	private void loadDirectory(String path) {
 		client.send("ls " + path);
-		XmlHandler handler = new XmlHandler(path);
-		for (FileStruct file : handler.readXmlString(client.read())) {
+		for (FileStruct file : XmlHandler.readXmlString(client.read())) {
 			FXMLLoader loader =
 					new FXMLLoader(FileIconViewController.class.getResource("FileIconView.fxml"));
 			try {

@@ -145,7 +145,7 @@ public class XmlHandler {
 		return temp.arrlist;
 	}
 	
-	public ArrayList<FileStruct> readXmlString(String strxml) {
+	public static ArrayList<FileStruct> readXmlString(String strxml) {
 		XmlHandler temp = (XmlHandler) xstream.fromXML(strxml);
 		return temp.arrlist;
 	}
