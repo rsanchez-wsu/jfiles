@@ -21,6 +21,8 @@
 
 package edu.wright.cs.jfiles.core;
 
+import edu.wright.cs.jfiles.commands.Command;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -53,13 +55,19 @@ public class SocketClient {
 		}
 	}
 	
+	/**
+	 * Sends the given command to the server.
+	 *
+	 * @param cmd
+	 *            command to send
+	 */
+	public void sendCommand(Command cmd) {
+		send(cmd.toString());
+	}
+	
 	private void openStreams() throws IOException {
 		streamIn = new DataInputStream(socket.getInputStream());
 		streamOut = new DataOutputStream(socket.getOutputStream());
-	}
-	
-	public InputStreamReader readXml() {
-		return new InputStreamReader(streamIn);
 	}
 	
 	public String read() {
