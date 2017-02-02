@@ -34,7 +34,7 @@ public abstract class Command {
 	public Command() {
 		this.parser = new Parser();
 	}
-	
+
 	/**
 	 * Default constructor.
 	 * @param args Command Parser
@@ -57,7 +57,7 @@ public abstract class Command {
 	public void add(String arg) {
 		this.parser.add(arg);
 	}
-	
+
 	/**
 	 * Abstract execute command.
 	 * @return The output of the command.
@@ -78,7 +78,7 @@ public abstract class Command {
 
 		return sbr.toString();
 	}
-	
+
 	@Override
 	public String toString() {
 		return this.getClass().getSimpleName().toUpperCase(Locale.ENGLISH) + " " + parser.toString();

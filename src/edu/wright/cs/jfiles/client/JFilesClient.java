@@ -21,19 +21,22 @@
 
 package edu.wright.cs.jfiles.client;
 
+import edu.wright.cs.jfiles.commands.Command;
 import edu.wright.cs.jfiles.commands.Commands;
-import edu.wright.cs.jfiles.commands.Ping;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.Properties;
 
 /**
@@ -124,22 +127,38 @@ public class JFilesClient implements Runnable {
 		logger.info("Config set max threads to " + host);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {
 		System.out.print("> ");
 		while (thread != null) {
 			try {
-				console.readLine();
-//				streamOut.writeUTF(console.readLine());
-//				streamOut.flush();
-				streamOut.writeUTF(Commands.getNewInstance("mv", new String[] { "", "" }).toString());
-				streamOut.flush();
+				BufferedReader consoleIn = new BufferedReader(new InputStreamReader(System.in));
+				String line = consoleIn.readLine();
+				if (line != null) {
+					String[] elements = line.split(" ");
+					sendCommand(Commands.getNewInstance(elements[0],
+							Arrays.copyOfRange(elements, 1, elements.length)));
+				}
 			} catch (IOException ioe) {
 				System.out.println(System.getProperty("line.separator")
 						+ "Sending error: " + ioe.getMessage());
 				stop();
 			}
+		}
+	}
+
+	/**
+	 * Sends the given command to the server.
+	 *
+	 * @param cmd
+	 *            command to send
+	 */
+	public void sendCommand(Command cmd) {
+		try {
+			streamOut.writeUTF(cmd.toString());
+			streamOut.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 	}
