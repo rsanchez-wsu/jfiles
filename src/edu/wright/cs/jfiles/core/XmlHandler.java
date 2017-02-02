@@ -140,7 +140,11 @@ public class XmlHandler {
 		XmlHandler temp = (XmlHandler) xstream.fromXML(isr);
 		return temp.arrlist;
 	}
-	
+
+	/**
+	 * Gets the current xml state as string.
+	 * @return The xml state as string.
+	 */
 	public String xmlToString() {
 		return xstream.toXML(this);
 	}

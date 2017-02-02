@@ -78,7 +78,7 @@ public class Ls extends Command {
 	private String getFiles(String directory) {
 		return atos(findFiles(directory));
 	}
-	
+
 	/**
 	 * Returns the files in xml format.
 	 * @param directory The directory to return.
