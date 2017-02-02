@@ -1,9 +1,9 @@
 /*
  * Copyright (C) 2017 - WSU CEG3120 Students
  *
-*
  *
-*
+ *
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -26,22 +26,38 @@ import edu.wright.cs.jfiles.commands.Command;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+/**
+ * Socket Client used by the GUI to communicate with server.
+ *
+ * @author Logan Rickert
+ *
+ */
 public class SocketClient {
-	
+
 	private Socket socket = null;
 	private static int port = 9786;
 	private static String host = "localhost";
 	private DataInputStream streamIn = null;
 	private DataOutputStream streamOut = null;
-	
+
+	/**
+	 * Default constructor.
+	 */
 	public SocketClient() {
 		this(host, port);
 	}
-	
+
+	/**
+	 * Constructor.
+	 *
+	 * @param serverName
+	 *            server address
+	 * @param serverPort
+	 *            server port
+	 */
 	public SocketClient(String serverName, int serverPort) {
 		System.out.println("Establishing connection. Please wait ...");
 		try {
@@ -54,7 +70,7 @@ public class SocketClient {
 			System.out.println("Unexpected exception: " + ioe.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Sends the given command to the server.
 	 *
@@ -64,32 +80,58 @@ public class SocketClient {
 	public void sendCommand(Command cmd) {
 		send(cmd.toString());
 	}
-	
+
+	/**
+	 * Opens the socket streams.
+	 *
+	 * @throws IOException
+	 *             can't open stream
+	 */
 	private void openStreams() throws IOException {
 		streamIn = new DataInputStream(socket.getInputStream());
 		streamOut = new DataOutputStream(socket.getOutputStream());
 	}
-	
+
+	/**
+	 * Reads in the data from the server.
+	 *
+	 * @return string data from server
+	 */
 	public String read() {
 		String input = "";
-		
+
 		try {
 			input = streamIn.readUTF();
+			log("Recieved : " + input);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return input;
 	}
-	
+
+	/**
+	 * Sends data to the server
+	 *
+	 * @param output
+	 *            string data to send to the server.
+	 */
 	public void send(String output) {
 		try {
+			log("Sending : " + output);
 			streamOut.writeUTF(output);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * Logs string to the console.
+	 *
+	 * @param str
+	 *            a string
+	 */
+	public void log(String str) {
+		System.out.println(str);
+	}
 }

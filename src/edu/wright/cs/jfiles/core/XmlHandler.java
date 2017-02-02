@@ -131,10 +131,15 @@ public class XmlHandler {
 		xstream.toXML(this, osw);
 	}
 
+	/**
+	 * Reads out the file structure of this XmlHandler as a string.
+	 *
+	 * @return xml representation of this
+	 */
 	public String xmlToString() {
 		return xstream.toXML(this);
 	}
-	
+
 	/**
 	 * Method to read XML and deserialize to an object.
 	 * @param isr InputStreamReader to read from
@@ -144,7 +149,14 @@ public class XmlHandler {
 		XmlHandler temp = (XmlHandler) xstream.fromXML(isr);
 		return temp.arrlist;
 	}
-	
+
+	/**
+	 * Reads in XML, and outputs a List of FileStructs.
+	 *
+	 * @param strxml
+	 *            the xml to read
+	 * @return list of FileStructs
+	 */
 	public static ArrayList<FileStruct> readXmlString(String strxml) {
 		XmlHandler temp = (XmlHandler) xstream.fromXML(strxml);
 		return temp.arrlist;

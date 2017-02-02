@@ -21,8 +21,9 @@
 
 package edu.wright.cs.jfiles.gui.client;
 
-import edu.wright.cs.jfiles.client.JFilesClient;
+import edu.wright.cs.jfiles.commands.Ls;
 import edu.wright.cs.jfiles.commands.Mv;
+import edu.wright.cs.jfiles.commands.Rm;
 import edu.wright.cs.jfiles.core.FileStruct;
 import edu.wright.cs.jfiles.core.SocketClient;
 import edu.wright.cs.jfiles.core.XmlHandler;
@@ -47,7 +48,6 @@ import javafx.scene.layout.FlowPane;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
@@ -56,6 +56,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
@@ -68,12 +69,19 @@ import java.util.ResourceBundle;
  */
 public class ClientAppViewController implements Initializable {
 
+	/**
+	 * Type for storing last operation.
+	 */
+	private enum Operation {
+		CUT, COPY;
+	}
+
 	private SocketClient client;
 
 	private FileStruct selectedFile;
 	private String currentDirectory;
 	private Map<FileStruct, Parent> contents;
-
+	private Operation lastOperation;
 	private Clipboard clipboard;
 
 	private ContextMenu fileContextMenu;
@@ -96,22 +104,26 @@ public class ClientAppViewController implements Initializable {
 	 *            the path to load
 	 */
 	private void loadDirectory(String path) {
-		client.send("ls " + path);
-		for (FileStruct file : XmlHandler.readXmlString(client.read())) {
-			FXMLLoader loader =
-					new FXMLLoader(FileIconViewController.class.getResource("FileIconView.fxml"));
-			try {
-				final Parent view = loader.load();
-				FileIconViewController controller = loader.getController();
+		client.sendCommand(new Ls(path));
+		String result = client.read();
+		if (!result.equals("")) {
+			List<FileStruct> files = XmlHandler.readXmlString(result);
+			for (FileStruct file : files) {
+				FXMLLoader loader = new FXMLLoader(
+						FileIconViewController.class.getResource("FileIconView.fxml"));
+				try {
+					final Parent view = loader.load();
+					FileIconViewController controller = loader.getController();
 
-				controller.setFileStruct(file);
-				controller.setSize(Size.MEDIUM);
-				controller.registerAppController(this);
+					controller.setFileStruct(file);
+					controller.setSize(Size.MEDIUM);
+					controller.registerAppController(this);
 
-				flowPane.getChildren().add(view);
-				contents.put(file, view);
-			} catch (IOException e) {
-				e.printStackTrace();
+					flowPane.getChildren().add(view);
+					contents.put(file, view);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -205,6 +217,7 @@ public class ClientAppViewController implements Initializable {
 	public void cut() {
 		StringSelection source = new StringSelection((String) selectedFile.getValue("path"));
 		clipboard.setContents(source, source);
+		lastOperation = Operation.CUT;
 	}
 
 	/**
@@ -212,7 +225,9 @@ public class ClientAppViewController implements Initializable {
 	 */
 	@FXML
 	public void copy() {
-		// Add selected file to clipboard
+		StringSelection source = new StringSelection((String) selectedFile.getValue("path"));
+		clipboard.setContents(source, source);
+		lastOperation = Operation.COPY;
 	}
 
 	/**
@@ -224,7 +239,20 @@ public class ClientAppViewController implements Initializable {
 		if (content != null) {
 			try {
 				String source = (String) content.getTransferData(DataFlavor.stringFlavor);
-				client.sendCommand(new Mv(source, currentDirectory));
+
+				switch (lastOperation) {
+				case COPY:
+					// client.sendCommand(new Cp(source, currentDirectory));
+					break;
+				case CUT:
+					client.sendCommand(new Mv(source, currentDirectory));
+					break;
+				default:
+					break;
+				}
+
+				loadDirectory(currentDirectory);
+
 			} catch (UnsupportedFlavorException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -238,7 +266,8 @@ public class ClientAppViewController implements Initializable {
 	 */
 	@FXML
 	public void delete() {
-		// client.sendCommand(new rm(""));
+		client.sendCommand(new Rm((String) selectedFile.getValue("path")));
+		loadDirectory(currentDirectory);
 	}
 
 	/**
@@ -317,7 +346,8 @@ public class ClientAppViewController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		contents = new HashMap<>();
 		client = new SocketClient();
-		loadDirectory(".");
+		currentDirectory = ".";
+		loadDirectory(currentDirectory);
 		clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		fileContextMenu = buildFileContextMenu();
 		viewContextMenu = buildViewContextMenu();
