@@ -97,7 +97,15 @@
 			includeantruntime="false"
 			debug="on"
 			deprecation="on">
-
+			
+			<!--
+			Adds an argument to the compiler to silence a warning. This warning
+			appears to be caused by an error in the JDK. Because this warning
+			doesn't effect our code it is going to be ignored.
+			(ref: https://bugs.openjdk.java.net/browse/JDK-8039469)
+			-->
+			<compilerarg value="-Xlint:-processing" />
+			
 			<compilerarg value="-Xlint:all" />
 			<compilerarg value="-Xlint:-path" />
 			<compilerarg value="-Werror" />

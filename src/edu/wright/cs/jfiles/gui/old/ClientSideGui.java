@@ -19,7 +19,9 @@
  *
  */
 
-package edu.wright.cs.jfiles.client;
+package edu.wright.cs.jfiles.gui.old;
+
+import edu.wright.cs.jfiles.core.FileStruct.Type;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -28,7 +30,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -36,8 +38,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -47,6 +47,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 
 /**
  * This class will form the body of the JFiles client side GUI application. This
@@ -73,9 +80,16 @@ public class ClientSideGui extends Application {
 
 	/**
 	 * This method is where most visual elements are created and manipulated.
+	 *
+	 * @throws IOException Thrown if parsing fails.
+	 * @throws SAXException  Thrown if parsing fails.
+	 * @throws ParserConfigurationException Thrown if parsing fails.
+	 * @throws XPathExpressionException Thrown when XPath counting elements when parsing,
+	 * 									compiling, or evaluating fails.
 	 */
 	@Override
-	public void start(Stage primaryStage) {
+	public void start(Stage primaryStage) throws ParserConfigurationException, SAXException,
+			IOException, XPathExpressionException {
 
 		// Login Window Construction
 
@@ -183,23 +197,22 @@ public class ClientSideGui extends Application {
 		MenuBar headderMenuBar = new MenuBar();
 		basePane.setTop(headderMenuBar);
 
-		// Create Menus
-		Menu fileMenu = new Menu("File");
-		Menu editMenu = new Menu("Edit");
-
 		// Create File Menu Items
-		MenuItem openFileMenuItem = new MenuItem("Open");
+		MenuItem openMenuItem = new MenuItem("Open");
 		MenuItem closeMenuItem = new MenuItem("Close");
 		// Create Edit Menu Items
 		MenuItem createMenuItem = new MenuItem("Create");
-		MenuItem openMenuItem = new MenuItem("Open");
 		MenuItem deleteMenuItem = new MenuItem("Delete");
 		MenuItem copyMenuItem = new MenuItem("Copy");
 		MenuItem pasteMenuItem = new MenuItem("Paste");
 		MenuItem cutMenuItem = new MenuItem("Cut");
 
+		// Create Menus
+		Menu fileMenu = new Menu("File");
+		Menu editMenu = new Menu("Edit");
+
 		// Add Menu Items and a Separator to Menu.
-		fileMenu.getItems().addAll(openFileMenuItem, new SeparatorMenuItem(), closeMenuItem);
+		fileMenu.getItems().addAll(openMenuItem, new SeparatorMenuItem(), closeMenuItem);
 		editMenu.getItems().addAll(createMenuItem, openMenuItem, deleteMenuItem, copyMenuItem,
 				pasteMenuItem, cutMenuItem);
 
@@ -209,71 +222,27 @@ public class ClientSideGui extends Application {
 		// Add the menus to the menu bar
 		headderMenuBar.getMenus().addAll(fileMenu, editMenu);
 
-		// Tools Area
-		final int imageHeight = 30;
-		final int imageWidth = 30;
+		// Build Context menus
+		ContextMenu fileContextMenu = new ContextMenu();
 
-		Image copyImage = new Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
-		ImageView copyImageView = new ImageView(copyImage);
-		copyImageView.setFitHeight(imageHeight);
-		copyImageView.setFitWidth(imageWidth);
-		Button copyButton = new Button("Copy", copyImageView);
-		copyButton.setContentDisplay(ContentDisplay.TOP);
-		copyButton.setStyle("-fx-font-size: 15px;" + "-fx-font-family: 'Currier New' ;"
-				+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
+		// Create menu Items
+		MenuItem openContextMenuItem = new MenuItem("Open");
+		// MenuItem closeContextMenuItem = new MenuItem("Close");
+		// MenuItem newContextMenuItem = new MenuItem("Create");
+		MenuItem deleteContextMenuItem = new MenuItem("Delete");
+		MenuItem copyContextMenuItem = new MenuItem("Copy");
+		MenuItem pasteContextMenuItem = new MenuItem("Paste");
+		MenuItem cutContextMenuItem = new MenuItem("Cut");
 
-		Image pasteImage = new Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
-		ImageView pasteImageView = new ImageView(pasteImage);
-		pasteImageView.setFitHeight(imageHeight);
-		pasteImageView.setFitWidth(imageWidth);
-		Button pasteButton = new Button("Copy", pasteImageView);
-		pasteButton.setContentDisplay(ContentDisplay.TOP);
-		pasteButton.setStyle("-fx-font-size: 15px;" + "-fx-font-family: 'Currier New' ;"
-				+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
+		fileContextMenu.getItems().addAll(openContextMenuItem, new SeparatorMenuItem(),
+				cutContextMenuItem, copyContextMenuItem, pasteContextMenuItem,
+				new SeparatorMenuItem(), deleteContextMenuItem);
 
-		Image cutImage = new Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
-		ImageView cutImageView = new ImageView(cutImage);
-		cutImageView.setFitHeight(imageHeight);
-		cutImageView.setFitWidth(imageWidth);
-		Button cutButton = new Button("Copy", cutImageView);
-		cutButton.setContentDisplay(ContentDisplay.TOP);
-		cutButton.setStyle("-fx-font-size: 15px;" + "-fx-font-family: 'Currier New' ;"
-				+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
-
-		Image deleteImage = new Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
-		ImageView deleteImageView = new ImageView(deleteImage);
-		deleteImageView.setFitHeight(imageHeight);
-		deleteImageView.setFitWidth(imageWidth);
-		Button deleteButton = new Button("Copy", deleteImageView);
-		deleteButton.setContentDisplay(ContentDisplay.TOP);
-		deleteButton.setStyle("-fx-font-size: 15px;" + "-fx-font-family: 'Currier New' ;"
-				+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
-
-		Image openImage = new Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
-		ImageView openImageView = new ImageView(openImage);
-		openImageView.setFitHeight(imageHeight);
-		openImageView.setFitWidth(imageWidth);
-		Button openButton = new Button("Copy", openImageView);
-		openButton.setContentDisplay(ContentDisplay.TOP);
-		openButton.setStyle("-fx-font-size: 15px;" + "-fx-font-family: 'Currier New' ;"
-				+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
-
-		Image createImage = new Image("file:src/edu/wright/cs/jfiles/gui/img/file_icon_jpg.png");
-		ImageView createImageView = new ImageView(createImage);
-		createImageView.setFitHeight(imageHeight);
-		createImageView.setFitWidth(imageWidth);
-		Button createButton = new Button("Copy", createImageView);
-		createButton.setContentDisplay(ContentDisplay.TOP);
-		createButton.setStyle("-fx-font-size: 15px;" + "-fx-font-family: 'Currier New' ;"
-				+ "-fx-text-fill: black;" + "-fx-base: #85C1E9;");
-
-		HBox toolsHbox = new HBox();
-		toolsHbox.setPadding(new Insets(10, 10, 10, 10));
-		toolsHbox.setSpacing(10);
-		toolsHbox.setStyle("-fx-background-color: LIGHTBLUE;");
-		toolsHbox.getChildren().addAll(copyButton, pasteButton, cutButton, deleteButton, openButton,
-				createButton);
-		basePane.setCenter(toolsHbox);
+		// Creates directory view and adds to center of screen
+		JDirectoryIconView directoryView = new JDirectoryIconView();
+		directoryView.populateLocal("./src/edu/wright/cs/jfiles/core");
+		directoryView.addContextMenu(fileContextMenu, Type.FILE);
+		basePane.setCenter(directoryView);
 
 		// Scene Creation. Put the basePane on the scene.
 		Scene scene = new Scene(basePane, 1200, 600, Color.WHITE);

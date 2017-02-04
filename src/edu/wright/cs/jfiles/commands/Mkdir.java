@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
  *
- *
+ * Roberto C. Sánchez <roberto.sanchez@wright.edu>
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,44 +19,37 @@
  *
  */
 
-package edu.wright.cs.jfiles.gui;
+
+package edu.wright.cs.jfiles.commands;
 
 /**
- * Each file / folder is stored as an object.
+ *  The MKDIR command returns ".mkdir".
+ *  Syntax:
+ *      MKDIR directory
+ *  Flags:
+ *      - None.
+ *  Example:
+ *      MKDIR testfolder
  */
-public class Item {
+
+public class Mkdir extends Command {
 
 	/**
-	 * Item Constructor.
+	 * Calls super.
+	 * @param args Command's args.
 	 */
-	public Item(String name, String ext, String type) {
-		this.name = name;
-		this.ext = ext;
-		this.type = type;
+	public Mkdir(String... args) {
+		super(args);
 	}
 
 	/**
-	 * Getter for file / folder name.
+	 *  TODO: Program routine for creating directories.
+	 *  @return .mkdir
 	 */
-	public String getName() {
-		return name;
+	@Override
+	public String execute() {
+
+		return ".mkdir";
 	}
 
-	/**
-	 * Getter for file / folder Extension.
-	 */
-	public String getExt() {
-		return ext;
-	}
-
-	/**
-	 * Getter for file / folder type.
-	 */
-	public String getType() {
-		return type;
-	}
-
-	private String name;
-	private String ext;
-	private String type;
 }

@@ -1,0 +1,16 @@
+BorderPane {
+}
+
+Label {	
+	-fx-font-size: 15px;
+	-fx-font-family: 'Currier New' ;
+	-fx-text-fill: black;
+	-fx-base: #85C1E9;
+}
+
+BorderPane.selected  {
+	-fx-background-color: rgb(198,210,255);
+	-fx-background-radius: 8;
+	-fx-border-radius: 8;
+	-fx-border-color: lightblue;
+}
