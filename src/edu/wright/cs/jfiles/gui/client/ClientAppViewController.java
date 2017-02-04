@@ -25,6 +25,7 @@ import edu.wright.cs.jfiles.commands.Ls;
 import edu.wright.cs.jfiles.commands.Mv;
 import edu.wright.cs.jfiles.commands.Rm;
 import edu.wright.cs.jfiles.core.FileStruct;
+import edu.wright.cs.jfiles.core.FileStructSelection;
 import edu.wright.cs.jfiles.core.SocketClient;
 import edu.wright.cs.jfiles.core.XmlHandler;
 import edu.wright.cs.jfiles.gui.common.FileIconViewController;
@@ -48,8 +49,7 @@ import javafx.scene.layout.FlowPane;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
@@ -67,7 +67,7 @@ import java.util.ResourceBundle;
  * @author Matt
  *
  */
-public class ClientAppViewController implements Initializable {
+public class ClientAppViewController implements Initializable, ClipboardOwner {
 
 	/**
 	 * Type for storing last operation.
@@ -98,32 +98,41 @@ public class ClientAppViewController implements Initializable {
 	FlowPane flowPane;
 
 	/**
+	 * Clears the view.
+	 */
+	private void clearView() {
+		contents.clear();
+		flowPane.getChildren().clear();
+	}
+
+	/**
 	 * Loads the given directory into the view.
 	 *
 	 * @param path
 	 *            the path to load
 	 */
 	private void loadDirectory(String path) {
+		clearView();
+
 		client.sendCommand(new Ls(path));
 		String result = client.read();
-		if (!result.equals("")) {
-			List<FileStruct> files = XmlHandler.readXmlString(result);
-			for (FileStruct file : files) {
-				FXMLLoader loader = new FXMLLoader(
-						FileIconViewController.class.getResource("FileIconView.fxml"));
-				try {
-					final Parent view = loader.load();
-					FileIconViewController controller = loader.getController();
 
-					controller.setFileStruct(file);
-					controller.setSize(Size.MEDIUM);
-					controller.registerAppController(this);
+		List<FileStruct> files = XmlHandler.readXmlString(result);
+		for (FileStruct file : files) {
+			FXMLLoader loader =
+					new FXMLLoader(FileIconViewController.class.getResource("FileIconView.fxml"));
+			try {
+				final Parent view = loader.load();
+				FileIconViewController controller = loader.getController();
 
-					flowPane.getChildren().add(view);
-					contents.put(file, view);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				controller.setFileStruct(file);
+				controller.setSize(Size.MEDIUM);
+				controller.registerAppController(this);
+
+				flowPane.getChildren().add(view);
+				contents.put(file, view);
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -215,8 +224,7 @@ public class ClientAppViewController implements Initializable {
 	 */
 	@FXML
 	public void cut() {
-		StringSelection source = new StringSelection((String) selectedFile.getValue("path"));
-		clipboard.setContents(source, source);
+		clipboard.setContents(new FileStructSelection(selectedFile), this);
 		lastOperation = Operation.CUT;
 	}
 
@@ -225,8 +233,7 @@ public class ClientAppViewController implements Initializable {
 	 */
 	@FXML
 	public void copy() {
-		StringSelection source = new StringSelection((String) selectedFile.getValue("path"));
-		clipboard.setContents(source, source);
+		clipboard.setContents(new FileStructSelection(selectedFile), this);
 		lastOperation = Operation.COPY;
 	}
 
@@ -238,14 +245,15 @@ public class ClientAppViewController implements Initializable {
 		Transferable content = clipboard.getContents(this);
 		if (content != null) {
 			try {
-				String source = (String) content.getTransferData(DataFlavor.stringFlavor);
-
+				FileStruct file =
+						(FileStruct) content.getTransferData(content.getTransferDataFlavors()[0]);
+				String filePath = (String) file.getValue("path");
 				switch (lastOperation) {
 				case COPY:
 					// client.sendCommand(new Cp(source, currentDirectory));
 					break;
 				case CUT:
-					client.sendCommand(new Mv(source, currentDirectory));
+					client.sendCommand(new Mv(filePath, currentDirectory));
 					break;
 				default:
 					break;
@@ -351,5 +359,11 @@ public class ClientAppViewController implements Initializable {
 		clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		fileContextMenu = buildFileContextMenu();
 		viewContextMenu = buildViewContextMenu();
+	}
+
+	@Override
+	public void lostOwnership(Clipboard clipboard, Transferable transferable) {
+		// Required for ClipboardOwner interface
+		System.out.println("ClientAppViewController : Lost Clipboard Ownership");
 	}
 }
