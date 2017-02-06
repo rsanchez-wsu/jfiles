@@ -116,7 +116,7 @@ public class ClientAppViewController implements Initializable, ClipboardOwner {
 	private void loadDirectory(String path) {
 		clearView();
 
-		client.sendCommand(new Ls(path));
+		client.sendCommand(new Ls(path, "-XML"));
 		String result = client.read();
 
 		List<FileStruct> files = XmlHandler.readXmlString(result);
