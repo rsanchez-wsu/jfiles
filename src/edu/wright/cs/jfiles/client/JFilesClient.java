@@ -43,31 +43,37 @@ import java.util.Scanner;
 
 /**
  * The main class of the JFiles client application.
- * 
+ * This method can use many threads for the same object. 
+ * It's purpose is to try to find connections to the server.
  * @author Roberto C. Sánchez &lt;roberto.sanchez@wright.edu&gt;
  *
  */
-public class JFilesClient implements Runnable {
 
+// Implementing runnable for reusability and inheritance
+public class JFilesClient implements Runnable {
+//Variables to create host and port
+//*READ ME*	
+//This code could use better variable names
 	static final Logger logger = LogManager.getLogger(JFilesClient.class);
 	private static String host = "localhost";
 	private static int port = 9786;
 	private static final String UTF_8 = "UTF-8";
+	
 	/**
+	 * This is a method for the class above.
 	 * Handles allocating resources needed for the client.
-	 * 
-	 * @throws IOException
-	 *             If there is a problem binding to the socket
+	 * @throws IOException if there is a problem binding to the socket
 	 */
-
+	//Needs to be coded
 	public JFilesClient() {
+		
 	}
 
 	/**
 	 * Handles allocating resources needed for the server.
 	 * 
 	 * @throws IOException
-	 *             If there is a problem binding to the socket
+	 *If there is a problem binding to the socket
 	 */
 	private static void init() throws IOException {
 		Properties prop = new Properties();
@@ -82,7 +88,7 @@ public class JFilesClient implements Runnable {
 				"%PROGRAMFILES%/jFiles/etc/clientConfig.xml",
 				"%APPDATA%/jFiles/etc/clientConfig.xml"};
 		
-		//Checking location(s) for the config file);
+		//Checking location(s) for the config file;
 		for (int i = 0; i < configPaths.length; i++) {
 			if (new File(configPaths[i]).exists()) {
 				config = new File(configPaths[i]);
@@ -91,18 +97,18 @@ public class JFilesClient implements Runnable {
 		}
 		
 		//Output location where the config file was found. Otherwise warn and use defaults.
-		if (config == null) {		
+		if (config == null) {	//No configuration	
 			logger.info("No config file found. Using default values.");
-		} else {
+		} else { //configuration found
 			logger.info("Config file found in " + config.getPath());
 			//Read file
 			try {
 				//Reads xmlfile into prop object as key value pairs
 				fis = new FileInputStream(config);
 				prop.loadFromXML(fis);			
-			} catch (IOException e) {
+			} catch (IOException e) { //found exception 
 				logger.error("IOException occured when trying to access the server config", e);
-			} finally {
+			} finally { //close file
 				if (fis != null) {
 					fis.close();
 				}
@@ -110,7 +116,7 @@ public class JFilesClient implements Runnable {
 		}
 	
 		//Add setters here. First value is the key name and second is the default value.
-		//Default values are require as they are used if the config file cannot be found OR if
+		//Default values are required as they are used if the config file cannot be found OR if
 		// the config file doesn't contain the key.
 		port = Integer.parseInt(prop.getProperty("port","9786"));
 		logger.info("Config set to port " + port);
@@ -118,7 +124,12 @@ public class JFilesClient implements Runnable {
 		host = prop.getProperty("host","localhost");
 		logger.info("Config set max threads to " + host);		
 	}
-	
+
+	/**
+	 * Run is a method that is suppose to 
+	 * communicate between the client and the server.
+	 *
+	 */
 	
 	@Override
 	public void run() {
@@ -153,7 +164,7 @@ public class JFilesClient implements Runnable {
 					while ((startPoint = fileSent.read(chunkOfBytes)) != -1) {
 						checkFile.update(chunkOfBytes, 0, startPoint);
 					}
-					//the finalized checksum
+					//The finalized checksum
 					byte[] checksum = checkFile.digest();
 					System.out.print("Digest(in bytes):: ");
 					for (int i = 0; i < checksum.length - 1 ; i++) {
@@ -164,15 +175,18 @@ public class JFilesClient implements Runnable {
 			//BufferedReader in = new BufferedReader(isr);
 			//Get user input
 			@SuppressWarnings("resource")
-			//Eclipse complained that kb wasn't being used. Not sure why.
-			//kb input is used on the line after it is initialized
-			//Overrode resource leak warning for now
+			/*Eclipse complained that kb wasn't being used, not sure why.
+			kb input is used on the line after it is initialized.
+			Overrode resource leak warning for now */
+			
+			//Create scanner for UTF_8
 			Scanner kb = new Scanner(System.in, UTF_8);
 			String line = kb.nextLine();
-			//Splits the user input into an array of words separated by spaces
-			//switch statement for which command was entered
-			switch (line.trim()) {
 			
+			//Splits the input from the file into an array separated by spaces.
+			//Switch statement for which command was entered. 
+			switch (line.trim()) {
+			//If file was entered
 			case "FILE": 
 				fileCommand(line, socket);
 				break;
@@ -200,6 +214,7 @@ public class JFilesClient implements Runnable {
 		 * @param sock an active Socket object connected to server
 		 */
 	public void fileCommand(String file, Socket sock) {
+		//Creates a new file to write to
 		try {
 			OutputStreamWriter osw = new OutputStreamWriter(sock.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
@@ -210,7 +225,8 @@ public class JFilesClient implements Runnable {
 			
 			BufferedWriter bw = new BufferedWriter(new FileWriter("AUTHORS-COPY"));
 			String line;
-			while ((line = br.readLine()) != null) {
+			//Whenever there's an output, write to the file.
+			while ((line = br.readLine()) != null) { 
 				System.out.println(line);
 				bw.write(line + "\n" );
 			}
@@ -230,7 +246,7 @@ public class JFilesClient implements Runnable {
 	 * @return a byte array containing the processed file
 	 */
 	public byte[] getChecksum(File file) {
-		//Initialize some variables
+		//Initialize checksum and the file input stream.
 		byte[] checksum = null;
 		FileInputStream fileSent = null;
 		
@@ -238,21 +254,21 @@ public class JFilesClient implements Runnable {
 			MessageDigest checkFile = MessageDigest.getInstance("MD5");
 			//@SuppressWarnings("resource")
 			fileSent = new FileInputStream(file);
-			// Creating a byte array so we can read the bytes of the file in
-			// chunks
+			// Creating a byte array so we can read the bytes of the file in chunks. 
 			byte[] chunkOfBytes = new byte[(int) file.length()];
-			// used as the place holder for the array
+			// Used as the place holder for the array
 			int startPoint = 0;
-
-			while ((startPoint = fileSent.read(chunkOfBytes)) != -1) {
+			//While there is a value inside the file, update.
+			while ((startPoint = fileSent.read(chunkOfBytes)) != -1) { 
 				checkFile.update(chunkOfBytes, 0, startPoint);
 			}
-			// the finalized checksum
+			//The finalized checksum
 			checksum = checkFile.digest();
 			System.out.print("Digest(in bytes):: ");
 			for (int i = 0; i < checksum.length - 1; i++) {
 				System.out.print(checksum[i]);
 			}
+		//New line	
 			System.out.println();
 
 		} catch (NoSuchAlgorithmException e) {

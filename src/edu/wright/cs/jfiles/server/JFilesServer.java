@@ -57,15 +57,31 @@ import javax.xml.transform.stream.StreamResult;
  *
  */
 public class JFilesServer implements Runnable {
-
+	// variables (some could use better names)
 	static final Logger logger = LogManager.getLogger(JFilesServer.class);
 	private static int PORT;
 	private static ServerSocket serverSocket;
 	private static int MAXTHREADS;
 	private static final String UTF_8 = "UTF-8";
 	private Socket socket;
-
+	/* Creates new port for serverSocket. ?static?
 	static {
+	}try
+	{
+		serverSocket = new ServerSocket(PORT);
+	}catch(
+	IOException e)
+	{
+			logger.error("Some error occurred", e);
+		}
+	}*/
+	/**
+	 * Handles allocating resources needed for the server.
+	 * 
+	 * @throws IOException
+	 *             If there is a problem binding to the socket
+	 */
+	void createServerSocket() {
 		try {
 			serverSocket = new ServerSocket(PORT);
 		} catch (IOException e) {
@@ -76,22 +92,21 @@ public class JFilesServer implements Runnable {
 	/**
 	 * Handles allocating resources needed for the server.
 	 * 
-	 * @throws IOException If there is a problem binding to the socket
-	 */	
+	 * @throws IOException
+	 *             If there is a problem binding to the socket
+	 */
 	private static void init() throws IOException {
 		Properties prop = new Properties();
 		FileInputStream fis = null;
-		File config = null;	
+		File config = null;
 
-		//Array of strings containing possible paths to check for config files
-		String[] configPaths = {"$HOME/.jfiles/serverConfig.xml",
-				"/usr/local/etc/jfiles/serverConfig.xml",
-				"/opt/etc/jfiles/serverConfig.xml",
-				"/etc/jfiles/serverConfig.xml",
-				"%PROGRAMFILES%/jFiles/etc/serverConfig.xml",
-				"%APPDATA%/jFiles/etc/serverConfig.xml"};
+		// Array of strings containing possible paths to check for config files
+		String[] configPaths = { "$HOME/.jfiles/serverConfig.xml",
+				"/usr/local/etc/jfiles/serverConfig.xml", "/opt/etc/jfiles/serverConfig.xml",
+				"/etc/jfiles/serverConfig.xml", "%PROGRAMFILES%/jFiles/etc/serverConfig.xml",
+				"%APPDATA%/jFiles/etc/serverConfig.xml" };
 
-		//Checking location(s) for the config file);
+		// Checking location(s) for the config file);
 		for (int i = 0; i < configPaths.length; i++) {
 			if (new File(configPaths[i]).exists()) {
 				config = new File(configPaths[i]);
@@ -99,16 +114,17 @@ public class JFilesServer implements Runnable {
 			}
 		}
 
-		//Output location where the config file was found. Otherwise warn and use defaults.
-		if (config == null) {		
+		// Output location where the config file was found. Otherwise warn and
+		// use defaults.
+		if (config == null) {
 			logger.info("No config file found. Using default values.");
 		} else {
 			logger.info("Config file found in " + config.getPath());
-			//Read file
+			// Read file
 			try {
-				//Reads xmlfile into prop object as key value pairs
+				// Reads xmlfile into prop object as key value pairs
 				fis = new FileInputStream(config);
-				prop.loadFromXML(fis);			
+				prop.loadFromXML(fis);
 			} catch (IOException e) {
 				logger.error("IOException occured when trying to access the server config", e);
 			} finally {
@@ -118,19 +134,23 @@ public class JFilesServer implements Runnable {
 			}
 		}
 
-		//Add setters here. First value is the key name and second is the default value.
-		//Default values are require as they are used if the config file cannot be found OR if
+		// Add setters here. First value is the key name and second is the
+		// default value.
+		// Default values are require as they are used if the config file cannot
+		// be found OR if
 		// the config file doesn't contain the key.
-		PORT = Integer.parseInt(prop.getProperty("Port","9786"));
+		PORT = Integer.parseInt(prop.getProperty("Port", "9786"));
 		logger.info("Config set to port " + PORT);
 
-		MAXTHREADS = Integer.parseInt(prop.getProperty("maxThreads","10"));
-		logger.info("Config set max threads to " + MAXTHREADS);		
+		MAXTHREADS = Integer.parseInt(prop.getProperty("maxThreads", "10"));
+		logger.info("Config set max threads to " + MAXTHREADS);
 	}
 
 	/**
 	 * This is a Javadoc comment to statisfy Checkstyle.
-	 * @throws IOException When bad things happen
+	 * 
+	 * @throws IOException
+	 *             When bad things happen
 	 */
 	public JFilesServer(Socket sock) throws IOException {
 		socket = sock;
@@ -138,11 +158,13 @@ public class JFilesServer implements Runnable {
 
 	/**
 	 * Creates an XML file.
-	 * @throws TransformerFactoryConfigurationError error in configuration
-	 * @throws TransformerException error in configuration
+	 * 
+	 * @throws TransformerFactoryConfigurationError
+	 *             error in configuration
+	 * @throws TransformerException
+	 *             error in configuration
 	 */
-	private void createXml() throws TransformerFactoryConfigurationError, 
-		TransformerException {
+	private void createXml() throws TransformerFactoryConfigurationError, TransformerException {
 		Document doc = null;
 		try {
 			// Create new XML document
@@ -155,11 +177,11 @@ public class JFilesServer implements Runnable {
 			// Add elements to new document
 			Element root = doc.createElement("fileSystem");
 			doc.appendChild(root);
-			Node dir = createNode(doc,"directory");
-			dir.appendChild(createNode(doc,"file"));
+			Node dir = createNode(doc, "directory");
+			dir.appendChild(createNode(doc, "file"));
 			root.appendChild(dir);
 
-			//Output XML to console
+			// Output XML to console
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			DOMSource source = new DOMSource(doc);
@@ -167,18 +189,21 @@ public class JFilesServer implements Runnable {
 			transformer.transform(source, console);
 
 		} catch (ParserConfigurationException e) {
-			logger.error("An error occurred while configuring the parser",e);
+			logger.error("An error occurred while configuring the parser", e);
 		} catch (TransformerConfigurationException e) {
 			logger.error("An error occurred while configuring the transformer", e);
 		} catch (TransformerFactoryConfigurationError e) {
-			logger.error("An error occurred while configuring the transformer factory",e);
+			logger.error("An error occurred while configuring the transformer factory", e);
 		}
 	}
 
 	/**
 	 * Create an xml node.
-	 * @param doc document to create node for
-	 * @param name name of node that should be created
+	 * 
+	 * @param doc
+	 *            document to create node for
+	 * @param name
+	 *            name of node that should be created
 	 * @return returns a Node element
 	 */
 	private Node createNode(Document doc, String name) {
@@ -188,9 +213,9 @@ public class JFilesServer implements Runnable {
 
 	@Override
 	public void run() {
-		//String dir = System.getProperty("user.dir");
-		//These were added to implement File command
-		//------------------------------------------
+		// String dir = System.getProperty("user.dir");
+		// These were added to implement File command
+		// ------------------------------------------
 		try {
 			System.out.println("Received connection from" + socket.getRemoteSocketAddress());
 			InputStreamReader isr = new InputStreamReader(socket.getInputStream(), UTF_8);
@@ -200,8 +225,8 @@ public class JFilesServer implements Runnable {
 			if (cmd != null) {
 				switch (cmd) {
 				case "FILE":
-					sendFile("AUTHORS",socket);
-					socket.close();	
+					sendFile("AUTHORS", socket);
+					socket.close();
 					break;
 
 				case "LIST":
@@ -214,17 +239,17 @@ public class JFilesServer implements Runnable {
 			}
 		} catch (IOException e) {
 			logger.error("Some error occurred", e);
-		} 
+		}
 	}
 
 	/**
-	 * When FILE command is received from client, server calls this method
-	 * to handle file transfer.
+	 * When FILE command is received from client, server calls this method to
+	 * handle file transfer.
 	 * 
-	 * @param servsock the socket where the server connection resides
+	 * @param servsock
+	 *            the socket where the server connection resides
 	 */
 	public void sendFile(String file, Socket servsock) {
-
 
 		try (BufferedReader br = new BufferedReader(new FileReader("AUTHORS"))) {
 			OutputStreamWriter osw = new OutputStreamWriter(servsock.getOutputStream(), UTF_8);
@@ -233,7 +258,7 @@ public class JFilesServer implements Runnable {
 
 			while ((line = br.readLine()) != null) {
 				System.out.println(line);
-				out.write(line + "\n") ;
+				out.write(line + "\n");
 			}
 			out.flush();
 
@@ -253,19 +278,20 @@ public class JFilesServer implements Runnable {
 		try {
 			init();
 			logger.info("Starting the server");
-			//Counts how many Threads there are
+			// Counts how many Threads there are
 			int numThrds = 1;
-			//A while loop that currently runs forever that will constantly obtain
-			//new connections and passing them to new threads.
-			//Recycles variable names
+			// A while loop that currently runs forever that will constantly
+			// obtain
+			// new connections and passing them to new threads.
+			// Recycles variable names
 			while (true) {
 				System.out.println("Preparing thread " + numThrds);
 				logger.info("Preparing thread " + numThrds);
 				System.out.println("Waiting for connection...");
 				logger.info("Waiting for connection...");
-				//Obtain a Socket object
+				// Obtain a Socket object
 				Socket sock = serverSocket.accept();
-				//Passes socket object to new server object
+				// Passes socket object to new server object
 				JFilesServer jf = new JFilesServer(sock);
 				try {
 					jf.createXml();
@@ -274,12 +300,13 @@ public class JFilesServer implements Runnable {
 				} catch (TransformerException e) {
 					logger.error("An exception has occurred with the transformer", e);
 				}
-				//Create and start a new Thread object with server object
+				// Create and start a new Thread object with server object
 				Thread thread = new Thread(jf);
 				thread.start();
-				//Sleep the main thread so that status messages remain organized
-				//Thread.sleep(2);
-				//Iterates the numThrds variable by 1
+				// Sleep the main thread so that status messages remain
+				// organized
+				// Thread.sleep(2);
+				// Iterates the numThrds variable by 1
 				numThrds++;
 			}
 		} catch (IOException e) {
@@ -287,4 +314,3 @@ public class JFilesServer implements Runnable {
 		}
 	}
 }
-
