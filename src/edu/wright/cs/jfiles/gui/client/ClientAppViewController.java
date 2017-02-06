@@ -38,6 +38,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.DragEvent;
@@ -87,6 +88,9 @@ public class ClientAppViewController implements Initializable {
 	private ContextMenu fileContextMenu;
 	// private ContextMenu folderContextMenu;
 	private ContextMenu viewContextMenu;
+
+	@FXML
+	TextField searchArea;
 
 	@FXML
 	BorderPane root;
@@ -270,6 +274,15 @@ public class ClientAppViewController implements Initializable {
 		loadDirectory(currentDirectory);
 	}
 
+	/**
+	 * Button clicked.
+	 * as of right now this doesn't display the new directory
+	 */
+	@FXML
+	public void buttonClicked() {
+		currentDirectory = searchArea.getText();
+		loadDirectory(currentDirectory);
+	}
 	/**
 	 * Mouse clicked in flowPane.
 	 */

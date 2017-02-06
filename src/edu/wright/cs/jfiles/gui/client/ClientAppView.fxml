@@ -40,7 +40,25 @@
             <TreeView fx:id="treeView" BorderPane.alignment="CENTER" />
          </left>
          <center>
-            <FlowPane fx:id="flowPane" onContextMenuRequested="#contextMenuRequested" onDragDropped="#onDragDrop" onDragOver="#onDragOver" onMouseClicked="#handleMouseClicked" rowValignment="TOP" BorderPane.alignment="CENTER" />
+            <FlowPane fx:id="flowPane" onContextMenuRequested="#contextMenuRequested" onDragDropped="#onDragDrop" onDragOver="#onDragOver" onMouseClicked="#handleMouseClicked" rowValignment="TOP" BorderPane.alignment="CENTER">
+               <children>
+                  <GridPane prefHeight="60.0" prefWidth="950.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="465.0" minWidth="10.0" prefWidth="104.0" />
+                      <ColumnConstraints hgrow="ALWAYS" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Button id="searchButton" mnemonicParsing="false" onMouseClicked="#buttonClicked" prefHeight="25.0" prefWidth="101.0" text="Search" GridPane.rowIndex="1" />
+                        <Label prefHeight="17.0" prefWidth="97.0" text="Current Directory:" />
+                        <TextField fx:id="searchArea" promptText="search here" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
+                        <TextField editable="false" GridPane.columnIndex="1" />
+                     </children>
+                  </GridPane>
+               </children></FlowPane>
          </center>
       </BorderPane>
    </center>
