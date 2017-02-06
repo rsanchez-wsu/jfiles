@@ -21,8 +21,8 @@
 
 package edu.wright.cs.jfiles.gui.common;
 
-import edu.wright.cs.jfiles.commands.Cd;
 import edu.wright.cs.jfiles.core.FileStruct;
+import edu.wright.cs.jfiles.core.PathStack;
 
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
@@ -41,22 +41,25 @@ public class DirectoryObj {
 		directoryImage =
 				new Image("file:src/edu/wright/cs/jfiles/resources/images/folder_icon.png");
 	}
-	/*
-	 * Event handler will call upon the open() method and grab the file path
+	/**
+	 * Event handler will call upon the open() method and grab the file path.
 	 * Pass it through a JDirectoryIconView object call populate(filepath) If I
 	 * don't write this down I will forget it
-	 */
+	**/
 
 	@FXML
 	private ImageView image;
 	private String filepath;
+	private PathStack newDirr;
 
 	/**
 	 * Default constructor.
 	 * @param filepath.
 	 */
-	public DirectoryObj(String filepath) {
+	public DirectoryObj(PathStack currPath, String filepath) {
+		newDirr = currPath;
 		this.filepath = filepath;
+		newDirr.push("/" + filepath);
 	}
 
 	/** Returns image to be used in the gui.
@@ -68,12 +71,18 @@ public class DirectoryObj {
 
 	/**
 	 * Sends an event handler the file path to be used.
-	 * @param currPath.
-	 * @return filepath.
+	 * @return newDirr.
 	 */
-	public String open(String currPath) {
-		filepath = currPath + "/" + filepath;
+	public String open() {
+		return newDirr.toString();
+	}
 
+	/**
+	 * I don't know if we need this later but just in case.
+	 * @return String
+	 */
+	@Override
+	public String toString() {
 		return filepath;
 	}
 }
