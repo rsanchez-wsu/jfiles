@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2017 - WSU CEG3120 Students
+ * Copyright (C) 2016 - WSU CEG3120 Students
  *
-*
+ * Roberto C. Sánchez <roberto.sanchez@wright.edu>
  *
-*
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -26,22 +26,26 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+/**
+ *Opens a server connection and links a UTF stream to the console.
+ */
 
 public class ConsoleClient {
 
 	private static final int port = 9786;
 	private static final String host = "localhost";
 	/**
-	 * Starts the program
+	 * Starts the program.
 	 * @param args
-	 * Does nothing
+	 * Does nothing.
 	 */
+
 	public static void main(String[] args) {
-		try{
+		try {
 			Socket socket = new Socket(host,port);
 			new ConsoleOut(new DataInputStream(new BufferedInputStream(socket.getInputStream())));
 			new ConsoleIn(new DataOutputStream(socket.getOutputStream()));
-		} catch(IOException ex){
+		} catch (IOException ex) {
 			System.out.println("Error while connecting to server.");
 		}
 	}
