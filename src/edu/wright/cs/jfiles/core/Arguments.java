@@ -30,7 +30,7 @@ import java.util.List;
  */
 public class Arguments {
 
-	private List<Argument> args = new ArrayList<Argument>();
+	private List<Argument> args = new ArrayList<>();
 
 	/**
 	 * Add an argument to the current list of arguments.
@@ -83,7 +83,7 @@ public class Arguments {
 	 * @return the list of arguments
 	 */
 	public List<Argument> getArgs() {
-		return new ArrayList<Argument>(args);
+		return new ArrayList<>(args);
 	}
 
 	/**

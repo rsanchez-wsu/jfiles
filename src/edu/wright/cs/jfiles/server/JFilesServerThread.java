@@ -52,7 +52,8 @@ public class JFilesServerThread extends Thread {
 	/**
 	 * .
 	 */
-	@SuppressWarnings("deprecation") // .interrupt();
+	// TODO: Eliminate the deprecated method and the suppression
+	@SuppressWarnings("deprecation")
 	public void send(String msg) {
 		try {
 			streamOut.writeUTF(msg);
@@ -74,7 +75,9 @@ public class JFilesServerThread extends Thread {
 	/**
 	 * .
 	 */
+	// TODO: Eliminate the deprecated method and the suppression
 	@SuppressWarnings("deprecation")
+	@Override
 	public void run() {
 		System.out.println("Server Thread " + id + " running.");
 		while (true) {

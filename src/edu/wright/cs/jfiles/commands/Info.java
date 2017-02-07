@@ -44,6 +44,7 @@ public class Info extends Command {
 	 *  TODO: Provide user usage info
 	 *  @return Nothing.
 	 */
+	@Override
 	public String execute() {
 		return "INFO: " + "Last logged in " + "amount of time" + "ago";
 	}

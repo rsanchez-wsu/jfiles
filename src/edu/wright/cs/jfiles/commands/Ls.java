@@ -50,7 +50,7 @@ public class Ls extends Command {
 	 * @return The list of files that match filename.
 	 */
 	private List<String> findFiles(String directory) {
-		List<String> res = new ArrayList<String>();
+		List<String> res = new ArrayList<>();
 
 		File folder = new File(directory);
 		File[] listOfFiles = folder.listFiles();

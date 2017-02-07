@@ -63,7 +63,7 @@ import javax.xml.transform.stream.StreamResult;
 public class JFilesServer {
 
 	static final Logger logger = LogManager.getLogger(JFilesServer.class);
-	private static int PORT = 9786;
+	private static final int PORT = 9786;
 	// private final ServerSocket serverSocket;
 	private JFilesServerThread[] clients = new JFilesServerThread[50];
 	private ServerSocket server = null;
@@ -129,7 +129,7 @@ public class JFilesServer {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	JFilesServer(int port) {
+	JFilesServer() {
 		try {
 			System.out.println("Binding to port " + PORT + ", please wait  ...");
 			server = new ServerSocket(PORT);
@@ -310,6 +310,6 @@ public class JFilesServer {
 	 * The main entry point to the program.
 	 */
 	public static void main(String[] args) {
-		new JFilesServer(PORT);
+		new JFilesServer();
 	}
 }

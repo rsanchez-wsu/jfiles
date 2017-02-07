@@ -8,6 +8,7 @@
 	<property name="tools.dir" value="tools" />
 	<property name="dist.dir" value="dist" />
 	<property name="classes.dir" value="${build.dir}/classes" />
+	<property name="tests.src.dir" value="tests" />
 
 	<path id="build.lib.path">
 		<fileset dir="${lib.dir}" includes="*.jar" />
@@ -162,6 +163,7 @@
 
 		<checkstyle config="${basedir}/.checkstyle.xml">
 			<fileset dir="${src.dir}" includes="**/*.java" />
+			<fileset dir="${tests.src.dir}" includes="**/*.java" />
 			<formatter type="plain" />
 			<formatter type="xml"
 				toFile="${build.dir}/checkstyle/${ant.project.name}.xml" />

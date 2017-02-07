@@ -43,6 +43,7 @@ public class Quit extends Command {
 	/**
 	 *  @return Nothing.
 	 */
+	@Override
 	public String execute() {
 		return ".exit";
 	}

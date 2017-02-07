@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2016 - WSU CEG3120 Students
- * 
+ *
  * Roberto C. Sánchez <roberto.sanchez@wright.edu>
- * 
+ *
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,53 +21,47 @@
 
 package edu.wright.cs.jfiles.junit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
-import edu.wright.cs.jfiles.core.FileStruct;
 import edu.wright.cs.jfiles.core.XmlHandler;
+
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.io.File;
 
 
+/**
+ * Test class for the XmlHandler.
+ */
 public class XmlHandlerTest {
-	
+
 	String testPath = "C:\fubar\foo.txt";
-	
+
 	@Test
-	public void XmlHandler() throws FileNotFoundException{
-		
+	public void testXmlHandler() {
+
 		OutputStream os = new ByteArrayOutputStream();
 		OutputStreamWriter osw = new OutputStreamWriter(os);
-		
+
 		XmlHandler handler = new XmlHandler(testPath, osw);
 		handler.sendXml(osw);
-		
+
 		String result = os.toString();
-		
+
 		assertTrue(result.contains("foo.txt"));
-		
+
 //		ByteArrayOutputStream baos = (ByteArrayOutputStream) os;
 //		byte[] bytes = baos.toByteArray();
 //		InputStream is = new ByteArrayInputStream(bytes);
-//		
+//
 //		InputStreamReader isr = new InputStreamReader(is);
-//		
+//
 //		ArrayList<FileStruct> files = handler.readXml(isr);
-//		
+//
 //		assertEquals("hello", "hello");
-		
+
 	}
 
 }
