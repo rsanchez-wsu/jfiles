@@ -21,6 +21,8 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import java.io.File;
+
 /**
  *  The Close command closes the connection.
  *  Syntax:
@@ -39,12 +41,27 @@ public class Pwd extends Command {
 	public Pwd(String... args) {
 		super(args);
 	}
+	
+	private String curDir(String directory){
+		
+		File folder = new File(directory);
+		
+		File f = new File("");
+		return(f.getAbsolutePath());
 
+
+	}
+	
+	
 	/**
 	 *  @return The full directory path of the current working directory.
 	 */
 	public String execute() {
-		return "PWD /your/directory/now";
+		
+		String directory = this.parser.next(); 
+		
+		
+		return curDir(directory);
 	}
 
 }
