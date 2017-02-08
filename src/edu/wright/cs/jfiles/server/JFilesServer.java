@@ -65,7 +65,7 @@ public class JFilesServer {
 	static final Logger logger = LogManager.getLogger(JFilesServer.class);
 	private static int PORT = 9786;
 	// private final ServerSocket serverSocket;
-	private JFilesServerThread[] clients = new JFilesServerThread[50];
+	public JFilesServerThread[] clients = new JFilesServerThread[50];
 	private ServerSocket server = null;
 	private int clientCount = 0;
 	DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
@@ -129,7 +129,7 @@ public class JFilesServer {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	JFilesServer(int port) {
+	public JFilesServer(int port) {
 		try {
 			System.out.println("Binding to port " + PORT + ", please wait  ...");
 			server = new ServerSocket(PORT);
