@@ -42,7 +42,11 @@ public class MapEntryConverter implements Converter {
 	/**
 	 * A constructor.
 	 */
-	public boolean canConvert(@SuppressWarnings("rawtypes") Class type) {
+	@Override
+	// Suppress the "rawtypes" warning because the super-interface constrains
+	// the method signature to taking a raw Class object
+	@SuppressWarnings("rawtypes")
+	public boolean canConvert(Class type) {
 		return AbstractMap.class.isAssignableFrom(type);
 	}
 
@@ -65,7 +69,7 @@ public class MapEntryConverter implements Converter {
 	@Override
 	public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
 
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 
 		while (reader.hasMoreChildren()) {
 			reader.moveDown();

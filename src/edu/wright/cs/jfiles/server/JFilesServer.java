@@ -63,7 +63,7 @@ import javax.xml.transform.stream.StreamResult;
 public class JFilesServer {
 
 	static final Logger logger = LogManager.getLogger(JFilesServer.class);
-	private static int PORT = 9786;
+	private static final int PORT = 9786;
 	// private final ServerSocket serverSocket;
 	public JFilesServerThread[] clients = new JFilesServerThread[50];
 	private ServerSocket server = null;
@@ -129,7 +129,7 @@ public class JFilesServer {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	public JFilesServer(int port) {
+	JFilesServer() {
 		try {
 			System.out.println("Binding to port " + PORT + ", please wait  ...");
 			server = new ServerSocket(PORT);
@@ -252,7 +252,11 @@ public class JFilesServer {
 		Command cmd = Commands.getNewInstance(sinput[0],
 					Arrays.copyOfRange(sinput, 1, sinput.length));
 
-		clients[findClient(id)].send(cmd.execute());
+		String cont = cmd.execute();
+
+		System.out.println("Sending back: " + cont);
+
+		clients[findClient(id)].send(cont);
 
 		if (cmd instanceof Quit) {
 			remove(id);
@@ -306,6 +310,6 @@ public class JFilesServer {
 	 * The main entry point to the program.
 	 */
 	public static void main(String[] args) {
-		new JFilesServer(PORT);
+		new JFilesServer();
 	}
 }

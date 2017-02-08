@@ -32,7 +32,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 
+import java.io.File;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 
@@ -43,6 +46,31 @@ import java.util.ResourceBundle;
  *
  */
 public class FileIconViewController implements Initializable {
+
+	private static Map<String, Image> images;
+	private static Image defaultFileImage;
+	private static Image defaultFolderImage;
+
+	static {
+		images = new HashMap<>();
+		File[] resources = new File("src/edu/wright/cs/jfiles/resources/images").listFiles();
+		if (resources != null) {
+			for (File f : resources) {
+				if (f.getName().equals("file_icon.png")) {
+					defaultFileImage = new Image(f.toURI().toString());
+					continue;
+				}
+				if (f.getName().equals("folder_icon.png")) {
+					defaultFolderImage = new Image(f.toURI().toString());
+					continue;
+				}
+				String ext =
+						f.getName().replaceAll("file_icon_", "").replaceAll(".png", "")
+								.replaceAll("folder_icon_", "");
+				images.put(ext, new Image(f.toURI().toString()));
+			}
+		}
+	}
 
 	/**
 	 * The model for this view.
@@ -103,8 +131,18 @@ public class FileIconViewController implements Initializable {
 	 * Populates image and label with correct values.
 	 */
 	private void populate() {
-		label.setText((String) fileStruct.getValue("name"));
-		image.setImage(new Image("file:src/edu/wright/cs/jfiles/resources/images/file_icon.png"));
+		String name = (String) fileStruct.getValue("name");
+		label.setText(name);
+		String ext = name.substring(name.lastIndexOf(".") + 1);
+		switch (fileStruct.getType()) {
+		case FILE:
+			image.setImage(images.getOrDefault(ext, defaultFileImage));
+			break;
+		case DIRECTORY:
+			image.setImage(images.getOrDefault(ext, defaultFolderImage));
+			break;
+		default:
+		}
 	}
 
 	/**

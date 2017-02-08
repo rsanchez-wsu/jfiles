@@ -76,7 +76,7 @@ public class XmlHandler {
 	 */
 	public XmlHandler(String path) {
 		this.currentPath = path;
-		arrlist = new ArrayList<FileStruct>();
+		arrlist = new ArrayList<>();
 		populateArray();
 	}
 
@@ -89,7 +89,7 @@ public class XmlHandler {
 	 */
 	public XmlHandler(String path, OutputStreamWriter str) {
 		this.currentPath = path;
-		arrlist = new ArrayList<FileStruct>();
+		arrlist = new ArrayList<>();
 		populateArray();
 		sendXml(str);
 	}
@@ -132,6 +132,15 @@ public class XmlHandler {
 	}
 
 	/**
+	 * Reads out the file structure of this XmlHandler as a string.
+	 *
+	 * @return xml representation of this
+	 */
+	public String xmlToString() {
+		return xstream.toXML(this);
+	}
+
+	/**
 	 * Method to read XML and deserialize to an object.
 	 * @param isr InputStreamReader to read from
 	 * @return reconstructed object
@@ -142,11 +151,15 @@ public class XmlHandler {
 	}
 
 	/**
-	 * Gets the current xml state as string.
-	 * @return The xml state as string.
+	 * Reads in XML, and outputs a List of FileStructs.
+	 *
+	 * @param strxml
+	 *            the xml to read
+	 * @return list of FileStructs
 	 */
-	public String xmlToString() {
-		return xstream.toXML(this);
+	public static ArrayList<FileStruct> readXmlString(String strxml) {
+		XmlHandler temp = (XmlHandler) xstream.fromXML(strxml);
+		return temp.arrlist;
 	}
 
 	/**
