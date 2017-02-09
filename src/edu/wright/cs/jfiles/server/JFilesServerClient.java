@@ -32,7 +32,7 @@ import java.net.Socket;
  * Thread class for the server.
  *
  */
-public class JFilesServerClient extends Thread {
+public class JFilesServerClient implements Runnable {
 	private JFilesServer server = null;
 	private Socket socket = null;
 	private int id = -1;
@@ -61,7 +61,6 @@ public class JFilesServerClient extends Thread {
 		} catch (IOException ioe) {
 			System.out.println(id + " ERROR sending: " + ioe.getMessage());
 			server.remove(id);
-			stop();
 		}
 	}
 
@@ -72,11 +71,6 @@ public class JFilesServerClient extends Thread {
 		return id;
 	}
 
-	/**
-	 * .
-	 */
-	// TODO: Eliminate the deprecated method and the suppression
-	@SuppressWarnings("deprecation")
 	@Override
 	public void run() {
 		System.out.println("Server Thread " + id + " running.");
@@ -86,7 +80,6 @@ public class JFilesServerClient extends Thread {
 			} catch (IOException ioe) {
 				System.out.println(id + " ERROR reading: " + ioe.getMessage());
 				server.remove(id);
-				stop();
 			}
 		}
 	}
