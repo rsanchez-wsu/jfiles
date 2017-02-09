@@ -88,6 +88,35 @@ public class Parser {
 	}
 
 	/**
+	 * Resets the current argument counter to 0.
+	 */
+	public void reset() {
+		currentArg = 0;
+	}
+
+	/**
+	 * Returns the remaining arguments, separated by a space.
+	 * @return the remaining arguments, separated by a space.
+	 */
+	public String rest() {
+		StringBuilder rest = new StringBuilder();
+
+		String next = next();
+
+		while (next != null) {
+			rest.append(next + " ");
+			next = next();
+		}
+
+		// Remove the ending space.
+		if (rest.length() > 0) {
+			rest.setLength(rest.length() - 1);
+		}
+
+		return rest.toString();
+	}
+
+	/**
 	 * Gets the arguments.
 	 * @return The arguments
 	 */
