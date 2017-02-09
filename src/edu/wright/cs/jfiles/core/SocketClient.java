@@ -102,7 +102,7 @@ public class SocketClient {
 
 		try {
 			input = streamIn.readUTF();
-			log("Recieved : " + input);
+			//log("Recieved : " + input);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -118,7 +118,7 @@ public class SocketClient {
 	 */
 	public void send(String output) {
 		try {
-			log("Sending : " + output);
+			//log("Sending : " + output);
 			streamOut.writeUTF(output);
 		} catch (IOException e) {
 			e.printStackTrace();

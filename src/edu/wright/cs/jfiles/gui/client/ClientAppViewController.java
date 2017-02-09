@@ -47,6 +47,9 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
@@ -75,6 +78,8 @@ public class ClientAppViewController implements Initializable, ClipboardOwner {
 	private enum Operation {
 		CUT, COPY;
 	}
+
+	static final Logger logger = LogManager.getLogger(ClientAppViewController.class);
 
 	private SocketClient client;
 
@@ -112,6 +117,7 @@ public class ClientAppViewController implements Initializable, ClipboardOwner {
 	 *            the path to load
 	 */
 	private void loadDirectory(String path) {
+		logger.info("Loading directory");
 		clearView();
 
 		client.sendCommand(new Ls(path));
@@ -132,7 +138,7 @@ public class ClientAppViewController implements Initializable, ClipboardOwner {
 				flowPane.getChildren().add(view);
 				contents.put(file, view);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("Unable to load FileIconView.fxml");
 			}
 		}
 	}
@@ -327,7 +333,7 @@ public class ClientAppViewController implements Initializable, ClipboardOwner {
 					flowPane.getChildren().add(view);
 					contents.put(fileStruct, view);
 				} catch (IOException e) {
-					e.printStackTrace();
+					logger.error("Unable to load FileIconView.fxml");
 				}
 			}
 
@@ -364,6 +370,6 @@ public class ClientAppViewController implements Initializable, ClipboardOwner {
 	@Override
 	public void lostOwnership(Clipboard clipboard, Transferable transferable) {
 		// Required for ClipboardOwner interface
-		System.out.println("ClientAppViewController : Lost Clipboard Ownership");
+		logger.info("ClientAppViewController : Lost Clipboard Ownership");
 	}
 }
