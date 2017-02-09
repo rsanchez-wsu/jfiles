@@ -46,7 +46,7 @@ public class Error extends Command {
 	 */
 	@Override
 	public String execute() {
-		return "ERROR: " + "EXAMPLE ERROR MESSAGE";
+		return "ERROR: " + parser.rest();
 	}
 
 }
