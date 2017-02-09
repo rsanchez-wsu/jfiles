@@ -21,66 +21,86 @@
 
 package edu.wright.cs.jfiles.server;
 
+import edu.wright.cs.jfiles.commands.Command;
+import edu.wright.cs.jfiles.commands.Commands;
+import edu.wright.cs.jfiles.commands.Quit;
+import edu.wright.cs.jfiles.commands.Stop;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Arrays;
 
 /**
  * Thread class for the server.
  *
  */
 public class JFilesServerClient implements Runnable {
-	private JFilesServer server = null;
 	private Socket socket = null;
-	private int id = -1;
 	private DataInputStream streamIn = null;
 	private DataOutputStream streamOut = null;
 
 	/**
 	 * .
 	 */
-	public JFilesServerClient(JFilesServer parmServer, Socket parmSocket) {
-		super();
-		server = parmServer;
+	public JFilesServerClient(Socket parmSocket) {
 		socket = parmSocket;
-		id = socket.getPort();
 	}
 
 	/**
 	 * .
 	 */
-	// TODO: Eliminate the deprecated method and the suppression
-	@SuppressWarnings("deprecation")
 	public void send(String msg) {
 		try {
 			streamOut.writeUTF(msg);
 			streamOut.flush();
 		} catch (IOException ioe) {
-			System.out.println(id + " ERROR sending: " + ioe.getMessage());
-			server.remove(id);
+			System.out.println("ERROR sending: " + ioe.getMessage());
+			close();
 		}
-	}
-
-	/**
-	 * .
-	 */
-	public int getid() {
-		return id;
 	}
 
 	@Override
 	public void run() {
-		System.out.println("Server Thread " + id + " running.");
+		System.out.println("Server Client running.");
 		while (true) {
 			try {
-				server.handle(id, streamIn.readUTF());
+				handle(streamIn.readUTF());
 			} catch (IOException ioe) {
-				System.out.println(id + " ERROR reading: " + ioe.getMessage());
-				server.remove(id);
+				System.out.println("ERROR reading: " + ioe.getMessage());
+				close();
 			}
+		}
+	}
+
+	/**
+	 * Handles new input.
+	 * @param input The input given from client.
+	 */
+	public synchronized void handle(String input) {
+
+		System.out.println("Got the input: " + input);
+
+//		logger.info("[Server] Recv command: " + input);
+
+		String[] sinput = input.split(" ");
+
+		Command cmd =
+				Commands.getNewInstance(sinput[0], Arrays.copyOfRange(sinput, 1, sinput.length));
+
+		String cont = cmd.execute();
+
+		System.out.println("Sending back: " + cont);
+
+		send(cont);
+
+		if (cmd instanceof Quit) {
+			close();
+		} else if (cmd instanceof Stop) {
+			JFilesServer.getInstance().stop();
 		}
 	}
 
@@ -95,17 +115,32 @@ public class JFilesServerClient implements Runnable {
 	/**
 	 * .
 	 */
-	public void close() throws IOException {
+	public void close() {
 		if (socket != null) {
-			socket.close();
+			try {
+				socket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		if (streamIn != null) {
-			streamIn.close();
+			try {
+				streamIn.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		if (streamOut != null) {
-			streamOut.close();
+			try {
+				streamOut.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 }
