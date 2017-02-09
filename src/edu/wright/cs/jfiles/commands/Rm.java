@@ -51,10 +51,10 @@ public class Rm extends Command {
 		String filePath;
 		filePath = parser.next();
 		File file = new File(filePath);
-		file.delete();
+		boolean success = file.delete();
 
-		return file.exists()
-				? filePath
+		return success
+				? new Info("File was deleted!").execute()
 				: new Error("Missing filename. Syntax: FIND <filename> [directory]").execute();
 //		The above conditional statement can also be written like so (I find this easier to read):
 //		if(file.exists())
