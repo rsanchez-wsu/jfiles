@@ -256,13 +256,7 @@ public class JFilesServer {
 	public void stop() {
 		shouldRun = false;
 
-		// Needs to be reworked.
-
-//		for (int ind = 0; ind < clientCount; ind++) {
-//			if (clients[ind] != null) {
-//				remove(clients[ind].getid());
-//			}
-//		}
+		executorService.shutdownNow();
 
 		try {
 			server.close();
