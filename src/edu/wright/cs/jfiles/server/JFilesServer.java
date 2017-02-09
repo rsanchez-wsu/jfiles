@@ -41,6 +41,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -63,12 +65,11 @@ import javax.xml.transform.stream.StreamResult;
 public class JFilesServer {
 
 	static final Logger logger = LogManager.getLogger(JFilesServer.class);
-	// private final ServerSocket serverSocket;
-	private JFilesServerClient[] clients = new JFilesServerClient[50];
 	private ServerSocket server = null;
-	private int clientCount = 0;
 	DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
+
 	private boolean shouldRun = true;
+	private ExecutorService executorService = Executors.newFixedThreadPool(10);
 
 	private static JFilesServer instance = new JFilesServer();
 
@@ -175,10 +176,18 @@ public class JFilesServer {
 			System.out.println("Can not bind to port " + port + ": " + ioe.getMessage());
 		}
 
+		accept();
+	}
+
+	/**
+	 * Constantly waits for new connection.
+	 */
+	public void accept() {
 		while (shouldRun) {
 			try {
 				System.out.println("Waiting for a client ...");
-				addThread(server.accept());
+
+				executorService.submit(new JFilesServerClient(server.accept()));
 			} catch (IOException ioe) {
 				System.out.println("Server accept error: " + ioe);
 				stop();
@@ -247,11 +256,13 @@ public class JFilesServer {
 	public void stop() {
 		shouldRun = false;
 
-		for (int ind = 0; ind < clientCount; ind++) {
-			if (clients[ind] != null) {
-				remove(clients[ind].getid());
-			}
-		}
+		// Needs to be reworked.
+
+//		for (int ind = 0; ind < clientCount; ind++) {
+//			if (clients[ind] != null) {
+//				remove(clients[ind].getid());
+//			}
+//		}
 
 		try {
 			server.close();
@@ -259,88 +270,6 @@ public class JFilesServer {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * This method searches for the client based on the id number.
-	 */
-	private int findClient(int id) {
-		for (int i = 0; i < clientCount; i++) {
-			if (clients[i].getid() == id) {
-				return i;
-			}
-		}
-		return -1;
-	}
-
-	/**
-	 * This method handles all the activities the thread will do.
-	 */
-	public synchronized void handle(int id, String input) {
-
-		System.out.println("Got the input: " + input);
-
-		logger.info("[Server] Recv command: " + input);
-
-		String[] sinput = input.split(" ");
-
-		Command cmd =
-				Commands.getNewInstance(sinput[0], Arrays.copyOfRange(sinput, 1, sinput.length));
-
-		String cont = cmd.execute();
-
-		System.out.println("Sending back: " + cont);
-
-		clients[findClient(id)].send(cont);
-
-		if (cmd instanceof Quit) {
-			remove(id);
-		} else if (cmd instanceof Stop) {
-			stop();
-		}
-	}
-
-	/**
-	 * This method handles removing a thread.
-	 */
-	public synchronized void remove(int id) {
-		int pos = findClient(id);
-		if (pos >= 0) {
-			JFilesServerClient toTerminate = clients[pos];
-			System.out.println("Removing client thread " + id + " at " + pos);
-			if (pos < clientCount - 1) {
-				for (int i = pos + 1; i < clientCount; i++) {
-					clients[i - 1] = clients[i];
-				}
-				clientCount--;
-			}
-
-			try {
-				toTerminate.close();
-			} catch (IOException ioe) {
-				System.out.println("Error closing thread: " + ioe);
-			}
-			toTerminate.interrupt();
-		}
-	}
-
-	/**
-	 * This method handles adding a new thread.
-	 */
-	private void addThread(Socket socket) {
-		if (clientCount < clients.length) {
-			System.out.println("Client accepted: " + socket);
-			clients[clientCount] = new JFilesServerClient(this, socket);
-			try {
-				clients[clientCount].open();
-				clients[clientCount].start();
-				clientCount++;
-			} catch (IOException ioe) {
-				System.out.println("Error opening thread: " + ioe);
-			}
-		} else {
-			System.out.println("Client refused: maximum " + clients.length + " reached.");
 		}
 	}
 
