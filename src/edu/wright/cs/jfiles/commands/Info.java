@@ -46,8 +46,6 @@ public class Info extends Command {
 	 */
 	public String execute() {
 		return "INFO: " + "Last logged in " + "amount of time" + "ago";
-		
-		
 	}
 
 }

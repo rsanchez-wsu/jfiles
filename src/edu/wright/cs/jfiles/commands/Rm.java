@@ -42,7 +42,6 @@ public class Rm extends Command {
 		super(args);
 	}
 
-
 	/**
 	 *	@return A new-line delimited list of files that match [filename] and
 	 *  			were removed.
@@ -53,11 +52,11 @@ public class Rm extends Command {
 		filePath = parser.next();
 		File file = new File(filePath);
 		file.delete();
-		
-		return file.exists() 
-				? filePath 
+
+		return file.exists()
+				? filePath
 				: new Error("Missing filename. Syntax: FIND <filename> [directory]").execute();
-//		The above conditional statement can also be written like so (I find this easier to read):		
+//		The above conditional statement can also be written like so (I find this easier to read):
 //		if(file.exists())
 //			return filePath;
 //		else

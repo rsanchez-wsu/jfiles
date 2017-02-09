@@ -41,26 +41,24 @@ public class Pwd extends Command {
 	public Pwd(String... args) {
 		super(args);
 	}
-	
-	private String curDir(String directory){
-		
+
+	/**
+	 * Gets the abs path of the current directory path and returns it.
+	 * @param directory The path of the directory.
+	 * @return The abs path of directory.
+	 */
+	private String curDir(String directory) {
 		File folder = new File(directory);
-		
-		File f = new File("");
-		return(f.getAbsolutePath());
 
-
+		return (folder.getAbsolutePath());
 	}
-	
-	
+
 	/**
 	 *  @return The full directory path of the current working directory.
 	 */
 	public String execute() {
-		
-		String directory = this.parser.next(); 
-		
-		
+		String directory = this.parser.next();
+
 		return curDir(directory);
 	}
 

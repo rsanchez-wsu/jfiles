@@ -50,7 +50,7 @@ public class Send extends Command {
 	public String execute() {
 		return ".send" + filename;
 	}
-	
+
 	/**
 	 * Gets the filename for sending.
 	 * @return the filename along with the extension that you want to send.
