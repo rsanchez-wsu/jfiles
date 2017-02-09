@@ -32,7 +32,7 @@ import java.net.Socket;
  * Thread class for the server.
  *
  */
-public class JFilesServerThread extends Thread {
+public class JFilesServerClient extends Thread {
 	private JFilesServer server = null;
 	private Socket socket = null;
 	private int id = -1;
@@ -42,7 +42,7 @@ public class JFilesServerThread extends Thread {
 	/**
 	 * .
 	 */
-	public JFilesServerThread(JFilesServer parmServer, Socket parmSocket) {
+	public JFilesServerClient(JFilesServer parmServer, Socket parmSocket) {
 		super();
 		server = parmServer;
 		socket = parmSocket;

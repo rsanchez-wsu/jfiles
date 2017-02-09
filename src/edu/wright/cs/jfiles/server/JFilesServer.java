@@ -64,7 +64,7 @@ public class JFilesServer {
 
 	static final Logger logger = LogManager.getLogger(JFilesServer.class);
 	// private final ServerSocket serverSocket;
-	private JFilesServerThread[] clients = new JFilesServerThread[50];
+	private JFilesServerClient[] clients = new JFilesServerClient[50];
 	private ServerSocket server = null;
 	private int clientCount = 0;
 	DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
@@ -307,7 +307,7 @@ public class JFilesServer {
 	public synchronized void remove(int id) {
 		int pos = findClient(id);
 		if (pos >= 0) {
-			JFilesServerThread toTerminate = clients[pos];
+			JFilesServerClient toTerminate = clients[pos];
 			System.out.println("Removing client thread " + id + " at " + pos);
 			if (pos < clientCount - 1) {
 				for (int i = pos + 1; i < clientCount; i++) {
@@ -331,7 +331,7 @@ public class JFilesServer {
 	private void addThread(Socket socket) {
 		if (clientCount < clients.length) {
 			System.out.println("Client accepted: " + socket);
-			clients[clientCount] = new JFilesServerThread(this, socket);
+			clients[clientCount] = new JFilesServerClient(this, socket);
 			try {
 				clients[clientCount].open();
 				clients[clientCount].start();
