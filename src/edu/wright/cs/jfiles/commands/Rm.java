@@ -21,6 +21,8 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import java.io.File;
+
 /**
  * The rm command removes a file.
  * Syntax:
@@ -40,13 +42,27 @@ public class Rm extends Command {
 		super(args);
 	}
 
+
 	/**
 	 *	@return A new-line delimited list of files that match [filename] and
 	 *  			were removed.
 	 */
 	@Override
 	public String execute() {
-		return "a list";
+		String filePath;
+		filePath = parser.next();
+		File file = new File(filePath);
+		file.delete();
+		
+		return file.exists() 
+				? filePath 
+				: new Error("Missing filename. Syntax: FIND <filename> [directory]").execute();
+//		The above conditional statement can also be written like so (I find this easier to read):		
+//		if(file.exists())
+//			return filePath;
+//		else
+//			return new Error("Missing filename. Syntax: FIND <filename> [directory]").execute();
+
 	}
 
 }
