@@ -23,6 +23,7 @@ package edu.wright.cs.jfiles.server;
 
 import edu.wright.cs.jfiles.commands.Command;
 import edu.wright.cs.jfiles.commands.Commands;
+import edu.wright.cs.jfiles.commands.Mv;
 import edu.wright.cs.jfiles.commands.Quit;
 
 import org.apache.logging.log4j.LogManager;
@@ -53,7 +54,6 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-
 /**
  * The main class of the JFiles server application.
  *
@@ -63,12 +63,23 @@ import javax.xml.transform.stream.StreamResult;
 public class JFilesServer {
 
 	static final Logger logger = LogManager.getLogger(JFilesServer.class);
-	private static final int PORT = 9786;
 	// private final ServerSocket serverSocket;
 	private JFilesServerThread[] clients = new JFilesServerThread[50];
 	private ServerSocket server = null;
 	private int clientCount = 0;
 	DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
+	private boolean shouldRun = true;
+
+	private static JFilesServer instance = new JFilesServer();
+
+	/**
+	 * Returns the JFilesServer instance.
+	 *
+	 * @return Returns the JFilesServer instance.
+	 */
+	public static JFilesServer getInstance() {
+		return instance;
+	}
 
 	/**
 	 * Handles allocating resources needed for the server.
@@ -120,7 +131,6 @@ public class JFilesServer {
 
 		int maxThreads = Integer.parseInt(prop.getProperty("maxThreads", "10"));
 		logger.info("Config set max threads to " + maxThreads);
-		start();
 	}
 
 	/**
@@ -129,23 +139,50 @@ public class JFilesServer {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	JFilesServer() {
+	private JFilesServer() {
 		try {
-			System.out.println("Binding to port " + PORT + ", please wait  ...");
-			server = new ServerSocket(PORT);
-			System.out.println("Server started: " + server);
-			try {
-				createXml();
-			} catch (TransformerFactoryConfigurationError e) {
-				// TODO Auto-generated catch block
-				// e.printStackTrace();
-			} catch (TransformerException e) {
-				// TODO Auto-generated catch block
-				// e.printStackTrace();
-			}
+			createXml();
+		} catch (TransformerFactoryConfigurationError e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
+		} catch (TransformerException e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
+		}
+
+		try {
 			setup();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Starts the server
+	 *
+	 * @param port
+	 *            The port to start on.
+	 */
+	public void start(int port) {
+		shouldRun = true;
+
+		try {
+			System.out.println("Binding to port " + port + ", please wait  ...");
+			server = new ServerSocket(port);
+			System.out.println("Server started: " + server);
 		} catch (IOException ioe) {
-			System.out.println("Can not bind to port " + PORT + ": " + ioe.getMessage());
+			System.out.println("Can not bind to port " + port + ": " + ioe.getMessage());
+		}
+
+		while (shouldRun) {
+			try {
+				System.out.println("Waiting for a client ...");
+				addThread(server.accept());
+			} catch (IOException ioe) {
+				System.out.println("Server accept error: " + ioe);
+				stop();
+			}
 		}
 	}
 
@@ -205,25 +242,24 @@ public class JFilesServer {
 	}
 
 	/**
-	 * .
-	 */
-	public void start() {
-		while (true) {
-			try {
-				System.out.println("Waiting for a client ...");
-				addThread(server.accept());
-			} catch (IOException ioe) {
-				System.out.println("Server accept error: " + ioe);
-				stop();
-			}
-		}
-	}
-
-	/**
 	 * This method stops the thread.
 	 */
 	public void stop() {
+		shouldRun = false;
 
+		for (int ind = 0; ind < clientCount; ind++) {
+			if (clients[ind] != null) {
+				remove(clients[ind].getid());
+			}
+		}
+
+		try {
+			server.close();
+			System.out.println("Server now closed!");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -249,8 +285,8 @@ public class JFilesServer {
 
 		String[] sinput = input.split(" ");
 
-		Command cmd = Commands.getNewInstance(sinput[0],
-					Arrays.copyOfRange(sinput, 1, sinput.length));
+		Command cmd =
+				Commands.getNewInstance(sinput[0], Arrays.copyOfRange(sinput, 1, sinput.length));
 
 		String cont = cmd.execute();
 
@@ -310,6 +346,6 @@ public class JFilesServer {
 	 * The main entry point to the program.
 	 */
 	public static void main(String[] args) {
-		new JFilesServer();
+		JFilesServer.getInstance().start(9786);
 	}
 }
