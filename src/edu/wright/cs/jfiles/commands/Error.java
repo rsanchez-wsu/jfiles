@@ -44,6 +44,7 @@ public class Error extends Command {
 	 *  TODO: Provide error details
 	 *  @return Nothing.
 	 */
+	@Override
 	public String execute() {
 		return "ERROR: " + "EXAMPLE ERROR MESSAGE";
 	}

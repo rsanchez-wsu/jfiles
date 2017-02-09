@@ -54,8 +54,8 @@ public class Parser {
 	 * Inits flag and args.
 	 */
 	Parser() {
-		flags = new HashMap<String, String>();
-		args = new ArrayList<String>();
+		flags = new HashMap<>();
+		args = new ArrayList<>();
 	}
 
 	/**

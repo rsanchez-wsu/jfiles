@@ -37,6 +37,7 @@ public class CommandNotFound extends Command {
 	/**
 	 *  @return Nothing.
 	 */
+	@Override
 	public String execute() {
 		return "Command not found!";
 	}

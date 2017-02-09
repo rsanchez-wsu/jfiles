@@ -48,7 +48,7 @@ public class Find extends Command {
 	 * @return The list of files that match filename.
 	 */
 	private List<String> findFiles(String filename, String directory) {
-		List<String> res = new ArrayList<String>();
+		List<String> res = new ArrayList<>();
 
 		File folder = new File(directory);
 		File[] listOfFiles = folder.listFiles();
@@ -81,6 +81,7 @@ public class Find extends Command {
 	 *          [directory]. If no [directory] is given, the current working
 	 *          directory is used.
 	 */
+	@Override
 	public String execute() {
 		String filename = this.parser.next();
 		String directory = this.parser.next();
