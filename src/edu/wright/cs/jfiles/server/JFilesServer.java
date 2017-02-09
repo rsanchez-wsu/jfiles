@@ -72,6 +72,11 @@ public class JFilesServer {
 
 	private static JFilesServer instance = new JFilesServer();
 
+	/**
+	 * Returns the JFilesServer instance.
+	 *
+	 * @return Returns the JFilesServer instance.
+	 */
 	public static JFilesServer getInstance() {
 		return instance;
 	}
@@ -144,7 +149,7 @@ public class JFilesServer {
 			// TODO Auto-generated catch block
 			// e.printStackTrace();
 		}
-		
+
 		try {
 			setup();
 		} catch (IOException e) {
@@ -153,9 +158,15 @@ public class JFilesServer {
 		}
 	}
 
+	/**
+	 * Starts the server
+	 *
+	 * @param port
+	 *            The port to start on.
+	 */
 	public void start(int port) {
 		shouldRun = true;
-		
+
 		try {
 			System.out.println("Binding to port " + port + ", please wait  ...");
 			server = new ServerSocket(port);
@@ -163,7 +174,7 @@ public class JFilesServer {
 		} catch (IOException ioe) {
 			System.out.println("Can not bind to port " + port + ": " + ioe.getMessage());
 		}
-		
+
 		while (shouldRun) {
 			try {
 				System.out.println("Waiting for a client ...");
@@ -235,13 +246,13 @@ public class JFilesServer {
 	 */
 	public void stop() {
 		shouldRun = false;
-		
+
 		for (int ind = 0; ind < clientCount; ind++) {
 			if (clients[ind] != null) {
 				remove(clients[ind].getid());
 			}
 		}
-		
+
 		try {
 			server.close();
 			System.out.println("Server now closed!");
