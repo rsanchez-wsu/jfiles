@@ -37,6 +37,15 @@ public enum Commands {
 	TOUCH((String[] args) -> {
 		return new Touch(args);
 	}),
+	STOP((String[] args) -> {
+		return new Stop(args);
+	}),
+	RESTART((String[] args) -> {
+		return new Restart(args);
+	}),
+	UPDATE((String[] args) -> {
+		return new Update(args);
+	}),
 	SEND((String[] args) -> {
 		return new Send(args);
 	}),
