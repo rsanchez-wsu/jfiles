@@ -24,6 +24,7 @@ package edu.wright.cs.jfiles.server;
 import edu.wright.cs.jfiles.commands.Command;
 import edu.wright.cs.jfiles.commands.Commands;
 import edu.wright.cs.jfiles.commands.Quit;
+import edu.wright.cs.jfiles.commands.Stop;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -256,6 +257,8 @@ public class JFilesServer {
 
 		if (cmd instanceof Quit) {
 			remove(id);
+		} else if (cmd instanceof Stop) {
+			stop();
 		}
 	}
 
