@@ -176,11 +176,11 @@ public class JFilesServer {
 		clients = Collections.synchronizedList(new ArrayList<>());
 
 		try {
-			System.out.println("Binding to port " + port + ", please wait  ...");
+			JFilesServer.print("Binding to port " + port + ", please wait  ...");
 			server = new ServerSocket(port);
-			System.out.println("Server started: " + server);
+			JFilesServer.print("Server started: " + server);
 		} catch (IOException ioe) {
-			System.out.println("Can not bind to port " + port + ": " + ioe.getMessage());
+			JFilesServer.print("Can not bind to port " + port + ": " + ioe.getMessage());
 		}
 
 		accept();
@@ -195,7 +195,7 @@ public class JFilesServer {
 				System.out.println("Waiting for a client ...");
 
 				/*
-				 *  Accept a new client
+				 * Accept a new client
 				 */
 				JFilesServerClient client = new JFilesServerClient(server.accept());
 
@@ -205,7 +205,7 @@ public class JFilesServer {
 				// Run the new client thread.
 				executorService.execute(client);
 			} catch (IOException ioe) {
-				System.out.println("Server accept error: " + ioe);
+				JFilesServer.print("Server accept error: " + ioe);
 				stop();
 			}
 		}
@@ -297,6 +297,18 @@ public class JFilesServer {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * A thread-safe print.
+	 *
+	 * @param toPrint
+	 *            A thread-safe print.
+	 */
+	public static void print(Object toPrint) {
+		synchronized (System.out) {
+			System.out.println(toPrint.toString());
 		}
 	}
 

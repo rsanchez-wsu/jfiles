@@ -26,6 +26,9 @@ import edu.wright.cs.jfiles.commands.Commands;
 import edu.wright.cs.jfiles.commands.Quit;
 import edu.wright.cs.jfiles.commands.Stop;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
@@ -43,6 +46,8 @@ import java.util.concurrent.TimeoutException;
  *
  */
 public class JFilesServerClient implements Runnable {
+
+	static final Logger logger = LogManager.getLogger(JFilesServer.class);
 	private Socket socket = null;
 	private DataInputStream streamIn = null;
 	private DataOutputStream streamOut = null;
@@ -62,7 +67,7 @@ public class JFilesServerClient implements Runnable {
 			streamOut.writeUTF(msg);
 			streamOut.flush();
 		} catch (IOException ioe) {
-			System.out.println("ERROR sending: " + ioe.getMessage());
+			JFilesServer.print("ERROR sending: " + ioe.getMessage());
 			close();
 		}
 	}
@@ -78,9 +83,9 @@ public class JFilesServerClient implements Runnable {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 //			e.printStackTrace();
-			System.out.println("Client socket terminated.");
+			JFilesServer.print("Client socket terminated.");
 		} finally {
-			System.out.println("Calling close....");
+			JFilesServer.print("Calling close....");
 			close();
 			remove();
 		}
@@ -92,9 +97,9 @@ public class JFilesServerClient implements Runnable {
 	 */
 	private void handle(String input) {
 
-		System.out.println("Got the input: " + input);
+		JFilesServer.print("Got the input: " + input);
 
-//		logger.info("[Server] Recv command: " + input);
+		logger.info("[Server] Recv command: " + input);
 
 		String[] sinput = input.split(" ");
 
@@ -103,7 +108,7 @@ public class JFilesServerClient implements Runnable {
 
 		String cont = cmd.execute();
 
-		System.out.println("Sending back: " + cont);
+		JFilesServer.print("Sending back: " + cont);
 
 		send(cont);
 
