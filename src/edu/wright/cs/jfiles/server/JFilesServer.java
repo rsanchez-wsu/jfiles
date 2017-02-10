@@ -39,10 +39,15 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -70,6 +75,7 @@ public class JFilesServer {
 
 	private boolean shouldRun = true;
 	private ExecutorService executorService = Executors.newFixedThreadPool(10);
+	private List<JFilesServerClient> clients;
 
 	private static JFilesServer instance = new JFilesServer();
 
@@ -167,6 +173,7 @@ public class JFilesServer {
 	 */
 	public void start(int port) {
 		shouldRun = true;
+		clients = Collections.synchronizedList(new ArrayList<>());
 
 		try {
 			System.out.println("Binding to port " + port + ", please wait  ...");
@@ -187,12 +194,23 @@ public class JFilesServer {
 			try {
 				System.out.println("Waiting for a client ...");
 
-				executorService.submit(new JFilesServerClient(server.accept()));
+				/*
+				 *  Accept a new client
+				 */
+				JFilesServerClient client = new JFilesServerClient(server.accept());
+
+				// Add client to be tracked
+				clients.add(client);
+
+				// Run the new client thread.
+				executorService.execute(client);
 			} catch (IOException ioe) {
 				System.out.println("Server accept error: " + ioe);
 				stop();
 			}
 		}
+
+		stop();
 	}
 
 	/**
@@ -256,8 +274,23 @@ public class JFilesServer {
 	public void stop() {
 		shouldRun = false;
 
+		/*
+		 * Go through each client connected and close the IO.
+		 */
+		for (JFilesServerClient client : clients) {
+			client.close();
+		}
+
+		clients.clear();
+
+		/*
+		 * Shut down all client sockets.
+		 */
 		executorService.shutdownNow();
 
+		/*
+		 * Shut down the server.
+		 */
 		try {
 			server.close();
 			System.out.println("Server now closed!");
@@ -265,6 +298,26 @@ public class JFilesServer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Adds a new client to be tracked.
+	 *
+	 * @param client
+	 *            The client to be added.
+	 */
+	public synchronized void add(JFilesServerClient client) {
+		clients.add(client);
+	}
+
+	/**
+	 * Removes a client from being tracked.
+	 *
+	 * @param client
+	 *            The client to be removed.
+	 */
+	public synchronized void remove(JFilesServerClient client) {
+		clients.remove(client);
 	}
 
 	/**

@@ -33,6 +33,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Thread class for the server.
@@ -53,7 +57,7 @@ public class JFilesServerClient implements Runnable {
 	/**
 	 * .
 	 */
-	public void send(String msg) {
+	private void send(String msg) {
 		try {
 			streamOut.writeUTF(msg);
 			streamOut.flush();
@@ -65,14 +69,20 @@ public class JFilesServerClient implements Runnable {
 
 	@Override
 	public void run() {
-		System.out.println("Server Client running.");
-		while (true) {
-			try {
+		try {
+			open();
+
+			while (true) {
 				handle(streamIn.readUTF());
-			} catch (IOException ioe) {
-				System.out.println("ERROR reading: " + ioe.getMessage());
-				close();
 			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+//			e.printStackTrace();
+			System.out.println("Client socket terminated.");
+		} finally {
+			System.out.println("Calling close....");
+			close();
+			remove();
 		}
 	}
 
@@ -80,7 +90,7 @@ public class JFilesServerClient implements Runnable {
 	 * Handles new input.
 	 * @param input The input given from client.
 	 */
-	public synchronized void handle(String input) {
+	private void handle(String input) {
 
 		System.out.println("Got the input: " + input);
 
@@ -99,6 +109,7 @@ public class JFilesServerClient implements Runnable {
 
 		if (cmd instanceof Quit) {
 			close();
+			remove();
 		} else if (cmd instanceof Stop) {
 			JFilesServer.getInstance().stop();
 		}
@@ -107,24 +118,22 @@ public class JFilesServerClient implements Runnable {
 	/**
 	 * .
 	 */
-	public void open() throws IOException {
+	private void open() throws IOException {
 		streamIn = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
 		streamOut = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+	}
+
+	/**
+	 * Removes this instance from the Server.
+	 */
+	private void remove() {
+		JFilesServer.getInstance().remove(this);
 	}
 
 	/**
 	 * .
 	 */
 	public void close() {
-		if (socket != null) {
-			try {
-				socket.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
 		if (streamIn != null) {
 			try {
 				streamIn.close();
@@ -142,5 +151,15 @@ public class JFilesServerClient implements Runnable {
 				e.printStackTrace();
 			}
 		}
+
+		if (socket != null) {
+			try {
+				socket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
+
 }
