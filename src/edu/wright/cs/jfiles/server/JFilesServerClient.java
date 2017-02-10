@@ -36,10 +36,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Arrays;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Thread class for the server.
@@ -53,14 +49,14 @@ public class JFilesServerClient implements Runnable {
 	private DataOutputStream streamOut = null;
 
 	/**
-	 * .
+	 * Creates a new socket.
 	 */
 	public JFilesServerClient(Socket parmSocket) {
 		socket = parmSocket;
 	}
 
 	/**
-	 * .
+	 * Sends a message to the client.
 	 */
 	private void send(String msg) {
 		try {
@@ -121,7 +117,7 @@ public class JFilesServerClient implements Runnable {
 	}
 
 	/**
-	 * .
+	 * Opens the streams.
 	 */
 	private void open() throws IOException {
 		streamIn = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
@@ -136,7 +132,7 @@ public class JFilesServerClient implements Runnable {
 	}
 
 	/**
-	 * .
+	 * Closes the streams and socket.
 	 */
 	public void close() {
 		if (streamIn != null) {

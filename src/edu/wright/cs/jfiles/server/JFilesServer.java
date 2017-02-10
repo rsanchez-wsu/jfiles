@@ -21,11 +21,6 @@
 
 package edu.wright.cs.jfiles.server;
 
-import edu.wright.cs.jfiles.commands.Command;
-import edu.wright.cs.jfiles.commands.Commands;
-import edu.wright.cs.jfiles.commands.Quit;
-import edu.wright.cs.jfiles.commands.Stop;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
@@ -36,18 +31,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
