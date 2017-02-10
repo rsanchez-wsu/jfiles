@@ -1,3 +1,4 @@
+
 2016-21-06 13:21:30.507 [main] INFO  edu.wright.cs.jfiles.server.JFilesServer - Config set to port 9786
 2016-21-06 13:21:30.508 [main] INFO  edu.wright.cs.jfiles.server.JFilesServer - Starting the server
 2016-23-06 13:23:39.782 [main] INFO  edu.wright.cs.jfiles.server.JFilesServer - Config set to port 9786
@@ -25,3 +26,82 @@
 2016-07-06 17:07:26.618 [main] INFO  edu.wright.cs.jfiles.server.JFilesServer - Config set to port 9786
 2016-07-06 17:07:26.619 [main] INFO  edu.wright.cs.jfiles.server.JFilesServer - Starting the server
 2016-43-14 11:43:45.643 [main] INFO  edu.wright.cs.jfiles.server.JFilesServer - No config file found. Using default values.
+2016-50-16 14:50:24.163 [main] ERROR edu.wright.cs.jfiles.server.JFilesServer - Some error occured
+java.net.BindException: Address already in use: JVM_Bind
+	at java.net.DualStackPlainSocketImpl.bind0(Native Method) ~[?:1.8.0_101]
+	at java.net.DualStackPlainSocketImpl.socketBind(Unknown Source) ~[?:1.8.0_101]
+	at java.net.AbstractPlainSocketImpl.bind(Unknown Source) ~[?:1.8.0_101]
+	at java.net.PlainSocketImpl.bind(Unknown Source) ~[?:1.8.0_101]
+	at java.net.ServerSocket.bind(Unknown Source) ~[?:1.8.0_101]
+	at java.net.ServerSocket.<init>(Unknown Source) ~[?:1.8.0_101]
+	at java.net.ServerSocket.<init>(Unknown Source) ~[?:1.8.0_101]
+	at edu.wright.cs.jfiles.server.JFilesServer.<clinit>(JFilesServer.java:54) [bin/:?]
+2016-10-20 20:10:57.963 [Thread-1] ERROR edu.wright.cs.jfiles.server.JFilesServer - An error occurred while communicating with the client
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(Unknown Source) ~[?:1.8.0_101]
+	at java.net.SocketInputStream.read(Unknown Source) ~[?:1.8.0_101]
+	at sun.nio.cs.StreamDecoder.readBytes(Unknown Source) ~[?:1.8.0_101]
+	at sun.nio.cs.StreamDecoder.implRead(Unknown Source) ~[?:1.8.0_101]
+	at sun.nio.cs.StreamDecoder.read(Unknown Source) ~[?:1.8.0_101]
+	at java.io.InputStreamReader.read(Unknown Source) ~[?:1.8.0_101]
+	at java.io.BufferedReader.fill(Unknown Source) ~[?:1.8.0_101]
+	at java.io.BufferedReader.readLine(Unknown Source) ~[?:1.8.0_101]
+	at java.io.BufferedReader.readLine(Unknown Source) ~[?:1.8.0_101]
+	at edu.wright.cs.jfiles.server.JFilesServer.getFile(JFilesServer.java:156) [bin/:?]
+	at edu.wright.cs.jfiles.server.JFilesServer.run(JFilesServer.java:88) [bin/:?]
+	at java.lang.Thread.run(Unknown Source) [?:1.8.0_101]
+2016-10-20 20:10:57.972 [Thread-1] ERROR edu.wright.cs.jfiles.server.JFilesServer - An error has occurred
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(Unknown Source) ~[?:1.8.0_101]
+	at java.net.SocketInputStream.read(Unknown Source) ~[?:1.8.0_101]
+	at sun.nio.cs.StreamDecoder.readBytes(Unknown Source) ~[?:1.8.0_101]
+	at sun.nio.cs.StreamDecoder.implRead(Unknown Source) ~[?:1.8.0_101]
+	at sun.nio.cs.StreamDecoder.read(Unknown Source) ~[?:1.8.0_101]
+	at java.io.InputStreamReader.read(Unknown Source) ~[?:1.8.0_101]
+	at java.io.BufferedReader.fill(Unknown Source) ~[?:1.8.0_101]
+	at java.io.BufferedReader.readLine(Unknown Source) ~[?:1.8.0_101]
+	at java.io.BufferedReader.readLine(Unknown Source) ~[?:1.8.0_101]
+	at edu.wright.cs.jfiles.server.JFilesServer.run(JFilesServer.java:79) [bin/:?]
+	at java.lang.Thread.run(Unknown Source) [?:1.8.0_101]
+2016-20-20 20:20:55.127 [Thread-1] ERROR edu.wright.cs.jfiles.client.JFilesClient - An error occured with the connection
+java.net.ConnectException: Connection refused: connect
+	at java.net.DualStackPlainSocketImpl.connect0(Native Method) ~[?:1.8.0_101]
+	at java.net.DualStackPlainSocketImpl.socketConnect(Unknown Source) ~[?:1.8.0_101]
+	at java.net.AbstractPlainSocketImpl.doConnect(Unknown Source) ~[?:1.8.0_101]
+	at java.net.AbstractPlainSocketImpl.connectToAddress(Unknown Source) ~[?:1.8.0_101]
+	at java.net.AbstractPlainSocketImpl.connect(Unknown Source) ~[?:1.8.0_101]
+	at java.net.PlainSocketImpl.connect(Unknown Source) ~[?:1.8.0_101]
+	at java.net.SocksSocketImpl.connect(Unknown Source) ~[?:1.8.0_101]
+	at java.net.Socket.connect(Unknown Source) ~[?:1.8.0_101]
+	at java.net.Socket.connect(Unknown Source) ~[?:1.8.0_101]
+	at java.net.Socket.<init>(Unknown Source) ~[?:1.8.0_101]
+	at java.net.Socket.<init>(Unknown Source) ~[?:1.8.0_101]
+	at edu.wright.cs.jfiles.client.JFilesClient.run(JFilesClient.java:69) [bin/:?]
+	at java.lang.Thread.run(Unknown Source) [?:1.8.0_101]
+2016-21-20 20:21:23.383 [Thread-1] ERROR edu.wright.cs.jfiles.server.JFilesServer - An error occurred while communicating with the client
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(Unknown Source) ~[?:1.8.0_101]
+	at java.net.SocketInputStream.read(Unknown Source) ~[?:1.8.0_101]
+	at sun.nio.cs.StreamDecoder.readBytes(Unknown Source) ~[?:1.8.0_101]
+	at sun.nio.cs.StreamDecoder.implRead(Unknown Source) ~[?:1.8.0_101]
+	at sun.nio.cs.StreamDecoder.read(Unknown Source) ~[?:1.8.0_101]
+	at java.io.InputStreamReader.read(Unknown Source) ~[?:1.8.0_101]
+	at java.io.BufferedReader.fill(Unknown Source) ~[?:1.8.0_101]
+	at java.io.BufferedReader.readLine(Unknown Source) ~[?:1.8.0_101]
+	at java.io.BufferedReader.readLine(Unknown Source) ~[?:1.8.0_101]
+	at edu.wright.cs.jfiles.server.JFilesServer.getFile(JFilesServer.java:156) [bin/:?]
+	at edu.wright.cs.jfiles.server.JFilesServer.run(JFilesServer.java:88) [bin/:?]
+	at java.lang.Thread.run(Unknown Source) [?:1.8.0_101]
+2016-21-20 20:21:23.390 [Thread-1] ERROR edu.wright.cs.jfiles.server.JFilesServer - An error has occurred
+java.net.SocketException: Connection reset
+	at java.net.SocketInputStream.read(Unknown Source) ~[?:1.8.0_101]
+	at java.net.SocketInputStream.read(Unknown Source) ~[?:1.8.0_101]
+	at sun.nio.cs.StreamDecoder.readBytes(Unknown Source) ~[?:1.8.0_101]
+	at sun.nio.cs.StreamDecoder.implRead(Unknown Source) ~[?:1.8.0_101]
+	at sun.nio.cs.StreamDecoder.read(Unknown Source) ~[?:1.8.0_101]
+	at java.io.InputStreamReader.read(Unknown Source) ~[?:1.8.0_101]
+	at java.io.BufferedReader.fill(Unknown Source) ~[?:1.8.0_101]
+	at java.io.BufferedReader.readLine(Unknown Source) ~[?:1.8.0_101]
+	at java.io.BufferedReader.readLine(Unknown Source) ~[?:1.8.0_101]
+	at edu.wright.cs.jfiles.server.JFilesServer.run(JFilesServer.java:79) [bin/:?]
+	at java.lang.Thread.run(Unknown Source) [?:1.8.0_101]

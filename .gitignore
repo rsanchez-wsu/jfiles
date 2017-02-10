@@ -19,3 +19,4 @@ dist/
 lib/
 tools/
 logs/
+logs/*

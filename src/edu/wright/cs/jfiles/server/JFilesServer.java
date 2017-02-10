@@ -21,6 +21,8 @@
 
 package edu.wright.cs.jfiles.server;
 
+import edu.wright.cs.jfiles.common.NetUtil;
+import edu.wright.cs.jfiles.socketmanagement.SocketManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
@@ -32,6 +34,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -50,6 +53,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+
 /**
  * The main class of the JFiles server application.
  * 
@@ -64,7 +68,11 @@ public class JFilesServer implements Runnable {
 	private static int MAXTHREADS;
 	private static final String UTF_8 = "UTF-8";
 	private Socket socket;
+	
 	/* Creates new port for serverSocket. ?static?
+	private boolean running = true;
+	NetUtil util = new NetUtil();
+	private SocketManager sockMan = null;
 	static {
 	}try
 	{
@@ -154,6 +162,7 @@ public class JFilesServer implements Runnable {
 	 */
 	public JFilesServer(Socket sock) throws IOException {
 		socket = sock;
+		sockMan = new SocketManager(socket);
 	}
 
 	/**
@@ -240,6 +249,67 @@ public class JFilesServer implements Runnable {
 		} catch (IOException e) {
 			logger.error("Some error occurred", e);
 		}
+		try {
+			while (running) {
+				//String cmd = in.readLine();
+				String cmd = sockMan.getCommandInput();
+				if (cmd != null) {
+					//cmdary splits up cmd to distinguish command
+					//from arguments
+					//cmdary[0] is command
+					//cmdary[1] is argument
+					String [] cmdary = cmd.split(" ");
+					//Switch statement replaces if-else structure
+					//Match command to one of these cases and execute
+					//accordingly
+					switch (cmdary [0]) {
+					//Client wants a file from the server
+					//Send file to client
+					case "SENDFILE":
+						sockMan.sendFile(new File(cmdary[1]));
+						break;
+					//Client wants to send file to server
+					//Prepare to receive file from client
+					case "GETFILE":
+						Thread thrd0 = new Thread(new Runnable() {
+							@Override
+							public void run() {
+								sockMan.sendCommand("SENDFILE" + " " + cmdary[1]);
+							}
+						});
+						thrd0.start();
+						break;
+					//Used by the socket manager to notify server of incoming file.
+					case "REC_FILE":
+						int identifier = Integer.parseInt(cmdary[1]);
+						String filename = cmdary[2];
+						File file = null;
+						while (file == null) {
+							file = sockMan.getFile(identifier);
+						}
+						file.renameTo(new File("copy-" + filename));
+						break;
+					//List command existed in repository's initial state
+					//May be obsolete
+					case "LIST":
+						break;
+					//Why do we have two different exit commands?
+					case "EXIT":
+					case "QUIT":
+						running = false;
+						sockMan.close();
+						socket.close();
+						break;
+
+					default:
+						System.out.println("Invalid Command.");
+						break;
+					}
+				}
+			}
+		} catch (IOException e) {
+			logger.error("An error has occurred", e);
+		} 
 	}
 
 	/**
@@ -250,22 +320,86 @@ public class JFilesServer implements Runnable {
 	 *            the socket where the server connection resides
 	 */
 	public void sendFile(String file, Socket servsock) {
-
 		try (BufferedReader br = new BufferedReader(new FileReader("AUTHORS"))) {
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(
+				new FileInputStream(file), "UTF-8"))) {
+
 			OutputStreamWriter osw = new OutputStreamWriter(servsock.getOutputStream(), UTF_8);
 			BufferedWriter out = new BufferedWriter(osw);
 			String line;
-
+			
+			@SuppressWarnings("unused")	//to be implemented
+			String checksum = util.getChecksum(new File(file));
 			while ((line = br.readLine()) != null) {
 				System.out.println(line);
 				out.write(line + "\n");
 			}
 			out.flush();
-
+			
+			//sending Checksum
+			File serverFile = new File(file);
+			String sendCheck = util.getChecksum(serverFile);
+			out.write(sendCheck + "\n" );
+			out.flush();
+			
+		} catch (IOException e) {
+			logger.error("Sending file error", e);
+		}	
+	}
+	
+	/**
+	 * Handles the transfer of a file from client to server.
+	 * @param file
+	 * 			  filename of received file
+	 * @param sock
+	 * 			  socket with active connection
+	 */
+	public void getFile(String file, Socket sock) {
+		BufferedWriter bw = null;
+		try {
+			InputStreamReader isr = new InputStreamReader(sock.getInputStream(), UTF_8);
+			BufferedReader br = new BufferedReader(isr);
+			// Remove .txt from end of filename. Probably better way of
+			// doing this.
+			//46 is ASCII value of "."
+			int index = 0;
+			while (file.charAt(index) != 46) {
+				index++;
+			}
+			String newFile = file.substring(0, index) + "-copy.txt";
+			bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(newFile), "UTF-8"));
+			String line;
+			
+			while ((line = br.readLine()) != null) {
+				System.out.println(line);
+				bw.write(line + "\n");
+			}
+			
+			//receive checkSum
+			String sentCheck = br.readLine();
+			System.out.println(line);
+			
+			File copiedFile = new File(newFile);
+			String checkNewFile = util.getChecksum(copiedFile);
+			
+			if (checkNewFile.equalsIgnoreCase(sentCheck)) {
+				System.out.println("An error occured in sending the file");
+				logger.error("An error occured in sending the file");
+			}
+			System.out.println("File received.");
 		} catch (IOException e) {
 			logger.error("Some error occurred", e);
 		}
-
+			logger.error("An error occurred while communicating with the client", e);
+		} finally {
+			if (bw != null) {
+				try {
+					bw.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	/**
@@ -308,6 +442,10 @@ public class JFilesServer implements Runnable {
 				// Thread.sleep(2);
 				// Iterates the numThrds variable by 1
 				numThrds++;
+				System.out.println("Received connection from" 
+						+ sock.getRemoteSocketAddress());
+			} catch (IOException e) {
+				logger.error("An error occurred while connecting to client", e);
 			}
 		} catch (IOException e) {
 			logger.error("Some error occurred", e);

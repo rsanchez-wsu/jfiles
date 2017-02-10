@@ -56,6 +56,8 @@
 	<target name="init"
 		depends="resolve"
 		description="Initialize the build environment">
+		
+		<mkdir dir="doc/javadoc"/>
 
 		<taskdef name="checkstyle"
 			classname="com.puppycrawl.tools.checkstyle.ant.CheckstyleAntTask"
@@ -230,5 +232,10 @@
 			failonerror="true"/>
 
 	</target>
+	
+	<!-- Generate javadocs for current project into /javadoc -->
+	  <target name="doc" depends="init" description="generate documentation">
+	    <javadoc sourcepath="src/" destdir="doc/javadoc"/>
+	  </target>
 
 </project>
