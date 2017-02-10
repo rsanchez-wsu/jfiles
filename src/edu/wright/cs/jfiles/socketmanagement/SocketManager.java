@@ -48,7 +48,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  *
  */
 public class SocketManager {
-	
+
 	static final Logger logger = LogManager.getLogger();
 	private InputStream in = null;
 	private OutputStream out = null;
@@ -86,25 +86,27 @@ public class SocketManager {
 
 		init();
 	}
-	
+
 	/**
 	 * This constructor will produce two Thread, one for incoming traffic and
-	 * one for outgoing traffic. This constructor sets the packet size to be used.
+	 * one for outgoing traffic. This constructor sets the packet size to be
+	 * used.
 	 * 
-	 * @param mainSocket The socket to be used
-	 * @param packetSize The size, in byte, of the packets being sent and received.
+	 * @param mainSocket
+	 *            The socket to be used
+	 * @param packetSize
+	 *            The size, in byte, of the packets being sent and received.
 	 */
 	public SocketManager(Socket mainSocket, int packetSize) {
-		
+
 		this.mainSocket = mainSocket;
 		this.packetSize = packetSize;
 
 		init();
 	}
-	
+
 	/**
-	 * Used by the constructor to initialize the inbound
-	 * and outbound threads.
+	 * Used by the constructor to initialize the inbound and outbound threads.
 	 */
 	private void init() {
 		try {
@@ -194,10 +196,9 @@ public class SocketManager {
 	}
 
 	/**
-	 * Takes a single byte array and sends it out with low priority.
-	 * Default packet size is 1024 bytes. If the packet being sent
-	 *  is less then 1024 bytes then add a '\r' byte to then end to 
-	 *  indicate an end to the packet.
+	 * Takes a single byte array and sends it out with low priority. Default
+	 * packet size is 1024 bytes. If the packet being sent is less then 1024
+	 * bytes then add a '\r' byte to then end to indicate an end to the packet.
 	 * 
 	 * @param packet
 	 *            The byte array to send
@@ -208,9 +209,9 @@ public class SocketManager {
 
 	/**
 	 * Adds packets to a queue based on priority level to await transport
-	 * through the output stream. Default packet size is 1024 bytes. If 
-	 * the packet being sent is less then 1024 bytes then add a '\r' byte 
-	 * to then end to indicate an end to the packet.
+	 * through the output stream. Default packet size is 1024 bytes. If the
+	 * packet being sent is less then 1024 bytes then add a '\r' byte to then
+	 * end to indicate an end to the packet.
 	 * 
 	 * @param packet
 	 *            Packet to be added to queue
@@ -322,7 +323,7 @@ public class SocketManager {
 	public OutputStream rawOutputStream() throws IOException {
 		return mainSocket.getOutputStream();
 	}
-	
+
 	/**
 	 * An inner class used to control inbound network traffic.
 	 * 
@@ -344,11 +345,12 @@ public class SocketManager {
 		private volatile int numPackets = 0;
 		private volatile int numPackAssem = 0;
 		private int cleanUpItr = 0;
-		
+
 		/**
 		 * Constructs the object to handle inbound traffic.
 		 * 
-		 * @param inStream An InputStream used to read incoming traffic
+		 * @param inStream
+		 *            An InputStream used to read incoming traffic
 		 */
 		public Inbound(InputStream inStream) {
 			in = inStream;
@@ -405,7 +407,7 @@ public class SocketManager {
 							packRecwritelock.lock();
 							packetsReceived.ensureCapacity(++numPackets);
 							packetsReceived.add(temp);
-							//wakeSort();
+							// wakeSort();
 						} finally {
 							packRecwritelock.unlock();
 						}
@@ -524,16 +526,15 @@ public class SocketManager {
 			thrd.setName("SortPackets Thread");
 			thrd.start();
 		}
-		
+
 		/**
-		 * This method exists solely to force the sortPackets 
-		 * thread to wait for a notification that a new packet 
-		 * as arrived to be sorted.
+		 * This method exists solely to force the sortPackets thread to wait for
+		 * a notification that a new packet as arrived to be sorted.
 		 * 
-		 * @param readyPackets The ArrayList object that is 
-		 * 					being used to store the incoming packets
-		 * @return True if the ArrayList object is not empty 
-		 * 				and false otherwise
+		 * @param readyPackets
+		 *            The ArrayList object that is being used to store the
+		 *            incoming packets
+		 * @return True if the ArrayList object is not empty and false otherwise
 		 */
 		private synchronized boolean readyForNext(ArrayList<byte[]> readyPackets) {
 			boolean complete = false;
@@ -553,10 +554,9 @@ public class SocketManager {
 			}
 			return complete;
 		}
-		
+
 		/**
-		 * Performs a notifyAll() call to wake up the 
-		 * sortPackets method.
+		 * Performs a notifyAll() call to wake up the sortPackets method.
 		 */
 		private synchronized void wakeSort() {
 			notifyAll();
@@ -604,10 +604,10 @@ public class SocketManager {
 			}
 			return file;
 		}
-		
+
 		/**
-		 * This method removes all unused packetAssembler 
-		 * objects still within the packAssemArr array.
+		 * This method removes all unused packetAssembler objects still within
+		 * the packAssemArr array.
 		 */
 		private void cleanUp() {
 			try {
@@ -719,9 +719,17 @@ public class SocketManager {
 					FileInputStream in = null;
 					try {
 						in = new FileInputStream(file);
+						if (in != null) {
+							try {
+								in.close();
+							} catch (IOException f) {
+								logger.error("No File to close", f);
+							}
+						}
 					} catch (FileNotFoundException e) {
 						logger.error("File wasn't found", e);
 					}
+
 					byte[] packet = null;
 					try {
 						// Last add the file bytes to the packet
@@ -814,7 +822,7 @@ public class SocketManager {
 			tempPacket.add((byte) ' ');
 			byte[] checksumArr = checksum.getBytes();
 			for (int i = 0; i < checksumArr.length; i++) {
-				if ( tempPacket.size() == packetSize) {
+				if (tempPacket.size() == packetSize) {
 					System.out.println("Payload length exceeds packet size limits.");
 					break;
 				}
