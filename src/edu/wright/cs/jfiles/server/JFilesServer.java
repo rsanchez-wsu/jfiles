@@ -197,7 +197,6 @@ public class JFilesServer {
 				executorService.execute(client);
 			} catch (IOException ioe) {
 				JFilesServer.print("Server accept error: " + ioe);
-				stop();
 			}
 		}
 
