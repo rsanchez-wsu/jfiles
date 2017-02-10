@@ -85,7 +85,6 @@ public class JFilesServer {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-
 	private void setup() throws IOException {
 		Properties prop = new Properties();
 		File config = null;
