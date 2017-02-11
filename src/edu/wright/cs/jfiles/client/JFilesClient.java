@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -132,7 +133,8 @@ public class JFilesClient implements Runnable {
 		while (thread != null) {
 			try {
 				BufferedReader consoleIn =
-						new BufferedReader(new InputStreamReader(System.in, "UTF_8"));
+						new BufferedReader(
+								new InputStreamReader(System.in, Charset.defaultCharset()));
 				String line = consoleIn.readLine();
 				if (line != null) {
 					String[] elements = line.split(" ");

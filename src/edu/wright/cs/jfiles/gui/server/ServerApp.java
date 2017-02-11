@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2016 - WSU CEG3120 Students
+ * Copyright (C) 2017 - WSU CEG3120 Students
  *
- * Roberto C. Sánchez <roberto.sanchez@wright.edu>
+ *
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,8 @@
  *
  */
 
-package edu.wright.cs.jfiles.gui.client;
+package edu.wright.cs.jfiles.gui.server;
+
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -28,20 +29,26 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
- * Main application.
+ * Main Server Application.
  *
  * @author Matt Gilene
  *
  */
-public class ClientApp extends Application {
+public class ServerApp extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
 		FXMLLoader loader =
-				new FXMLLoader(ClientAppViewController.class.getResource("ClientAppView.fxml"));
+				new FXMLLoader(ServerAppViewController.class.getResource("ServerAppView.fxml"));
 		Parent appView = loader.load();
+		ServerAppViewController controller = loader.getController();
 		Scene scene = new Scene(appView);
 		stage.setScene(scene);
+		stage.setTitle("JFiles Server");
+		stage.setOnCloseRequest(event -> {
+			controller.exit();
+			stage.close();
+		});
 		stage.show();
 	}
 

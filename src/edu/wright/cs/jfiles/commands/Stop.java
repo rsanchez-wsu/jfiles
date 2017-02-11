@@ -19,15 +19,30 @@
  *
  */
 
-package edu.wright.cs.jfiles.gui.server;
+package edu.wright.cs.jfiles.commands;
 
 /**
- * This class is a place holder for if/when we decide to
- * make a server side gui.
- *
- * @author Matt
- *
+ * The Stop command closes the connection. Syntax: STOP Flags: - None. Example:
+ * STOP
  */
-public class ServerGui {
+public class Stop extends Command {
+
+	/**
+	 * Calls super.
+	 *
+	 * @param args
+	 *            Command's args.
+	 */
+	public Stop(String... args) {
+		super(args);
+	}
+
+	/**
+	 * @return Nothing.
+	 */
+	@Override
+	public String execute() {
+		return new Info("Stopping server...").execute();
+	}
 
 }
