@@ -129,7 +129,7 @@ public class JFilesServer {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	JFilesServer() {
+	public JFilesServer() {
 		try {
 			System.out.println("Binding to port " + PORT + ", please wait  ...");
 			server = new ServerSocket(PORT);
