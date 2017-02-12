@@ -296,7 +296,7 @@ public class JFilesServer implements Runnable {
 
 				break;
 			case "FIND":
-				try {
+				if (baseCommand.length > 1) {
 					theDate = Calendar.getInstance();
 					schHstWrt.println(baseCommand[1]
 							+ "\t\t" + dateFormat.format(theDate.getTime()));
@@ -305,12 +305,10 @@ public class JFilesServer implements Runnable {
 					} else {
 						clients[findClient(id)].send("Invaild Command\n");
 					}
-				} catch (ArrayIndexOutOfBoundsException e) {
-					break;
 				}
 				break;
 			case "FINDR":
-				try {
+				if (baseCommand.length > 1) {
 					theDate = Calendar.getInstance();
 					schHstWrt.println(baseCommand[1]
 							+ "\t\t" + dateFormat.format(theDate.getTime()));
@@ -319,8 +317,6 @@ public class JFilesServer implements Runnable {
 					} else {
 						clients[findClient(id)].send("Invaild Command\n");
 					}
-				} catch (ArrayIndexOutOfBoundsException e) {
-					break;
 				}
 				break;
 			case "FILE":
