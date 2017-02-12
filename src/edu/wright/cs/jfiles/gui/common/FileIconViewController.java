@@ -155,9 +155,6 @@ public class FileIconViewController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		assert image != null : "image not injected";
-		assert label != null : "label not injected";
-
 		setSize(Size.MEDIUM);
 
 		label.setWrapText(true);

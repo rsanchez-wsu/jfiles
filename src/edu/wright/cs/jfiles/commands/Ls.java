@@ -50,7 +50,7 @@ public class Ls extends Command {
 	 * @return The list of files that match filename.
 	 */
 	private List<String> findFiles(String directory) {
-		List<String> res = new ArrayList<String>();
+		List<String> res = new ArrayList<>();
 
 		File folder = new File(directory);
 		File[] listOfFiles = folder.listFiles();
@@ -76,13 +76,16 @@ public class Ls extends Command {
 	 * @return The list of files that match filename as a string.
 	 */
 	private String getFiles(String directory) {
-		String dir = directory != null ? directory : ".";
+		return atos(findFiles(directory));
+	}
 
-		XmlHandler handler = new XmlHandler(dir);
-
-		return handler.xmlToString();
-
-//		return atos(findFiles(dir));
+	/**
+	 * Returns the files in xml format.
+	 * @param directory The directory to return.
+	 * @return The directory in XML.
+	 */
+	private String getXmlFiles(String directory) {
+		return (new XmlHandler(directory)).xmlToString();
 	}
 
 	/**
@@ -93,8 +96,9 @@ public class Ls extends Command {
 	@Override
 	public String execute() {
 		String directory = this.parser.next();
+		directory = directory != null ? directory : ".";
 
-		return getFiles(directory);
+		return !parser.doesFlagExist("XML") ? getFiles(directory) : getXmlFiles(directory);
 	}
 
 }

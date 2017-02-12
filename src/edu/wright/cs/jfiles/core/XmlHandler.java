@@ -76,7 +76,7 @@ public class XmlHandler {
 	 */
 	public XmlHandler(String path) {
 		this.currentPath = path;
-		arrlist = new ArrayList<FileStruct>();
+		arrlist = new ArrayList<>();
 		populateArray();
 	}
 
@@ -89,7 +89,7 @@ public class XmlHandler {
 	 */
 	public XmlHandler(String path, OutputStreamWriter str) {
 		this.currentPath = path;
-		arrlist = new ArrayList<FileStruct>();
+		arrlist = new ArrayList<>();
 		populateArray();
 		sendXml(str);
 	}

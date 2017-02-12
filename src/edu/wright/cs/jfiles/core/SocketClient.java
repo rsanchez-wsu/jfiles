@@ -1,9 +1,6 @@
 /*
  * Copyright (C) 2017 - WSU CEG3120 Students
  *
- *
- *
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -44,19 +41,16 @@ public class SocketClient {
 	private DataOutputStream streamOut = null;
 
 	/**
-	 * Default constructor.
+	 * Create a new connection to the server.
 	 */
 	public SocketClient() {
 		this(host, port);
 	}
 
 	/**
-	 * Constructor.
-	 *
-	 * @param serverName
-	 *            server address
-	 * @param serverPort
-	 *            server port
+	 * Create a new connection to server.
+	 * @param serverName hostname.
+	 * @param serverPort port.
 	 */
 	public SocketClient(String serverName, int serverPort) {
 		System.out.println("Establishing connection. Please wait ...");
@@ -74,8 +68,7 @@ public class SocketClient {
 	/**
 	 * Sends the given command to the server.
 	 *
-	 * @param cmd
-	 *            command to send
+	 * @param cmd Command to send
 	 */
 	public void sendCommand(Command cmd) {
 		send(cmd.toString());
@@ -102,7 +95,6 @@ public class SocketClient {
 
 		try {
 			input = streamIn.readUTF();
-			//log("Recieved : " + input);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -118,20 +110,9 @@ public class SocketClient {
 	 */
 	public void send(String output) {
 		try {
-			//log("Sending : " + output);
 			streamOut.writeUTF(output);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	/**
-	 * Logs string to the console.
-	 *
-	 * @param str
-	 *            a string
-	 */
-	public void log(String str) {
-		System.out.println(str);
 	}
 }

@@ -198,6 +198,7 @@ public class JFilesClient implements Runnable {
 	/**
 	 * Stops the thread.
 	 */
+	// TODO: Eliminate the deprecated method and the suppression
 	@SuppressWarnings("deprecation")
 	public void stop() {
 		if (thread != null) {
