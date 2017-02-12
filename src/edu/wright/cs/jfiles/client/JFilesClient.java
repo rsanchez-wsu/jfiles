@@ -132,7 +132,7 @@ public class JFilesClient implements Runnable {
 		while (thread != null) {
 			try {
 				BufferedReader consoleIn =
-						new BufferedReader(new InputStreamReader(System.in, "UTF_8"));
+						new BufferedReader(new InputStreamReader(System.in, "US-ASCII"));
 				String line = consoleIn.readLine();
 				if (line != null) {
 					String[] elements = line.split(" ");
