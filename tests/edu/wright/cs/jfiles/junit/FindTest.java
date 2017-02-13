@@ -21,7 +21,7 @@
 
 package edu.wright.cs.jfiles.junit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import edu.wright.cs.jfiles.server.JFilesServer;
 
@@ -37,11 +37,11 @@ import java.net.Socket;
 
 /**
  * @author Laure
- * This is the test class for the find command, including the secondary
- * of the actions of the server to execute said command.
+ *
+ *         This is the test class for the find command, including the secondary
+ *         of the actions of the server to execute said command.
  */
 public class FindTest {
-
 
 	@Test
 	public void testFind() {
@@ -49,11 +49,11 @@ public class FindTest {
 		Socket socket = null;
 		File testFile = new File("armadillotestFile");
 		try {
-			socket = new Socket("localhost",9786);
-			DataInputStream in = new DataInputStream(new BufferedInputStream(
-					socket.getInputStream()));
-			DataOutputStream out = new DataOutputStream(new BufferedOutputStream(
-					socket.getOutputStream()));
+			socket = new Socket("localhost", 9786);
+			DataInputStream in =
+					new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+			DataOutputStream out =
+					new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 			testFile.createNewFile();
 			out.writeUTF("find armadillo");
 			String inStr = in.readUTF();
