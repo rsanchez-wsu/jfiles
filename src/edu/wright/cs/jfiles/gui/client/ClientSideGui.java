@@ -217,33 +217,33 @@ public class ClientSideGui extends Application {
 
 		// Create MenuBar For Menu Items
 		MenuBar headderMenuBar = new MenuBar();
-		
+
 		// Creates a label for path and text field to display path
 		Label pathLabel = new Label("Current Directory: ");
+
+		// Create GridPane to organize the objects
+		GridPane gridPane = new GridPane();
+		gridPane.add(headderMenuBar, 0, 0, 2, 1);
+		gridPane.add(pathLabel, 0, 1);
+
 		TextField pathDisplay = new TextField();
 		pathDisplay.setEditable(false);
 		pathDisplay.setPromptText("File Path");
-		
+
 		// Populates text field with path
 		String currentPath = JFilesServer.sendPath();
 		pathDisplay.appendText(currentPath);
-		
+
 		// Creates a box for the search area
 		TextField searchArea = new TextField();
+		gridPane.add(searchArea, 1, 2);
 
 		// Creates a button to collect the search
 		Button searchButton = new Button();
 		searchButton.setText("Search");
 		searchButton.setMinWidth(100);
 
-		// Create GridPane to organize the objects
-		GridPane gridPane = new GridPane();
-
-		// Add objects to GridPane
-		gridPane.add(headderMenuBar, 0, 0, 2, 1);
-		gridPane.add(pathLabel, 0, 1);
 		gridPane.add(pathDisplay, 1, 1);
-		gridPane.add(searchArea, 1, 2);
 		gridPane.add(searchButton, 0, 2);
 
 		// Add Column Constraints to get areas even
