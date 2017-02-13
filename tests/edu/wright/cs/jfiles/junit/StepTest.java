@@ -1,9 +1,7 @@
 /*
  * Copyright (C) 2017 - WSU CEG3120 Students
  *
-*
  *
-*
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -21,7 +19,7 @@
 
 package edu.wright.cs.jfiles.junit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import edu.wright.cs.jfiles.server.JFilesServer;
 import edu.wright.cs.jfiles.server.JFilesServerThread;
@@ -33,8 +31,11 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+/**
+ * Test class for the send command.
+ */
 public class StepTest {
-	
+
 	@Test
 	public void sendTest() throws IOException {
 		JFilesServer server = new JFilesServer();
