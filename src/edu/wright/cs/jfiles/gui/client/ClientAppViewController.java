@@ -107,6 +107,12 @@ public class ClientAppViewController implements Initializable, ClipboardOwner, S
 
 	@FXML
 	transient FlowPane flowPane;
+	/**
+	 *Constructor with no arguments for Javabeans.
+	 */
+	public ClientAppViewController() {
+		super();
+	}
 
 	/**
 	 * Write object used for NotSerializableException for Javabean.
