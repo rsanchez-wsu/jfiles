@@ -57,6 +57,8 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
 import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -70,8 +72,12 @@ import java.util.ResourceBundle;
  * @author Matt
  *
  */
-public class ClientAppViewController implements Initializable, ClipboardOwner {
+public class ClientAppViewController implements Initializable, ClipboardOwner, Serializable{
 
+	/**
+	 *For Serialization.
+	 */
+	private static final long serialVersionUID = 1L;
 	/**
 	 * Type for storing last operation.
 	 */
@@ -81,27 +87,45 @@ public class ClientAppViewController implements Initializable, ClipboardOwner {
 
 	static final Logger logger = LogManager.getLogger(ClientAppViewController.class);
 
-	private SocketClient client;
+	private transient SocketClient client;
 
-	private FileStruct selectedFile;
-	private String currentDirectory;
-	private Map<FileStruct, Parent> contents;
-	private Operation lastOperation;
-	private Clipboard clipboard;
+	private transient FileStruct selectedFile;
+	private transient String currentDirectory;
+	private transient Map<FileStruct, Parent> contents;
+	private transient Operation lastOperation;
+	private transient Clipboard clipboard;
 
-	private ContextMenu fileContextMenu;
+	private transient ContextMenu fileContextMenu;
 	// private ContextMenu folderContextMenu;
-	private ContextMenu viewContextMenu;
+	private transient ContextMenu viewContextMenu;
 
 	@FXML
-	BorderPane root;
+	transient BorderPane root;
 
 	@FXML
-	TreeView<String> treeView;
+	transient TreeView<String> treeView;
 
 	@FXML
-	FlowPane flowPane;
+	transient FlowPane flowPane;
 
+	/**
+	 * Write object used for NotSerializableException for Javabean.
+	 * @param stream for outpustream
+	 * @throws java.io.IOException because of outputstream
+	 */
+	private void writeObject(java.io.ObjectOutputStream stream) throws java.io.IOException {
+		throw new java.io.NotSerializableException( getClass().getName() );
+	}
+	/**
+	 * Read object used for NotSerializableException for Javabean.
+	 * @param stream for inputstream
+	 * @throws java.io.IOException because of inputstream
+	 * @throws ClassNotFoundException for not finding class
+	 */
+	private void readObject(java.io.ObjectInputStream stream)
+			throws java.io.IOException, ClassNotFoundException {
+		throw new java.io.NotSerializableException( getClass().getName() );
+	}
 	/**
 	 * Clears the view.
 	 */
