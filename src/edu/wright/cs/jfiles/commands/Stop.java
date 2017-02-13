@@ -22,49 +22,29 @@
 package edu.wright.cs.jfiles.commands;
 
 /**
- *  The Send command returns ".send".
+ *  The Stop command closes the connection.
  *  Syntax:
- *      SEND filename
+ *      STOP
  *  Flags:
  *      - None.
  *  Example:
- *      SEND build.xml
+ *      STOP
  */
-public class Send extends Command {
-
-	private String filename;
+public class Stop extends Command {
 
 	/**
 	 * Calls super.
 	 * @param args Command's args.
 	 */
-	public Send(String... args) {
+	public Stop(String... args) {
 		super(args);
 	}
 
 	/**
-	 * TODO: Program file send.
-	 * @return RECV to sender of SEND.
+	 *  @return Nothing.
 	 */
-	@Override
 	public String execute() {
-		return ".send" + filename;
+		return new Info("Stopping server...").execute();
 	}
 
-	/**
-	 * Gets the filename for sending.
-	 * @return the filename along with the extension that you want to send.
-	 */
-	public String getFilename() {
-		return filename;
-	}
-
-	/**
-	 * Sets the filename that you want to send.
-	 * @param filename - the filename string you want to send.
-	 */
-	public void setFilename(String filename) {
-		this.filename = filename;
-	}
 }
-

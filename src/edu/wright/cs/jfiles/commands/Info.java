@@ -46,7 +46,7 @@ public class Info extends Command {
 	 */
 	@Override
 	public String execute() {
-		return "INFO: " + "Last logged in " + "amount of time" + "ago";
+		return "INFO: " + parser.rest();
 	}
 
 }
