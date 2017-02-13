@@ -41,6 +41,7 @@ public class Stop extends Command {
 	}
 
 	/**
+	 * TODO: Call ERROR if errors Stopping the server.
 	 *  @return Nothing.
 	 */
 	public String execute() {

@@ -41,6 +41,7 @@ public class Start extends Command {
 	}
 
 	/**
+	 * TODO: Call ERROR if errors Starting the server.
 	 *  @return string server start info.
 	 */
 	public String execute() {
