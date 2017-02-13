@@ -21,6 +21,8 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import java.io.File;
+
 /**
  * The rmdir command removes a directory.
  * Syntax:
@@ -42,11 +44,22 @@ public class Rmdir extends Command {
 
 	/**
 	 *  TODO: Program for RMDIR.
-	 *  @return Not much yet
+	 *  @return either the directory was found and remove or that it was not found
 	 */
 	@Override
 	public String execute() {
-		return "";
+		
+		String directoryToRem = parser.next();
+
+		if (directoryToRem != null) {
+			return (new File(directoryToRem)).delete()
+					? new Info("Directory was deleted!").execute()
+					: new Error("Directory was not found!").execute();
+		} else {
+			return new Error("Missing directory name.").execute();
+		}
+		
+		
 	}
 
 }
