@@ -21,10 +21,22 @@
 
 package edu.wright.cs.jfiles.gui.client;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
 import edu.wright.cs.jfiles.gui.common.Item;
 import edu.wright.cs.jfiles.gui.common.Parser;
 import edu.wright.cs.jfiles.server.JFilesServer;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -55,18 +67,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-
-import java.io.IOException;
-import java.util.ArrayList;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 /**
  * This class will form the body of the JFiles client side GUI application. This
@@ -79,16 +79,102 @@ import javax.xml.xpath.XPathFactory;
  */
 public class ClientSideGui extends Application {
 
+	/**
+	 * Removes the DropShadow from the connectButton when the mouse has left it.
+	 */
+	public class AddConnectDropShadow implements EventHandler<MouseEvent> {
+		@Override
+		public void handle(MouseEvent exitButtonMouseOver) {
+			DropShadow dropShadow = new DropShadow();
+			connectButton.setEffect(dropShadow);
+		}
+	}
+	/**
+	 * Removes the DropShadow from the exitButton when the mouse has left it.
+	 */
+	public class AddExitDropShadow implements EventHandler<MouseEvent> {
+		@Override
+		public void handle(MouseEvent exitButtonMouseOver) {
+			DropShadow dropShadow = new DropShadow();
+			exitButton.setEffect(dropShadow);
+		}
+	}
+	/**
+	 * EventHandler for when the connectButton is clicked. Collects the users's
+	 * input or displays appropriate error messages.
+	 */
+	public class ConnectButtonClicked implements EventHandler<ActionEvent> {
+		@Override
+		public void handle(ActionEvent connectButtonClicked) {
+			// Hide Old Error Labels
+			noConnectionLabel.setVisible(false);
+			invalidLabel.setVisible(false);
+			emptyUsernameFieldLabel.setVisible(false);
+			emptyPasswordFieldLabel.setVisible(false);
+			// Display New Error Labels
+			if ((usernameTextField.getText() == null
+					|| usernameTextField.getText().trim().isEmpty())) {
+				emptyUsernameFieldLabel.setVisible(true);
+			} else if ((passwordTextField.getText() == null
+					|| passwordTextField.getText().trim().isEmpty())) {
+				emptyPasswordFieldLabel.setVisible(true);
+			} else {
+				username = usernameTextField.getText();
+				password = passwordTextField.getText();
+				// Just uses the variables to shutup FindBugs
+				System.out
+						.println("Username = " + username + "\n" + "Password = " + password + "\n");
+			}
+		}
+	}
+	/**
+	 * Adds a DropShadow to the exitButton when it is moused over.
+	 */
+	public class RemoveConnectDropShadow implements EventHandler<MouseEvent> {
+		@Override
+		public void handle(MouseEvent connectButtonMouseNotOver) {
+			connectButton.setEffect(null);
+		}
+	}
+	/**
+	 * Adds a DropShadow to the connect button when it is moused over.
+	 */
+	public class RemoveExitDropShadow implements EventHandler<MouseEvent> {
+		@Override
+		public void handle(MouseEvent exitButtonMouseNotOver) {
+			exitButton.setEffect(null);
+		}
+	}
+	/**
+	 * Main method. This method is where the program starts in this class. It
+	 * launches the GUI.
+	 *
+	 * @param args
+	 *            The command-line arguments
+	 *
+	 */
+	public static void main(String[] args) {
+
+		System.out.println("Launching Client Main GUI Window.");
+		// Launches the GUI
+		launch(args);
+	}
 	// Variables
 	String username = "";
 	String password = "";
 	Button exitButton;
 	Button connectButton;
+
 	Label noConnectionLabel;
+
 	Label invalidLabel;
+
 	Label emptyUsernameFieldLabel;
+
 	Label emptyPasswordFieldLabel;
+
 	TextField usernameTextField;
+
 	TextField passwordTextField;
 
 	// String containing fake XML for parsing testing (output from server
@@ -102,6 +188,46 @@ public class ClientSideGui extends Application {
 			+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>"
 			+ "<item><name>Test2</name><ext>.png</ext><type>file</type></item>"
 			+ "<item><name>Folder</name><ext></ext><type>folder</type></item>" + "</items>";
+
+	/**
+	 * Description: This method creates a Error Label with the passed
+	 * parameters.
+	 *
+	 * @param name
+	 *            : The label's name
+	 * @param visible
+	 *            : The label's state of visibility
+	 * @param color
+	 *            : The font color of the label
+	 * @return: returns the created label
+	 */
+	Label createErrorLabel(String name, boolean visible, String color) {
+		Label label = new Label(name);
+		label.setTextFill(Color.web(color));
+		label.setVisible(visible);
+		return label;
+	}
+
+	/**
+	 * Description: This method creates a Login Screen Label with the passed
+	 * parameters.
+	 *
+	 * @param name
+	 *            : The label's name
+	 * @param font
+	 *            : The font style of the label
+	 * @param color
+	 *            : The font color of the label
+	 * @param fontSize
+	 *            : The font size of the label
+	 * @return: returns the created label
+	 */
+	Label createLoginLabel(String name, String color, String font, int fontSize) {
+		Label label = new Label(name);
+		label.setTextFill(Color.web(color));
+		label.setFont(Font.font(font, FontWeight.BOLD, fontSize));
+		return label;
+	}
 
 	/**
 	 * This method is where most visual elements are created and manipulated.
@@ -223,8 +349,8 @@ public class ClientSideGui extends Application {
 
 		// Create GridPane to organize the objects
 		GridPane gridPane = new GridPane();
-		gridPane.add(headderMenuBar, 0, 0, 2, 1);
 		gridPane.add(pathLabel, 0, 1);
+		gridPane.add(headderMenuBar, 0, 0, 2, 1);
 
 		TextField pathDisplay = new TextField();
 		pathDisplay.setEditable(false);
@@ -243,6 +369,7 @@ public class ClientSideGui extends Application {
 		searchButton.setText("Search");
 		searchButton.setMinWidth(100);
 
+		// Add objects to GridPane
 		gridPane.add(pathDisplay, 1, 1);
 		gridPane.add(searchButton, 0, 2);
 
@@ -356,6 +483,14 @@ public class ClientSideGui extends Application {
 		filePane.setStyle("-fx-background-color: LIGHTBLUE;");
 		basePane.setCenter(filePane);
 
+		Label outputArea = new Label();
+		outputArea.setText("Test");
+		outputArea.setTextFill(Color.web("#FF0000"));
+		outputArea.setLayoutX(basePane.getLayoutX());;
+		outputArea.setLayoutY(basePane.getLayoutY());
+		basePane.setCenter(filePane);
+		filePane.getChildren().add(outputArea);
+
 		// This for loop loops through the items parsed from the XML string
 		// and puts them into the GUI with an image and name
 		for (int i = 0; i < items.size(); i++) {
@@ -396,132 +531,6 @@ public class ClientSideGui extends Application {
 		primaryStage.setResizable(true);
 		// Displays the start Stage and its contents.
 		primaryStage.show();
-	}
-
-	/**
-	 * Description: This method creates a Login Screen Label with the passed
-	 * parameters.
-	 *
-	 * @param name
-	 *            : The label's name
-	 * @param font
-	 *            : The font style of the label
-	 * @param color
-	 *            : The font color of the label
-	 * @param fontSize
-	 *            : The font size of the label
-	 * @return: returns the created label
-	 */
-	Label createLoginLabel(String name, String color, String font, int fontSize) {
-		Label label = new Label(name);
-		label.setTextFill(Color.web(color));
-		label.setFont(Font.font(font, FontWeight.BOLD, fontSize));
-		return label;
-	}
-
-	/**
-	 * Description: This method creates a Error Label with the passed
-	 * parameters.
-	 *
-	 * @param name
-	 *            : The label's name
-	 * @param visible
-	 *            : The label's state of visibility
-	 * @param color
-	 *            : The font color of the label
-	 * @return: returns the created label
-	 */
-	Label createErrorLabel(String name, boolean visible, String color) {
-		Label label = new Label(name);
-		label.setTextFill(Color.web(color));
-		label.setVisible(visible);
-		return label;
-	}
-
-	/**
-	 * Main method. This method is where the program starts in this class. It
-	 * launches the GUI.
-	 *
-	 * @param args
-	 *            The command-line arguments
-	 *
-	 */
-	public static void main(String[] args) {
-
-		System.out.println("Launching Client Main GUI Window.");
-		// Launches the GUI
-		launch(args);
-	}
-
-	/**
-	 * EventHandler for when the connectButton is clicked. Collects the users's
-	 * input or displays appropriate error messages.
-	 */
-	public class ConnectButtonClicked implements EventHandler<ActionEvent> {
-		@Override
-		public void handle(ActionEvent connectButtonClicked) {
-			// Hide Old Error Labels
-			noConnectionLabel.setVisible(false);
-			invalidLabel.setVisible(false);
-			emptyUsernameFieldLabel.setVisible(false);
-			emptyPasswordFieldLabel.setVisible(false);
-			// Display New Error Labels
-			if ((usernameTextField.getText() == null
-					|| usernameTextField.getText().trim().isEmpty())) {
-				emptyUsernameFieldLabel.setVisible(true);
-			} else if ((passwordTextField.getText() == null
-					|| passwordTextField.getText().trim().isEmpty())) {
-				emptyPasswordFieldLabel.setVisible(true);
-			} else {
-				username = usernameTextField.getText();
-				password = passwordTextField.getText();
-				// Just uses the variables to shutup FindBugs
-				System.out
-						.println("Username = " + username + "\n" + "Password = " + password + "\n");
-			}
-		}
-	}
-
-	/**
-	 * Adds a DropShadow to the exitButton when it is moused over.
-	 */
-	public class RemoveConnectDropShadow implements EventHandler<MouseEvent> {
-		@Override
-		public void handle(MouseEvent connectButtonMouseNotOver) {
-			connectButton.setEffect(null);
-		}
-	}
-
-	/**
-	 * Adds a DropShadow to the connect button when it is moused over.
-	 */
-	public class RemoveExitDropShadow implements EventHandler<MouseEvent> {
-		@Override
-		public void handle(MouseEvent exitButtonMouseNotOver) {
-			exitButton.setEffect(null);
-		}
-	}
-
-	/**
-	 * Removes the DropShadow from the exitButton when the mouse has left it.
-	 */
-	public class AddExitDropShadow implements EventHandler<MouseEvent> {
-		@Override
-		public void handle(MouseEvent exitButtonMouseOver) {
-			DropShadow dropShadow = new DropShadow();
-			exitButton.setEffect(dropShadow);
-		}
-	}
-
-	/**
-	 * Removes the DropShadow from the connectButton when the mouse has left it.
-	 */
-	public class AddConnectDropShadow implements EventHandler<MouseEvent> {
-		@Override
-		public void handle(MouseEvent exitButtonMouseOver) {
-			DropShadow dropShadow = new DropShadow();
-			connectButton.setEffect(dropShadow);
-		}
 	}
 
 }
