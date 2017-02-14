@@ -320,6 +320,14 @@ public class JFilesServer {
 	public synchronized void remove(JFilesServerClient client) {
 		clients.remove(client);
 	}
+	/**
+	 * For testing purposes.
+	 * @return The first client. or null if there is no first client.
+	 */
+
+	public JFilesServerClient firstClient() {
+		return clients.size() == 0 ? null : clients.get(0);
+	}
 
 	/**
 	 * The main entry point to the program.
