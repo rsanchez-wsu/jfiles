@@ -275,14 +275,15 @@ public class ClientAppViewController implements Initializable {
 	}
 
 	/**
-	 * Button clicked.
-	 * as of right now this doesn't display the new directory
+	 * Button clicked. as of right now this doesn't display the new directory
 	 */
 	@FXML
 	public void buttonClicked() {
 		currentDirectory = searchArea.getText();
 		loadDirectory(currentDirectory);
+
 	}
+
 	/**
 	 * Mouse clicked in flowPane.
 	 */
@@ -353,6 +354,21 @@ public class ClientAppViewController implements Initializable {
 		} else if (node instanceof BorderPane) {
 			fileContextMenu.show(node, event.getScreenX(), event.getScreenY());
 		}
+	}
+
+	/*
+	 * a setter for the current directory
+	 */
+	public void setCurrentDirectory(String name) {
+		currentDirectory = name;
+		loadDirectory(currentDirectory);
+	}
+
+	/*
+	 * a getter for the current directory
+	 */
+	public String getCurrentDirectory() {
+		return currentDirectory;
 	}
 
 	@Override

@@ -22,6 +22,7 @@
 package edu.wright.cs.jfiles.gui.common;
 
 import edu.wright.cs.jfiles.core.FileStruct;
+import edu.wright.cs.jfiles.core.FileStruct.Type;
 import edu.wright.cs.jfiles.gui.client.ClientAppViewController;
 
 import javafx.fxml.FXML;
@@ -34,7 +35,6 @@ import javafx.scene.layout.BorderPane;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-
 
 /**
  * Controller for FileIconViews.
@@ -132,6 +132,22 @@ public class FileIconViewController implements Initializable {
 	@FXML
 	public void handleMouseClick() {
 		appController.setSelectedFile(fileStruct);
+		// if it is a directory this will take you inside and display the new
+		// directory
+		if (fileStruct.getType() == Type.DIRECTORY) {
+			clear();
+			String name = appController.getCurrentDirectory() + "/" + label.getText();
+			appController.setCurrentDirectory(name);
+			populate();
+		}
+	}
+
+	/*
+	 * Needs to clear the file images from the gui so when we enter a new
+	 * directory the old directory stops getting displayed
+	 */
+	private void clear() {
+
 	}
 
 	@Override
