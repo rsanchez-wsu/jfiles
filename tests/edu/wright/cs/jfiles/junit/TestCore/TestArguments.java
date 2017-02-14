@@ -92,21 +92,18 @@ public class TestArguments {
 		Argument arg = args.getLast();
 		assertEquals(argumentString3, arg.toString());
 	}
-	
-	@Test
-	public void testGetArgs() {
-		Arguments args = new Arguments();
-		List<Argument> baseList = null;
-		Argument arg1 = new Argument(argumentString1);
-		Argument arg2 = new Argument(argumentString2);
-		Argument arg3 = new Argument(argumentString3);
-		baseList.add(arg1);
-		baseList.add(arg2);
-		baseList.add(arg3);
-		args.add(argumentString1);
-		args.add(argumentString2);
-		args.add(argumentString3);
-		List<Argument> argList = args.getArgs();
-		assertEquals(baseList, argList);
-	}
+//
+//	@Test
+//	public void testGetArgs() {
+//		Arguments args = new Arguments();
+//		List<Argument> baseList = null;
+//		Argument arg1 = new Argument(argumentString1);
+//		Argument arg2 = new Argument(argumentString2);
+//		Argument arg3 = new Argument(argumentString3);
+//		baseList.add(arg1);
+//		baseList.add(arg2);
+//		baseList.add(arg3);
+//		List<Argument> argList = args.getArgs();
+//		assertEquals(baseList, argList);
+//	}
 }
