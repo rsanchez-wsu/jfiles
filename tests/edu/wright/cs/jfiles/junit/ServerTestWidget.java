@@ -21,8 +21,11 @@
 
 package edu.wright.cs.jfiles.junit;
 
+import static org.junit.Assert.assertTrue;
+
 import edu.wright.cs.jfiles.server.JFilesServer;
 import edu.wright.cs.jfiles.server.JFilesServerClient;
+
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -30,6 +33,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.concurrent.TimeUnit;
+
+
 
 /**
  * Creates A server, runs it in its own thread, connects to it on
@@ -45,16 +51,25 @@ public class ServerTestWidget implements Runnable {
 
 	/**
 	 * Starts the server in a new thread and opens the client.
-	 * @throws IOException
-	 * This exception being thrown is a failure of the test.
+	 *
+	 * @throws InterruptedException IOException
+	 *             any of these exceptions being thrown is
+	 *             a failure of the test.
 	 */
-	ServerTestWidget() throws IOException {
+	ServerTestWidget() throws IOException, InterruptedException {
 		server = JFilesServer.getInstance();
 		thread = new Thread(this);
 		thread.start();
 		socket = new Socket("localhost", 9786);
 		in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
 		out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+		/*block progress until the client thread is accepted*/
+		int delayCounter = 0;
+		while (server.firstClient() == null) {
+			TimeUnit.MILLISECONDS.sleep(1);
+			assertTrue(delayCounter++ < 1000);
+		}
+		client = server.firstClient();
 	}
 	/**
 	 * Start the server listening thread.
@@ -88,6 +103,7 @@ public class ServerTestWidget implements Runnable {
 
 	public void send(String outline) throws IOException {
 		out.writeUTF(outline);
+		out.flush();
 	}
 
 }
