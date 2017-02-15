@@ -23,15 +23,12 @@ package edu.wright.cs.jfiles.junit;
 
 import static org.junit.Assert.assertTrue;
 
-import edu.wright.cs.jfiles.server.JFilesServer;
-import edu.wright.cs.jfiles.server.JFilesServerThread;
+
 
 import org.junit.Test;
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
+
 import java.io.IOException;
-import java.net.Socket;
 
 /**
  * Test class for the send command.
@@ -39,17 +36,13 @@ import java.net.Socket;
 public class StepTest {
 
 	@Test
-	public void sendTest() throws IOException {
-		JFilesServer server = new JFilesServer();
-		Socket socket = new Socket("localhost",(9786));
-		JFilesServerThread sthread = server.clients[1];
+	public void sendTest() throws IOException, InterruptedException  {
+		ServerTestWidget tw = new ServerTestWidget();
 		try {
-			sthread.send("test message");
-			assertTrue((new DataInputStream(new BufferedInputStream(
-					socket.getInputStream()))).readUTF().equals("test message"));
+			tw.client.send("test message");
+			assertTrue(tw.receive().equals("test message"));
 		} finally {
-			server.stop();
-			socket.close();
+			tw.stop();
 		}
 	}
 }
