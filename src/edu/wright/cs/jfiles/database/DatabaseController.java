@@ -28,6 +28,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Types;
 
 /**
  * Class used to perform actions on the database.
@@ -71,6 +72,19 @@ public class DatabaseController {
 	}
 
 	/**
+	 * Closes the connection to the database.
+	 */
+	public static void shutdown() {
+		try {
+			DriverManager.getConnection("jdbc:derby:JFilesDB;shutdown=true");
+		} catch (SQLException e) {
+			if (!e.getSQLState().equals("08006")) {
+				logger.error(e);
+			}
+		}
+	}
+
+	/**
 	 * Main, testing purposes only. This can be used to setup the database as
 	 * well.
 	 *
@@ -80,19 +94,6 @@ public class DatabaseController {
 	 *             if Driver can't be loaded
 	 */
 	public static void main(String[] args) {
-		try {
-			Procedures.createProcedures();
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-		}
-
-		Connection conn = openConnection();
-		try {
-			CallableStatement stmt = conn.prepareCall("{call createTables()}");
-			stmt.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 				+ "<permission type=\"read\">"
 					+ "<directory path=\"\" />"
@@ -100,12 +101,46 @@ public class DatabaseController {
 					+ "<file path=\"\" />"
 					+ "<file path=\"\" />"
 				+ "</permission>";
+		String xml2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+				+ "<permission type=\"read\">"
+					+ "<directory path=\"asdlkfkja;lsdfj\" />"
+					+ "<directory path=\"alskdfa;lsjdf\" />"
+					+ "<file path=\"a;skldjf;laksjdf;adsjf\" />"
+					+ "<file path=\"a;skdjf;alkskdjfla;ksjdf\" />"
+				+ "</permission>";
+
 		try {
-			CallableStatement stmt = conn.prepareCall("{call createPermission(?)}");
+			Connection conn = openConnection();
+
+			// Load our predefined procedures
+			Procedures.createProcedures(conn);
+
+			CallableStatement stmt;
+
+			// Build all the tables
+			stmt = conn.prepareCall("{call createTables()}");
+			stmt.executeUpdate();
+			stmt.close();
+
+			// Create two new permissions
+			stmt = conn.prepareCall("{call createPermission(?)}");
 			stmt.setString(1, xml);
 			stmt.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
+			stmt.setString(1, xml2);
+			stmt.executeUpdate();
+			stmt.close();
+
+			// Query the xml from permission with ID 0
+			stmt = conn.prepareCall("{call getPermission(?, ?)}");
+			stmt.setInt(1, 0);
+			stmt.registerOutParameter(2, Types.VARCHAR);
+			stmt.execute();
+			System.out.println(stmt.getString(2));
+			stmt.close();
+
+			conn.close();
+		} catch (SQLException e1) {
+			e1.printStackTrace();
 		}
 	}
 }
