@@ -24,11 +24,12 @@ package edu.wright.cs.jfiles.database;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.Statement;
 
 /**
  * Class used to perform actions on the database.
@@ -41,6 +42,26 @@ public class DatabaseController {
 	private static final String JDBC_DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
 
 	private static final Logger logger = LogManager.getLogger(DatabaseController.class);
+
+	private static final String[] TABLES = {
+			"CREATE TABLE USERS ("
+					+ "id INTEGER NOT NULL "
+						+ "GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1)"
+						+ "PRIMARY KEY,"
+					+ "name VARCHAR(40),"
+					+ "pass VARCHAR(20),"
+					+ "role INTEGER)",
+			"CREATE TABLE ROLES ("
+					+ "id INTEGER NOT NULL "
+						+ "GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1)"
+						+ "PRIMARY KEY,"
+					+ "name VARCHAR(20))",
+			"CREATE TABLE PERMISSIONS ("
+					+ "id INTEGER NOT NULL "
+						+ "GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1)"
+						+ "PRIMARY KEY,"
+					+ "doc XML)"
+	};
 
 	/**
 	 * Prevents Instantiation, this class is meant to be completely static.
@@ -76,12 +97,254 @@ public class DatabaseController {
 	 */
 	public static void shutdown() {
 		try {
-			DriverManager.getConnection("jdbc:derby:JFilesDB;shutdown=true");
+			DriverManager.getConnection("jdbc:derby:JFilesDB;shutdown=true").close();
 		} catch (SQLException e) {
 			if (!e.getSQLState().equals("08006")) {
 				logger.error(e);
 			}
 		}
+	}
+
+	/**
+	 * Drops all the tables in the database.
+	 */
+	// NOTE: This uses regular statements + string formation for the update due
+	// to JDBC/Derby not supporting the use of prepared statements when dropping
+	// tables.
+	public static void resetDatabase() {
+		Connection conn = null;
+		Statement stmt = null;
+
+		try {
+			conn = openConnection();
+			conn.setAutoCommit(false);
+
+			stmt = conn.createStatement();
+
+			ResultSet rs = conn.getMetaData().getTables(null, "APP", null, null);
+			while (rs.next()) {
+				String tablename = rs.getString("TABLE_NAME");
+				String sql = "DROP TABLE " + tablename;
+				stmt.executeUpdate(sql);
+			}
+			conn.commit();
+
+			rs.close();
+		} catch (SQLException e) {
+			logger.error(e);
+		}
+
+		try {
+			if (stmt != null) {
+				stmt.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+		} catch (SQLException e) {
+			logger.error(e);
+		}
+	}
+
+	/**
+	 * Builds all the tables for our database.
+	 */
+	public static void createTables() {
+		Connection conn = null;
+		Statement stmt = null;
+		try {
+			conn = DatabaseController.openConnection();
+			conn.setAutoCommit(false);
+
+			stmt = conn.createStatement();
+			for (String tbl : TABLES) {
+				try {
+					stmt.executeUpdate(tbl);
+				} catch (SQLException e) {
+					if (!e.getSQLState().equals("X0Y32")) {
+						e.printStackTrace();
+					}
+				}
+			}
+			conn.commit();
+
+		} catch (SQLException e) {
+			logger.error(e);
+		} finally {
+			try {
+				if (stmt != null) {
+					stmt.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				logger.error(e);
+			}
+		}
+	}
+
+	/**
+	 * Creates a new user in the database.
+	 *
+	 * <p>
+	 * NOTE: This is a Derby Prepared Statement This function is not to be
+	 * called directly. Rather only called via an SQL call statement.
+	 * </p>
+	 *
+	 * @param name
+	 *            the user's name
+	 * @param pass
+	 *            the user's password
+	 * @param role
+	 *            the user's role
+	 */
+	public static void createUser(String name, String pass, int role) {
+		Connection conn = null;
+		PreparedStatement selectStmt = null;
+		PreparedStatement insertStmt = null;
+		ResultSet rs = null;
+
+		try {
+			conn = DatabaseController.openConnection();
+
+			String sql = "SELECT * FROM ROLES WHERE ID = ?";
+			selectStmt = conn.prepareStatement(sql);
+			selectStmt.setInt(1, role);
+
+			rs = selectStmt.executeQuery();
+			if (!rs.next()) {
+				role = 0;
+			}
+
+			String sql2 = "INSERT INTO USERS (name, pass, role) VALUES (?, ?, ?)";
+			insertStmt = conn.prepareStatement(sql2);
+			insertStmt.setString(1, name);
+			insertStmt.setString(2, pass);
+			insertStmt.setInt(3, role);
+			insertStmt.executeUpdate();
+		} catch (SQLException e) {
+			logger.error(e);
+		} finally {
+			try {
+				if (conn != null) {
+					conn.close();
+				}
+				if (rs != null) {
+					rs.close();
+				}
+				if (insertStmt != null) {
+					insertStmt.close();
+				}
+				if (selectStmt != null) {
+					selectStmt.close();
+				}
+
+			} catch (SQLException e) {
+				logger.error(e);
+			}
+		}
+	}
+
+	/**
+	 * Creates a new permission in the database.
+	 *
+	 * <p>
+	 * NOTE: This is a Derby Prepared Statement This function is not to be
+	 * called directly. Rather only called via an SQL call statement.
+	 * </p>
+	 *
+	 * @param doc
+	 *            xml document
+	 */
+	public static void createPermission(String doc) {
+		Connection conn = null;
+		PreparedStatement insertStmt = null;
+
+		try {
+			conn = DatabaseController.openConnection();
+
+			String sql = "INSERT INTO PERMISSIONS (doc) "
+					+ "VALUES (XMLPARSE(DOCUMENT CAST (? AS CLOB) PRESERVE WHITESPACE))";
+			insertStmt = conn.prepareStatement(sql);
+			insertStmt.setString(1, doc);
+			insertStmt.executeUpdate();
+		} catch (SQLException e) {
+			logger.error(e);
+		} finally {
+			try {
+				if (insertStmt != null) {
+					insertStmt.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				logger.error(e);
+			}
+		}
+	}
+
+	/**
+	 * Creates a new role in the database.
+	 *
+	 * <p>
+	 * NOTE: This is a Derby Prepared Statement This function is not to be
+	 * called directly. Rather only called via an SQL call statement.
+	 * </p>
+	 *
+	 * @param name
+	 *            name of the role
+	 */
+	public static int createRole(String name) {
+		int id = -1;
+		Connection conn = null;
+		PreparedStatement selectStmt = null;
+		PreparedStatement insertStmt = null;
+		ResultSet rs = null;
+
+		try {
+			conn = DatabaseController.openConnection();
+
+			String sql = "SELECT ID FROM ROLES WHERE NAME = ?";
+			selectStmt = conn.prepareStatement(sql);
+			selectStmt.setString(1, name);
+
+			rs = selectStmt.executeQuery();
+			if (!rs.next()) {
+				String sql2 = "INSERT INTO ROLES (NAME) VALUES (?)";
+
+				insertStmt = conn.prepareStatement(sql2);
+				insertStmt.setString(1, name);
+				insertStmt.executeUpdate();
+				insertStmt.close();
+
+				rs = selectStmt.executeQuery();
+				if (rs.next()) {
+					id = rs.getInt(1);
+				}
+			}
+		} catch (SQLException e) {
+			logger.error(e);
+		} finally {
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				if (insertStmt != null) {
+					insertStmt.close();
+				}
+				if (selectStmt != null) {
+					selectStmt.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				logger.error(e);
+			}
+		}
+		return id;
 	}
 
 	/**
@@ -94,53 +357,26 @@ public class DatabaseController {
 	 *             if Driver can't be loaded
 	 */
 	public static void main(String[] args) {
-		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "<permission type=\"read\">"
-					+ "<directory path=\"\" />"
-					+ "<directory path=\"\" />"
-					+ "<file path=\"\" />"
-					+ "<file path=\"\" />"
-				+ "</permission>";
-		String xml2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "<permission type=\"read\">"
-					+ "<directory path=\"asdlkfkja;lsdfj\" />"
-					+ "<directory path=\"alskdfa;lsjdf\" />"
-					+ "<file path=\"a;skldjf;laksjdf;adsjf\" />"
-					+ "<file path=\"a;skdjf;alkskdjfla;ksjdf\" />"
-				+ "</permission>";
+		// Reset DB
+		resetDatabase();
 
-		try {
-			Connection conn = openConnection();
+		// Build all the tables
+		createTables();
 
-			// Load our predefined procedures
-			Procedures.createProcedures(conn);
+		// Create NONE role
+		int id1 = createRole("NONE");
+		System.out.println("NONE: id=" + id1);
 
-			CallableStatement stmt;
+		// Create ADMIN role
+		int id2 = createRole("ADMIN");
+		System.out.println("ADMIN: id=" + id2);
 
-			// Build all the tables
-			stmt = conn.prepareCall("{call createTables()}");
-			stmt.executeUpdate();
-			stmt.close();
+		// Create User with ADMIN role
+		createUser("Bill Gates", "windows_vista", 1);
 
-			// Create two new permissions
-			stmt = conn.prepareCall("{call createPermission(?)}");
-			stmt.setString(1, xml);
-			stmt.executeUpdate();
-			stmt.setString(1, xml2);
-			stmt.executeUpdate();
-			stmt.close();
+		// Create User with invalid role -> default to NONE
+		createUser("Steve Jobs", "earpods", 12);
 
-			// Query the xml from permission with ID 0
-			stmt = conn.prepareCall("{call getPermission(?, ?)}");
-			stmt.setInt(1, 0);
-			stmt.registerOutParameter(2, Types.VARCHAR);
-			stmt.execute();
-			System.out.println(stmt.getString(2));
-			stmt.close();
-
-			conn.close();
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-		}
+		shutdown();
 	}
 }
