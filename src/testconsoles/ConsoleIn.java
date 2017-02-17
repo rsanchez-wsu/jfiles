@@ -31,6 +31,7 @@ import java.io.InputStreamReader;
  */
 public class ConsoleIn implements Runnable {
 
+	private Thread thread;
 	private DataOutputStream out;
 	/**
 	 *creates the console watcher and starts it.
@@ -38,8 +39,7 @@ public class ConsoleIn implements Runnable {
 
 	public ConsoleIn(DataOutputStream outt) {
 		out = outt;
-		Thread thread = new Thread(this);
-		thread.start();
+		thread = new Thread(this);
 	}
 	/**
 	 * Starts watching.
@@ -54,5 +54,21 @@ public class ConsoleIn implements Runnable {
 				System.out.println("IOException on output");
 			}
 		}
+	}
+	/**
+	 * start.
+	 */
+
+	public void start() {
+		thread.start();
+	}
+
+	/**
+	 * stop.
+	 */
+
+	@SuppressWarnings("deprecation")
+	public void stop() {
+		thread.stop();
 	}
 }

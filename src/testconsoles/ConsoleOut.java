@@ -30,6 +30,7 @@ import java.io.IOException;
  * Simple test class: Takes an input stream and print it to the console.
  */
 public class ConsoleOut implements Runnable {
+	private Thread thread;
 	private DataInputStream in;
 	/**
 	 * Create the transmission object; includes starting a new thread.
@@ -37,7 +38,7 @@ public class ConsoleOut implements Runnable {
 
 	public ConsoleOut(DataInputStream dataInputStream) {
 		in = dataInputStream;
-		Thread thread = new Thread(this);
+		thread = new Thread(this);
 		thread.start();
 	}
 	/**
@@ -52,5 +53,22 @@ public class ConsoleOut implements Runnable {
 				System.out.println("Exception on the input stream!");
 			}
 		}
+	}
+
+	/**
+	 * start.
+	 */
+
+	public void start() {
+		thread.start();
+	}
+
+	/**
+	 * stop.
+	 */
+
+	@SuppressWarnings("deprecation")
+	public void stop() {
+		thread.stop();
 	}
 }

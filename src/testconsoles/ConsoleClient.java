@@ -40,11 +40,16 @@ public class ConsoleClient {
 	 * Does nothing.
 	 */
 
+
 	public static void main(String[] args) {
 		try {
+			@SuppressWarnings("resource")
 			Socket socket = new Socket(host,port);
-			new ConsoleOut(new DataInputStream(new BufferedInputStream(socket.getInputStream())));
-			new ConsoleIn(new DataOutputStream(socket.getOutputStream()));
+			ConsoleOut cout = new ConsoleOut(
+					new DataInputStream(new BufferedInputStream(socket.getInputStream())));
+			ConsoleIn cin = new ConsoleIn(new DataOutputStream(socket.getOutputStream()));
+			cout.start();
+			cin.start();
 		} catch (IOException ex) {
 			System.out.println("Error while connecting to server.");
 		}
