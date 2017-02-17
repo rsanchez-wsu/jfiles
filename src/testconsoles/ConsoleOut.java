@@ -39,7 +39,6 @@ public class ConsoleOut implements Runnable {
 	public ConsoleOut(DataInputStream dataInputStream) {
 		in = dataInputStream;
 		thread = new Thread(this);
-		thread.start();
 	}
 	/**
 	 * start watching.
