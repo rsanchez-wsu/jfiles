@@ -45,6 +45,7 @@ public class ConsoleClient {
 		try {
 			@SuppressWarnings("resource")
 			Socket socket = new Socket(host,port);
+			System.out.println("Dummy CLient started");
 			ConsoleOut cout = new ConsoleOut(
 					new DataInputStream(new BufferedInputStream(socket.getInputStream())));
 			ConsoleIn cin = new ConsoleIn(new DataOutputStream(socket.getOutputStream()));

@@ -46,8 +46,11 @@ public class ConsoleServer {
 			server = new ServerSocket(port);
 			System.out.println("Dummy server started");
 			client = server.accept();
-			new ConsoleOut(new DataInputStream(new BufferedInputStream(client.getInputStream())));
-			new ConsoleIn(new DataOutputStream(client.getOutputStream()));
+			ConsoleOut cout = new ConsoleOut(new DataInputStream(
+					new BufferedInputStream(client.getInputStream())));
+			ConsoleIn cin = new ConsoleIn(new DataOutputStream(client.getOutputStream()));
+			cout.start();
+			cin.start();
 			System.out.println("Client accepted.");
 		} catch (IOException e) {
 			System.out.println("Io error encountered. Exiting.");
@@ -63,4 +66,5 @@ public class ConsoleServer {
 	public static void main(String[] args) {
 		new ConsoleServer();
 	}
+
 }
