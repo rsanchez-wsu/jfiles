@@ -32,6 +32,8 @@ package edu.wright.cs.jfiles.commands;
  */
 public class Send extends Command {
 
+	private String filename;
+
 	/**
 	 * Calls super.
 	 * @param args Command's args.
@@ -46,7 +48,23 @@ public class Send extends Command {
 	 */
 	@Override
 	public String execute() {
-		return ".send" + "FILE NAME AND EXTENSION";
+		return ".send" + filename;
 	}
 
+	/**
+	 * Gets the filename for sending.
+	 * @return the filename along with the extension that you want to send.
+	 */
+	public String getFilename() {
+		return filename;
+	}
+
+	/**
+	 * Sets the filename that you want to send.
+	 * @param filename - the filename string you want to send.
+	 */
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
 }
+

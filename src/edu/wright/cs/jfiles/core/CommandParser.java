@@ -119,7 +119,7 @@ public class CommandParser {
 	 * @return a stack populated with the arguments for the command
 	 */
 	private Stack<String> populateStackWithArgs(String commandLine) {
-		List<String> args = new ArrayList<String>();
+		List<String> args = new ArrayList<>();
 
 		StringBuilder argBuilder = new StringBuilder();
 
@@ -127,7 +127,7 @@ public class CommandParser {
 		boolean startQuote = false;
 
 		for (int i = 0; i < commandLineLength; i++) {
-			Character currentChar = commandLine.charAt(i);
+			char currentChar = commandLine.charAt(i);
 
 			if (Character.isWhitespace(currentChar)) {
 
@@ -157,7 +157,7 @@ public class CommandParser {
 			args.add(argBuilder.toString());
 		}
 
-		Stack<String> argStack = new Stack<String>();
+		Stack<String> argStack = new Stack<>();
 		int argCount = args.size();
 		for (int i = argCount - 1; i >= 0; i--) {
 			argStack.push(args.get(i));

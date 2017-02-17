@@ -54,8 +54,8 @@ public class Parser {
 	 * Inits flag and args.
 	 */
 	Parser() {
-		flags = new HashMap<String, String>();
-		args = new ArrayList<String>();
+		flags = new HashMap<>();
+		args = new ArrayList<>();
 	}
 
 	/**
@@ -85,6 +85,35 @@ public class Parser {
 	 */
 	public String next() {
 		return currentArg < args.size() ? args.get(currentArg++) : null;
+	}
+
+	/**
+	 * Resets the current argument counter to 0.
+	 */
+	public void reset() {
+		currentArg = 0;
+	}
+
+	/**
+	 * Returns the remaining arguments, separated by a space.
+	 * @return the remaining arguments, separated by a space.
+	 */
+	public String rest() {
+		StringBuilder rest = new StringBuilder();
+
+		String next = next();
+
+		while (next != null) {
+			rest.append(next + " ");
+			next = next();
+		}
+
+		// Remove the ending space.
+		if (rest.length() > 0) {
+			rest.setLength(rest.length() - 1);
+		}
+
+		return rest.toString();
 	}
 
 	/**

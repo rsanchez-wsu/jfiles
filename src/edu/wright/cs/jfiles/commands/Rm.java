@@ -21,6 +21,8 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import java.io.File;
+
 /**
  * The rm command removes a file.
  * Syntax:
@@ -46,7 +48,15 @@ public class Rm extends Command {
 	 */
 	@Override
 	public String execute() {
-		return "a list";
+		String filePath = parser.next();
+
+		if (filePath != null) {
+			return (new File(filePath)).delete()
+					? new Info("File was deleted!").execute()
+					: new Error("File not found!").execute();
+		} else {
+			return new Error("Missing filename. Syntax: FIND <filename> [directory]").execute();
+		}
 	}
 
 }
