@@ -25,6 +25,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Simple input console.
@@ -46,7 +47,13 @@ public class ConsoleIn implements Runnable {
 	 */
 
 	public void run() {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		BufferedReader reader;
+		try {
+			reader = new BufferedReader(new InputStreamReader(System.in,"UTF-8"));
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+			return;
+		}
 		while (true) {
 			try {
 				out.writeUTF(reader.readLine());
