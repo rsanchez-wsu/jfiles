@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Creates A server, runs it in its own thread, connects to it on
- *         a socket and creates a some handles to interact with it.
+ *         a socket and creates some handles to interact with it.
  */
 public class ServerTestWidget implements Runnable {
 	public JFilesServer server;

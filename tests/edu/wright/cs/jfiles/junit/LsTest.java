@@ -23,15 +23,12 @@ package edu.wright.cs.jfiles.junit;
 
 import static org.junit.Assert.assertTrue;
 
-import edu.wright.cs.jfiles.server.JFilesServer;
 
 import org.junit.Test;
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
+
 import java.io.File;
 import java.io.IOException;
-import java.net.Socket;
 
 
 
@@ -41,36 +38,22 @@ import java.net.Socket;
 public class LsTest {
 
 	@Test
-	public void testList() {
-		JFilesServer server = new JFilesServer();
-		Socket socket = null;
-		try {
-			socket = new Socket("localhost",9786);
-		} catch (IOException e) {
-			System.out.println("Error while opening socket for testing");
-			System.exit(1);
-		}
+	public void testList() throws IOException, InterruptedException {
+		ServerTestWidget tw = new ServerTestWidget();
 		File folder = new File(".");
 		File[] dir = folder.listFiles();
 		assertTrue(folder != null);
-		server.handle((int) server.clients[1].getId(), "_LS");
+		tw.send("LS");
+		String res = tw.receive();
+		String[] result = res.split("\r\n");
 		try {
-			DataInputStream streamin = new DataInputStream(new BufferedInputStream(
-					socket.getInputStream()));
-			for (int i = 1;i <= dir.length;i++) {
-				String s1 = dir[i].getPath();
-				String s2 = streamin.readUTF();
+			for (int i = 1;i < dir.length;i++) {
+				String s1 = dir[i].getAbsolutePath();
+				String s2 = result[i];
 				assertTrue(s1.equals(s2));
 			}
-		} catch (IOException e) {
-			System.out.println("IOException during LS test");
 		} finally {
-			server.stop();
-			try {
-				socket.close();
-			} catch (IOException e) {
-				System.out.println("IOException during LS test");
-			}
+			tw.stop();
 		}
 	}
 
