@@ -58,7 +58,7 @@ public class JFilesServerClient implements Runnable {
 	/**
 	 * Sends a message to the client.
 	 */
-	private void send(String msg) {
+	public void send(String msg) {
 		try {
 			streamOut.writeUTF(msg);
 			streamOut.flush();

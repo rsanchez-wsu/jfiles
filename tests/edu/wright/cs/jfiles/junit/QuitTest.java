@@ -26,37 +26,42 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-
-import java.io.File;
 import java.io.IOException;
-
+import java.net.Socket;
+import java.util.concurrent.TimeUnit;
 /**
- * @author Laure
- *
- *         This is the test class for the find command, including the secondary
- *         of the actions of the server to execute said command.
+ * Test class for:
+ * Opening a server
+ * Opening a socket
+ * Closing that socket
+ * Closing the server.
  */
-public class FindTest {
+
+public class QuitTest {
 
 	@Test
-	public void testFind() throws IOException, InterruptedException {
-		File testFile = new File("armadillotestFile");
+	public void quitTest() throws IOException, InterruptedException {
+		ServerTestWidget tw = new ServerTestWidget();
+		assertTrue(tw.server.firstClient() != null);
+		tw.send("QUIT");
+		int delayCounter = 0;
+		while (tw.server.firstClient() != null) {
+			TimeUnit.MILLISECONDS.sleep(1);
+			assertTrue(delayCounter++ < 1000);
+		}
+		tw.stop();
+		/*The following attempt to open a socket is
+		 * expected to fail as the server should have quit at this point*/
 		try {
-			ServerTestWidget tw = new ServerTestWidget();
-			if (!testFile.exists()) {
-				testFile.createNewFile();
-			}
-			tw.send("find armadillo");
-			String inStr = tw.receive();
-			assertTrue(inStr.contains("armadillo"));
-			tw.send("find aardvark");
-			inStr = tw.receive();
-			assertTrue(!inStr.contains("aardvark"));
-			assertTrue(!inStr.contains("armadillo"));
-		} finally {
-			if (testFile.exists()) {
-				testFile.delete();
-			}
+			Socket socket = new Socket("localhost",9786);
+			assertTrue(false);
+			/*to prevent findbugs warning:*/
+			socket.close();
+		} catch (IOException e) {
+			/*to prevent warnings*/
+			int bob = 1;
+			bob = bob + 1;
 		}
 	}
+
 }
