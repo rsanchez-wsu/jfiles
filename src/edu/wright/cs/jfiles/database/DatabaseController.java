@@ -79,6 +79,9 @@ public class DatabaseController {
 			// Load the JDBC driver and open a connection
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(DATABASE_URL);
+
+			// All of our connections are AutoCommit = false
+			conn.setAutoCommit(false);
 		} catch (SQLException e) {
 			if (e.getSQLState().equals("XJ040")) {
 				logger.error(
@@ -115,21 +118,11 @@ public class DatabaseController {
 	// to JDBC/Derby not supporting the use of prepared statements when dropping
 	// tables.
 	public static void resetDatabase() {
-		Connection conn = null;
-		Statement stmt = null;
-		ResultSet rs = null;
-
-		try {
-			conn = openConnection();
-
-			// This executes a batch of statements so wait until the end to
-			// commit them all as a single transaction.
-			conn.setAutoCommit(false);
-
-			stmt = conn.createStatement();
+		try (	Connection conn = openConnection();
+				Statement stmt = conn.createStatement()) {
 
 			// Fetch all the tables in the APP Schema and drop each one
-			rs = conn.getMetaData().getTables(null, "APP", null, null);
+			ResultSet rs = conn.getMetaData().getTables(null, "APP", null, null);
 			while (rs.next()) {
 				String tablename = rs.getString("TABLE_NAME");
 				String sql = "DROP TABLE " + tablename;
@@ -141,39 +134,17 @@ public class DatabaseController {
 		} catch (SQLException e) {
 			logger.error(e);
 		}
-
-		try {
-			if (rs != null) {
-				rs.close();
-			}
-			if (stmt != null) {
-				stmt.close();
-			}
-			if (conn != null) {
-				conn.close();
-			}
-		} catch (SQLException e) {
-			logger.error(e);
-		}
 	}
 
 	/**
 	 * Builds all the tables for our database.
 	 */
 	public static void createTables() {
-		Connection conn = null;
-		Statement stmt = null;
-
-		try {
-			conn = DatabaseController.openConnection();
-
-			// This executes a batch of statements so wait until the end to
-			// commit them all as a single transaction.
-			conn.setAutoCommit(false);
+		try (	Connection conn = openConnection();
+				Statement stmt = conn.createStatement()) {
 
 			// For each predefined table in TABLES create the table in the
 			// database
-			stmt = conn.createStatement();
 			for (String tbl : TABLES) {
 				try {
 					stmt.executeUpdate(tbl);
@@ -188,17 +159,6 @@ public class DatabaseController {
 			conn.commit();
 		} catch (SQLException e) {
 			logger.error(e);
-		} finally {
-			try {
-				if (stmt != null) {
-					stmt.close();
-				}
-				if (conn != null) {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				logger.error(e);
-			}
 		}
 	}
 
@@ -218,52 +178,33 @@ public class DatabaseController {
 	 *            the user's role
 	 */
 	public static void createUser(String name, String pass, int role) {
-		Connection conn = null;
-		PreparedStatement selectStmt = null;
-		PreparedStatement insertStmt = null;
-		ResultSet rs = null;
+		String sql = "SELECT * FROM ROLES WHERE ID = ?";
+		String sql2 = "INSERT INTO USERS (name, pass, role) VALUES (?, ?, ?)";
 
-		try {
-			conn = DatabaseController.openConnection();
+		try (	Connection conn = openConnection();
+				PreparedStatement selectStmt = conn.prepareStatement(sql);
+				PreparedStatement insertStmt = conn.prepareStatement(sql2)) {
 
-			// Query the database to see if the role passed in actually exists.
-			String sql = "SELECT * FROM ROLES WHERE ID = ?";
-			selectStmt = conn.prepareStatement(sql);
+			// Prepare our query
 			selectStmt.setInt(1, role);
 
-			rs = selectStmt.executeQuery();
-			// If the role does not exist set to default role (0)
-			if (!rs.next()) {
-				role = 0;
+			// Query the database to see if the role passed in actually exists.
+			try (ResultSet rs = selectStmt.executeQuery()) {
+				// If the role does not exist set to default role (0)
+				if (!rs.next()) {
+					role = 0;
+				}
+
+				// Create user in database.
+				insertStmt.setString(1, name);
+				insertStmt.setString(2, pass);
+				insertStmt.setInt(3, role);
+				insertStmt.executeUpdate();
+				conn.commit();
 			}
 
-			// Create user in database.
-			String sql2 = "INSERT INTO USERS (name, pass, role) VALUES (?, ?, ?)";
-			insertStmt = conn.prepareStatement(sql2);
-			insertStmt.setString(1, name);
-			insertStmt.setString(2, pass);
-			insertStmt.setInt(3, role);
-			insertStmt.executeUpdate();
 		} catch (SQLException e) {
 			logger.error(e);
-		} finally {
-			try {
-				if (conn != null) {
-					conn.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-				if (insertStmt != null) {
-					insertStmt.close();
-				}
-				if (selectStmt != null) {
-					selectStmt.close();
-				}
-
-			} catch (SQLException e) {
-				logger.error(e);
-			}
 		}
 	}
 
@@ -279,33 +220,19 @@ public class DatabaseController {
 	 *            xml document
 	 */
 	public static void createPermission(String doc) {
-		Connection conn = null;
-		PreparedStatement insertStmt = null;
-
-		try {
-			conn = DatabaseController.openConnection();
+		String sql = "INSERT INTO PERMISSIONS (doc) "
+				+ "VALUES (XMLPARSE(DOCUMENT CAST (? AS CLOB) PRESERVE WHITESPACE))";
+		try (	Connection conn = openConnection();
+				PreparedStatement insertStmt = conn.prepareStatement(sql)) {
 
 			// Create permission in database. (We are parsing the XML doc via
 			// XMLPARSE and storing it as a binary XML data type in the
 			// database.
-			String sql = "INSERT INTO PERMISSIONS (doc) "
-					+ "VALUES (XMLPARSE(DOCUMENT CAST (? AS CLOB) PRESERVE WHITESPACE))";
-			insertStmt = conn.prepareStatement(sql);
 			insertStmt.setString(1, doc);
 			insertStmt.executeUpdate();
+			conn.commit();
 		} catch (SQLException e) {
 			logger.error(e);
-		} finally {
-			try {
-				if (insertStmt != null) {
-					insertStmt.close();
-				}
-				if (conn != null) {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				logger.error(e);
-			}
 		}
 	}
 
@@ -322,55 +249,37 @@ public class DatabaseController {
 	 */
 	public static int createRole(String name) {
 		int id = -1;
-		Connection conn = null;
-		PreparedStatement selectStmt = null;
-		PreparedStatement insertStmt = null;
-		ResultSet rs = null;
+		String sql = "SELECT ID FROM ROLES WHERE NAME = ?";
+		String sql2 = "INSERT INTO ROLES (NAME) VALUES (?)";
 
-		try {
-			conn = DatabaseController.openConnection();
+		try (	Connection conn = openConnection();
+				PreparedStatement selectStmt = conn.prepareStatement(sql);
+				PreparedStatement insertStmt = conn.prepareStatement(sql2)) {
 
-			// Query database to see if the role already exists.
-			String sql = "SELECT ID FROM ROLES WHERE NAME = ?";
-			selectStmt = conn.prepareStatement(sql);
+			// Prepare our query
 			selectStmt.setString(1, name);
 
-			rs = selectStmt.executeQuery();
-			// If the role does not exist then create the role
-			if (!rs.next()) {
-				rs.close();
-				String sql2 = "INSERT INTO ROLES (NAME) VALUES (?)";
+			// Query database to see if the role already exists.
+			try (ResultSet rs = selectStmt.executeQuery()) {
+				// If the role does not exist then create the role
+				if (!rs.next()) {
+					insertStmt.setString(1, name);
+					insertStmt.executeUpdate();
+					conn.commit();
+				}
+			}
 
-				insertStmt = conn.prepareStatement(sql2);
-				insertStmt.setString(1, name);
-				insertStmt.executeUpdate();
-				insertStmt.close();
-
-				rs = selectStmt.executeQuery();
+			// Query the table for the ID of the role we just created
+			try (ResultSet rs = selectStmt.executeQuery()) {
 				if (rs.next()) {
 					id = rs.getInt(1);
 				}
 			}
+
 		} catch (SQLException e) {
 			logger.error(e);
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (insertStmt != null) {
-					insertStmt.close();
-				}
-				if (selectStmt != null) {
-					selectStmt.close();
-				}
-				if (conn != null) {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				logger.error(e);
-			}
 		}
+
 		return id;
 	}
 
