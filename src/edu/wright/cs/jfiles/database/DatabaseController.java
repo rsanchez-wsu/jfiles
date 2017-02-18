@@ -43,27 +43,6 @@ public class DatabaseController {
 
 	private static final Logger logger = LogManager.getLogger(DatabaseController.class);
 
-	// Array of predefined tables for the database
-	private static final String[] TABLES = {
-			"CREATE TABLE USERS ("
-					+ "id INTEGER NOT NULL "
-						+ "GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1)"
-						+ "PRIMARY KEY,"
-					+ "name VARCHAR(40),"
-					+ "pass VARCHAR(20),"
-					+ "role INTEGER)",
-			"CREATE TABLE ROLES ("
-					+ "id INTEGER NOT NULL "
-						+ "GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1)"
-						+ "PRIMARY KEY,"
-					+ "name VARCHAR(20))",
-			"CREATE TABLE PERMISSIONS ("
-					+ "id INTEGER NOT NULL "
-						+ "GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1)"
-						+ "PRIMARY KEY,"
-					+ "doc XML)"
-	};
-
 	/**
 	 * Prevents Instantiation, this class is meant to be completely static.
 	 */
@@ -112,46 +91,51 @@ public class DatabaseController {
 	}
 
 	/**
-	 * Drops all the tables in the database.
-	 */
-	// NOTE: This uses regular statements + string formation for the update due
-	// to JDBC/Derby not supporting the use of prepared statements when dropping
-	// tables.
-	public static void resetDatabase() {
-		try (	Connection conn = openConnection();
-				Statement stmt = conn.createStatement()) {
-
-			// Fetch all the tables in the APP Schema and drop each one
-			ResultSet rs = conn.getMetaData().getTables(null, "APP", null, null);
-			while (rs.next()) {
-				String tablename = rs.getString("TABLE_NAME");
-				String sql = "DROP TABLE " + tablename;
-				stmt.executeUpdate(sql);
-			}
-
-			// Commit the transaction.
-			conn.commit();
-		} catch (SQLException e) {
-			logger.error(e);
-		}
-	}
-
-	/**
 	 * Builds all the tables for our database.
 	 */
+	// TODO: There has to be a better way to accomplish this
 	public static void createTables() {
 		try (	Connection conn = openConnection();
 				Statement stmt = conn.createStatement()) {
 
-			// For each predefined table in TABLES create the table in the
-			// database
-			for (String tbl : TABLES) {
-				try {
-					stmt.executeUpdate(tbl);
-				} catch (SQLException e) {
-					if (!e.getSQLState().equals("X0Y32")) {
-						e.printStackTrace();
-					}
+			try {
+				stmt.executeUpdate(
+						"CREATE TABLE USERS ("
+						+ "id INTEGER NOT NULL "
+							+ "GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1)"
+							+ "PRIMARY KEY,"
+						+ "name VARCHAR(40),"
+						+ "pass VARCHAR(20),"
+						+ "role INTEGER)");
+			} catch (SQLException e) {
+				if (!e.getSQLState().equals("X0Y32")) {
+					e.printStackTrace();
+				}
+			}
+
+			try {
+				stmt.executeUpdate(
+						"CREATE TABLE ROLES ("
+						+ "id INTEGER NOT NULL "
+							+ "GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1)"
+							+ "PRIMARY KEY,"
+						+ "name VARCHAR(20))");
+			} catch (SQLException e) {
+				if (!e.getSQLState().equals("X0Y32")) {
+					e.printStackTrace();
+				}
+			}
+
+			try {
+				stmt.executeUpdate(
+						"CREATE TABLE PERMISSIONS ("
+						+ "id INTEGER NOT NULL "
+							+ "GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1)"
+							+ "PRIMARY KEY,"
+						+ "doc XML)");
+			} catch (SQLException e) {
+				if (!e.getSQLState().equals("X0Y32")) {
+					e.printStackTrace();
 				}
 			}
 
@@ -200,9 +184,10 @@ public class DatabaseController {
 				insertStmt.setString(2, pass);
 				insertStmt.setInt(3, role);
 				insertStmt.executeUpdate();
-				conn.commit();
 			}
 
+			// Commit the transaction.
+			conn.commit();
 		} catch (SQLException e) {
 			logger.error(e);
 		}
@@ -230,6 +215,8 @@ public class DatabaseController {
 			// database.
 			insertStmt.setString(1, doc);
 			insertStmt.executeUpdate();
+
+			// Commit the transaction.
 			conn.commit();
 		} catch (SQLException e) {
 			logger.error(e);
@@ -265,7 +252,6 @@ public class DatabaseController {
 				if (!rs.next()) {
 					insertStmt.setString(1, name);
 					insertStmt.executeUpdate();
-					conn.commit();
 				}
 			}
 
@@ -276,6 +262,8 @@ public class DatabaseController {
 				}
 			}
 
+			// Commit the transaction.
+			conn.commit();
 		} catch (SQLException e) {
 			logger.error(e);
 		}
@@ -293,9 +281,6 @@ public class DatabaseController {
 	 *             if Driver can't be loaded
 	 */
 	public static void main(String[] args) {
-		// Reset DB
-		resetDatabase();
-
 		// Build all the tables
 		createTables();
 
