@@ -22,6 +22,8 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import java.io.File;
+
 /**
  *  The MKDIR command returns ".mkdir".
  *  Syntax:
@@ -43,13 +45,29 @@ public class Mkdir extends Command {
 	}
 
 	/**
+	 * A method to make a directory based on the directory path given.
+	 * 
+	 * @param directoryPath
+	 * @return - whether the directory was created successfully or not
+	 */
+	private String makeDirectory(String directoryPath){
+		if (new File(directoryPath).mkdir())
+			return "Directory Created at" + directoryPath;
+		else
+			return "Directory Not Created";
+	}
+	
+	/**
 	 *  TODO: Program routine for creating directories.
-	 *  @return .mkdir
+	 *  @return Directory created or an error
 	 */
 	@Override
 	public String execute() {
-
-		return ".mkdir";
+		String directory = this.parser.next();
+		
+		return directory != null
+				? makeDirectory(directory)
+				: new Error("Missing directory. Syntax: MKDIR [directoryPath]").execute();
 	}
 
 }
