@@ -38,7 +38,9 @@ import java.sql.Statement;
  */
 public class DatabaseController {
 
-	private static final String DATABASE_URL = "jdbc:derby:JFilesDB;create=true";
+	private static final String DATABASE_URL_OPEN = "jdbc:derby:JFilesDB;create=true";
+	private static final String DATABASE_URL_SHUTDOWN = "jdbc:derby:JFilesDB;shutdown=true";
+
 	private static final String JDBC_DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
 
 	private static final Logger logger = LogManager.getLogger(DatabaseController.class);
@@ -57,21 +59,19 @@ public class DatabaseController {
 		try {
 			// Load the JDBC driver and open a connection
 			Class.forName(JDBC_DRIVER);
-			conn = DriverManager.getConnection(DATABASE_URL);
+			conn = DriverManager.getConnection(DATABASE_URL_OPEN);
 
 			// All of our connections are AutoCommit = false
 			conn.setAutoCommit(false);
 		} catch (SQLException e) {
 			if (e.getSQLState().equals("XJ040")) {
-				logger.error(
-						"Connection already open somwhere else,"
-								+ " make sure no Eclipse Data Tools Platform connections are open.",
-						e);
+				logger.error("\n\tConnection already open somwhere else,"
+						+ " make sure no Eclipse Data Tools Platform connections are open.", e);
 			} else {
 				logger.error(e);
 			}
 		} catch (ClassNotFoundException e) {
-			logger.error("Unable to load JDBC Embedded Derby Driver", e);
+			logger.error("\n\tUnable to load JDBC Embedded Derby Driver", e);
 		}
 		return conn;
 	}
@@ -82,7 +82,7 @@ public class DatabaseController {
 	public static void shutdown() {
 		try {
 			// Shutdown the connection to the database
-			DriverManager.getConnection("jdbc:derby:JFilesDB;shutdown=true").close();
+			DriverManager.getConnection(DATABASE_URL_SHUTDOWN).close();
 		} catch (SQLException e) {
 			if (!e.getSQLState().equals("08006")) {
 				logger.error(e);
@@ -100,26 +100,12 @@ public class DatabaseController {
 
 			try {
 				stmt.executeUpdate(
-						"CREATE TABLE USERS ("
-						+ "id INTEGER NOT NULL "
-							+ "GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1)"
-							+ "PRIMARY KEY,"
-						+ "name VARCHAR(40),"
-						+ "pass VARCHAR(20),"
-						+ "role INTEGER)");
-			} catch (SQLException e) {
-				if (!e.getSQLState().equals("X0Y32")) {
-					e.printStackTrace();
-				}
-			}
-
-			try {
-				stmt.executeUpdate(
 						"CREATE TABLE ROLES ("
-						+ "id INTEGER NOT NULL "
-							+ "GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1)"
-							+ "PRIMARY KEY,"
-						+ "name VARCHAR(20))");
+						+ "ROLE_ID INTEGER NOT NULL "
+							+ "GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1),"
+						+ "ROLE_NAME VARCHAR(20) NOT NULL,"
+						+ "PRIMARY KEY (ROLE_ID),"
+						+ "UNIQUE (ROLE_NAME))");
 			} catch (SQLException e) {
 				if (!e.getSQLState().equals("X0Y32")) {
 					e.printStackTrace();
@@ -129,10 +115,53 @@ public class DatabaseController {
 			try {
 				stmt.executeUpdate(
 						"CREATE TABLE PERMISSIONS ("
-						+ "id INTEGER NOT NULL "
-							+ "GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1)"
-							+ "PRIMARY KEY,"
-						+ "doc XML)");
+						+ "PERM_ID INTEGER NOT NULL "
+							+ "GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1),"
+						+ "PERM_DOC XML NOT NULL,"
+						+ "PRIMARY KEY (PERM_ID))");
+			} catch (SQLException e) {
+				if (!e.getSQLState().equals("X0Y32")) {
+					e.printStackTrace();
+				}
+			}
+
+			try {
+				stmt.executeUpdate(
+						"CREATE TABLE USERS ("
+						+ "USER_ID INTEGER NOT NULL "
+							+ "GENERATED ALWAYS AS IDENTITY (START WITH 100000, INCREMENT BY 1),"
+						+ "USER_NAME VARCHAR(40) NOT NULL,"
+						+ "USER_PASS VARCHAR(20) NOT NULL,"
+						+ "USER_ROLE INTEGER,"
+						+ "PRIMARY KEY (USER_ID),"
+						+ "UNIQUE (USER_NAME),"
+						+ "FOREIGN KEY (USER_ROLE) REFERENCES ROLES (ROLE_ID))");
+			} catch (SQLException e) {
+				if (!e.getSQLState().equals("X0Y32")) {
+					e.printStackTrace();
+				}
+			}
+
+			try {
+				stmt.executeUpdate(
+						"CREATE TABLE USER_PERMISSIONS ("
+						+ "USER_ID INT NOT NULL,"
+						+ "PERM_ID INT NOT NULL,"
+						+ "FOREIGN KEY (USER_ID) REFERENCES USERS (USER_ID),"
+						+ "FOREIGN KEY (PERM_ID) REFERENCES PERMISSIONS (PERM_ID))");
+			} catch (SQLException e) {
+				if (!e.getSQLState().equals("X0Y32")) {
+					e.printStackTrace();
+				}
+			}
+
+			try {
+				stmt.executeUpdate(
+						"CREATE TABLE ROLE_PERMISSIONS ("
+						+ "ROLE_ID INT NOT NULL,"
+						+ "PERM_ID INT NOT NULL,"
+						+ "FOREIGN KEY (ROLE_ID) REFERENCES ROLES (ROLE_ID),"
+						+ "FOREIGN KEY (PERM_ID) REFERENCES PERMISSIONS (PERM_ID))");
 			} catch (SQLException e) {
 				if (!e.getSQLState().equals("X0Y32")) {
 					e.printStackTrace();
@@ -162,34 +191,29 @@ public class DatabaseController {
 	 *            the user's role
 	 */
 	public static void createUser(String name, String pass, int role) {
-		String sql = "SELECT * FROM ROLES WHERE ID = ?";
-		String sql2 = "INSERT INTO USERS (name, pass, role) VALUES (?, ?, ?)";
+		String sql = "INSERT INTO USERS (USER_NAME, USER_PASS, USER_ROLE) VALUES (?, ?, ?)";
 
 		try (	Connection conn = openConnection();
-				PreparedStatement selectStmt = conn.prepareStatement(sql);
-				PreparedStatement insertStmt = conn.prepareStatement(sql2)) {
+				PreparedStatement insertStmt = conn.prepareStatement(sql)) {
 
-			// Prepare our query
-			selectStmt.setInt(1, role);
 
-			// Query the database to see if the role passed in actually exists.
-			try (ResultSet rs = selectStmt.executeQuery()) {
-				// If the role does not exist set to default role (0)
-				if (!rs.next()) {
-					role = 0;
-				}
-
-				// Create user in database.
-				insertStmt.setString(1, name);
-				insertStmt.setString(2, pass);
-				insertStmt.setInt(3, role);
-				insertStmt.executeUpdate();
-			}
+			// Create user in database.
+			insertStmt.setString(1, name);
+			insertStmt.setString(2, pass);
+			insertStmt.setInt(3, role);
+			insertStmt.executeUpdate();
 
 			// Commit the transaction.
 			conn.commit();
+			logger.info(String.format("User \"%s\" added to the database.", name));
 		} catch (SQLException e) {
-			logger.error(e);
+			if (e.getSQLState().equals("23505")) {
+				logger.error("\n\tUser not added. Users must have unique names");
+			} else if (e.getSQLState().equals("23503")) {
+				logger.error("\n\tUser not added. Role must match an existing role.");
+			} else {
+				logger.error(e);
+			}
 		}
 	}
 
@@ -202,13 +226,19 @@ public class DatabaseController {
 	 * </p>
 	 *
 	 * @param doc
-	 *            xml document
+	 *            XML document
+	 * @return id of the permission created
 	 */
-	public static void createPermission(String doc) {
-		String sql = "INSERT INTO PERMISSIONS (doc) "
+	public static int createPermission(String doc) {
+		String sql = "INSERT INTO PERMISSIONS (PERM_DOC) "
 				+ "VALUES (XMLPARSE(DOCUMENT CAST (? AS CLOB) PRESERVE WHITESPACE))";
+		String sql2 =
+				"SELECT PERM_ID FROM PERMISSIONS WHERE"
+						+ " PERM_DOC = (XMLPARSE(DOCUMENT CAST (? AS CLOB) PRESERVE WHITESPACE))";
+		int id = -1;
 		try (	Connection conn = openConnection();
-				PreparedStatement insertStmt = conn.prepareStatement(sql)) {
+				PreparedStatement insertStmt = conn.prepareStatement(sql);
+				PreparedStatement selectStmt = conn.prepareStatement(sql2)) {
 
 			// Create permission in database. (We are parsing the XML doc via
 			// XMLPARSE and storing it as a binary XML data type in the
@@ -216,11 +246,26 @@ public class DatabaseController {
 			insertStmt.setString(1, doc);
 			insertStmt.executeUpdate();
 
+			// Get the ID of the the permission that was just created
+			selectStmt.setString(1, doc);
+			try (ResultSet rs = selectStmt.executeQuery()) {
+				if (rs.next()) {
+					id = rs.getInt(1);
+					logger.info(
+							String.format("\n\tPermission added to the database with ID=%d.", id));
+				} else {
+					logger.error("\n\tPermission not added to the database, ID not found");
+
+				}
+			}
+
 			// Commit the transaction.
 			conn.commit();
 		} catch (SQLException e) {
 			logger.error(e);
 		}
+
+		return id;
 	}
 
 	/**
@@ -233,39 +278,38 @@ public class DatabaseController {
 	 *
 	 * @param name
 	 *            name of the role
+	 * @return the id of the role created.
 	 */
 	public static int createRole(String name) {
 		int id = -1;
-		String sql = "SELECT ID FROM ROLES WHERE NAME = ?";
-		String sql2 = "INSERT INTO ROLES (NAME) VALUES (?)";
+		String sql = "INSERT INTO ROLES (ROLE_NAME) VALUES (?)";
+		String sql2 = "SELECT ID FROM ROLES WHERE ROLE_NAME = ?";
 
 		try (	Connection conn = openConnection();
-				PreparedStatement selectStmt = conn.prepareStatement(sql);
-				PreparedStatement insertStmt = conn.prepareStatement(sql2)) {
+				PreparedStatement insertStmt = conn.prepareStatement(sql);
+				PreparedStatement selectStmt = conn.prepareStatement(sql2)) {
 
-			// Prepare our query
-			selectStmt.setString(1, name);
-
-			// Query database to see if the role already exists.
-			try (ResultSet rs = selectStmt.executeQuery()) {
-				// If the role does not exist then create the role
-				if (!rs.next()) {
-					insertStmt.setString(1, name);
-					insertStmt.executeUpdate();
-				}
-			}
+			insertStmt.setString(1, name);
+			insertStmt.executeUpdate();
 
 			// Query the table for the ID of the role we just created
 			try (ResultSet rs = selectStmt.executeQuery()) {
 				if (rs.next()) {
 					id = rs.getInt(1);
+					logger.info(
+							String.format("\n\tRole added to the database with ID=%d.", id));
+				} else {
+					logger.error("\n\tRole not added to the database, ID not found");
+
 				}
 			}
 
 			// Commit the transaction.
 			conn.commit();
 		} catch (SQLException e) {
-			logger.error(e);
+			if (e.getSQLState().equals("23505")) {
+				logger.error("\n\tRole not added, this role already exisits.");
+			}
 		}
 
 		return id;
