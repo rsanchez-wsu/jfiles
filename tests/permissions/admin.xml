@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE permission SYSTEM "tests/permissions/permission.dtd">
+
+<!-- Declares a new permission that provides access to the src, tests, and build folders. -->
+<permission type="readwrite">
+	<directory path="./src"/>
+	<directory path="./tests"/>
+	<directory path="./build" />
+</permission>
