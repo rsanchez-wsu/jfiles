@@ -45,6 +45,7 @@ public class Mkdir extends Command {
 	}
 
 	/**
+	 * TODO: Take in an option into the make directory method. Example: mkdir [OPTION]... DIRECTORY...
 	 * A method to make a directory based on the directory path given.
 	 * 
 	 * @param directoryPath
@@ -52,7 +53,7 @@ public class Mkdir extends Command {
 	 */
 	private String makeDirectory(String directoryPath){
 		if (new File(directoryPath).mkdir())
-			return "Directory Created at" + directoryPath;
+			return "Directory Created at " + directoryPath;
 		else
 			return "Directory Not Created";
 	}
