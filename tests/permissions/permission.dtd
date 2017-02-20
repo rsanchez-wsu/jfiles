@@ -1,6 +1,4 @@
-<!ELEMENT permission (directory*, file*)>
-<!ELEMENT directory EMPTY>
-<!ELEMENT file EMPTY>
+<!ELEMENT permission (location*)>
+<!ELEMENT location EMPTY>
 <!ATTLIST permission type (read|write|readwrite) #REQUIRED >
-<!ATTLIST directory path CDATA #REQUIRED >
-<!ATTLIST file path CDATA #REQUIRED >
+<!ATTLIST location path CDATA #REQUIRED >
