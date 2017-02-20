@@ -187,9 +187,9 @@ public class DatabaseController {
 	 * @param role
 	 *            the user's role
 	 */
-	public static void createUser(String name, String pass, int role) {
+	public static int createUser(String name, String pass, int role) {
 		String sql = "INSERT INTO USERS (USER_NAME, USER_PASS, USER_ROLE) VALUES (?, ?, ?)";
-
+		int id = -1;
 		try (	Connection conn = openConnection();
 				PreparedStatement insertStmt =
 						conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -203,6 +203,7 @@ public class DatabaseController {
 
 			try (ResultSet rs = insertStmt.getGeneratedKeys()) {
 				if (rs.next()) {
+					id = rs.getInt(1);
 					logger.info(String.format("%n\tUser \"%s\" added to the database with ID=%d.",
 							name, rs.getInt(1)));
 				}
@@ -218,6 +219,7 @@ public class DatabaseController {
 				logger.error(e);
 			}
 		}
+		return id;
 	}
 
 	/**
@@ -316,17 +318,49 @@ public class DatabaseController {
 	 *            ID of the permission to add
 	 */
 	public static void addPermissionToRole(int roleId, int permId) {
-		String sql = "INSERT (ROLE_ID, PERM_ID) INTO ROLE_PERMISSIONS VALUES (?, ?)";
+		String sql = "INSERT INTO ROLE_PERMISSIONS (ROLE_ID, PERM_ID) VALUES (?, ?)";
 
 		try (Connection conn = openConnection();
 				PreparedStatement insertStmt = conn.prepareStatement(sql)) {
 
 			insertStmt.setInt(1, roleId);
 			insertStmt.setInt(2, permId);
+			insertStmt.executeUpdate();
+			logger.info(String.format("%n\tPermission with ID=%d added to the role with ID=%d.",
+					permId, roleId));
 		} catch (SQLException e) {
 			if (e.getSQLState().equals("23503")) {
 				logger.error("%n\tPermission not added to role. ROLE_ID or PERM_ID "
 						+ "does not match an exisiting ROLE or PERMISSION.");
+			} else {
+				logger.error(e);
+			}
+		}
+	}
+
+	/**
+	 * Adds a permission to the specified user.
+	 *
+	 * @param userId
+	 *            ID of role to add permission to
+	 * @param permId
+	 *            ID of the permission to add
+	 */
+	public static void addPermissionToUser(int userId, int permId) {
+		String sql = "INSERT INTO USER_PERMISSIONS (USER_ID, PERM_ID) VALUES (?, ?)";
+
+		try (Connection conn = openConnection();
+				PreparedStatement insertStmt = conn.prepareStatement(sql)) {
+
+			insertStmt.setInt(1, userId);
+			insertStmt.setInt(2, permId);
+			insertStmt.executeUpdate();
+			logger.info(String.format("%n\tPermission with ID=%d added to the user with ID=%d.",
+					permId, userId));
+		} catch (SQLException e) {
+			if (e.getSQLState().equals("23503")) {
+				logger.error("%n\tPermission not added to user. USER_ID or PERM_ID "
+						+ "does not match an exisiting USER or PERMISSION.");
 			} else {
 				logger.error(e);
 			}
@@ -356,15 +390,20 @@ public class DatabaseController {
 		createUser("Bill Gates", "windows_vista", 1);
 
 		// Create User with invalid role -> default to NONE
-		createUser("Steve Jobs", "earpods", 12);
+		createUser("Steve Jobs", "earpods", 0);
 
 		try {
-			String doc = new String(Files.readAllBytes(Paths.get("tests/permissions/admin.xml")),
+			String noneDoc = new String(Files.readAllBytes(Paths.get("tests/permissions/none.xml")),
 					"UTF-8");
-			createPermission(doc);
+			String adminDoc =
+					new String(Files.readAllBytes(Paths.get("tests/permissions/admin.xml")),
+					"UTF-8");
+			createPermission(noneDoc);
+			createPermission(adminDoc);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
+
 
 		// Make sure to shutdown the database connection before the program exits.
 		shutdown();

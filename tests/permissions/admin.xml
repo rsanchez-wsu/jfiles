@@ -6,4 +6,5 @@
 	<directory path="./src"/>
 	<directory path="./tests"/>
 	<directory path="./build" />
+	<file path="./build.xml" />
 </permission>
