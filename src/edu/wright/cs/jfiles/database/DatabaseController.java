@@ -95,10 +95,10 @@ public class DatabaseController {
 	// TODO: There has to be a better way to accomplish this
 	public static void createTables() {
 		try (	Connection conn = openConnection();
-				Statement stmt = conn.createStatement()) {
+				Statement createStmt = conn.createStatement()) {
 
 			try {
-				stmt.executeUpdate(
+				createStmt.executeUpdate(
 						"CREATE TABLE ROLES ("
 						+ "ROLE_ID INTEGER NOT NULL "
 							+ "GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1),"
@@ -112,7 +112,7 @@ public class DatabaseController {
 			}
 
 			try {
-				stmt.executeUpdate(
+				createStmt.executeUpdate(
 						"CREATE TABLE PERMISSIONS ("
 						+ "PERM_ID INTEGER NOT NULL "
 							+ "GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1),"
@@ -125,7 +125,7 @@ public class DatabaseController {
 			}
 
 			try {
-				stmt.executeUpdate(
+				createStmt.executeUpdate(
 						"CREATE TABLE USERS ("
 						+ "USER_ID INTEGER NOT NULL "
 							+ "GENERATED ALWAYS AS IDENTITY (START WITH 100000, INCREMENT BY 1),"
@@ -142,7 +142,7 @@ public class DatabaseController {
 			}
 
 			try {
-				stmt.executeUpdate(
+				createStmt.executeUpdate(
 						"CREATE TABLE USER_PERMISSIONS ("
 						+ "USER_ID INT NOT NULL,"
 						+ "PERM_ID INT NOT NULL,"
@@ -155,7 +155,7 @@ public class DatabaseController {
 			}
 
 			try {
-				stmt.executeUpdate(
+				createStmt.executeUpdate(
 						"CREATE TABLE ROLE_PERMISSIONS ("
 						+ "ROLE_ID INT NOT NULL,"
 						+ "PERM_ID INT NOT NULL,"
@@ -177,11 +177,42 @@ public class DatabaseController {
 	public static void dropTables() {
 		try (	Connection conn = openConnection();
 				Statement dropStmt = conn.createStatement()) {
-			dropStmt.executeUpdate("DROP TABLE ROLE_PERMISSIONS");
-			dropStmt.executeUpdate("DROP TABLE USER_PERMISSIONS");
-			dropStmt.executeUpdate("DROP TABLE USERS");
-			dropStmt.executeUpdate("DROP TABLE ROLES");
-			dropStmt.executeUpdate("DROP TABLE PERMISSIONS");
+
+			try {
+				dropStmt.executeUpdate("DROP TABLE ROLE_PERMISSIONS");
+			} catch (SQLException e) {
+				if (!e.getSQLState().equals("X0Y32")) {
+					e.printStackTrace();
+				}
+			}
+			try {
+				dropStmt.executeUpdate("DROP TABLE USER_PERMISSIONS");
+			} catch (SQLException e) {
+				if (!e.getSQLState().equals("X0Y32")) {
+					e.printStackTrace();
+				}
+			}
+			try {
+				dropStmt.executeUpdate("DROP TABLE USERS");
+			} catch (SQLException e) {
+				if (!e.getSQLState().equals("X0Y32")) {
+					e.printStackTrace();
+				}
+			}
+			try {
+				dropStmt.executeUpdate("DROP TABLE ROLES");
+			} catch (SQLException e) {
+				if (!e.getSQLState().equals("X0Y32")) {
+					e.printStackTrace();
+				}
+			}
+			try {
+				dropStmt.executeUpdate("DROP TABLE PERMISSIONS");
+			} catch (SQLException e) {
+				if (!e.getSQLState().equals("X0Y32")) {
+					e.printStackTrace();
+				}
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -454,6 +485,36 @@ public class DatabaseController {
 			logger.error(e);
 		}
 		return perms;
+	}
+
+	/**
+	 * Updates all of the data for a given user.
+	 *
+	 * @param id
+	 *            Id of user to update
+	 * @param name
+	 *            New name
+	 * @param pass
+	 *            New pass
+	 * @param role
+	 *            New role
+	 */
+	public static void updateUser(int id, String name, String pass, int role) {
+		String sql = "UPDATE USERS SET "
+				+ "USER_NAME = ?, USER_PASS = ?, USER_ROLE = ? "
+				+ "WHERE USER_ID = ?";
+
+		try (	Connection conn = openConnection();
+				PreparedStatement updateStmt = conn.prepareStatement(sql)) {
+
+			updateStmt.setString(1, name);
+			updateStmt.setString(2, pass);
+			updateStmt.setInt(3, role);
+			updateStmt.setInt(4, id);
+			updateStmt.executeUpdate();
+		} catch (SQLException e) {
+			logger.error(e);
+		}
 	}
 
 	/**
