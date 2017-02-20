@@ -22,31 +22,30 @@
 package edu.wright.cs.jfiles.commands;
 
 /**
- *  The Info command sends extra information to the client.
+ *  The Start command opens the connection.
  *  Syntax:
- *      INFO message...
+ *      START
  *  Flags:
  *      - None.
  *  Example:
- *      INFO Last logged in 10 minutes ago
+ *      START
  */
-public class Info extends Command {
+public class Start extends Command {
 
 	/**
 	 * Calls super.
 	 * @param args Command's args.
 	 */
-	public Info(String... args) {
+	public Start(String... args) {
 		super(args);
 	}
 
 	/**
-	 *  TODO: Provide the user info
-	 *  @return Nothing.
+	 * TODO: Call ERROR if errors Starting the server.
+	 *  @return string server start info.
 	 */
-	@Override
 	public String execute() {
-		return "INFO: " + parser.rest();
+		return new Info("Starting server...").execute();
 	}
 
 }

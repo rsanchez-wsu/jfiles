@@ -43,6 +43,9 @@ public enum Commands {
 	STOP((String[] args) -> {
 		return new Stop(args);
 	}),
+	START((String[] args) -> {
+		return new Start(args);
+	}),
 	RESTART((String[] args) -> {
 		return new Restart(args);
 	}),

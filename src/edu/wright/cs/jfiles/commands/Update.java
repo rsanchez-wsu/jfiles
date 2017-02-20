@@ -41,10 +41,13 @@ public class Update extends Command {
 	}
 
 	/**
-	 *  @return Nothing.
+	 * TODO: Allow this command to be configurable to pull from different branches.
+	 * TODO: Call Stop, then Update, then Start.
+	 * TODO: Call ERROR if errors updating
+	 *  @return Server update info.
 	 */
 	public String execute() {
-		return "";
+		return new Info("Updating server from branch: master").execute();
 	}
 
 }

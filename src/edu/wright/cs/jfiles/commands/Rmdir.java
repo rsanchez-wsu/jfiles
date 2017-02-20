@@ -49,7 +49,6 @@ public class Rmdir extends Command {
 	 */
 	@Override
 	public String execute() {
-		
 		String directoryToRem = parser.next();
 
 		if (directoryToRem != null) {
@@ -59,8 +58,5 @@ public class Rmdir extends Command {
 		} else {
 			return new Error("Missing directory name.").execute();
 		}
-		
-		
 	}
-
 }
