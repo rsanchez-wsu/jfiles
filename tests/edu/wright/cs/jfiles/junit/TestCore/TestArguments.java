@@ -28,6 +28,7 @@ import edu.wright.cs.jfiles.core.Arguments;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,6 +45,15 @@ public class TestArguments {
 	public void testGetArgument() {
 		Argument arg = new Argument(argumentString1);
 		assertEquals(argumentString1, arg.getArgument());
+	}
+
+	@Test
+	public void testCreateAndAddArgument() {
+		Argument arg = new Argument(argumentString1);
+		Arguments args = new Arguments();
+		args.add(arg);
+		assertEquals(argumentString1, arg.getArgument());
+		assertEquals(1, args.size());
 	}
 
 	@Test
@@ -92,18 +102,21 @@ public class TestArguments {
 		Argument arg = args.getLast();
 		assertEquals(argumentString3, arg.toString());
 	}
-//
-//	@Test
-//	public void testGetArgs() {
-//		Arguments args = new Arguments();
-//		List<Argument> baseList = null;
-//		Argument arg1 = new Argument(argumentString1);
-//		Argument arg2 = new Argument(argumentString2);
-//		Argument arg3 = new Argument(argumentString3);
-//		baseList.add(arg1);
-//		baseList.add(arg2);
-//		baseList.add(arg3);
-//		List<Argument> argList = args.getArgs();
-//		assertEquals(baseList, argList);
-//	}
+
+	@Test
+	public void testGetArgsList() {
+		List<Argument> baseList = new ArrayList<>();
+		Argument arg1 = new Argument(argumentString1);
+		Argument arg2 = new Argument(argumentString2);
+		Argument arg3 = new Argument(argumentString3);
+		baseList.add(arg1);
+		baseList.add(arg2);
+		baseList.add(arg3);
+		Arguments args = new Arguments();
+		args.add(arg1);
+		args.add(arg2);
+		args.add(arg3);
+		List<Argument> argList = args.getArgs();
+		assertEquals(baseList, argList);
+	}
 }
