@@ -39,14 +39,17 @@ public class Role {
 	/**
 	 * Creates a new role.
 	 *
+	 * @param id
+	 *            Role Id
 	 * @param name
-	 *            name of the role
+	 *            Role name
 	 */
-	public Role(String name) {
-		this.id = DatabaseController.createRole(name);
+	public Role(int id, String name) {
+		this.id = id;
 		this.name = name;
 		this.permissions = new ArrayList<>();
 	}
+
 
 	/**
 	 * Gets the Id for this role.
@@ -103,5 +106,10 @@ public class Role {
 			hasAccess = perm.hasAccess(file);
 		}
 		return hasAccess;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("ID: %d NAME: %s", id, name);
 	}
 }

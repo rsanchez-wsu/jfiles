@@ -24,15 +24,14 @@ package edu.wright.cs.jfiles.database;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class used to perform actions on the database.
@@ -169,6 +168,22 @@ public class DatabaseController {
 			}
 		} catch (SQLException e) {
 			logger.error(e);
+		}
+	}
+
+	/**
+	 * Drops all the tables in the database.
+	 */
+	public static void dropTables() {
+		try (	Connection conn = openConnection();
+				Statement dropStmt = conn.createStatement()) {
+			dropStmt.executeUpdate("DROP TABLE ROLE_PERMISSIONS");
+			dropStmt.executeUpdate("DROP TABLE USER_PERMISSIONS");
+			dropStmt.executeUpdate("DROP TABLE USERS");
+			dropStmt.executeUpdate("DROP TABLE ROLES");
+			dropStmt.executeUpdate("DROP TABLE PERMISSIONS");
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -368,6 +383,80 @@ public class DatabaseController {
 	}
 
 	/**
+	 * Queries all the users from the database.
+	 *
+	 * @return users in the database
+	 */
+	public static List<Object[]> getAllUsers() {
+		List<Object[]> users = new ArrayList<>();
+		String sql = "SELECT * FROM USERS";
+		try (	Connection conn = openConnection();
+				PreparedStatement selectStmt = conn.prepareStatement(sql)) {
+			try (ResultSet rs = selectStmt.executeQuery()) {
+				while (rs.next()) {
+					Object[] cols = new Object[4];
+					cols[0] = rs.getObject("USER_ID", Integer.class);
+					cols[1] = rs.getObject("USER_NAME", String.class);
+					cols[2] = rs.getObject("USER_PASS", String.class);
+					cols[3] = rs.getObject("USER_ROLE", Integer.class);
+					users.add(cols);
+				}
+			}
+		} catch (SQLException e) {
+			logger.error(e);
+		}
+		return users;
+	}
+
+	/**
+	 * Queries all the roles from the database.
+	 *
+	 * @return list of roles
+	 */
+	public static List<Object[]> getAllRoles() {
+		List<Object[]> roles = new ArrayList<>();
+		String sql = "SELECT * FROM ROLES";
+		try (	Connection conn = openConnection();
+				PreparedStatement selectStmt = conn.prepareStatement(sql)) {
+			try (ResultSet rs = selectStmt.executeQuery()) {
+				while (rs.next()) {
+					Object[] cols = new Object[2];
+					cols[0] = rs.getObject("ROLE_ID", Integer.class);
+					cols[1] = rs.getObject("ROLE_NAME", String.class);
+					roles.add(cols);
+				}
+			}
+		} catch (SQLException e) {
+			logger.error(e);
+		}
+		return roles;
+	}
+
+	/**
+	 * Queries all the permissions from the database.
+	 *
+	 * @return list of permissions
+	 */
+	public static List<Object[]> getAllPermissions() {
+		List<Object[]> perms = new ArrayList<>();
+		String sql = "SELECT * FROM PERMISSIONS";
+		try (	Connection conn = openConnection();
+				PreparedStatement selectStmt = conn.prepareStatement(sql)) {
+			try (ResultSet rs = selectStmt.executeQuery()) {
+				while (rs.next()) {
+					Object[] cols = new Object[2];
+					cols[0] = rs.getObject("PERM_ID", Integer.class);
+					cols[1] = rs.getObject("ROLE_DOC", String.class);
+					perms.add(cols);
+				}
+			}
+		} catch (SQLException e) {
+			logger.error(e);
+		}
+		return perms;
+	}
+
+	/**
 	 * Main, testing purposes only. This can be used to setup the database as
 	 * well.
 	 *
@@ -377,6 +466,8 @@ public class DatabaseController {
 	 *             if Driver can't be loaded
 	 */
 	public static void main(String[] args) {
+		dropTables();
+
 		// Build all the tables
 		createTables();
 
@@ -391,19 +482,6 @@ public class DatabaseController {
 
 		// Create User with invalid role -> default to NONE
 		createUser("Steve Jobs", "earpods", 0);
-
-		try {
-			String noneDoc = new String(Files.readAllBytes(Paths.get("tests/permissions/none.xml")),
-					"UTF-8");
-			String adminDoc =
-					new String(Files.readAllBytes(Paths.get("tests/permissions/admin.xml")),
-					"UTF-8");
-			createPermission(noneDoc);
-			createPermission(adminDoc);
-		} catch (IOException e) {
-			logger.error(e);
-		}
-
 
 		// Make sure to shutdown the database connection before the program exits.
 		shutdown();

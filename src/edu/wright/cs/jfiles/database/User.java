@@ -41,8 +41,10 @@ public class User {
 	private List<Permission> permissions;
 
 	/**
-	 * Creates a new User in the Database.
+	 * Creates a new User.
 	 *
+	 * @param id
+	 *            User Id
 	 * @param name
 	 *            User name
 	 * @param pass
@@ -50,8 +52,8 @@ public class User {
 	 * @param role
 	 *            User role
 	 */
-	public User(String name, String pass, Role role) {
-		this.id = DatabaseController.createUser(name, pass, role.getId());
+	public User(int id, String name, String pass, Role role) {
+		this.id = id;
 		this.setName(name);
 		this.setPass(pass);
 		this.role = role;
@@ -160,5 +162,10 @@ public class User {
 	public void setRole(Role role) {
 		this.role = role;
 		// TODO: Update the database.
+	}
+
+	@Override
+	public String toString() {
+		return String.format("ID: %d NAME: %s PASS: %s ROLE: (%s)", id, name, pass, role);
 	}
 }

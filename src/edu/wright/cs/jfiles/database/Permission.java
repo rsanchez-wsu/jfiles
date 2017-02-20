@@ -51,12 +51,14 @@ public class Permission {
 	/**
 	 * Creates a new permission in the database.
 	 *
+	 * @param id
+	 *            Permission id
 	 * @param xml
 	 *            string containing XML denoting the files this permission
 	 *            grants access to
 	 */
-	public Permission(String xml) {
-		this.id = DatabaseController.createPermission(xml);
+	public Permission(int id, String xml) {
+		this.id = id;
 		this.xml = xml;
 	}
 
