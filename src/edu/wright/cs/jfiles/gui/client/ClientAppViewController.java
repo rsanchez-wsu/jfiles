@@ -25,6 +25,7 @@ import edu.wright.cs.jfiles.commands.Ls;
 import edu.wright.cs.jfiles.commands.Mv;
 import edu.wright.cs.jfiles.commands.Rm;
 import edu.wright.cs.jfiles.core.FileStruct;
+import edu.wright.cs.jfiles.core.PathStack;
 import edu.wright.cs.jfiles.core.SocketClient;
 import edu.wright.cs.jfiles.core.XmlHandler;
 import edu.wright.cs.jfiles.gui.common.FileIconViewController;
@@ -80,7 +81,7 @@ public class ClientAppViewController implements Initializable {
 	private SocketClient client;
 
 	private FileStruct selectedFile;
-	private String currentDirectory;
+	private PathStack currentDirectory = new PathStack();
 	private Map<FileStruct, Parent> contents;
 	private Operation lastOperation;
 	private Clipboard clipboard;
@@ -249,13 +250,13 @@ public class ClientAppViewController implements Initializable {
 					// client.sendCommand(new Cp(source, currentDirectory));
 					break;
 				case CUT:
-					client.sendCommand(new Mv(source, currentDirectory));
+					client.sendCommand(new Mv(source, currentDirectory.toPath()));
 					break;
 				default:
 					break;
 				}
 
-				loadDirectory(currentDirectory);
+				loadDirectory(currentDirectory.toPath());
 
 			} catch (UnsupportedFlavorException e) {
 				e.printStackTrace();
@@ -271,7 +272,7 @@ public class ClientAppViewController implements Initializable {
 	@FXML
 	public void delete() {
 		client.sendCommand(new Rm((String) selectedFile.getValue("path")));
-		loadDirectory(currentDirectory);
+		loadDirectory(currentDirectory.toPath());
 	}
 
 	/**
@@ -279,8 +280,13 @@ public class ClientAppViewController implements Initializable {
 	 */
 	@FXML
 	public void buttonClicked() {
-		currentDirectory = searchArea.getText();
-		loadDirectory(currentDirectory);
+		String[] path;
+		path = searchArea.getText().split("/");
+		currentDirectory.root();
+		for (int i = 0; i < path.length; i++) {
+			currentDirectory.push(path[i]);
+		}
+		loadDirectory(currentDirectory.toPath());
 
 	}
 
@@ -356,27 +362,33 @@ public class ClientAppViewController implements Initializable {
 		}
 	}
 
-	/*
-	 * a setter for the current directory
+	/**
+	 * sets the current directory.
+	 * @param name String
 	 */
 	public void setCurrentDirectory(String name) {
-		currentDirectory = name;
-		loadDirectory(currentDirectory);
+		String[] path = name.split("/");
+		currentDirectory.root();
+		for (int i = 0; i < path.length; i++) {
+			currentDirectory.push(path[i]);
+		}
+		loadDirectory(currentDirectory.toPath());
 	}
 
-	/*
-	 * a getter for the current directory
+	/**
+	 * returns the current directory.
+	 * @return currentDirectory
 	 */
 	public String getCurrentDirectory() {
-		return currentDirectory;
+		return currentDirectory.toPath();
 	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		contents = new HashMap<>();
 		client = new SocketClient();
-		currentDirectory = ".";
-		loadDirectory(currentDirectory);
+		currentDirectory.root();
+		loadDirectory(currentDirectory.toPath());
 		clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		fileContextMenu = buildFileContextMenu();
 		viewContextMenu = buildViewContextMenu();

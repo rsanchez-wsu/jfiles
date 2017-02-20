@@ -45,6 +45,17 @@ public class PathStack extends Stack<String> {
 	}
 
 	/**
+	 * Empties out the path and returns it to the root directory.
+	 */
+	public void root() {
+		while (size() > 0) {
+			pop();
+		}
+
+		push(".");
+	}
+
+	/**
 	 * Returns the file path string in a readable format.
 	 * @return String
 	 */
@@ -62,5 +73,24 @@ public class PathStack extends Stack<String> {
 		}
 
 		return (path);
+	}
+
+	/**
+	 * Returns the directory of the object and the directory it is inside of.
+	 * @return String[]
+	 */
+	public String[] getHierarchy() {
+		String[] lastTwo = new String[2];
+		int len = size();
+		if (len == 0) {
+			throw new EmptyStackException();
+		}
+
+		len -= 1;
+		int backOne = len - 1;
+		lastTwo[0] = elementAt(len);
+		lastTwo[1] = elementAt(backOne);
+
+		return lastTwo;
 	}
 }
