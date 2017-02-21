@@ -21,17 +21,21 @@
 
 package edu.wright.cs.jfiles.database;
 
+import edu.wright.cs.jfiles.database.DatabaseUtils.PermissionResult;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Class used to perform actions on the database.
@@ -414,77 +418,53 @@ public class DatabaseController {
 	}
 
 	/**
-	 * Queries all the users from the database.
+	 * Checks to see if the user with the given Id has permission to access the
+	 * location specified and returns what type of permission access they have.
 	 *
-	 * @return users in the database
+	 * @param userId
+	 *            User's Id
+	 * @param location
+	 *            File location
+	 * @return Type of access the user has (READ, WRITE, READWRITE) or NONE if
+	 *         the user doesn't have access.
 	 */
-	public static List<Object[]> getAllUsers() {
-		List<Object[]> users = new ArrayList<>();
-		String sql = "SELECT * FROM USERS";
-		try (	Connection conn = openConnection();
-				PreparedStatement selectStmt = conn.prepareStatement(sql)) {
-			try (ResultSet rs = selectStmt.executeQuery()) {
-				while (rs.next()) {
-					Object[] cols = new Object[4];
-					cols[0] = rs.getObject("USER_ID", Integer.class);
-					cols[1] = rs.getObject("USER_NAME", String.class);
-					cols[2] = rs.getObject("USER_PASS", String.class);
-					cols[3] = rs.getObject("USER_ROLE", Integer.class);
-					users.add(cols);
-				}
-			}
-		} catch (SQLException e) {
-			logger.error(e);
-		}
-		return users;
-	}
+	public static PermissionResult userHasPermission(int userId, String location) {
+		// Gets the permissions
+		String sql1 = "SELECT XMLSERIALIZE(PERM_DOC AS CLOB) FROM PERMISSIONS WHERE PERM_ID = "
+				+ "(SELECT PERM_ID FROM USER_PERMISSIONS WHERE USER_ID = ?)";
+		String sql2 = "SELECT XMLSERIALIZE(PERM_DOC AS CLOB) FROM PERMISSIONS WHERE PERM_ID = "
+				+ "(SELECT PERM_ID FROM ROLE_PERMISSIONS WHERE ROLE_ID = "
+				+ "(SELECT USER_ROLE FROM USERS WHERE USER_ID = ?))";
 
-	/**
-	 * Queries all the roles from the database.
-	 *
-	 * @return list of roles
-	 */
-	public static List<Object[]> getAllRoles() {
-		List<Object[]> roles = new ArrayList<>();
-		String sql = "SELECT * FROM ROLES";
 		try (	Connection conn = openConnection();
-				PreparedStatement selectStmt = conn.prepareStatement(sql)) {
-			try (ResultSet rs = selectStmt.executeQuery()) {
-				while (rs.next()) {
-					Object[] cols = new Object[2];
-					cols[0] = rs.getObject("ROLE_ID", Integer.class);
-					cols[1] = rs.getObject("ROLE_NAME", String.class);
-					roles.add(cols);
-				}
-			}
-		} catch (SQLException e) {
-			logger.error(e);
-		}
-		return roles;
-	}
+				PreparedStatement rolePermSelectStmt = conn.prepareStatement(sql1);
+				PreparedStatement userPermSelectStmt = conn.prepareStatement(sql2)) {
 
-	/**
-	 * Queries all the permissions from the database.
-	 *
-	 * @return list of permissions
-	 */
-	public static List<Object[]> getAllPermissions() {
-		List<Object[]> perms = new ArrayList<>();
-		String sql = "SELECT * FROM PERMISSIONS";
-		try (	Connection conn = openConnection();
-				PreparedStatement selectStmt = conn.prepareStatement(sql)) {
-			try (ResultSet rs = selectStmt.executeQuery()) {
+			rolePermSelectStmt.setInt(1, userId);
+			try (ResultSet rs = rolePermSelectStmt.executeQuery()) {
 				while (rs.next()) {
-					Object[] cols = new Object[2];
-					cols[0] = rs.getObject("PERM_ID", Integer.class);
-					cols[1] = rs.getObject("ROLE_DOC", String.class);
-					perms.add(cols);
+					String xml = rs.getString(1);
+					System.out.println(xml);
+					PermissionResult result = DatabaseUtils.hasAccess(xml, location);
+					if (result != PermissionResult.NONE) {
+						return result;
+					}
+				}
+			}
+			userPermSelectStmt.setInt(1, userId);
+			try (ResultSet rs = userPermSelectStmt.executeQuery()) {
+				while (rs.next()) {
+					String xml = rs.getString(1);
+					PermissionResult result = DatabaseUtils.hasAccess(xml, location);
+					if (result != PermissionResult.NONE) {
+						return result;
+					}
 				}
 			}
 		} catch (SQLException e) {
-			logger.error(e);
+			e.printStackTrace();
 		}
-		return perms;
+		return PermissionResult.NONE;
 	}
 
 	/**
@@ -518,6 +498,30 @@ public class DatabaseController {
 	}
 
 	/**
+	 * Updates all of the data for a given permission.
+	 *
+	 * @param id
+	 *            Id of user to update
+	 * @param doc
+	 *            XML doc for permission
+	 */
+	public static void updatePermission(int id, String doc) {
+		String sql = "UPDATE PERMISSIONS SET "
+				+ "PERM_DOC = XMLPARSE(DOCUMENT CAST (? AS CLOB) PRESERVE WHITESPACE)"
+				+ " WHERE PERM_ID = ?";
+
+		try (Connection conn = openConnection();
+				PreparedStatement updateStmt = conn.prepareStatement(sql)) {
+
+			updateStmt.setInt(1, id);
+			updateStmt.setString(2, doc);
+			updateStmt.executeUpdate();
+		} catch (SQLException e) {
+			logger.error(e);
+		}
+	}
+
+	/**
 	 * Main, testing purposes only. This can be used to setup the database as
 	 * well.
 	 *
@@ -527,22 +531,32 @@ public class DatabaseController {
 	 *             if Driver can't be loaded
 	 */
 	public static void main(String[] args) {
+		// Drop all the tables
 		dropTables();
 
 		// Build all the tables
 		createTables();
 
-		// Create NONE role
+		// Create none role
 		createRole("NONE");
 
 		// Create ADMIN role
-		createRole("ADMIN");
+		int adminid = createRole("ADMIN");
 
 		// Create User with ADMIN role
-		createUser("Bill Gates", "windows_vista", 1);
+		int billid = createUser("Bill Gates", "windows_vista", adminid);
 
-		// Create User with invalid role -> default to NONE
-		createUser("Steve Jobs", "earpods", 0);
+		try {
+			String xml = new String(
+					Files.readAllBytes(new File("tests/permissions/admin.xml").toPath()), "UTF-8");
+			int permid = createPermission(xml);
+			addPermissionToRole(adminid, permid);
+			System.out.println(userHasPermission(billid,
+					"./src/edu/wright/cs/jfiles/client/JFilesClient.java"));
+			System.out.println(userHasPermission(billid, "./tests/permissions/admin.xml"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		// Make sure to shutdown the database connection before the program exits.
 		shutdown();
