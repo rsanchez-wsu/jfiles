@@ -19,7 +19,7 @@
  *
  */
 
-package edu.wright.cs.jfiles.junit.TestCore;
+package edu.wright.cs.jfiles.junit.core;
 
 import static org.junit.Assert.assertEquals;
 
