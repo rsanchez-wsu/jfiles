@@ -53,7 +53,9 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
@@ -61,6 +63,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
+
+
 
 /**
  * Controller for main application view.
@@ -168,12 +172,21 @@ public class ClientAppViewController implements Initializable, ClipboardOwner {
 		MenuItem copy = new MenuItem("Copy");
 		MenuItem paste = new MenuItem("Paste");
 		MenuItem delete = new MenuItem("Delete");
-		menu.getItems().addAll(cut, copy, paste, delete);
+		
+		MenuItem send =  new MenuItem("Send File");
+		menu.getItems().addAll(cut, copy, paste, delete, send);
 
 		cut.setOnAction(event -> cut());
 		copy.setOnAction(event -> copy());
 		paste.setOnAction(event -> paste());
-		delete.setOnAction(event -> delete());
+		delete.setOnAction(event -> delete()); 
+		send.setOnAction(event -> {
+			try {
+				sendFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		});
 
 		return menu;
 	}
@@ -278,6 +291,26 @@ public class ClientAppViewController implements Initializable, ClipboardOwner {
 	public void delete() {
 		client.sendCommand(new Rm((String) selectedFile.getValue("path")));
 		loadDirectory(currentDirectory);
+	}
+	
+	/**
+	 * 	Send action. sends files to the JFileServer.
+	 * @throws IOException 
+	 */
+	public void sendFile() throws IOException{	
+		// How to retrieve file name?
+		System.out.println((String) selectedFile.getValue("file"));
+		DataOutputStream data = new DataOutputStream(client.streamOut);
+		FileInputStream input = new FileInputStream("Search History.txt");
+		
+		byte[] buffer = new byte[4096];
+		
+		while(input.read(buffer) > 0){
+		   data.write(buffer);
+		}
+		
+		input.close();
+		
 	}
 
 	/**
