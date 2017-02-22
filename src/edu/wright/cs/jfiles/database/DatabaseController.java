@@ -28,7 +28,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
 import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.DriverManager;

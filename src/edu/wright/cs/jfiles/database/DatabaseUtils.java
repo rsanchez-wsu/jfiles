@@ -38,6 +38,11 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+/**
+ * Database utility methods.
+ *
+ * @author Matt Gilene
+ */
 public class DatabaseUtils {
 
 	/**
@@ -47,6 +52,15 @@ public class DatabaseUtils {
 		READ, WRITE, READWRITE, NONE
 	}
 
+	/**
+	 * Checks if the given XML string gives access to given location.
+	 *
+	 * @param xml
+	 *            XML document string
+	 * @param location
+	 *            path to file
+	 * @return PermissonResult type
+	 */
 	public static PermissionResult hasAccess(String xml, String location) {
 		try {
 			File file = new File(location);
