@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE permission SYSTEM "tests/permissions/permission.dtd">
+
+<permission type=readwrite>
+	<location path="./src" />
+	<location path="./tests" />
+</permission>

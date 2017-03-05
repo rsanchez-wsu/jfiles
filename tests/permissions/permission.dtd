@@ -1,0 +1,4 @@
+<!ELEMENT permission (location*)>
+<!ELEMENT location EMPTY>
+<!ATTLIST permission type (read|write|readwrite) #REQUIRED >
+<!ATTLIST location path CDATA #REQUIRED >
