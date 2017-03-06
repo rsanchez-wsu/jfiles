@@ -21,7 +21,7 @@
 
 package edu.wright.cs.jfiles.database;
 
-import edu.wright.cs.jfiles.database.DatabaseUtils.PermissionResult;
+import edu.wright.cs.jfiles.database.DatabaseUtils.PermissionType;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -165,6 +165,7 @@ public class DatabaseController {
 	/**
 	 * Drops all the tables in the database.
 	 */
+	// TODO: There has to be a better way to accomplish this
 	public static void dropTables() {
 		try (Connection conn = openConnection(); Statement dropStmt = conn.createStatement()) {
 
@@ -429,7 +430,7 @@ public class DatabaseController {
 	 * @throws IdNotFoundException
 	 *             thrown if a user with userId does not exist in the database.
 	 */
-	public static PermissionResult userHasPermission(int userId, String location)
+	public static PermissionType userHasPermission(int userId, String location)
 			throws IdNotFoundException {
 		// Gets the permissions
 		String sql1 = "SELECT XMLSERIALIZE(PERM_DOC AS CLOB) FROM PERMISSIONS WHERE PERM_ID = "
@@ -447,8 +448,8 @@ public class DatabaseController {
 				while (rs.next()) {
 					String xml = rs.getString(1);
 					System.out.println(xml);
-					PermissionResult result = DatabaseUtils.hasAccess(xml, location);
-					if (result != PermissionResult.NONE) {
+					PermissionType result = DatabaseUtils.hasAccess(xml, location);
+					if (result != PermissionType.NONE) {
 						return result;
 					}
 				}
@@ -458,8 +459,8 @@ public class DatabaseController {
 			try (ResultSet rs = userPermSelectStmt.executeQuery()) {
 				while (rs.next()) {
 					String xml = rs.getString(1);
-					PermissionResult result = DatabaseUtils.hasAccess(xml, location);
-					if (result != PermissionResult.NONE) {
+					PermissionType result = DatabaseUtils.hasAccess(xml, location);
+					if (result != PermissionType.NONE) {
 						return result;
 					}
 				}
@@ -471,7 +472,7 @@ public class DatabaseController {
 				logger.error(e);
 			}
 		}
-		return PermissionResult.NONE;
+		return PermissionType.NONE;
 	}
 
 	/**
