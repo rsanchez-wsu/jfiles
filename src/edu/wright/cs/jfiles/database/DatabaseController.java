@@ -104,9 +104,11 @@ public class DatabaseController {
 		try (Connection conn = openConnection(); Statement createStmt = conn.createStatement()) {
 
 			try {
-				createStmt.executeUpdate("CREATE TABLE ROLES (" + "ROLE_ID INTEGER NOT NULL "
-						+ "GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1),"
-						+ "ROLE_NAME VARCHAR(20) NOT NULL," + "PRIMARY KEY (ROLE_ID),"
+				createStmt.executeUpdate("CREATE TABLE ROLES ("
+						+ "ROLE_ID INTEGER NOT NULL "
+							+ "GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1),"
+						+ "ROLE_NAME VARCHAR(20) NOT NULL,"
+						+ "PRIMARY KEY (ROLE_ID),"
 						+ "UNIQUE (ROLE_NAME))");
 			} catch (SQLException e) {
 				if (!e.getSQLState().equals("X0Y32")) {
@@ -115,9 +117,11 @@ public class DatabaseController {
 			}
 
 			try {
-				createStmt.executeUpdate("CREATE TABLE PERMISSIONS (" + "PERM_ID INTEGER NOT NULL "
-						+ "GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1),"
-						+ "PERM_DOC XML NOT NULL," + "PRIMARY KEY (PERM_ID))");
+				createStmt.executeUpdate("CREATE TABLE PERMISSIONS ("
+						+ "PERM_ID INTEGER NOT NULL "
+							+ "GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1),"
+						+ "PERM_DOC XML NOT NULL,"
+						+ "PRIMARY KEY (PERM_ID))");
 			} catch (SQLException e) {
 				if (!e.getSQLState().equals("X0Y32")) {
 					logger.error(e);
@@ -125,10 +129,14 @@ public class DatabaseController {
 			}
 
 			try {
-				createStmt.executeUpdate("CREATE TABLE USERS (" + "USER_ID INTEGER NOT NULL "
-						+ "GENERATED ALWAYS AS IDENTITY (START WITH 100000, INCREMENT BY 1),"
-						+ "USER_NAME VARCHAR(40) NOT NULL," + "USER_PASS VARCHAR(20) NOT NULL,"
-						+ "USER_ROLE INTEGER," + "PRIMARY KEY (USER_ID)," + "UNIQUE (USER_NAME),"
+				createStmt.executeUpdate("CREATE TABLE USERS ("
+						+ "USER_ID INTEGER NOT NULL "
+							+ "GENERATED ALWAYS AS IDENTITY (START WITH 100000, INCREMENT BY 1),"
+						+ "USER_NAME VARCHAR(40) NOT NULL,"
+						+ "USER_PASS VARCHAR(40) NOT NULL,"
+						+ "USER_ROLE INTEGER,"
+						+ "PRIMARY KEY (USER_ID),"
+						+ "UNIQUE (USER_NAME),"
 						+ "FOREIGN KEY (USER_ROLE) REFERENCES ROLES (ROLE_ID))");
 			} catch (SQLException e) {
 				if (!e.getSQLState().equals("X0Y32")) {
@@ -137,7 +145,8 @@ public class DatabaseController {
 			}
 
 			try {
-				createStmt.executeUpdate("CREATE TABLE USER_PERMISSIONS (" + "USER_ID INT NOT NULL,"
+				createStmt.executeUpdate("CREATE TABLE USER_PERMISSIONS ("
+						+ "USER_ID INT NOT NULL,"
 						+ "PERM_ID INT NOT NULL,"
 						+ "FOREIGN KEY (USER_ID) REFERENCES USERS (USER_ID),"
 						+ "FOREIGN KEY (PERM_ID) REFERENCES PERMISSIONS (PERM_ID))");
@@ -148,7 +157,8 @@ public class DatabaseController {
 			}
 
 			try {
-				createStmt.executeUpdate("CREATE TABLE ROLE_PERMISSIONS (" + "ROLE_ID INT NOT NULL,"
+				createStmt.executeUpdate("CREATE TABLE ROLE_PERMISSIONS ("
+						+ "ROLE_ID INT NOT NULL,"
 						+ "PERM_ID INT NOT NULL,"
 						+ "FOREIGN KEY (ROLE_ID) REFERENCES ROLES (ROLE_ID),"
 						+ "FOREIGN KEY (PERM_ID) REFERENCES PERMISSIONS (PERM_ID))");
