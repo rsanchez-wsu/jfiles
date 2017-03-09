@@ -21,15 +21,10 @@
 
 package edu.wright.cs.jfiles.client;
 
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-=======
 import edu.wright.cs.jfiles.common.NetUtil;
 import edu.wright.cs.jfiles.socketmanagement.SocketManager;
 //import org.apache.logging.log4j.LogManager;
 //import org.apache.logging.log4j.Logger;
->>>>>>> team1-dev
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -43,103 +38,25 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-<<<<<<< HEAD
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Properties;
-=======
->>>>>>> team1-dev
 import java.util.Scanner;
 
 /**
  * The main class of the JFiles client application.
- * This method can use many threads for the same object. 
- * It's purpose is to try to find connections to the server.
+ * 
  * @author Roberto C. Sánchez &lt;roberto.sanchez@wright.edu&gt;
  *
  */
-
-// Implementing runnable for reusability and inheritance
 public class JFilesClient implements Runnable {
-//Variables to create host and port
-//*READ ME*	
-//This code could use better variable names
-	static final Logger logger = LogManager.getLogger(JFilesClient.class);
-	private static final String UTF_8 = "UTF-8";
+
+	//static final Logger logger = LogManager.getLogger(JFilesClient.class);
 	private String host = "localhost";
 	private int port = 9786;
+	private static final String UTF_8 = "UTF-8";
 	private boolean running = true;
 	static volatile String serverCommand = null;
 	private SocketManager sockMan;
 	private Scanner kb;
 	NetUtil util = new NetUtil();
-	
-	/**
-	 * This is a method for the class above.
-	 * Handles allocating resources needed for the client.
-	 * @throws IOException if there is a problem binding to the socket
-	 */
-	//Needs to be coded
-	public JFilesClient() {
-		
-	}
-
-	/**
-	 * Handles allocating resources needed for the server.
-	 * 
-	 * @throws IOException
-	 *If there is a problem binding to the socket
-	 */
-	private static void init() throws IOException {
-		Properties prop = new Properties();
-		FileInputStream fis = null;
-		File config = null;	
-		
-		//Array of strings containing possible paths to check for config files
-		String[] configPaths = {"$HOME/.jfiles/clientConfig.xml",
-				"/usr/local/etc/jfiles/clientConfig.xml",
-				"/opt/etc/jfiles/clientConfig.xml",
-				"/etc/jfiles/clientConfig.xml",
-				"%PROGRAMFILES%/jFiles/etc/clientConfig.xml",
-				"%APPDATA%/jFiles/etc/clientConfig.xml"};
-		
-		//Checking location(s) for the config file;
-		for (int i = 0; i < configPaths.length; i++) {
-			if (new File(configPaths[i]).exists()) {
-				config = new File(configPaths[i]);
-				break;
-			}
-		}
-		
-		//Output location where the config file was found. Otherwise warn and use defaults.
-		if (config == null) {	//No configuration	
-			logger.info("No config file found. Using default values.");
-		} else { //configuration found
-			logger.info("Config file found in " + config.getPath());
-			//Read file
-			try {
-				//Reads xmlfile into prop object as key value pairs
-				fis = new FileInputStream(config);
-				prop.loadFromXML(fis);			
-			} catch (IOException e) { //found exception 
-				logger.error("IOException occured when trying to access the server config", e);
-			} finally { //close file
-				if (fis != null) {
-					fis.close();
-				}
-			}
-		}
-	
-		//Add setters here. First value is the key name and second is the default value.
-		//Default values are required as they are used if the config file cannot be found OR if
-		// the config file doesn't contain the key.
-		port = Integer.parseInt(prop.getProperty("port","9786"));
-		logger.info("Config set to port " + port);
-		
-		host = prop.getProperty("host","localhost");
-		logger.info("Config set max threads to " + host);		
-	//static final Logger logger = LogManager.getLogger(JFilesClient.class);
-	
 
 	/**
 	 * No argument constructor.
@@ -147,12 +64,6 @@ public class JFilesClient implements Runnable {
 	public JFilesClient() {
 	}
 
-	/**
-	 * Run is a method that is suppose to 
-	 * communicate between the client and the server.
-	 *
-	 */
-	
 	@Override
 	public void run() {
 		try (Socket socket = new Socket(host, port)) {
@@ -172,35 +83,6 @@ public class JFilesClient implements Runnable {
 			keyboard.start();
 			Thread internalCommand = new Thread(new Runnable() {
 
-					while ((startPoint = fileSent.read(chunkOfBytes)) != -1) {
-						checkFile.update(chunkOfBytes, 0, startPoint);
-					}
-					//The finalized checksum
-					byte[] checksum = checkFile.digest();
-					System.out.print("Digest(in bytes):: ");
-					for (int i = 0; i < checksum.length - 1 ; i++) {
-						System.out.print(checksum[i] );
-					}
-					System.out.println();
-				*/
-			//BufferedReader in = new BufferedReader(isr);
-			//Get user input
-			@SuppressWarnings("resource")
-			/*Eclipse complained that kb wasn't being used, not sure why.
-			kb input is used on the line after it is initialized.
-			Overrode resource leak warning for now */
-			
-			//Create scanner for UTF_8
-			Scanner kb = new Scanner(System.in, UTF_8);
-			String line = kb.nextLine();
-			
-			//Splits the input from the file into an array separated by spaces.
-			//Switch statement for which command was entered. 
-			switch (line.trim()) {
-			//If file was entered
-			case "FILE": 
-				fileCommand(line, socket);
-				break;
 				@Override
 				public void run() {
 					while (running) {
@@ -284,20 +166,6 @@ public class JFilesClient implements Runnable {
 				commandInput = null;
 			}
 		} catch (UnknownHostException e) {
-			logger.error("Unknown host exception was thrown", e);
-		} catch (IOException e) {
-			logger.error("An error has occurred", e);
-			//
-			//
-			//
-			//Check to see if we need to change the error messages
-			//to print out something meaningful.
-			//
-			//
-			//
-		}  //catch ( NoSuchAlgorithmException e) {
-			//logger.error("No such algorithm exception was thrown", e);
-		//} 
 		//	logger.error("Could not connect to host at that address", e);
 		} catch (IOException e) {
 		//	logger.error("An error occured with the connection", e);
@@ -314,7 +182,6 @@ public class JFilesClient implements Runnable {
 	 * @param sock an active Socket object connected to server
 	 */
 	public void fileCommand(String file, Socket sock) {
-		//Creates a new file to write to
 		BufferedWriter bw = null;
 		try {
 			// Sends FILE command to output stream
@@ -323,10 +190,6 @@ public class JFilesClient implements Runnable {
 			out.write("FILE " + file + "\n");
 			out.flush();
 			
-			BufferedWriter bw = new BufferedWriter(new FileWriter("AUTHORS-COPY"));
-			String line;
-			//Whenever there's an output, write to the file.
-			while ((line = br.readLine()) != null) {
 			// Reads in file from server
 			if (!file.equals("QUIT") || !file.equals("EXIT")) {
 				InputStreamReader isr = new InputStreamReader(sock.getInputStream(), UTF_8);
@@ -358,7 +221,6 @@ public class JFilesClient implements Runnable {
 			}
 			
 		} catch (IOException e) {
-			logger.error("An error has occurred", e);
 			//logger.error("An error occurred while communicating with the server", e);
 		} finally {
 			if (bw != null) {
@@ -376,38 +238,6 @@ public class JFilesClient implements Runnable {
 	 * @param filepath the location of the file to send
 	 * @param sock the active socket on which the server connection resides
 	 */
-	public byte[] getChecksum(File file) {
-		//Initialize checksum and the file input stream.
-		byte[] checksum = null;
-		FileInputStream fileSent = null;
-		
-		try {
-			MessageDigest checkFile = MessageDigest.getInstance("MD5");
-			//@SuppressWarnings("resource")
-			fileSent = new FileInputStream(file);
-			// Creating a byte array so we can read the bytes of the file in chunks. 
-			byte[] chunkOfBytes = new byte[(int) file.length()];
-			// Used as the place holder for the array
-			int startPoint = 0;
-			//While there is a value inside the file, update.
-			while ((startPoint = fileSent.read(chunkOfBytes)) != -1) { 
-				checkFile.update(chunkOfBytes, 0, startPoint);
-			}
-			//The finalized checksum
-			checksum = checkFile.digest();
-			System.out.print("Digest(in bytes):: ");
-			for (int i = 0; i < checksum.length - 1; i++) {
-				System.out.print(checksum[i]);
-			}
-		//New line	
-			System.out.println();
-
-		} catch (NoSuchAlgorithmException e) {
-			logger.error("No such algorithm exception was thrown.", e);;
-			//
-			//Team1-dev changes from 2/10/17 were here
-			//
-			//
 	public void fileSendCommand(String filepath, Socket sock) {
 		try (BufferedReader br = new BufferedReader(
 				new InputStreamReader(new FileInputStream(filepath), "UTF-8"))) {
@@ -433,21 +263,9 @@ public class JFilesClient implements Runnable {
 			
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
-//end team1-dev changes from 2/10/17
-			//
-			
 		} catch (FileNotFoundException e) {
-			logger.error("The file was unable to be found.", e);
+			e.printStackTrace();
 		} catch (IOException e) {
-			logger.error("An error has occurred", e);
-		} finally {
-			if (fileSent != null) {
-				try {
-					fileSent.close();
-				} catch (IOException e) {
-					logger.error("An IOException was thrown while trying to close fileSent", e);
-				}
-			}
 			e.printStackTrace();
 		}
 	}
@@ -496,12 +314,7 @@ public class JFilesClient implements Runnable {
 	 */
 
 	public static void main(String[] args) {
-		logger.info("Starting the client");
-		try {
-			init();
-		} catch (IOException e) {
-			logger.error("An error has occurred", e);
-		}
+		System.out.println("Starting the client");
 		JFilesClient jf = new JFilesClient();
 
 		Thread thread = new Thread(jf);
