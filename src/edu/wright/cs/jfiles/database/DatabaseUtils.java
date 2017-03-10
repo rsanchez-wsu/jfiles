@@ -48,7 +48,7 @@ public class DatabaseUtils {
 	/**
 	 * Possible permission access results.
 	 */
-	public enum PermissionResult {
+	public enum PermissionType {
 		READ, WRITE, READWRITE, NONE
 	}
 
@@ -61,7 +61,7 @@ public class DatabaseUtils {
 	 *            path to file
 	 * @return PermissonResult type
 	 */
-	public static PermissionResult hasAccess(String xml, String location) {
+	public static PermissionType hasAccess(String xml, String location) {
 		try {
 			File file = new File(location);
 			XPath xpath = XPathFactory.newInstance().newXPath();
@@ -72,7 +72,7 @@ public class DatabaseUtils {
 					.evaluate(xmlDocument, XPathConstants.NODESET);
 			String type = (String) xpath.compile("/permission/@type").evaluate(xmlDocument,
 					XPathConstants.STRING);
-			PermissionResult permissionType = PermissionResult.valueOf(type);
+			PermissionType permissionType = PermissionType.valueOf(type);
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				File permLocation = new File(nodeList.item(i).getTextContent());
 				if (file.equals(permLocation)) {
@@ -96,6 +96,6 @@ public class DatabaseUtils {
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		}
-		return PermissionResult.NONE;
+		return PermissionType.NONE;
 	}
 }

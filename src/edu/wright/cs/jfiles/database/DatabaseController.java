@@ -21,7 +21,7 @@
 
 package edu.wright.cs.jfiles.database;
 
-import edu.wright.cs.jfiles.database.DatabaseUtils.PermissionResult;
+import edu.wright.cs.jfiles.database.DatabaseUtils.PermissionType;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,6 +35,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class used to perform actions on the database.
@@ -53,10 +55,12 @@ public class DatabaseController {
 	/**
 	 * Prevents Instantiation, this class is meant to be completely static.
 	 */
-	private DatabaseController() {}
+	private DatabaseController() {
+	}
 
 	/**
 	 * Opens a connection to the database.
+	 *
 	 * @return JDBC Connection
 	 */
 	public static Connection openConnection() {
@@ -67,8 +71,10 @@ public class DatabaseController {
 			conn = DriverManager.getConnection(DATABASE_URL_OPEN);
 		} catch (SQLException e) {
 			if (e.getSQLState().equals("XJ040")) {
-				logger.error("%n\tConnection already open somwhere else,"
-						+ " make sure no Eclipse Data Tools Platform connections are open.", e);
+				logger.error(
+						"%n\tConnection already open somwhere else,"
+								+ " make sure no Eclipse Data Tools Platform connections are open.",
+						e);
 			} else {
 				logger.error(e);
 			}
@@ -97,12 +103,10 @@ public class DatabaseController {
 	 */
 	// TODO: There has to be a better way to accomplish this
 	public static void createTables() {
-		try (	Connection conn = openConnection();
-				Statement createStmt = conn.createStatement()) {
+		try (Connection conn = openConnection(); Statement createStmt = conn.createStatement()) {
 
 			try {
-				createStmt.executeUpdate(
-						"CREATE TABLE ROLES ("
+				createStmt.executeUpdate("CREATE TABLE ROLES ("
 						+ "ROLE_ID INTEGER NOT NULL "
 							+ "GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1),"
 						+ "ROLE_NAME VARCHAR(20) NOT NULL,"
@@ -110,63 +114,59 @@ public class DatabaseController {
 						+ "UNIQUE (ROLE_NAME))");
 			} catch (SQLException e) {
 				if (!e.getSQLState().equals("X0Y32")) {
-					e.printStackTrace();
+					logger.error(e);
 				}
 			}
 
 			try {
-				createStmt.executeUpdate(
-						"CREATE TABLE PERMISSIONS ("
+				createStmt.executeUpdate("CREATE TABLE PERMISSIONS ("
 						+ "PERM_ID INTEGER NOT NULL "
 							+ "GENERATED ALWAYS AS IDENTITY (START WITH 0, INCREMENT BY 1),"
 						+ "PERM_DOC XML NOT NULL,"
 						+ "PRIMARY KEY (PERM_ID))");
 			} catch (SQLException e) {
 				if (!e.getSQLState().equals("X0Y32")) {
-					e.printStackTrace();
+					logger.error(e);
 				}
 			}
 
 			try {
-				createStmt.executeUpdate(
-						"CREATE TABLE USERS ("
+				createStmt.executeUpdate("CREATE TABLE USERS ("
 						+ "USER_ID INTEGER NOT NULL "
 							+ "GENERATED ALWAYS AS IDENTITY (START WITH 100000, INCREMENT BY 1),"
 						+ "USER_NAME VARCHAR(40) NOT NULL,"
-						+ "USER_PASS VARCHAR(20) NOT NULL,"
+						+ "USER_PASS VARCHAR(40) NOT NULL,"
 						+ "USER_ROLE INTEGER,"
 						+ "PRIMARY KEY (USER_ID),"
 						+ "UNIQUE (USER_NAME),"
 						+ "FOREIGN KEY (USER_ROLE) REFERENCES ROLES (ROLE_ID))");
 			} catch (SQLException e) {
 				if (!e.getSQLState().equals("X0Y32")) {
-					e.printStackTrace();
+					logger.error(e);
 				}
 			}
 
 			try {
-				createStmt.executeUpdate(
-						"CREATE TABLE USER_PERMISSIONS ("
+				createStmt.executeUpdate("CREATE TABLE USER_PERMISSIONS ("
 						+ "USER_ID INT NOT NULL,"
 						+ "PERM_ID INT NOT NULL,"
 						+ "FOREIGN KEY (USER_ID) REFERENCES USERS (USER_ID),"
 						+ "FOREIGN KEY (PERM_ID) REFERENCES PERMISSIONS (PERM_ID))");
 			} catch (SQLException e) {
 				if (!e.getSQLState().equals("X0Y32")) {
-					e.printStackTrace();
+					logger.error(e);
 				}
 			}
 
 			try {
-				createStmt.executeUpdate(
-						"CREATE TABLE ROLE_PERMISSIONS ("
+				createStmt.executeUpdate("CREATE TABLE ROLE_PERMISSIONS ("
 						+ "ROLE_ID INT NOT NULL,"
 						+ "PERM_ID INT NOT NULL,"
 						+ "FOREIGN KEY (ROLE_ID) REFERENCES ROLES (ROLE_ID),"
 						+ "FOREIGN KEY (PERM_ID) REFERENCES PERMISSIONS (PERM_ID))");
 			} catch (SQLException e) {
 				if (!e.getSQLState().equals("X0Y32")) {
-					e.printStackTrace();
+					logger.error(e);
 				}
 			}
 		} catch (SQLException e) {
@@ -177,47 +177,47 @@ public class DatabaseController {
 	/**
 	 * Drops all the tables in the database.
 	 */
+	// TODO: There has to be a better way to accomplish this
 	public static void dropTables() {
-		try (	Connection conn = openConnection();
-				Statement dropStmt = conn.createStatement()) {
+		try (Connection conn = openConnection(); Statement dropStmt = conn.createStatement()) {
 
 			try {
 				dropStmt.executeUpdate("DROP TABLE ROLE_PERMISSIONS");
 			} catch (SQLException e) {
 				if (!e.getSQLState().equals("X0Y32")) {
-					e.printStackTrace();
+					logger.error(e);
 				}
 			}
 			try {
 				dropStmt.executeUpdate("DROP TABLE USER_PERMISSIONS");
 			} catch (SQLException e) {
 				if (!e.getSQLState().equals("X0Y32")) {
-					e.printStackTrace();
+					logger.error(e);
 				}
 			}
 			try {
 				dropStmt.executeUpdate("DROP TABLE USERS");
 			} catch (SQLException e) {
 				if (!e.getSQLState().equals("X0Y32")) {
-					e.printStackTrace();
+					logger.error(e);
 				}
 			}
 			try {
 				dropStmt.executeUpdate("DROP TABLE ROLES");
 			} catch (SQLException e) {
 				if (!e.getSQLState().equals("X0Y32")) {
-					e.printStackTrace();
+					logger.error(e);
 				}
 			}
 			try {
 				dropStmt.executeUpdate("DROP TABLE PERMISSIONS");
 			} catch (SQLException e) {
 				if (!e.getSQLState().equals("X0Y32")) {
-					e.printStackTrace();
+					logger.error(e);
 				}
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 	}
 
@@ -235,14 +235,20 @@ public class DatabaseController {
 	 *            the user's password
 	 * @param role
 	 *            the user's role
+	 * @throws FailedInsertException
+	 *             thrown when invalid user data has been attempted to be
+	 *             inserted into the database and the user could not be created.
+	 * @throws IdNotFoundException
+	 *             thrown when a database ID column can't be found for the given
+	 *             role.
 	 */
-	public static int createUser(String name, String pass, int role) {
+	public static int createUser(String name, String pass, int role)
+			throws FailedInsertException, IdNotFoundException {
 		String sql = "INSERT INTO USERS (USER_NAME, USER_PASS, USER_ROLE) VALUES (?, ?, ?)";
-		int id = -1;
-		try (	Connection conn = openConnection();
+		int id = 0;
+		try (Connection conn = openConnection();
 				PreparedStatement insertStmt =
 						conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
 
 			// Create user in database.
 			insertStmt.setString(1, name);
@@ -259,11 +265,9 @@ public class DatabaseController {
 			}
 		} catch (SQLException e) {
 			if (e.getSQLState().equals("23505")) {
-				logger.error(
-						String.format("%n\tUser %s not added. Users must have unique names", name));
+				throw new FailedInsertException("Users must have unique names");
 			} else if (e.getSQLState().equals("23503")) {
-				logger.error(String.format("%n\tUser %s not added. Role with ID=%d not found.",
-						name, role));
+				throw new IdNotFoundException("Role with ID= " + role + " not found");
 			} else {
 				logger.error(e);
 			}
@@ -282,12 +286,15 @@ public class DatabaseController {
 	 * @param doc
 	 *            XML document
 	 * @return id of the permission created
+	 * @throws FailedInsertException
+	 *             thrown if the the permission creation failed and no ID for
+	 *             the created permission can be found.
 	 */
-	public static int createPermission(String doc) {
+	public static int createPermission(String doc) throws FailedInsertException {
 		String sql = "INSERT INTO PERMISSIONS (PERM_DOC) "
 				+ "VALUES (XMLPARSE(DOCUMENT CAST (? AS CLOB) PRESERVE WHITESPACE))";
-		int id = -1;
-		try (	Connection conn = openConnection();
+		int id = 0;
+		try (Connection conn = openConnection();
 				PreparedStatement insertStmt =
 						conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -304,7 +311,7 @@ public class DatabaseController {
 					logger.info(
 							String.format("%n\tPermission added to the database with ID=%d.", id));
 				} else {
-					logger.error("%n\tPermission not added to the database, ID not found");
+					throw new FailedInsertException();
 				}
 			}
 		} catch (SQLException e) {
@@ -325,27 +332,29 @@ public class DatabaseController {
 	 * @param name
 	 *            name of the role
 	 * @return the id of the role created.
+	 * @throws FailedInsertException
+	 *             thrown if the the role creation failed and no ID for the
+	 *             created role can be found.
 	 */
-	public static int createRole(String name) {
+	public static int createRole(String name) throws FailedInsertException {
 		int id = -1;
 		String sql = "INSERT INTO ROLES (ROLE_NAME) VALUES (?)";
 
-		try (	Connection conn = openConnection();
+		try (Connection conn = openConnection();
 				PreparedStatement insertStmt =
 						conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
 			insertStmt.setString(1, name);
 			insertStmt.executeUpdate();
 
-			// Query the table for the ID of the role we just created
+			// Get the ID of the role that was just created
 			try (ResultSet rs = insertStmt.getGeneratedKeys()) {
 				if (rs.next()) {
 					id = rs.getInt(1);
 					logger.info(String.format("%n\tRole %s added to the database with ID=%d.", name,
 							id));
 				} else {
-					logger.error(String
-							.format("%n\tRole %s not added to the database, ID not found", name));
+					throw new FailedInsertException();
 				}
 			}
 		} catch (SQLException e) {
@@ -365,8 +374,11 @@ public class DatabaseController {
 	 *            ID of role to add permission to
 	 * @param permId
 	 *            ID of the permission to add
+	 * @throws IdNotFoundException
+	 *             thrown if the roleId or permId does not exist in the
+	 *             database.
 	 */
-	public static void addPermissionToRole(int roleId, int permId) {
+	public static void addPermissionToRole(int roleId, int permId) throws IdNotFoundException {
 		String sql = "INSERT INTO ROLE_PERMISSIONS (ROLE_ID, PERM_ID) VALUES (?, ?)";
 
 		try (Connection conn = openConnection();
@@ -379,8 +391,7 @@ public class DatabaseController {
 					permId, roleId));
 		} catch (SQLException e) {
 			if (e.getSQLState().equals("23503")) {
-				logger.error("%n\tPermission not added to role. ROLE_ID or PERM_ID "
-						+ "does not match an exisiting ROLE or PERMISSION.");
+				throw new IdNotFoundException("roleId or permId could not be found");
 			} else {
 				logger.error(e);
 			}
@@ -394,8 +405,11 @@ public class DatabaseController {
 	 *            ID of role to add permission to
 	 * @param permId
 	 *            ID of the permission to add
+	 * @throws IdNotFoundException
+	 *             thrown if the userId or permId does not exist in the
+	 *             database.
 	 */
-	public static void addPermissionToUser(int userId, int permId) {
+	public static void addPermissionToUser(int userId, int permId) throws IdNotFoundException {
 		String sql = "INSERT INTO USER_PERMISSIONS (USER_ID, PERM_ID) VALUES (?, ?)";
 
 		try (Connection conn = openConnection();
@@ -408,8 +422,7 @@ public class DatabaseController {
 					permId, userId));
 		} catch (SQLException e) {
 			if (e.getSQLState().equals("23503")) {
-				logger.error("%n\tPermission not added to user. USER_ID or PERM_ID "
-						+ "does not match an exisiting USER or PERMISSION.");
+				throw new IdNotFoundException("userId or permId could not be found");
 			} else {
 				logger.error(e);
 			}
@@ -426,8 +439,11 @@ public class DatabaseController {
 	 *            File location
 	 * @return Type of access the user has (READ, WRITE, READWRITE) or NONE if
 	 *         the user doesn't have access.
+	 * @throws IdNotFoundException
+	 *             thrown if a user with userId does not exist in the database.
 	 */
-	public static PermissionResult userHasPermission(int userId, String location) {
+	public static PermissionType userHasPermission(int userId, String location)
+			throws IdNotFoundException {
 		// Gets the permissions
 		String sql1 = "SELECT XMLSERIALIZE(PERM_DOC AS CLOB) FROM PERMISSIONS WHERE PERM_ID = "
 				+ "(SELECT PERM_ID FROM USER_PERMISSIONS WHERE USER_ID = ?)";
@@ -435,7 +451,7 @@ public class DatabaseController {
 				+ "(SELECT PERM_ID FROM ROLE_PERMISSIONS WHERE ROLE_ID = "
 				+ "(SELECT USER_ROLE FROM USERS WHERE USER_ID = ?))";
 
-		try (	Connection conn = openConnection();
+		try (Connection conn = openConnection();
 				PreparedStatement rolePermSelectStmt = conn.prepareStatement(sql1);
 				PreparedStatement userPermSelectStmt = conn.prepareStatement(sql2)) {
 
@@ -444,32 +460,37 @@ public class DatabaseController {
 				while (rs.next()) {
 					String xml = rs.getString(1);
 					System.out.println(xml);
-					PermissionResult result = DatabaseUtils.hasAccess(xml, location);
-					if (result != PermissionResult.NONE) {
+					PermissionType result = DatabaseUtils.hasAccess(xml, location);
+					if (result != PermissionType.NONE) {
 						return result;
 					}
 				}
 			}
+
 			userPermSelectStmt.setInt(1, userId);
 			try (ResultSet rs = userPermSelectStmt.executeQuery()) {
 				while (rs.next()) {
 					String xml = rs.getString(1);
-					PermissionResult result = DatabaseUtils.hasAccess(xml, location);
-					if (result != PermissionResult.NONE) {
+					PermissionType result = DatabaseUtils.hasAccess(xml, location);
+					if (result != PermissionType.NONE) {
 						return result;
 					}
 				}
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			if (e.getSQLState().equals("23503")) {
+				throw new IdNotFoundException("User with ID = " + userId + " could not be found");
+			} else {
+				logger.error(e);
+			}
 		}
-		return PermissionResult.NONE;
+		return PermissionType.NONE;
 	}
 
 	/**
 	 * Updates all of the data for a given user.
 	 *
-	 * @param id
+	 * @param userId
 	 *            Id of user to update
 	 * @param name
 	 *            New name
@@ -477,34 +498,43 @@ public class DatabaseController {
 	 *            New pass
 	 * @param role
 	 *            New role
+	 * @throws IdNotFoundException
+	 *             thrown if a user with userId does not exist in the database.
 	 */
-	public static void updateUser(int id, String name, String pass, int role) {
-		String sql = "UPDATE USERS SET "
-				+ "USER_NAME = ?, USER_PASS = ?, USER_ROLE = ? "
+	public static void updateUser(int userId, String name, String pass, int role)
+			throws IdNotFoundException {
+		String sql = "UPDATE USERS SET " + "USER_NAME = ?, USER_PASS = ?, USER_ROLE = ? "
 				+ "WHERE USER_ID = ?";
 
-		try (	Connection conn = openConnection();
+		try (Connection conn = openConnection();
 				PreparedStatement updateStmt = conn.prepareStatement(sql)) {
 
 			updateStmt.setString(1, name);
 			updateStmt.setString(2, pass);
 			updateStmt.setInt(3, role);
-			updateStmt.setInt(4, id);
+			updateStmt.setInt(4, userId);
 			updateStmt.executeUpdate();
 		} catch (SQLException e) {
-			logger.error(e);
+			if (e.getSQLState().equals("23503")) {
+				throw new IdNotFoundException("User with ID = " + userId + " could not be found");
+			} else {
+				logger.error(e);
+			}
 		}
 	}
 
 	/**
 	 * Updates all of the data for a given permission.
 	 *
-	 * @param id
+	 * @param permId
 	 *            Id of user to update
 	 * @param doc
 	 *            XML doc for permission
+	 * @throws IdNotFoundException
+	 *             thrown if a permission with permId does not exist in the
+	 *             database.
 	 */
-	public static void updatePermission(int id, String doc) {
+	public static void updatePermission(int permId, String doc) throws IdNotFoundException {
 		String sql = "UPDATE PERMISSIONS SET "
 				+ "PERM_DOC = XMLPARSE(DOCUMENT CAST (? AS CLOB) PRESERVE WHITESPACE)"
 				+ " WHERE PERM_ID = ?";
@@ -512,12 +542,41 @@ public class DatabaseController {
 		try (Connection conn = openConnection();
 				PreparedStatement updateStmt = conn.prepareStatement(sql)) {
 
-			updateStmt.setInt(1, id);
+			updateStmt.setInt(1, permId);
 			updateStmt.setString(2, doc);
 			updateStmt.executeUpdate();
 		} catch (SQLException e) {
+			if (e.getSQLState().equals("23503")) {
+				throw new IdNotFoundException("User with ID = " + permId + " could not be found");
+			} else {
+				logger.error(e);
+			}
+		}
+	}
+
+	/**
+	 * Returns the list of users in the database.
+	 *
+	 * @return List contating user id, name and role.
+	 */
+	public static List<Object[]> getUsers() {
+		String sql = "SELECT USER_ID, USER_NAME, USER_ROLE FROM USERS";
+		List<Object[]> users = new ArrayList<>();
+		try (Connection conn = openConnection();
+				PreparedStatement selectStmt = conn.prepareStatement(sql)) {
+
+			try (ResultSet rs = selectStmt.executeQuery()) {
+				while (rs.next()) {
+					int id = rs.getInt(1);
+					String name = rs.getString(2);
+					int role = rs.getInt(3);
+					users.add(new Object[] { id, name, role });
+				}
+			}
+		} catch (SQLException e) {
 			logger.error(e);
 		}
+		return users;
 	}
 
 	/**
@@ -537,27 +596,59 @@ public class DatabaseController {
 		createTables();
 
 		// Create none role
-		createRole("NONE");
+		int noneid = 0;
+		try {
+			noneid = createRole("NONE");
+		} catch (FailedInsertException e) {
+			logger.error(e);
+		}
 
 		// Create ADMIN role
-		int adminid = createRole("ADMIN");
+		int adminid = 0;
+		try {
+			adminid = createRole("ADMIN");
+		} catch (FailedInsertException e) {
+			logger.error(e);
+		}
 
 		// Create User with ADMIN role
-		int billid = createUser("Bill Gates", "windows_vista", adminid);
+		int user1id = 0;
+		try {
+			user1id = createUser("Bill Gates", "windows_vista", adminid);
+		} catch (FailedInsertException | IdNotFoundException e) {
+			logger.error(e);
+		}
+
+		int user2id = 0;
+		try {
+			user2id = createUser("Steve Jobs", "earpods_rule", noneid);
+		} catch (FailedInsertException | IdNotFoundException e) {
+			logger.error(e);
+		}
 
 		try {
 			String xml = new String(
 					Files.readAllBytes(new File("tests/permissions/admin.xml").toPath()), "UTF-8");
 			int permid = createPermission(xml);
 			addPermissionToRole(adminid, permid);
-			System.out.println(userHasPermission(billid,
+			System.out.println(userHasPermission(user1id,
 					"./src/edu/wright/cs/jfiles/client/JFilesClient.java"));
-			System.out.println(userHasPermission(billid, "./tests/permissions/admin.xml"));
+			System.out.println(userHasPermission(user1id, "./tests/permissions/admin.xml"));
+			System.out.println(userHasPermission(user2id, "./src"));
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e);
+		} catch (FailedInsertException e) {
+			logger.error(e);
+		} catch (IdNotFoundException e) {
+			logger.error(e);
 		}
 
-		// Make sure to shutdown the database connection before the program exits.
+		for (Object[] user : getUsers()) {
+			System.out.println(String.format("%d\t%s\t%d", user[0], user[1], user[2]));
+		}
+
+		// Make sure to shutdown the database connection before the program
+		// exits.
 		shutdown();
 	}
 }
