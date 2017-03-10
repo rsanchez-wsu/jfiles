@@ -35,6 +35,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class used to perform actions on the database.
@@ -553,6 +555,31 @@ public class DatabaseController {
 	}
 
 	/**
+	 * Returns the list of users in the database.
+	 *
+	 * @return List contating user id, name and role.
+	 */
+	public static List<Object[]> getUsers() {
+		String sql = "SELECT USER_ID, USER_NAME, USER_ROLE FROM USERS";
+		List<Object[]> users = new ArrayList<>();
+		try (Connection conn = openConnection();) {
+			PreparedStatement selectStmt = conn.prepareStatement(sql);
+
+			try (ResultSet rs = selectStmt.executeQuery()) {
+				while (rs.next()) {
+					int id = rs.getInt(1);
+					String name = rs.getString(2);
+					int role = rs.getInt(3);
+					users.add(new Object[] { id, name, role });
+				}
+			}
+		} catch (SQLException e) {
+			logger.error(e);
+		}
+		return users;
+	}
+
+	/**
 	 * Main, testing purposes only. This can be used to setup the database as
 	 * well.
 	 *
@@ -614,6 +641,10 @@ public class DatabaseController {
 			logger.error(e);
 		} catch (IdNotFoundException e) {
 			logger.error(e);
+		}
+
+		for (Object[] user : getUsers()) {
+			System.out.println(String.format("%d\t%s\t%d", user[0], user[1], user[2]));
 		}
 
 		// Make sure to shutdown the database connection before the program
