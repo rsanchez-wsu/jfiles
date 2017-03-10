@@ -562,8 +562,8 @@ public class DatabaseController {
 	public static List<Object[]> getUsers() {
 		String sql = "SELECT USER_ID, USER_NAME, USER_ROLE FROM USERS";
 		List<Object[]> users = new ArrayList<>();
-		try (Connection conn = openConnection();) {
-			PreparedStatement selectStmt = conn.prepareStatement(sql);
+		try (Connection conn = openConnection();
+				PreparedStatement selectStmt = conn.prepareStatement(sql)) {
 
 			try (ResultSet rs = selectStmt.executeQuery()) {
 				while (rs.next()) {
