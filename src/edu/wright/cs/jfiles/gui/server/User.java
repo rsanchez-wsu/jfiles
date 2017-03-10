@@ -23,37 +23,86 @@ package edu.wright.cs.jfiles.gui.server;
 
 import javafx.beans.property.SimpleStringProperty;
 
+/**
+ * Container class used to store data for use in a table.
+ *
+ * @author Matt Gilene
+ *
+ */
 public class User {
 	private final SimpleStringProperty id;
 	private final SimpleStringProperty name;
 	private final SimpleStringProperty role;
 
+	/**
+	 * Public constructor.
+	 *
+	 * @param id
+	 *            user id
+	 * @param name
+	 *            user name
+	 * @param role
+	 *            user role
+	 */
 	public User(String id, String name, String role) {
 		this.id = new SimpleStringProperty(id);
 		this.name = new SimpleStringProperty(name);
 		this.role = new SimpleStringProperty(role);
 	}
 
+	/**
+	 * Get ID.
+	 *
+	 * @return id
+	 */
 	public String getId() {
 		return id.get();
 	}
 
+	/**
+	 * Sets ID.
+	 *
+	 * @param id
+	 *            user id
+	 */
 	public void setId(String id) {
 		this.id.set(id);
 	}
 
+	/**
+	 * Get name.
+	 *
+	 * @return name
+	 */
 	public String getName() {
 		return name.get();
 	}
 
+	/**
+	 * Sets name.
+	 *
+	 * @param name
+	 *            user name
+	 */
 	public void setName(String name) {
 		this.name.set(name);
 	}
 
+	/**
+	 * Get role.
+	 *
+	 * @return role
+	 */
 	public String getRole() {
 		return role.get();
 	}
 
+	/**
+	 * Sets role.
+	 *
+	 * @param role
+	 *            user role
+	 */
 	public void setRole(String role) {
 		this.role.set(role);
 	}
