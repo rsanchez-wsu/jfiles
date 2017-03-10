@@ -21,16 +21,28 @@
 
 package edu.wright.cs.jfiles.gui.server;
 
+import edu.wright.cs.jfiles.database.DatabaseController;
+import edu.wright.cs.jfiles.database.FailedInsertException;
+import edu.wright.cs.jfiles.database.IdNotFoundException;
 import edu.wright.cs.jfiles.server.JFilesServer;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.security.SecureRandom;
+import java.util.List;
 import java.util.ResourceBundle;
 
 
@@ -45,12 +57,35 @@ public class ServerAppViewController implements Initializable {
 	@FXML
 	TextArea consoleOutput;
 
+	@FXML
+	TableView<User> userTable;
+	@FXML
+	TableColumn<User, String> userTable_id;
+	@FXML
+	TableColumn<User, String> userTable_name;
+	@FXML
+	TableColumn<User, String> userTable_role;
+	@FXML
+	TableColumn<User, String> userTable_status;
+
 	private JFilesServer server;
 	Thread serverThread;
 	private static int PORT = 9786;
 
+	private ObservableList<User> userlist = FXCollections.observableArrayList();
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		userTable_id.setCellValueFactory(new PropertyValueFactory<User, String>("id"));
+		userTable_name.setCellValueFactory(new PropertyValueFactory<User, String>("name"));
+		userTable_role.setCellValueFactory(new PropertyValueFactory<User, String>("role"));
+
+		try {
+			DatabaseController.createRole("ADMIN");
+		} catch (FailedInsertException e1) {
+			e1.printStackTrace();
+		}
+
 		server = JFilesServer.getInstance();
 		server.start(PORT);
 
@@ -63,13 +98,24 @@ public class ServerAppViewController implements Initializable {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
+
+		loadUsers();
 	}
 
 	/**
 	 * Loads the user list.
 	 */
 	public void loadUsers() {
-
+		List<Object[]> users = DatabaseController.getUsers();
+		userlist.clear();
+		for (Object[] userdata : users) {
+			User user = new User(
+					String.valueOf((int) userdata[0]),
+					(String) userdata[1],
+					String.valueOf((int) userdata[2]));
+			userlist.add(user);
+		}
+		userTable.setItems(userlist);
 	}
 
 	/**
@@ -77,7 +123,15 @@ public class ServerAppViewController implements Initializable {
 	 */
 	@FXML
 	public void createNewUser() {
-
+		try {
+			SecureRandom random = new SecureRandom();
+			DatabaseController.createUser(new BigInteger(130, random).toString(32), "550291", 0);
+		} catch (FailedInsertException e) {
+			System.out.println("duplicate user");
+		} catch (IdNotFoundException e) {
+			e.printStackTrace();
+		}
+		loadUsers();
 	}
 
 	/**
@@ -88,6 +142,7 @@ public class ServerAppViewController implements Initializable {
 		if (server != null) {
 			server.stop();
 		}
+		DatabaseController.shutdown();
 	}
 
 }
