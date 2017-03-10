@@ -25,7 +25,6 @@ import edu.wright.cs.jfiles.server.JFilesServer;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 
 import java.io.PrintStream;
@@ -44,10 +43,7 @@ import java.util.ResourceBundle;
 public class ServerAppViewController implements Initializable {
 
 	@FXML
-	TextArea textArea;
-
-	@FXML
-	ScrollPane scrollPane;
+	TextArea consoleOutput;
 
 	private JFilesServer server;
 	Thread serverThread;
@@ -55,12 +51,10 @@ public class ServerAppViewController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		scrollPane.setContent(textArea);
-
 		server = JFilesServer.getInstance();
 		server.start(PORT);
 
-		Console console = new Console(textArea);
+		Console console = new Console(consoleOutput);
 		PrintStream ps = null;
 		try {
 			ps = new PrintStream(console, true, Charset.defaultCharset().name());
@@ -69,6 +63,21 @@ public class ServerAppViewController implements Initializable {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Loads the user list.
+	 */
+	public void loadUsers() {
+
+	}
+
+	/**
+	 * Creates a new user.
+	 */
+	@FXML
+	public void createNewUser() {
+
 	}
 
 	/**

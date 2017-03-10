@@ -5,7 +5,6 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wright.cs.jfiles.gui.server.ServerAppViewController">
    <children>
       <MenuBar>
@@ -27,14 +26,47 @@
           </Menu>
         </menus>
       </MenuBar>
-      <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-         <content>
-            <TextArea fx:id="textArea" editable="false" wrapText="true">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </TextArea>
-         </content>
-      </ScrollPane>
+      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+        <tabs>
+          <Tab text="Log">
+               <content>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
+                     <content>
+                        <TextArea fx:id="consoleOutput" editable="false" wrapText="true">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </TextArea>
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+          <Tab text="Settings" />
+            <Tab text="Users">
+              <content>
+                  <VBox>
+                     <children>
+                        <ToolBar prefHeight="40.0" prefWidth="200.0">
+                          <items>
+                            <Button fx:id="newUserBtn" mnemonicParsing="false" onAction="#createNewUser" text="New" />
+                          </items>
+                        </ToolBar>
+                        <TableView fx:id="userTable" layoutX="14.0" layoutY="14.0" prefHeight="316.0" prefWidth="563.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <columns>
+                            <TableColumn fx:id="userTable_id" prefWidth="75.0" text="ID" />
+                            <TableColumn fx:id="userTable_name" prefWidth="75.0" text="Name" />
+                              <TableColumn fx:id="userTable_role" prefWidth="75.0" text="Role" />
+                              <TableColumn fx:id="userTable_status" prefWidth="75.0" text="Status" />
+                          </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                        </TableView>
+                     </children>
+                  </VBox>
+              </content>
+            </Tab>
+        </tabs>
+      </TabPane>
    </children>
 </VBox>

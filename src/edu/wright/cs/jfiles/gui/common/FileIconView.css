@@ -2,15 +2,22 @@ BorderPane {
 }
 
 Label {	
-	-fx-font-size: 15px;
-	-fx-font-family: 'Currier New' ;
+	-fx-font-size: 12px;
+	-fx-font-family: 'Arial' ;
 	-fx-text-fill: black;
 	-fx-base: #85C1E9;
+	-fx-display: inline;
+}
+
+BorderPane {
+	-fx-display: inline;
+	-fx-padding: 5 0 5 0;
 }
 
 BorderPane.selected  {
-	-fx-background-color: rgb(198,210,255);
+	-fx-background-color: lightgray;
 	-fx-background-radius: 8;
 	-fx-border-radius: 8;
-	-fx-border-color: lightblue;
+	-fx-border-color: lightgray;
+	-fx-effect: dropshadow( one-pass-box , black , 8 , 0.0 , 2 , 0 );
 }
