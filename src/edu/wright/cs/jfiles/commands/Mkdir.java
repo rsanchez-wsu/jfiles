@@ -45,7 +45,7 @@ public class Mkdir extends Command {
 	}
 
 	/**
-	 * A method to make a directory based on the directory path given.
+	 *  A method to make a directory based on the directory path given.
 	 * @param directoryPath - the path where the directory will be created
 	 * @return - whether the directory was created successfully or not
 	 */
