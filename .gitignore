@@ -9,7 +9,7 @@
 *.ear
 *.log
 
-# mac system file
+# MAC System file
 *.DS_Store
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
@@ -26,3 +26,4 @@ logs/
 searchHistory.txt
 /Search History.txt
 /Command History.txt
+/JFilesDB/
