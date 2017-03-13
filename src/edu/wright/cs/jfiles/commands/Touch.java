@@ -21,6 +21,9 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import java.io.File;
+import java.io.IOException;
+
 /**
  * The touch command creates an empty file.
  * Syntax:
@@ -29,6 +32,8 @@ package edu.wright.cs.jfiles.commands;
  * 		TOUCH test.txt
  */
 public class Touch extends Command {
+	private boolean name;
+
 	/**
 	 * Calls super.
 	 * @param args Command's args.
@@ -38,12 +43,41 @@ public class Touch extends Command {
 	}
 
 	/**
-	 *  TODO: Program for TOUCH.
-	 *  @return Not much yet
+	 * Method for creating a new file
+	 * @return true.
+	 */
+	public boolean createNewFile() {
+		return true;
+	}
+
+	/**
+	 * TODO: Program for TOUCH.
+	 * @return f
 	 */
 	@Override
 	public String execute() {
-		return "";
+		File file = new File("name.txt");
+
+		setName(false);
+		if (!file.exists()) {
+			try {
+				setName(file.createNewFile());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println("file " + file.exists() + " already exists");
+		}
+		return null;
+	}
+
+	public boolean isName() {
+		return name;
+	}
+
+	public void setName(boolean name) {
+		this.name = name;
 	}
 
 }
