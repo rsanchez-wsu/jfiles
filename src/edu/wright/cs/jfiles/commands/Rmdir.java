@@ -44,8 +44,7 @@ public class Rmdir extends Command {
 
 	/**
 	 * TODO: Program for RMDIR.
-	 * @return a statment saying either the directory
-	 * was found and remove or that it was not found
+	 * @return a statement saying either the directory was found and remove or that it was not found
 	 */
 	@Override
 	public String execute() {
