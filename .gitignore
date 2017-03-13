@@ -25,9 +25,5 @@ logs/
 
 searchHistory.txt
 /Search History.txt
-<<<<<<< HEAD
-/Command History.txt
-=======
 /Command History.txt
 /JFilesDB/
->>>>>>> refs/heads/jdbc2-dev
