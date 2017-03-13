@@ -70,6 +70,11 @@ public class ServerTestWidget implements Runnable {
 			assertTrue(delayCounter++ < 1000);
 		}
 		client = server.firstClient();
+		delayCounter = 0;
+		while (!client.isOpen()) {
+			TimeUnit.MILLISECONDS.sleep(1);
+			assertTrue(delayCounter++ < 1000);
+		}
 	}
 	/**
 	 * Start the server listening thread.

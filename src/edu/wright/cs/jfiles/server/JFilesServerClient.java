@@ -163,4 +163,11 @@ public class JFilesServerClient implements Runnable {
 		}
 	}
 
+	/**
+	 * Returns true iff the stream has been opened.
+	 */
+	public boolean isOpen() {
+		return (streamOut != null && streamIn != null);
+	}
+
 }

@@ -40,6 +40,8 @@ public class FindTest {
 
 	@Test
 	public void testFind() throws IOException, InterruptedException {
+		System.out.println("hi!");
+		/*assertTrue(false);*/
 		File testFile = new File("armadillotestFile");
 		try {
 			ServerTestWidget tw = new ServerTestWidget();
