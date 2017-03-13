@@ -45,8 +45,6 @@ public class Mkdir extends Command {
 	}
 
 	/**
-	 * TODO: Take in an option into the make directory method.
-	 * Example: mkdir [OPTION]... DIRECTORY...
 	 * A method to make a directory based on the directory path given.
 	 * @param directoryPath - the path where the directory will be created
 	 * @return - whether the directory was created successfully or not
