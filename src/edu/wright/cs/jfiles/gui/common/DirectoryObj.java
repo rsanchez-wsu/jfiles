@@ -50,39 +50,104 @@ public class DirectoryObj {
 	@FXML
 	private ImageView image;
 	private String filepath;
+	private String lastPath;
 	private PathStack newDirr;
 
 	/**
-	 * Default constructor.
-	 * @param filepath.
+	 * Default Constructor, everything is set to root.
 	 */
-	public DirectoryObj(PathStack currPath, String filepath) {
-		newDirr = currPath;
+	public DirectoryObj() {
+		newDirr = new PathStack();
+		newDirr.root();
+
+		filepath = ".";
+		lastPath = ".";
+	}
+
+	/**
+	 * Constructor for a PathStack being passed through.
+	 * Writes the filepath then updates
+	 */
+	public DirectoryObj(PathStack currPath) {
+		newDirr = new PathStack();
+		newDirr.root();
+
+		filepath = currPath.toPath();
+		update();
+	}
+
+	/**
+	 * Constructor for a String with the path.
+	 * breaks up the string and populates the PathStack with it
+	 */
+	public DirectoryObj(String filepath) {
+		newDirr = new PathStack();
+		newDirr.root();
+
 		this.filepath = filepath;
-		newDirr.push("/" + filepath);
+		update();
+	}
+
+	/**
+	 * As long as the filepath is up to date this method will be used to populate the fields.
+	 */
+	public void update() {
+		String[] pathHolder;
+
+		pathHolder = this.filepath.split("/");
+		for (int i = 0; i < pathHolder.length; i++) {
+			newDirr.push("/" + pathHolder[i]);
+		}
+		lastPath = newDirr.peek();
 	}
 
 	/** Returns image to be used in the gui.
 	 * @return image
 	 */
-	public ImageView assignImage() {
+	public ImageView getImage() {
 		return image;
 	}
 
 	/**
-	 * Sends an event handler the file path to be used.
-	 * @return newDirr.
+	 * Set image to be used in the gui.
 	 */
-	public String open() {
-		return newDirr.toString();
+	public void setImage(ImageView image) {
+		this.image = image;
 	}
 
 	/**
-	 * I don't know if we need this later but just in case.
+	 * return whole filepath for gui name.
 	 * @return String
 	 */
-	@Override
-	public String toString() {
+	public String getFilePath() {
 		return filepath;
+	}
+
+	/**
+	 * Set the file path and update the directory.
+	 * This is meant for multiple directories in one string.
+	 */
+	public void setFilePath(String path) {
+		newDirr.root();
+
+		String[] pathHolder = path.split("/");
+		for (int i = 0; i < pathHolder.length; i++) {
+			newDirr.push("/" + pathHolder[i]);
+		}
+	}
+
+	/**
+	 * Return the directory the object is in.
+	 * @return String
+	 */
+	public String getLastPath() {
+		return lastPath;
+	}
+
+	/**
+	 * Set the lastPath as needed.
+	 */
+	public void setLastPath(String lastPath) {
+		this.lastPath = lastPath;
 	}
 }
