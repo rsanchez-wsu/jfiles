@@ -43,7 +43,7 @@ public class CreateUserViewController {
 	@FXML
 	private TextField txtRole;
 
-	private ServerAppViewController parentController;
+	private UserListViewController parentController;
 
 	/**
 	 * Registers the parent controller with this view.
@@ -51,7 +51,7 @@ public class CreateUserViewController {
 	 * @param controller
 	 *            controller for the parent
 	 */
-	public void registerParentController(ServerAppViewController controller) {
+	public void registerParentController(UserListViewController controller) {
 		parentController = controller;
 	}
 

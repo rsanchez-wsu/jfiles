@@ -57,42 +57,19 @@ import java.util.ResourceBundle;
 public class ServerAppViewController implements Initializable {
 
 	@FXML
-	TextArea consoleOutput;
+	UserListViewController userListViewController;
 
 	@FXML
-	TableView<User> userTable;
-	@FXML
-	TableColumn<User, String> userTableId;
-	@FXML
-	TableColumn<User, String> userTableName;
-	@FXML
-	TableColumn<User, String> userTableRole;
-	@FXML
-	TableColumn<User, String> userTableStatus;
+	TextArea consoleOutput;
 
 	private JFilesServer server;
 	Thread serverThread;
 	private static int PORT = 9786;
 
-	private ObservableList<User> userlist = FXCollections.observableArrayList();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		userTableId.setCellValueFactory(new PropertyValueFactory<User, String>("id"));
-		userTableName.setCellValueFactory(new PropertyValueFactory<User, String>("name"));
-		userTableRole.setCellValueFactory(new PropertyValueFactory<User, String>("role"));
-
-		// DatabaseController.dropTables();
-		// DatabaseController.createTables();
-
-		try {
-			DatabaseController.createRole("ADMIN");
-		} catch (FailedInsertException e1) {
-			e1.printStackTrace();
-		}
-
-		server = JFilesServer.getInstance();
-		server.start(PORT);
+		userListViewController.ping();
 
 		Console console = new Console(consoleOutput);
 		PrintStream ps = null;
@@ -104,63 +81,22 @@ public class ServerAppViewController implements Initializable {
 			e.printStackTrace();
 		}
 
-		loadUsers();
-	}
+		server = JFilesServer.getInstance();
+		server.start(PORT);
 
-	/**
-	 * Loads the user list.
-	 */
-	public void loadUsers() {
-		List<Object[]> users = DatabaseController.getUsers();
-		userlist.clear();
-		for (Object[] userdata : users) {
-			User user = new User(
-					String.valueOf((int) userdata[0]),
-					(String) userdata[1],
-					String.valueOf((int) userdata[2]));
-			userlist.add(user);
-		}
-		userTable.setItems(userlist);
-	}
+		DatabaseController.dropTables();
+		DatabaseController.createTables();
 
-	/**
-	 * Displays the CreateNewUser view.
-	 */
-	@FXML
-	public void displayNewUserView() {
-		FXMLLoader loader =
-				new FXMLLoader(CreateUserViewController.class.getResource("CreateUserView.fxml"));
 		try {
-			Parent createUserView = loader.load();
-			CreateUserViewController controller = loader.getController();
-			controller.registerParentController(this);
-
-			Scene scene = new Scene(createUserView);
-			Stage stage = new Stage();
-			stage.setScene(scene);
-			stage.setTitle("Create User");
-			stage.show();
-		} catch (IOException e) {
-			e.printStackTrace();
+			DatabaseController.createRole("NONE");
+			DatabaseController.createRole("ADMIN");
+		} catch (FailedInsertException e1) {
+			e1.printStackTrace();
 		}
 	}
 
 	/**
-	 * Creates a new user in the database.
-	 */
-	public void createNewUser(String name, String pass, int role) {
-		try {
-			DatabaseController.createUser(name, pass, role);
-		} catch (FailedInsertException e) {
-			e.printStackTrace();
-		} catch (IdNotFoundException e) {
-			e.printStackTrace();
-		}
-		loadUsers();
-	}
-
-	/**
-	 * Called when the program requestes to exit.
+	 * Called when the program requests to exit.
 	 */
 	@FXML
 	public void exit() {
