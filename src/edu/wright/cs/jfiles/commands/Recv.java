@@ -78,4 +78,17 @@ public class Recv extends Command {
 		return "Execute in progress";
 	}
 
+	/**
+	 * Gets the class specific help message and Syntax.
+	 * It's done like this so you can extend this method and not
+	 * have to worry about help working the same in all methods.
+	 * @return [0] is what the command does, [1] is the syntax of command.
+	 */
+	protected String[] helpStrings() {
+		return new String[] {
+				"Prepares to receive a file.",
+				"RECV <filename> <contents...> EOF"
+		};
+	}
+
 }
