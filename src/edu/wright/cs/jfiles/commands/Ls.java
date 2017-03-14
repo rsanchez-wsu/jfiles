@@ -103,8 +103,6 @@ public class Ls extends Command {
 			directory = this.cp.getCwd() + directory;
 		}
 
-		System.out.println("Dir: " + directory);
-
 		if (this.cp.hasPermission(directory, PermissionType.NONE)) {
 			return new Error(
 					"You do not have permission to view directory: " + directory).execute();
