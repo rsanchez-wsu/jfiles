@@ -11,7 +11,7 @@
 		<!-- Compile/runtime dependencies (needed to build and run the application) -->
 		<dependency org="org.apache.derby" name="derby" rev="10.11.1.1" conf="lib->default"/>
 		<dependency org="commons-dbutils" name="commons-dbutils" rev="1.5" conf="lib->default"/>
-		<dependency org="commons-io" name="commons-io" rev="2.5"/>
+		<dependency org="commons-io" name="commons-io" rev="2.5" conf="lib->default"/>
 
 		<!-- Compile-only dependencies (needed to build the application and run tests) -->
 		<dependency org="junit" name="junit" rev="4.6" conf="tools->default"/>
