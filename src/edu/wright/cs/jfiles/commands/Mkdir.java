@@ -70,8 +70,6 @@ public class Mkdir extends Command {
 			directory = this.cp.getCwd() + directory;
 		}
 
-		System.out.println("Dir: " + directory);
-
 		if (!this.cp.hasPermission(directory, PermissionType.READWRITE)) {
 			return new Error(
 					"You do not have permission to write to directory: " + directory).execute();
