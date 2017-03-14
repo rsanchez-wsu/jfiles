@@ -139,15 +139,6 @@ public class Parser {
 		return this.flags.containsKey(flag);
 	}
 
-	/**
-	 * FindBugs says parser variable is 'unused' in abstract class.
-	 * Can't suppresswarning without something else complaining.
-	 * So the solution is to call a method that does nothing.
-	 */
-	public void shutupFindBugs() {
-
-	}
-
 	@Override
 	public String toString() {
 		StringBuilder end = new StringBuilder();
