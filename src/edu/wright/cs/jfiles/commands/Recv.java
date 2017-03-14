@@ -36,7 +36,7 @@ public class Recv extends Command {
 	private String sender;
 	private String receiver;
 	private String filename;
-	
+
 	/**
 	 * Calls super.
 	 * @param args Command's args.
