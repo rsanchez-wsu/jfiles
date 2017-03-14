@@ -559,9 +559,9 @@ public class DatabaseController {
 	 *
 	 * @return List contating user id, name and role.
 	 */
-	public static List<Object[]> getUsers() {
-		String sql = "SELECT USER_ID, USER_NAME, USER_ROLE FROM USERS";
-		List<Object[]> users = new ArrayList<>();
+	public static List<User> getUsers() {
+		String sql = "SELECT USER_ID, USER_NAME, USER_PASS, USER_ROLE FROM USERS";
+		List<User> users = new ArrayList<>();
 		try (Connection conn = openConnection();
 				PreparedStatement selectStmt = conn.prepareStatement(sql)) {
 
@@ -569,8 +569,9 @@ public class DatabaseController {
 				while (rs.next()) {
 					int id = rs.getInt(1);
 					String name = rs.getString(2);
-					int role = rs.getInt(3);
-					users.add(new Object[] { id, name, role });
+					String pass = rs.getString(3);
+					int role = rs.getInt(4);
+					users.add(new User( id, name, pass, role ));
 				}
 			}
 		} catch (SQLException e) {
@@ -643,8 +644,8 @@ public class DatabaseController {
 			logger.error(e);
 		}
 
-		for (Object[] user : getUsers()) {
-			System.out.println(String.format("%d\t%s\t%d", user[0], user[1], user[2]));
+		for (User user : getUsers()) {
+			System.out.println(user);
 		}
 
 		// Make sure to shutdown the database connection before the program
