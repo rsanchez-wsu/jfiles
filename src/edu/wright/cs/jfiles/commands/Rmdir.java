@@ -21,6 +21,8 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import edu.wright.cs.jfiles.database.DatabaseUtils.PermissionType;
+
 import java.io.File;
 
 /**
@@ -48,12 +50,21 @@ public class Rmdir extends Command {
 	 */
 	@Override
 	public String execute() {
-		String directoryToRem = parser.next();
+		String dir = parser.next();
 
-		if (directoryToRem != null) {
-			return (new File(directoryToRem)).delete()
-					? new Info("Directory was deleted!").execute()
-					: new Error("Directory was not found!").execute();
+		if (dir != null) {
+			if (!dir.startsWith("/")) {
+				dir = this.cp.getCwd() + dir;
+			}
+
+			if (!this.cp.hasPermission(dir, PermissionType.READWRITE)) {
+				return new Error(
+						"You do not have permission to write to directory: " + dir).execute();
+			} else {
+				return (new File(dir)).delete()
+						? new Info("Directory was deleted!").execute()
+						: new Error("Directory not found or not empty!").execute();
+			}
 		} else {
 			return new Error("Missing directory name.").execute();
 		}
