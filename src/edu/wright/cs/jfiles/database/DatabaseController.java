@@ -47,10 +47,14 @@ public class DatabaseController {
 
 	private static final String DATABASE_URL_OPEN = "jdbc:derby:JFilesDB;create=true";
 	private static final String DATABASE_URL_SHUTDOWN = "jdbc:derby:JFilesDB;shutdown=true";
-
 	private static final String JDBC_DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
-
 	private static final Logger logger = LogManager.getLogger(DatabaseController.class);
+
+	private static Connection conn;
+
+	static {
+		conn = openConnection();
+	}
 
 	/**
 	 * Prevents Instantiation, this class is meant to be completely static.
@@ -90,6 +94,7 @@ public class DatabaseController {
 	public static void shutdown() {
 		try {
 			// Shutdown the connection to the database
+			conn.close();
 			DriverManager.getConnection(DATABASE_URL_SHUTDOWN).close();
 		} catch (SQLException e) {
 			if (!e.getSQLState().equals("08006")) {
@@ -103,7 +108,7 @@ public class DatabaseController {
 	 */
 	// TODO: There has to be a better way to accomplish this
 	public static void createTables() {
-		try (Connection conn = openConnection(); Statement createStmt = conn.createStatement()) {
+		try (Statement createStmt = conn.createStatement()) {
 
 			try {
 				createStmt.executeUpdate("CREATE TABLE ROLES ("
@@ -179,7 +184,7 @@ public class DatabaseController {
 	 */
 	// TODO: There has to be a better way to accomplish this
 	public static void dropTables() {
-		try (Connection conn = openConnection(); Statement dropStmt = conn.createStatement()) {
+		try (Statement dropStmt = conn.createStatement()) {
 
 			try {
 				dropStmt.executeUpdate("DROP TABLE ROLE_PERMISSIONS");
@@ -246,8 +251,7 @@ public class DatabaseController {
 			throws FailedInsertException, IdNotFoundException {
 		String sql = "INSERT INTO USERS (USER_NAME, USER_PASS, USER_ROLE) VALUES (?, ?, ?)";
 		int id = 0;
-		try (Connection conn = openConnection();
-				PreparedStatement insertStmt =
+		try (PreparedStatement insertStmt =
 						conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
 			// Create user in database.
@@ -294,8 +298,7 @@ public class DatabaseController {
 		String sql = "INSERT INTO PERMISSIONS (PERM_DOC) "
 				+ "VALUES (XMLPARSE(DOCUMENT CAST (? AS CLOB) PRESERVE WHITESPACE))";
 		int id = 0;
-		try (Connection conn = openConnection();
-				PreparedStatement insertStmt =
+		try (PreparedStatement insertStmt =
 						conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
 			// Create permission in database. (We are parsing the XML doc via
@@ -340,8 +343,7 @@ public class DatabaseController {
 		int id = -1;
 		String sql = "INSERT INTO ROLES (ROLE_NAME) VALUES (?)";
 
-		try (Connection conn = openConnection();
-				PreparedStatement insertStmt =
+		try (PreparedStatement insertStmt =
 						conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
 			insertStmt.setString(1, name);
@@ -381,8 +383,7 @@ public class DatabaseController {
 	public static void addPermissionToRole(int roleId, int permId) throws IdNotFoundException {
 		String sql = "INSERT INTO ROLE_PERMISSIONS (ROLE_ID, PERM_ID) VALUES (?, ?)";
 
-		try (Connection conn = openConnection();
-				PreparedStatement insertStmt = conn.prepareStatement(sql)) {
+		try (PreparedStatement insertStmt = conn.prepareStatement(sql)) {
 
 			insertStmt.setInt(1, roleId);
 			insertStmt.setInt(2, permId);
@@ -412,8 +413,7 @@ public class DatabaseController {
 	public static void addPermissionToUser(int userId, int permId) throws IdNotFoundException {
 		String sql = "INSERT INTO USER_PERMISSIONS (USER_ID, PERM_ID) VALUES (?, ?)";
 
-		try (Connection conn = openConnection();
-				PreparedStatement insertStmt = conn.prepareStatement(sql)) {
+		try (PreparedStatement insertStmt = conn.prepareStatement(sql)) {
 
 			insertStmt.setInt(1, userId);
 			insertStmt.setInt(2, permId);
@@ -451,8 +451,7 @@ public class DatabaseController {
 				+ "(SELECT PERM_ID FROM ROLE_PERMISSIONS WHERE ROLE_ID = "
 				+ "(SELECT USER_ROLE FROM USERS WHERE USER_ID = ?))";
 
-		try (Connection conn = openConnection();
-				PreparedStatement rolePermSelectStmt = conn.prepareStatement(sql1);
+		try (PreparedStatement rolePermSelectStmt = conn.prepareStatement(sql1);
 				PreparedStatement userPermSelectStmt = conn.prepareStatement(sql2)) {
 
 			rolePermSelectStmt.setInt(1, userId);
@@ -506,9 +505,7 @@ public class DatabaseController {
 		String sql = "UPDATE USERS SET " + "USER_NAME = ?, USER_PASS = ?, USER_ROLE = ? "
 				+ "WHERE USER_ID = ?";
 
-		try (Connection conn = openConnection();
-				PreparedStatement updateStmt = conn.prepareStatement(sql)) {
-
+		try (PreparedStatement updateStmt = conn.prepareStatement(sql)) {
 			updateStmt.setString(1, name);
 			updateStmt.setString(2, pass);
 			updateStmt.setInt(3, role);
@@ -539,9 +536,7 @@ public class DatabaseController {
 				+ "PERM_DOC = XMLPARSE(DOCUMENT CAST (? AS CLOB) PRESERVE WHITESPACE)"
 				+ " WHERE PERM_ID = ?";
 
-		try (Connection conn = openConnection();
-				PreparedStatement updateStmt = conn.prepareStatement(sql)) {
-
+		try (PreparedStatement updateStmt = conn.prepareStatement(sql)) {
 			updateStmt.setInt(1, permId);
 			updateStmt.setString(2, doc);
 			updateStmt.executeUpdate();
@@ -557,14 +552,12 @@ public class DatabaseController {
 	/**
 	 * Returns the list of users in the database.
 	 *
-	 * @return List contating user id, name and role.
+	 * @return List containing user id, name and role.
 	 */
 	public static List<Object[]> getUsers() {
 		String sql = "SELECT USER_ID, USER_NAME, USER_ROLE FROM USERS";
 		List<Object[]> users = new ArrayList<>();
-		try (Connection conn = openConnection();) {
-			PreparedStatement selectStmt = conn.prepareStatement(sql);
-
+		try (PreparedStatement selectStmt = conn.prepareStatement(sql)) {
 			try (ResultSet rs = selectStmt.executeQuery()) {
 				while (rs.next()) {
 					int id = rs.getInt(1);
