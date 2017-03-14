@@ -21,6 +21,8 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import edu.wright.cs.jfiles.database.DatabaseUtils.PermissionType;
+
 import com.google.common.io.Files;
 
 import java.io.File;
@@ -62,6 +64,12 @@ public class Mv extends Command {
 
 		if (!toName.startsWith("/")) {
 			toName = this.cp.getCwd() + toName;
+		}
+
+		if (!this.cp.hasPermission(fromName, PermissionType.READWRITE)
+				&& !this.cp.hasPermission(toName, PermissionType.READWRITE)) {
+			return new Error(
+					"You do not have permission to edit that directory.").execute();
 		}
 
 		try {
