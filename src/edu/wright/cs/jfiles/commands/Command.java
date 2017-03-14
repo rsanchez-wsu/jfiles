@@ -21,6 +21,8 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import edu.wright.cs.jfiles.server.ClientProperties;
+
 import java.lang.StringBuilder;
 import java.util.List;
 import java.util.Locale;
@@ -30,6 +32,7 @@ import java.util.Locale;
  */
 public abstract class Command {
 	protected Parser parser;
+	protected ClientProperties cp = null;
 
 	/**
 	 * Command constructor.
@@ -59,6 +62,21 @@ public abstract class Command {
 	 */
 	public void add(String arg) {
 		this.parser.add(arg);
+	}
+
+	/**
+	 * Set the clientproperties member variable.
+	 * @param cp ClientProperties to set.
+	 */
+	public void setClientProperties(ClientProperties cp) {
+		this.cp = cp;
+	}
+
+	/**
+	 * @return The User's client properties.
+	 */
+	public ClientProperties getClientProperties() {
+		return this.cp;
 	}
 
 	/**
