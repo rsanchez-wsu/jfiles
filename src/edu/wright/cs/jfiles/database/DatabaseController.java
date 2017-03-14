@@ -635,7 +635,9 @@ public class DatabaseController {
 			System.out.println(userHasPermission(user1id,
 					"./src/edu/wright/cs/jfiles/client/JFilesClient.java"));
 			System.out.println(userHasPermission(user1id, "./tests/permissions/admin.xml"));
-			System.out.println(userHasPermission(user2id, "./src"));
+			System.out.println(userHasPermission(user1id, "./serverfiles"));
+			System.out.println(userHasPermission(user1id, "./serverfiles/"));
+			System.out.println(userHasPermission(user1id, "serverfiles/"));
 		} catch (IOException e) {
 			logger.error(e);
 		} catch (FailedInsertException e) {
