@@ -41,12 +41,37 @@ public class Login extends Command {
 	}
 
 	/**
+	 * Logs the user in.
+	 * @param username The username to login with.
+	 * @param password The password to log in with.
+	 * @return If login was successful.
+	 */
+	private String login(String username, String password) {
+		// Password may be 'blank'.
+		if (password == null) {
+			password = "";
+		}
+
+		if (username != null) {
+			if (this.cp.login(username, password)) {
+				return new Info("Login successful!").execute();
+			} else {
+				return new Error("Invalid username or password!").execute();
+			}
+		} else {
+			return new Error("Username invalid! " + this.help()).execute();
+		}
+	}
+
+	/**
 	 *  TODO: Returning username to login to the host.
 	 *  @return Nothing.
 	 */
 	@Override
 	public String execute() {
-		return "Login:";
+		return this.cp != null
+				? login(this.parser.next(), this.parser.next())
+				: new Error("Unable to login! Server error.").execute();
 	}
 
 	/**
