@@ -66,6 +66,10 @@ public class Mkdir extends Command {
 	public String execute() {
 		String directory = this.parser.next();
 
+		if (directory == null) {
+			return new Error("Missing directory. Syntax: MKDIR [directoryPath]").execute();
+		}
+
 		if (!directory.startsWith("/")) {
 			directory = this.cp.getCwd() + directory;
 		}
@@ -74,9 +78,7 @@ public class Mkdir extends Command {
 			return new Error(
 					"You do not have permission to write to directory: " + directory).execute();
 		} else {
-			return directory != null
-					? makeDirectory(directory)
-					: new Error("Missing directory. Syntax: MKDIR [directoryPath]").execute();
+			return makeDirectory(directory);
 		}
 	}
 
