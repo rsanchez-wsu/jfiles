@@ -48,6 +48,10 @@ public class ClientProperties {
 	 * @param cwd The directory to set CWD to.
 	 */
 	public void setCwd(String cwd) {
+		if (!cwd.endsWith("/")) {
+			cwd += "/";
+		}
+
 		this.cwd = cwd;
 	}
 
