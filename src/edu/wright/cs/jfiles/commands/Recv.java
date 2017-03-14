@@ -75,6 +75,10 @@ public class Recv extends Command {
 	 */
 	@Override
 	public String execute() {
+		sender = "";
+		receiver = "";
+		filename = parser.next();
+
 		return "Execute in progress";
 	}
 

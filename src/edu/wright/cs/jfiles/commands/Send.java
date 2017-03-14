@@ -51,6 +51,9 @@ public class Send extends Command {
 	 */
 	@Override
 	public String execute() {
+		sender = "";
+		receiver = "";
+
 		return ".send" + filename;
 	}
 
