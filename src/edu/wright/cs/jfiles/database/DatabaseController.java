@@ -72,14 +72,14 @@ public class DatabaseController {
 		} catch (SQLException e) {
 			if (e.getSQLState().equals("XJ040")) {
 				logger.error(
-						"%n\tConnection already open somwhere else,"
+						"Connection already open somwhere else,"
 								+ " make sure no Eclipse Data Tools Platform connections are open.",
 						e);
 			} else {
 				logger.error(e);
 			}
 		} catch (ClassNotFoundException e) {
-			logger.error("%n\tUnable to load JDBC Embedded Derby Driver", e);
+			logger.error("Unable to load JDBC Embedded Derby Driver", e);
 		}
 		return conn;
 	}
@@ -259,7 +259,7 @@ public class DatabaseController {
 			try (ResultSet rs = insertStmt.getGeneratedKeys()) {
 				if (rs.next()) {
 					id = rs.getInt(1);
-					logger.info(String.format("%n\tUser \"%s\" added to the database with ID=%d.",
+					logger.info(String.format("User \"%s\" added to the database with ID=%d.",
 							name, rs.getInt(1)));
 				}
 			}
@@ -309,7 +309,7 @@ public class DatabaseController {
 				if (rs.next()) {
 					id = rs.getInt(1);
 					logger.info(
-							String.format("%n\tPermission added to the database with ID=%d.", id));
+							String.format("Permission added to the database with ID=%d.", id));
 				} else {
 					throw new FailedInsertException();
 				}
@@ -351,7 +351,7 @@ public class DatabaseController {
 			try (ResultSet rs = insertStmt.getGeneratedKeys()) {
 				if (rs.next()) {
 					id = rs.getInt(1);
-					logger.info(String.format("%n\tRole %s added to the database with ID=%d.", name,
+					logger.info(String.format("Role %s added to the database with ID=%d.", name,
 							id));
 				} else {
 					throw new FailedInsertException();
@@ -360,7 +360,7 @@ public class DatabaseController {
 		} catch (SQLException e) {
 			if (e.getSQLState().equals("23505")) {
 				logger.error(
-						String.format("%n\tRole %s not added, this role already exisits.", name));
+						String.format("Role %s not added, this role already exisits.", name));
 			}
 		}
 
@@ -387,7 +387,7 @@ public class DatabaseController {
 			insertStmt.setInt(1, roleId);
 			insertStmt.setInt(2, permId);
 			insertStmt.executeUpdate();
-			logger.info(String.format("%n\tPermission with ID=%d added to the role with ID=%d.",
+			logger.info(String.format("Permission with ID=%d added to the role with ID=%d.",
 					permId, roleId));
 		} catch (SQLException e) {
 			if (e.getSQLState().equals("23503")) {
@@ -418,7 +418,7 @@ public class DatabaseController {
 			insertStmt.setInt(1, userId);
 			insertStmt.setInt(2, permId);
 			insertStmt.executeUpdate();
-			logger.info(String.format("%n\tPermission with ID=%d added to the user with ID=%d.",
+			logger.info(String.format("Permission with ID=%d added to the user with ID=%d.",
 					permId, userId));
 		} catch (SQLException e) {
 			if (e.getSQLState().equals("23503")) {
@@ -641,10 +641,6 @@ public class DatabaseController {
 			logger.error(e);
 		} catch (IdNotFoundException e) {
 			logger.error(e);
-		}
-
-		for (Object[] user : getUsers()) {
-			System.out.println(String.format("%d\t%s\t%d", user[0], user[1], user[2]));
 		}
 
 		// Make sure to shutdown the database connection before the program
