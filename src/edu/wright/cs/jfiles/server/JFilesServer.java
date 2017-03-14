@@ -70,6 +70,8 @@ public class JFilesServer {
 
 	private static JFilesServer instance = new JFilesServer();
 
+	private String defaultCwd;
+
 	/**
 	 * Returns the JFilesServer instance.
 	 *
@@ -127,6 +129,9 @@ public class JFilesServer {
 		// logger.info("Config set to port " + PORT);
 
 		int maxThreads = Integer.parseInt(prop.getProperty("maxThreads", "10"));
+
+		defaultCwd = "serverfiles";
+
 		logger.info("Config set max threads to " + maxThreads);
 	}
 
@@ -319,6 +324,14 @@ public class JFilesServer {
 	 */
 	public synchronized void remove(JFilesServerClient client) {
 		clients.remove(client);
+	}
+
+	/**
+	 * Returns the default Current Working Directory..
+	 * @return The default CWD.
+	 */
+	public String getCwd() {
+		return this.defaultCwd;
 	}
 
 	/**
