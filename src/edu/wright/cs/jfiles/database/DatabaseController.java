@@ -624,10 +624,15 @@ public class DatabaseController {
 					Files.readAllBytes(new File("tests/permissions/admin.xml").toPath()), "UTF-8");
 			int permid = createPermission(xml);
 			addPermissionToRole(adminid, permid);
-			System.out.println(userHasPermission(user1id,
-					"./src/edu/wright/cs/jfiles/client/JFilesClient.java"));
-			System.out.println(userHasPermission(user1id, "./tests/permissions/admin.xml"));
-			System.out.println(userHasPermission(user2id, "./src"));
+			System.out.println(userHasPermission(user1id, "src"));
+			System.out.println(userHasPermission(user1id, "src/"));
+			System.out.println(userHasPermission(user1id, "./src/"));
+			System.out.println(userHasPermission(user1id, "src/edu"));
+
+			System.out.println(userHasPermission(user2id, "src"));
+			System.out.println(userHasPermission(user2id, "src/"));
+			System.out.println(userHasPermission(user2id, "./src/"));
+			System.out.println(userHasPermission(user2id, "src/edu"));
 		} catch (IOException e) {
 			logger.error(e);
 		} catch (FailedInsertException e) {
