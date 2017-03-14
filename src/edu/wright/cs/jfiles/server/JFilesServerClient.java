@@ -47,12 +47,15 @@ public class JFilesServerClient implements Runnable {
 	private Socket socket = null;
 	private DataInputStream streamIn = null;
 	private DataOutputStream streamOut = null;
+	private ClientProperties cp = new ClientProperties();
 
 	/**
 	 * Creates a new socket.
 	 */
 	public JFilesServerClient(Socket parmSocket) {
 		socket = parmSocket;
+		cp.setCwd(JFilesServer.getInstance().getCwd());
+		cp.cachePermissionType();
 	}
 
 	/**
@@ -102,6 +105,7 @@ public class JFilesServerClient implements Runnable {
 		Command cmd =
 				Commands.getNewInstance(sinput[0], Arrays.copyOfRange(sinput, 1, sinput.length));
 
+		cmd.setClientProperties(cp);
 		String cont = cmd.execute();
 
 		JFilesServer.print("Sending back: " + cont);
