@@ -21,6 +21,11 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import com.google.common.io.Files;
+
+import java.io.File;
+import java.io.IOException;
+
 /**
  * The mv command moves or renames a file.
  * Syntax:
@@ -44,7 +49,30 @@ public class Mv extends Command {
 	 */
 	@Override
 	public String execute() {
-		return "";
+		String fromName = this.parser.next();
+		String toName = this.parser.next();
+
+		if (fromName == null || toName == null) {
+			return new Error("Invalid from or to name.").execute();
+		}
+
+		if (!fromName.startsWith("/")) {
+			fromName = this.cp.getCwd() + fromName;
+		}
+
+		if (!toName.startsWith("/")) {
+			toName = this.cp.getCwd() + toName;
+		}
+
+		try {
+			Files.move(new File(fromName), new File(toName));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return new Error("Move failed!").execute();
+		}
+
+		return new Info("Move successful!").execute();
 	}
 
 	/**
