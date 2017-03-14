@@ -59,7 +59,9 @@ public class Login extends Command {
 				return new Error("Invalid username or password!").execute();
 			}
 		} else {
-			return new Error("Username invalid! " + this.help()).execute();
+			return this.cp.getUser().getUsername() != null
+					? new Info("You are logged in as: " + this.cp.getUser().getUsername()).execute()
+					: new Info("You are not logged in!").execute();
 		}
 	}
 
