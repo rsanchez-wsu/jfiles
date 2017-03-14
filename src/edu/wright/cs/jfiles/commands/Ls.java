@@ -100,7 +100,7 @@ public class Ls extends Command {
 
 		return !parser.doesFlagExist("XML") ? getFiles(directory) : getXmlFiles(directory);
 	}
-	
+
 	/**
 	 * Gets the class specific help message and Syntax.
 	 * It's done like this so you can extend this method and not
