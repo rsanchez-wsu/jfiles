@@ -638,6 +638,15 @@ public class DatabaseController {
 			System.out.println(userHasPermission(user1id, "./serverfiles"));
 			System.out.println(userHasPermission(user1id, "./serverfiles/"));
 			System.out.println(userHasPermission(user1id, "serverfiles/"));
+			System.out.println(userHasPermission(user1id, "src"));
+			System.out.println(userHasPermission(user1id, "src/"));
+			System.out.println(userHasPermission(user1id, "./src/"));
+			System.out.println(userHasPermission(user1id, "src/edu"));
+
+			System.out.println(userHasPermission(user2id, "src"));
+			System.out.println(userHasPermission(user2id, "src/"));
+			System.out.println(userHasPermission(user2id, "./src/"));
+			System.out.println(userHasPermission(user2id, "src/edu"));
 		} catch (IOException e) {
 			logger.error(e);
 		} catch (FailedInsertException e) {
@@ -645,6 +654,7 @@ public class DatabaseController {
 		} catch (IdNotFoundException e) {
 			logger.error(e);
 		}
+
 
 		for (User user : getUsers()) {
 			System.out.println(user);

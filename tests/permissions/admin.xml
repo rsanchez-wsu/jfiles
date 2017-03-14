@@ -2,4 +2,5 @@
 <!DOCTYPE permission SYSTEM "tests/permissions/permission.dtd">
 <permission type="READWRITE">
 	<location path="serverfiles/"/>
+	<location path="src"/>
 </permission>
