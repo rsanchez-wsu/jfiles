@@ -23,10 +23,9 @@ package edu.wright.cs.jfiles.commands;
 
 import edu.wright.cs.jfiles.database.DatabaseUtils.PermissionType;
 
-import com.google.common.io.Files;
-
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  * The mv command moves or renames a file.
@@ -72,15 +71,11 @@ public class Mv extends Command {
 					"You do not have permission to edit that directory.").execute();
 		}
 
-		try {
-			Files.move(new File(fromName), new File(toName));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if ((new File(fromName)).renameTo(new File(toName))) {
+			return new Info("Move successful!").execute();
+		} else {
 			return new Error("Move failed!").execute();
 		}
-
-		return new Info("Move successful!").execute();
 	}
 
 	/**
