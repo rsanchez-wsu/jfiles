@@ -21,7 +21,11 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import edu.wright.cs.jfiles.database.DatabaseUtils.PermissionType;
+
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * The rm command removes a file.
@@ -51,9 +55,26 @@ public class Rm extends Command {
 		String filePath = parser.next();
 
 		if (filePath != null) {
-			return (new File(filePath)).delete()
-					? new Info("File was deleted!").execute()
-					: new Error("File not found!").execute();
+			if (!filePath.startsWith("/")) {
+				filePath = this.cp.getCwd() + filePath;
+			}
+
+			Path path = Paths.get(filePath);
+
+			String directory = "";
+
+			if (path.getNameCount() > 1) {
+				directory = path.subpath(0, path.getNameCount() - 1).toString();
+			}
+
+			if (!this.cp.hasPermission(directory, PermissionType.READWRITE)) {
+				return new Error(
+						"You do not have permission to write to directory: " + directory).execute();
+			} else {
+				return (new File(filePath)).delete()
+						? new Info("File was deleted!").execute()
+						: new Error("File not found!").execute();
+			}
 		} else {
 			return new Error("Missing filename. Syntax: FIND <filename> [directory]").execute();
 		}
