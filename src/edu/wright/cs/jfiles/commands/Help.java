@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2016 - WSU CEG3120 Students
+ * Copyright (C) 2017 - WSU CEG3120 Students
  *
- * Roberto C. Sánchez <roberto.sanchez@wright.edu>
+ *
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,32 +21,42 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import java.util.Locale;
+
 /**
- *  The Close command closes the connection.
+ *  Returns information and arguments for a command.
  *  Syntax:
- *      CD directoryName
+ *      HELP [command]
  *  Flags:
  *      - None.
  *  Example:
- *      CD src
+ *      HELP
  */
-public class Cd extends Command {
+public class Help extends Command {
 
 	/**
 	 * Calls super.
 	 * @param args Command's args.
 	 */
-	public Cd(String... args) {
+	public Help(String... args) {
 		super(args);
 	}
 
 	/**
-	 *  TODO: Returning the new directory you requested.
-	 *  @return Nothing.
+	 *  @return The full directory path of the current working directory.
 	 */
 	@Override
 	public String execute() {
-		return "CD: " + "Directory";
+		String cmdName = parser.next();
+
+		System.out.println("CMD: " + cmdName);
+
+		if (cmdName != null) {
+			return Commands.getNewInstance(
+				cmdName.toUpperCase(Locale.ENGLISH), new String[]{}).help();
+		} else {
+			return this.help();
+		}
 	}
 
 	/**
@@ -57,9 +67,8 @@ public class Cd extends Command {
 	 */
 	protected String[] helpStrings() {
 		return new String[] {
-				"Sets the current working directory to <directoryName>.",
-				"CD <directoryName>"
+				"Gets the help message for a command.",
+				"HELP [command]"
 		};
 	}
-
 }

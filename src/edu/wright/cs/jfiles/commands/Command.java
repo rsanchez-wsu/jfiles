@@ -83,6 +83,33 @@ public abstract class Command {
 	}
 
 	/**
+	 * Returns a string detailing usage of command.
+	 * IE: FIND: Finds filenames. Syntax: filename [directory]
+	 * @return A string detailing usage of command.
+	 */
+	public String help() {
+		String[] help = this.helpStrings();
+
+		return new Info(
+				this.getClass().getSimpleName().toUpperCase(Locale.getDefault()) + ": "
+				+ help[0] + " Syntax: " + help[1]
+		).execute();
+	}
+
+	/**
+	 * Gets the class specific help message and Syntax.
+	 * It's done like this so you can extend this method and not
+	 * have to worry about help working the same in all methods.
+	 * @return [0] is what the command does, [1] is the syntax of command.
+	 */
+	protected String[] helpStrings() {
+		return new String[] {
+				"Help not implemented.",
+				"None."
+		};
+	}
+
+	/**
 	 * Converts cmd to string.
 	 */
 	@Override

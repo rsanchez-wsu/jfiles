@@ -22,44 +22,30 @@
 package edu.wright.cs.jfiles.commands;
 
 /**
- *  The Close command closes the connection.
+ *  The Start command opens the connection.
  *  Syntax:
- *      CD directoryName
+ *      START
  *  Flags:
  *      - None.
  *  Example:
- *      CD src
+ *      START
  */
-public class Cd extends Command {
+public class Start extends Command {
 
 	/**
 	 * Calls super.
 	 * @param args Command's args.
 	 */
-	public Cd(String... args) {
+	public Start(String... args) {
 		super(args);
 	}
 
 	/**
-	 *  TODO: Returning the new directory you requested.
-	 *  @return Nothing.
+	 * TODO: Call ERROR if errors Starting the server.
+	 *  @return string server start info.
 	 */
-	@Override
 	public String execute() {
-		return "CD: " + "Directory";
-	}
-
-	/**
-	 * Gets the class specific help message and Syntax.
-	 * It's done like this so you can extend this method and not
-	 * have to worry about help working the same in all methods.
-	 * @return [0] is what the command does, [1] is the syntax of command.
-	 */
-	protected String[] helpStrings() {
-		return new String[] {
-				"Sets the current working directory to <directoryName>.",
-				"CD <directoryName>"
-		};
+		return new Info("Starting server...").execute();
 	}
 
 }

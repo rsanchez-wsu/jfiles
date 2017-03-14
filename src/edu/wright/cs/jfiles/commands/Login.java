@@ -49,4 +49,17 @@ public class Login extends Command {
 		return "Login:";
 	}
 
+	/**
+	 * Gets the class specific help message and Syntax.
+	 * It's done like this so you can extend this method and not
+	 * have to worry about help working the same in all methods.
+	 * @return [0] is what the command does, [1] is the syntax of command.
+	 */
+	protected String[] helpStrings() {
+		return new String[] {
+				"Logs into a user account.",
+				"LOGIN <username> [password]"
+		};
+	}
+
 }
