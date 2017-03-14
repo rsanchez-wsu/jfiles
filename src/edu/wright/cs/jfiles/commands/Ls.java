@@ -22,6 +22,7 @@
 package edu.wright.cs.jfiles.commands;
 
 import edu.wright.cs.jfiles.core.XmlHandler;
+import edu.wright.cs.jfiles.database.DatabaseUtils.PermissionType;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -96,9 +97,20 @@ public class Ls extends Command {
 	@Override
 	public String execute() {
 		String directory = this.parser.next();
-		directory = directory != null ? directory : ".";
+		directory = directory != null ? directory : "";
 
-		return !parser.doesFlagExist("XML") ? getFiles(directory) : getXmlFiles(directory);
+		if (!directory.startsWith("/")) {
+			directory = this.cp.getCwd() + directory;
+		}
+
+		System.out.println("Dir: " + directory);
+
+		if (!this.cp.hasPermission(directory, PermissionType.READ)) {
+			return new Error(
+					"You do not have permission to view directory: " + directory).execute();
+		} else {
+			return !parser.doesFlagExist("XML") ? getFiles(directory) : getXmlFiles(directory);
+		}
 	}
 
 	/**
