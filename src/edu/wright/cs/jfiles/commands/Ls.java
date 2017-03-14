@@ -105,7 +105,7 @@ public class Ls extends Command {
 
 		System.out.println("Dir: " + directory);
 
-		if (!this.cp.hasPermission(directory, PermissionType.READ)) {
+		if (this.cp.hasPermission(directory, PermissionType.NONE)) {
 			return new Error(
 					"You do not have permission to view directory: " + directory).execute();
 		} else {
