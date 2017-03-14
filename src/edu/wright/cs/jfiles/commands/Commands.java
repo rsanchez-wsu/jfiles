@@ -37,6 +37,9 @@ public enum Commands {
 	TOUCH((String[] args) -> {
 		return new Touch(args);
 	}),
+	HELP((String[] args) -> {
+		return new Help(args);
+	}),
 	PWD((String[] args) -> {
 		return new Pwd(args);
 	}),
