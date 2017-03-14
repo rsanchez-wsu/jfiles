@@ -58,6 +58,10 @@ public class ClientProperties {
 	public String getCwd() {
 		return this.cwd;
 	}
+	
+	public User getUser() {
+		return this.user;
+	}
 
 	/**
 	 * Logs a user in. Sets userId.
