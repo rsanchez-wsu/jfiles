@@ -23,28 +23,16 @@ package edu.wright.cs.jfiles.gui.server;
 
 import edu.wright.cs.jfiles.database.DatabaseController;
 import edu.wright.cs.jfiles.database.FailedInsertException;
-import edu.wright.cs.jfiles.database.IdNotFoundException;
 import edu.wright.cs.jfiles.server.JFilesServer;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.List;
 import java.util.ResourceBundle;
 
 
@@ -69,8 +57,6 @@ public class ServerAppViewController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		userListViewController.ping();
-
 		Console console = new Console(consoleOutput);
 		PrintStream ps = null;
 		try {
@@ -84,6 +70,7 @@ public class ServerAppViewController implements Initializable {
 		server = JFilesServer.getInstance();
 		server.start(PORT);
 
+		// TODO: Remove this and replace with server startup operations
 		DatabaseController.dropTables();
 		DatabaseController.createTables();
 

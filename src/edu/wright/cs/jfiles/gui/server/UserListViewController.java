@@ -25,11 +25,6 @@ import edu.wright.cs.jfiles.database.DatabaseController;
 import edu.wright.cs.jfiles.database.FailedInsertException;
 import edu.wright.cs.jfiles.database.IdNotFoundException;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -42,6 +37,17 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
+
+/**
+ * Java FX controller for UserListView.
+ *
+ * @author Matt Gilene
+ *
+ */
 public class UserListViewController implements Initializable {
 
 	@FXML
@@ -63,6 +69,7 @@ public class UserListViewController implements Initializable {
 		userTableName.setCellValueFactory(new PropertyValueFactory<User, String>("name"));
 		userTableRole.setCellValueFactory(new PropertyValueFactory<User, String>("role"));
 	}
+
 	/**
 	 * Displays the CreateNewUser view.
 	 */
@@ -111,9 +118,5 @@ public class UserListViewController implements Initializable {
 			userlist.add(user);
 		}
 		userTable.setItems(userlist);
-	}
-
-	public void ping() {
-		System.out.println("pong");
 	}
 }
