@@ -22,6 +22,8 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import edu.wright.cs.jfiles.database.DatabaseUtils.PermissionType;
+
 import java.io.File;
 
 /**
@@ -63,9 +65,21 @@ public class Mkdir extends Command {
 	@Override
 	public String execute() {
 		String directory = this.parser.next();
-		return directory != null
-				? makeDirectory(directory)
-				: new Error("Missing directory. Syntax: MKDIR [directoryPath]").execute();
+
+		if (!directory.startsWith("/")) {
+			directory = this.cp.getCwd() + directory;
+		}
+
+		System.out.println("Dir: " + directory);
+
+		if (!this.cp.hasPermission(directory, PermissionType.READWRITE)) {
+			return new Error(
+					"You do not have permission to write to directory: " + directory).execute();
+		} else {
+			return directory != null
+					? makeDirectory(directory)
+					: new Error("Missing directory. Syntax: MKDIR [directoryPath]").execute();
+		}
 	}
 
 	/**
