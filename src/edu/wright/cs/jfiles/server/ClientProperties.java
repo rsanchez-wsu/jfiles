@@ -58,7 +58,11 @@ public class ClientProperties {
 	public String getCwd() {
 		return this.cwd;
 	}
-	
+
+	/**
+	 * Gets the user for client properties.
+	 * @return The user.
+	 */
 	public User getUser() {
 		return this.user;
 	}
