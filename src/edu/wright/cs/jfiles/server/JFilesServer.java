@@ -130,7 +130,7 @@ public class JFilesServer {
 
 		int maxThreads = Integer.parseInt(prop.getProperty("maxThreads", "10"));
 
-		defaultCwd = "serverfiles";
+		defaultCwd = "serverfiles/";
 
 		logger.info("Config set max threads to " + maxThreads);
 	}
