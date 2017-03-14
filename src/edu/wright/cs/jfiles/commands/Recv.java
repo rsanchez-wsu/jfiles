@@ -33,12 +33,40 @@ package edu.wright.cs.jfiles.commands;
 
 public class Recv extends Command {
 
+	private String sender;
+	private String receiver;
+	private String filename;
+	
 	/**
 	 * Calls super.
 	 * @param args Command's args.
 	 */
 	public Recv(String... args) {
 		super(args);
+	}
+
+	/**
+	 * Gets the user that will send the file.
+	 * @return the sender of the file.
+	 */
+	public String getSender() {
+		return sender;
+	}
+
+	/**
+	 * Gets the user that will receive the file.
+	 * @return the receiver of the file.
+	 */
+	public String getReceiver() {
+		return receiver;
+	}
+
+	/**
+	 * Gets the filename for sending.
+	 * @return the filename along with the extension that you want to send.
+	 */
+	public String getFilename() {
+		return filename;
 	}
 
 	/**

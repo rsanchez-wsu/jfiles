@@ -23,6 +23,7 @@ package edu.wright.cs.jfiles.commands;
 
 /**
  *  The Send command returns ".send".
+ *  This command is used to send a file to a user.
  *  Syntax:
  *      SEND filename
  *  Flags:
@@ -32,6 +33,8 @@ package edu.wright.cs.jfiles.commands;
  */
 public class Send extends Command {
 
+	private String sender;
+	private String receiver;
 	private String filename;
 
 	/**
@@ -49,6 +52,22 @@ public class Send extends Command {
 	@Override
 	public String execute() {
 		return ".send" + filename;
+	}
+
+	/**
+	 * Gets the user that will send the file.
+	 * @return the sender of the file.
+	 */
+	public String getSender() {
+		return sender;
+	}
+
+	/**
+	 * Gets the user that will receive the file.
+	 * @return the receiver of the file.
+	 */
+	public String getReceiver() {
+		return receiver;
 	}
 
 	/**
