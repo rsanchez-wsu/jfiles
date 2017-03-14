@@ -36,11 +36,28 @@ public class ClientProperties {
 	 */
 	private User user = new User();
 	private PermissionType cachePermissionType = PermissionType.NONE;
+	private String cwd;
 
 	/**
 	 * Default constructor for ClientProperties.
 	 */
 	public ClientProperties() {}
+
+	/**
+	 * Sets the Current Working Directory.
+	 * @param cwd The directory to set CWD to.
+	 */
+	public void setCwd(String cwd) {
+		this.cwd = cwd;
+	}
+
+	/**
+	 * Gets the Current Working Directory.
+	 * @return The Current Working Directory.
+	 */
+	public String getCwd() {
+		return this.cwd;
+	}
 
 	/**
 	 * Logs a user in. Sets userId.
@@ -64,11 +81,10 @@ public class ClientProperties {
 	}
 
 	/**
-	 * Caches the permissiontype for a certain directory.
-	 * @param dir The directory to cache.
+	 * Caches the permissiontype of the current working directory.
 	 */
-	public void cachePermissionType(String dir) {
-		this.cachePermissionType = getPermissionType(dir);
+	public void cachePermissionType() {
+		this.cachePermissionType = getPermissionType(this.getCwd());
 	}
 
 	/**
