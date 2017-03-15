@@ -21,7 +21,6 @@
 
 package edu.wright.cs.jfiles.gui.server;
 
-
 import edu.wright.cs.jfiles.database.DatabaseController;
 import edu.wright.cs.jfiles.database.FailedInsertException;
 import edu.wright.cs.jfiles.database.IdNotFoundException;
@@ -29,7 +28,6 @@ import edu.wright.cs.jfiles.database.IdNotFoundException;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -72,8 +70,7 @@ public class CreateUserViewController {
 		} catch (IdNotFoundException e) {
 			e.printStackTrace();
 		}
-		Node source = (Node) event.getSource();
-		Stage stage = (Stage) source.getScene().getWindow();
+		Stage stage = (Stage) root.getScene().getWindow();
 		stage.close();
 	}
 }
