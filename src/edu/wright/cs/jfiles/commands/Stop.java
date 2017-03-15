@@ -22,13 +22,8 @@
 package edu.wright.cs.jfiles.commands;
 
 /**
- *  The Stop command closes the connection.
- *  Syntax:
- *      STOP
- *  Flags:
- *      - None.
- *  Example:
- *      STOP
+ * The Stop command closes the connection. Syntax: STOP Flags: - None. Example:
+ * STOP
  */
 public class Stop extends Command {
 
@@ -49,5 +44,4 @@ public class Stop extends Command {
 	public String execute() {
 		return new Info("Stopping server...").execute();
 	}
-
 }

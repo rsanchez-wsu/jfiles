@@ -41,7 +41,7 @@ public class Info extends Command {
 	}
 
 	/**
-	 *  TODO: Provide user usage info
+	 *  TODO: Provide the user info
 	 *  @return Nothing.
 	 */
 	@Override

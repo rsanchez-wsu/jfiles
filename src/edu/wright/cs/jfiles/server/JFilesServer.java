@@ -23,9 +23,6 @@ package edu.wright.cs.jfiles.server;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,18 +36,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 /**
  * The main class of the JFiles server application.
@@ -138,16 +123,6 @@ public class JFilesServer {
 	 */
 	private JFilesServer() {
 		try {
-			createXml();
-		} catch (TransformerFactoryConfigurationError e) {
-			// TODO Auto-generated catch block
-			// e.printStackTrace();
-		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
-			// e.printStackTrace();
-		}
-
-		try {
 			setup();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -194,6 +169,7 @@ public class JFilesServer {
 
 						// Add client to be tracked
 						clients.add(client);
+						JFilesServer.print(client + " connected");
 
 						// Run the new client thread.
 						executorService.execute(client);
@@ -204,61 +180,6 @@ public class JFilesServer {
 				stop();
 			}
 		}).start();
-	}
-
-	/**
-	 * Creates an XML file.
-	 *
-	 * @throws TransformerFactoryConfigurationError
-	 *             error in configuration
-	 * @throws TransformerException
-	 *             error in configuration
-	 */
-	private void createXml() throws TransformerFactoryConfigurationError, TransformerException {
-		Document doc = null;
-		try {
-			// Create new XML document
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			factory.setNamespaceAware(true);
-			DocumentBuilder builder;
-			builder = factory.newDocumentBuilder();
-			doc = builder.newDocument();
-
-			// Add elements to new document
-			Element root = doc.createElement("fileSystem");
-			doc.appendChild(root);
-			Node dir = createNode(doc, "directory");
-			dir.appendChild(createNode(doc, "file"));
-			root.appendChild(dir);
-
-			// Output XML to console
-			Transformer transformer = TransformerFactory.newInstance().newTransformer();
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			DOMSource source = new DOMSource(doc);
-			StreamResult console = new StreamResult(System.out);
-			transformer.transform(source, console);
-
-		} catch (ParserConfigurationException e) {
-			logger.error("An error occurred while configuring the parser", e);
-		} catch (TransformerConfigurationException e) {
-			logger.error("An error occurred while configuring the transformer", e);
-		} catch (TransformerFactoryConfigurationError e) {
-			logger.error("An error occurred while configuring the transformer factory", e);
-		}
-	}
-
-	/**
-	 * Create an xml node.
-	 *
-	 * @param doc
-	 *            document to create node for
-	 * @param name
-	 *            name of node that should be created
-	 * @return returns a Node element
-	 */
-	private static Node createNode(Document doc, String name) {
-		Element node = doc.createElement(name);
-		return node;
 	}
 
 	/**

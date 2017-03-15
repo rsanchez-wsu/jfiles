@@ -21,6 +21,7 @@
 
 package edu.wright.cs.jfiles.database;
 
+import org.apache.commons.io.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -75,16 +76,11 @@ public class DatabaseUtils {
 			PermissionType permissionType = PermissionType.valueOf(type);
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				File permLocation = new File(nodeList.item(i).getTextContent());
-				if (file.equals(permLocation)) {
+				if (permLocation.equals(file)) {
 					return permissionType;
-				} else {
-					File parent = file.getParentFile();
-					while (parent != null) {
-						if (parent.equals(permLocation)) {
-							return permissionType;
-						}
-						parent = parent.getParentFile();
-					}
+				}
+				if (FileUtils.directoryContains(permLocation, file)) {
+					return permissionType;
 				}
 			}
 		} catch (SAXException e1) {

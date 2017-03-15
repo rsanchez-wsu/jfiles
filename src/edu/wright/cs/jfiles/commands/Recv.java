@@ -33,6 +33,10 @@ package edu.wright.cs.jfiles.commands;
 
 public class Recv extends Command {
 
+	private String sender;
+	private String receiver;
+	private String filename;
+
 	/**
 	 * Calls super.
 	 * @param args Command's args.
@@ -42,12 +46,53 @@ public class Recv extends Command {
 	}
 
 	/**
+	 * Gets the user that will send the file.
+	 * @return the sender of the file.
+	 */
+	public String getSender() {
+		return sender;
+	}
+
+	/**
+	 * Gets the user that will receive the file.
+	 * @return the receiver of the file.
+	 */
+	public String getReceiver() {
+		return receiver;
+	}
+
+	/**
+	 * Gets the filename for sending.
+	 * @return the filename along with the extension that you want to send.
+	 */
+	public String getFilename() {
+		return filename;
+	}
+
+	/**
 	 *  TODO: Program for RECV.
 	 *  @return Not much yet
 	 */
 	@Override
 	public String execute() {
+		sender = "";
+		receiver = "";
+		filename = parser.next();
+
 		return "Execute in progress";
+	}
+
+	/**
+	 * Gets the class specific help message and Syntax.
+	 * It's done like this so you can extend this method and not
+	 * have to worry about help working the same in all methods.
+	 * @return [0] is what the command does, [1] is the syntax of command.
+	 */
+	protected String[] helpStrings() {
+		return new String[] {
+				"Prepares to receive a file.",
+				"RECV <filename> <contents...> EOF"
+		};
 	}
 
 }
