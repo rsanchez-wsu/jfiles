@@ -550,6 +550,33 @@ public class DatabaseController {
 	}
 
 	/**
+	 * Gets a single user from the database.
+	 *
+	 * @param userid
+	 *            The Id of the user to get
+	 * @return Id, User name, password, role
+	 */
+	public static Object[] getUser(int userid) {
+		String sql = "SELECT USER_ID, USER_NAME, USER_PASS, USER_ROLE FROM USERS WHERE USER_ID = ?";
+		Object[] user = null;
+		try (PreparedStatement selectStmt = conn.prepareStatement(sql)) {
+			selectStmt.setInt(1, userid);
+			try (ResultSet rs = selectStmt.executeQuery()) {
+				while (rs.next()) {
+					int id = rs.getInt(1);
+					String name = rs.getString(2);
+					int pass = rs.getInt(3);
+					int role = rs.getInt(4);
+					user = new Object[] { id, name, pass, role };
+				}
+			}
+		} catch (SQLException e) {
+			logger.error(e);
+		}
+		return user;
+	}
+
+	/**
 	 * Returns the list of users in the database.
 	 *
 	 * @return List containing user id, name and role.
