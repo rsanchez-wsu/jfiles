@@ -141,7 +141,7 @@ public class JFilesServer {
 
 		defaultCwd = "serverfiles/";
 		defaultUser = DatabaseController.getUser("tmp");
-		// Ensure folder for user exists.
+		// Ensure folder for user exists. If it doesn't, it'll error.
 		if (!(new File(defaultCwd + defaultUser.getUsername()).mkdir())) {
 			logger.info("Could not create tmp user directory!");
 		}
