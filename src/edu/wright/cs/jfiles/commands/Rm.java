@@ -21,6 +21,12 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import edu.wright.cs.jfiles.database.DatabaseUtils.PermissionType;
+
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 /**
  * The rm command removes a file.
  * Syntax:
@@ -46,7 +52,45 @@ public class Rm extends Command {
 	 */
 	@Override
 	public String execute() {
-		return "a list";
+		String filePath = parser.next();
+
+		if (filePath != null) {
+			if (!filePath.startsWith("/")) {
+				filePath = this.cp.getCwd() + filePath;
+			}
+
+			Path path = Paths.get(filePath);
+
+			String directory = "";
+
+			if (path.getNameCount() > 1) {
+				directory = path.subpath(0, path.getNameCount() - 1).toString();
+			}
+
+			if (!this.cp.hasPermission(directory, PermissionType.READWRITE)) {
+				return new Error(
+						"You do not have permission to write to directory: " + directory).execute();
+			} else {
+				return (new File(filePath)).delete()
+						? new Info("File was deleted!").execute()
+						: new Error("File not found!").execute();
+			}
+		} else {
+			return new Error("Missing filename. Syntax: FIND <filename> [directory]").execute();
+		}
+	}
+
+	/**
+	 * Gets the class specific help message and Syntax.
+	 * It's done like this so you can extend this method and not
+	 * have to worry about help working the same in all methods.
+	 * @return [0] is what the command does, [1] is the syntax of command.
+	 */
+	protected String[] helpStrings() {
+		return new String[] {
+				"Removes a file.",
+				"RM <filename>"
+		};
 	}
 
 }

@@ -41,11 +41,12 @@ public class Info extends Command {
 	}
 
 	/**
-	 *  TODO: Provide user usage info
+	 *  TODO: Provide the user info
 	 *  @return Nothing.
 	 */
+	@Override
 	public String execute() {
-		return "INFO: " + "Last logged in " + "amount of time" + "ago";
+		return "INFO: " + parser.rest();
 	}
 
 }

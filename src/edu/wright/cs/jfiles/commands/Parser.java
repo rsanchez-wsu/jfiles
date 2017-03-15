@@ -38,6 +38,8 @@ public class Parser {
 	private final Map<String, String> flags;
 	private int currentArg = 0;
 
+	private StringBuilder part = new StringBuilder("");
+
 	/**
 	 * Inits a new parser.
 	 * @param args The arguments to parse.
@@ -48,14 +50,20 @@ public class Parser {
 		for (String arg : args) {
 			add(arg);
 		}
+
+		// If any part is left over, add rest to args.
+		if (part.length() > 0) {
+			this.args.add(part.toString());
+			part.setLength(0);
+		}
 	}
 
 	/**
 	 * Inits flag and args.
 	 */
 	Parser() {
-		flags = new HashMap<String, String>();
-		args = new ArrayList<String>();
+		flags = new HashMap<>();
+		args = new ArrayList<>();
 	}
 
 	/**
@@ -75,7 +83,17 @@ public class Parser {
 			}
 		} else {
 			if (arg.length() > 0) {
-				this.args.add(arg);
+				if (arg.startsWith("\"")) {
+					part.append(arg.substring(1, arg.length()));
+				} else if (part.length() > 0 && arg.endsWith("\"")) {
+					part.append(" " + arg.substring(0, arg.length() - 1));
+					this.args.add(part.toString());
+					part.setLength(0);
+				} else if (part.length() > 0) {
+					part.append(" " + arg);
+				} else {
+					this.args.add(arg);
+				}
 			}
 		}
 	}
@@ -85,6 +103,35 @@ public class Parser {
 	 */
 	public String next() {
 		return currentArg < args.size() ? args.get(currentArg++) : null;
+	}
+
+	/**
+	 * Resets the current argument counter to 0.
+	 */
+	public void reset() {
+		currentArg = 0;
+	}
+
+	/**
+	 * Returns the remaining arguments, separated by a space.
+	 * @return the remaining arguments, separated by a space.
+	 */
+	public String rest() {
+		StringBuilder rest = new StringBuilder();
+
+		String next = next();
+
+		while (next != null) {
+			rest.append(next + " ");
+			next = next();
+		}
+
+		// Remove the ending space.
+		if (rest.length() > 0) {
+			rest.setLength(rest.length() - 1);
+		}
+
+		return rest.toString();
 	}
 
 	/**
@@ -110,15 +157,6 @@ public class Parser {
 		return this.flags.containsKey(flag);
 	}
 
-	/**
-	 * FindBugs says parser variable is 'unused' in abstract class.
-	 * Can't suppresswarning without something else complaining.
-	 * So the solution is to call a method that does nothing.
-	 */
-	public void shutupFindBugs() {
-
-	}
-
 	@Override
 	public String toString() {
 		StringBuilder end = new StringBuilder();
@@ -137,7 +175,11 @@ public class Parser {
 		}
 
 		for (String arg : args) {
-			end.append(arg + " ");
+			if (arg.contains(" ")) {
+				end.append("\"" + arg + "\" ");
+			} else {
+				end.append(arg + " ");
+			}
 		}
 
 		if (end.length() > 0) {

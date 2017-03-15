@@ -43,6 +43,7 @@ public class Ping extends Command {
 	/**
 	 *  @return Nothing.
 	 */
+	@Override
 	public String execute() {
 		return "Pong!";
 	}

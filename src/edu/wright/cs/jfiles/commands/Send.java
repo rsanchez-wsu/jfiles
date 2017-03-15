@@ -23,6 +23,7 @@ package edu.wright.cs.jfiles.commands;
 
 /**
  *  The Send command returns ".send".
+ *  This command is used to send a file to a user.
  *  Syntax:
  *      SEND filename
  *  Flags:
@@ -31,6 +32,10 @@ package edu.wright.cs.jfiles.commands;
  *      SEND build.xml
  */
 public class Send extends Command {
+
+	private String sender;
+	private String receiver;
+	private String filename;
 
 	/**
 	 * Calls super.
@@ -46,7 +51,55 @@ public class Send extends Command {
 	 */
 	@Override
 	public String execute() {
-		return ".send" + "FILE NAME AND EXTENSION";
+		sender = "";
+		receiver = "";
+
+		return ".send" + filename;
 	}
 
+	/**
+	 * Gets the user that will send the file.
+	 * @return the sender of the file.
+	 */
+	public String getSender() {
+		return sender;
+	}
+
+	/**
+	 * Gets the user that will receive the file.
+	 * @return the receiver of the file.
+	 */
+	public String getReceiver() {
+		return receiver;
+	}
+
+	/**
+	 * Gets the filename for sending.
+	 * @return the filename along with the extension that you want to send.
+	 */
+	public String getFilename() {
+		return filename;
+	}
+
+	/**
+	 * Sets the filename that you want to send.
+	 * @param filename - the filename string you want to send.
+	 */
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+
+	/**
+	 * Gets the class specific help message and Syntax.
+	 * It's done like this so you can extend this method and not
+	 * have to worry about help working the same in all methods.
+	 * @return [0] is what the command does, [1] is the syntax of command.
+	 */
+	protected String[] helpStrings() {
+		return new String[] {
+				"Requests the server sends a file.",
+				"SEND <filename>"
+		};
+	}
 }
+

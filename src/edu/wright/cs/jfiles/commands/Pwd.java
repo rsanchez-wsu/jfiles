@@ -21,6 +21,8 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import java.io.File;
+
 /**
  *  The Close command closes the connection.
  *  Syntax:
@@ -41,10 +43,35 @@ public class Pwd extends Command {
 	}
 
 	/**
+	 * Gets the abs path of the current directory path and returns it.
+	 * @param directory The path of the directory.
+	 * @return The abs path of directory.
+	 */
+	private String curDir(String directory) {
+		File folder = new File(directory);
+
+		return (folder.getAbsolutePath());
+	}
+
+	/**
 	 *  @return The full directory path of the current working directory.
 	 */
+	@Override
 	public String execute() {
-		return "PWD /your/directory/now";
+		return curDir(this.cp.getCwd());
+	}
+
+	/**
+	 * Gets the class specific help message and Syntax.
+	 * It's done like this so you can extend this method and not
+	 * have to worry about help working the same in all methods.
+	 * @return [0] is what the command does, [1] is the syntax of command.
+	 */
+	protected String[] helpStrings() {
+		return new String[] {
+				"Gets the current working directory.",
+				"PWD"
+		};
 	}
 
 }

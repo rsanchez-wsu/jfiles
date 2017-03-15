@@ -22,6 +22,7 @@
 package edu.wright.cs.jfiles.commands;
 
 import edu.wright.cs.jfiles.core.XmlHandler;
+import edu.wright.cs.jfiles.database.DatabaseUtils.PermissionType;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public class Ls extends Command {
 	 * @return The list of files that match filename.
 	 */
 	private List<String> findFiles(String directory) {
-		List<String> res = new ArrayList<String>();
+		List<String> res = new ArrayList<>();
 
 		File folder = new File(directory);
 		File[] listOfFiles = folder.listFiles();
@@ -93,11 +94,34 @@ public class Ls extends Command {
 	 *  @return A new-line delimited list of files in the [directory]. If no
 	 *  	    [directory] is given, the current working directory is used.
 	 */
+	@Override
 	public String execute() {
 		String directory = this.parser.next();
-		directory = directory != null ? directory : ".";
+		directory = directory != null ? directory : "";
 
-		return !parser.doesFlagExist("XML") ? getFiles(directory) : getXmlFiles(directory);
+		if (!directory.startsWith("/")) {
+			directory = this.cp.getCwd() + directory;
+		}
+
+		if (this.cp.hasPermission(directory, PermissionType.NONE)) {
+			return new Error(
+					"You do not have permission to view directory: " + directory).execute();
+		} else {
+			return !parser.doesFlagExist("XML") ? getFiles(directory) : getXmlFiles(directory);
+		}
+	}
+
+	/**
+	 * Gets the class specific help message and Syntax.
+	 * It's done like this so you can extend this method and not
+	 * have to worry about help working the same in all methods.
+	 * @return [0] is what the command does, [1] is the syntax of command.
+	 */
+	protected String[] helpStrings() {
+		return new String[] {
+				"Lists the contents of a directory.",
+				"LS [directory]"
+		};
 	}
 
 }

@@ -21,7 +21,12 @@
 
 package edu.wright.cs.jfiles.gui.client;
 
+import edu.wright.cs.jfiles.commands.Ls;
+import edu.wright.cs.jfiles.commands.Mv;
+import edu.wright.cs.jfiles.commands.Rm;
 import edu.wright.cs.jfiles.core.FileStruct;
+import edu.wright.cs.jfiles.core.FileStructSelection;
+import edu.wright.cs.jfiles.core.SocketClient;
 import edu.wright.cs.jfiles.core.XmlHandler;
 import edu.wright.cs.jfiles.gui.common.FileIconViewController;
 import edu.wright.cs.jfiles.gui.common.FileIconViewController.Size;
@@ -36,12 +41,23 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 
+
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
@@ -52,10 +68,23 @@ import java.util.ResourceBundle;
  * @author Matt
  *
  */
-public class ClientAppViewController implements Initializable {
+public class ClientAppViewController implements Initializable, ClipboardOwner {
+
+	/**
+	 * Type for storing last operation.
+	 */
+	private enum Operation {
+		CUT, COPY;
+	}
+
+
+	private SocketClient client;
 
 	private FileStruct selectedFile;
+	private String currentDirectory;
 	private Map<FileStruct, Parent> contents;
+	private Operation lastOperation;
+	private Clipboard clipboard;
 
 	private ContextMenu fileContextMenu;
 	// private ContextMenu folderContextMenu;
@@ -71,14 +100,27 @@ public class ClientAppViewController implements Initializable {
 	FlowPane flowPane;
 
 	/**
+	 * Clears the view.
+	 */
+	private void clearView() {
+		contents.clear();
+		flowPane.getChildren().clear();
+	}
+
+	/**
 	 * Loads the given directory into the view.
 	 *
 	 * @param path
 	 *            the path to load
 	 */
 	private void loadDirectory(String path) {
-		XmlHandler handler = new XmlHandler(path);
-		for (FileStruct file : handler.getFiles()) {
+		clearView();
+
+		client.sendCommand(new Ls(path, "-XML"));
+		String result = client.read();
+
+		List<FileStruct> files = XmlHandler.readXmlString(result);
+		for (FileStruct file : files) {
 			FXMLLoader loader =
 					new FXMLLoader(FileIconViewController.class.getResource("FileIconView.fxml"));
 			try {
@@ -146,6 +188,8 @@ public class ClientAppViewController implements Initializable {
 		Menu view = new Menu("View");
 		Menu sort = new Menu("Sort");
 
+		MenuItem paste = new MenuItem("Paste");
+
 		MenuItem largeIcons = new MenuItem("Large Icons");
 		MenuItem mediumIcons = new MenuItem("Medium Icons");
 		MenuItem smallIcons = new MenuItem("Small Icons");
@@ -159,7 +203,9 @@ public class ClientAppViewController implements Initializable {
 
 		MenuItem newFile = new MenuItem("New");
 
-		menu.getItems().addAll(view, sort, newFile);
+		menu.getItems().addAll(paste, view, sort, newFile);
+
+		paste.setOnAction(event -> paste());
 
 		largeIcons.setOnAction(event -> System.out.println("Large Icons"));
 		mediumIcons.setOnAction(event -> System.out.println("Medium Icons"));
@@ -180,7 +226,8 @@ public class ClientAppViewController implements Initializable {
 	 */
 	@FXML
 	public void cut() {
-		System.out.println("Cut");
+		clipboard.setContents(new FileStructSelection(selectedFile), this);
+		lastOperation = Operation.CUT;
 	}
 
 	/**
@@ -188,7 +235,8 @@ public class ClientAppViewController implements Initializable {
 	 */
 	@FXML
 	public void copy() {
-		System.out.println("Copy");
+		clipboard.setContents(new FileStructSelection(selectedFile), this);
+		lastOperation = Operation.COPY;
 	}
 
 	/**
@@ -196,7 +244,31 @@ public class ClientAppViewController implements Initializable {
 	 */
 	@FXML
 	public void paste() {
-		System.out.println("Paste");
+		Transferable content = clipboard.getContents(this);
+		if (content != null) {
+			try {
+				FileStruct file =
+						(FileStruct) content.getTransferData(content.getTransferDataFlavors()[0]);
+				String filePath = (String) file.getValue("path");
+				switch (lastOperation) {
+				case COPY:
+					// client.sendCommand(new Cp(source, currentDirectory));
+					break;
+				case CUT:
+					client.sendCommand(new Mv(filePath, currentDirectory));
+					break;
+				default:
+					break;
+				}
+
+				loadDirectory(currentDirectory);
+
+			} catch (UnsupportedFlavorException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**
@@ -204,17 +276,64 @@ public class ClientAppViewController implements Initializable {
 	 */
 	@FXML
 	public void delete() {
-		System.out.println("Delete");
+		client.sendCommand(new Rm((String) selectedFile.getValue("path")));
+		loadDirectory(currentDirectory);
 	}
 
 	/**
-	 * Mouse clicked in flowPane action.
+	 * Mouse clicked in flowPane.
 	 */
 	@FXML
 	public void handleMouseClicked() {
 		fileContextMenu.hide();
 		// folderContextMenu.hide();
 		viewContextMenu.hide();
+	}
+
+	/**
+	 * Handles dragging files over the view.
+	 *
+	 * @param event
+	 *            drag event
+	 */
+	@FXML
+	public void onDragOver(DragEvent event) {
+		event.acceptTransferModes(TransferMode.COPY);
+	}
+
+	/**
+	 * Handles dropping files on the view.
+	 *
+	 * @param event
+	 *            drag event
+	 */
+	@FXML
+	public void onDragDrop(DragEvent event) {
+		root.getScene().getWindow().requestFocus();
+
+		Dragboard dragboard = event.getDragboard();
+		if (dragboard.hasFiles()) {
+			for (File file : dragboard.getFiles()) {
+				try {
+					FileStruct fileStruct = new FileStruct(file.toPath());
+					System.out.println(fileStruct.getValue("path") + " added");
+					FXMLLoader loader = new FXMLLoader(
+							FileIconViewController.class.getResource("FileIconView.fxml"));
+					final Parent view = loader.load();
+					FileIconViewController controller = loader.getController();
+
+					controller.setFileStruct(fileStruct);
+					controller.setSize(Size.MEDIUM);
+					controller.registerAppController(this);
+
+					flowPane.getChildren().add(view);
+					contents.put(fileStruct, view);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+
+		}
 	}
 
 	/**
@@ -236,8 +355,17 @@ public class ClientAppViewController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		contents = new HashMap<>();
-		loadDirectory("./src/edu/wright/cs/jfiles/core");
+		client = new SocketClient();
+		currentDirectory = ".";
+		loadDirectory(currentDirectory);
+		clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		fileContextMenu = buildFileContextMenu();
 		viewContextMenu = buildViewContextMenu();
+	}
+
+	@Override
+	public void lostOwnership(Clipboard clipboard, Transferable transferable) {
+		// Required for ClipboardOwner interface
+		System.out.println("ClientAppViewController : Lost Clipboard Ownership");
 	}
 }
