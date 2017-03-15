@@ -555,6 +555,41 @@ public class DatabaseController {
 	}
 
 	/**
+	 * Gets a specific user from database.
+	 * @param username Get user by username.
+	 * @return The User.
+	 */
+	public static User getUser(String username) {
+		User user = null;
+
+		String sql = "SELECT USER_ID, USER_NAME, USER_PASS, USER_ROLE FROM USERS "
+						+ "WHERE USER_NAME = ?";
+		List<User> users = new ArrayList<>();
+		try (Connection conn = openConnection();
+				PreparedStatement selectStmt = conn.prepareStatement(sql)) {
+
+			selectStmt.setString(1, username);
+			try (ResultSet rs = selectStmt.executeQuery()) {
+				while (rs.next()) {
+					int id = rs.getInt(1);
+					String name = rs.getString(2);
+					String pass = rs.getString(3);
+					int role = rs.getInt(4);
+					users.add(new User( id, name, pass, role ));
+				}
+			}
+		} catch (SQLException e) {
+			logger.error(e);
+		}
+
+		if (users.size() > 0) {
+			user = users.get(0);
+		}
+
+		return user;
+	}
+
+	/**
 	 * Returns the list of users in the database.
 	 *
 	 * @return List contating user id, name and role.
@@ -626,6 +661,13 @@ public class DatabaseController {
 		} catch (FailedInsertException | IdNotFoundException e) {
 			logger.error(e);
 		}
+
+		try {
+			int user3id = createUser("tmp", "", noneid);
+		} catch (FailedInsertException | IdNotFoundException e) {
+			logger.error(e);
+		}
+
 
 		try {
 			String xml = new String(
