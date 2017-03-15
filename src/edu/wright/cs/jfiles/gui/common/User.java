@@ -19,7 +19,7 @@
  *
  */
 
-package edu.wright.cs.jfiles.gui.server;
+package edu.wright.cs.jfiles.gui.common;
 
 import javafx.beans.property.SimpleStringProperty;
 

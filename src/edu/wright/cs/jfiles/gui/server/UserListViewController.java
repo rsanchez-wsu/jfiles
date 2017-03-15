@@ -22,8 +22,7 @@
 package edu.wright.cs.jfiles.gui.server;
 
 import edu.wright.cs.jfiles.database.DatabaseController;
-import edu.wright.cs.jfiles.database.FailedInsertException;
-import edu.wright.cs.jfiles.database.IdNotFoundException;
+import edu.wright.cs.jfiles.gui.common.User;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -35,6 +34,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -49,6 +49,9 @@ import java.util.ResourceBundle;
  *
  */
 public class UserListViewController implements Initializable {
+
+	@FXML
+	VBox root;
 
 	@FXML
 	TableView<User> userTable;
@@ -80,8 +83,7 @@ public class UserListViewController implements Initializable {
 		try {
 			Parent createUserView = loader.load();
 			CreateUserViewController controller = loader.getController();
-			controller.registerParentController(this);
-
+			controller.newIdProperty.addListener(listener -> loadUsers());
 			Scene scene = new Scene(createUserView);
 			Stage stage = new Stage();
 			stage.setScene(scene);
@@ -90,20 +92,6 @@ public class UserListViewController implements Initializable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	/**
-	 * Creates a new user in the database.
-	 */
-	public void createNewUser(String name, String pass, int role) {
-		try {
-			DatabaseController.createUser(name, pass, role);
-		} catch (FailedInsertException e) {
-			e.printStackTrace();
-		} catch (IdNotFoundException e) {
-			e.printStackTrace();
-		}
-		loadUsers();
 	}
 
 	/**
