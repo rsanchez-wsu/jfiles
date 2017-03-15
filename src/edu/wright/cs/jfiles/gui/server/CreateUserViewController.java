@@ -21,11 +21,15 @@
 
 package edu.wright.cs.jfiles.gui.server;
 
+import edu.wright.cs.jfiles.database.DatabaseController;
+import edu.wright.cs.jfiles.database.FailedInsertException;
+import edu.wright.cs.jfiles.database.IdNotFoundException;
 
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 /**
@@ -37,23 +41,16 @@ import javafx.stage.Stage;
 public class CreateUserViewController {
 
 	@FXML
+	AnchorPane root;
+
+	@FXML
 	private TextField txtName;
 	@FXML
 	private TextField txtPass;
 	@FXML
 	private TextField txtRole;
 
-	private UserListViewController parentController;
-
-	/**
-	 * Registers the parent controller with this view.
-	 *
-	 * @param controller
-	 *            controller for the parent
-	 */
-	public void registerParentController(UserListViewController controller) {
-		parentController = controller;
-	}
+	public SimpleIntegerProperty newIdProperty = new SimpleIntegerProperty();
 
 	/**
 	 * Called when submit button is pressed.
@@ -65,9 +62,15 @@ public class CreateUserViewController {
 	public void submitPressed(ActionEvent event) {
 		String name = txtName.getText();
 		String pass = txtPass.getText();
-		int role = Integer.valueOf(txtRole.getText());
-		parentController.createNewUser(name, pass, role);
-		((Stage) ((Node) event.getSource()).getScene().getWindow()).close();
+		int role = Integer.parseInt(txtRole.getText());
+		try {
+			newIdProperty.set(DatabaseController.createUser(name, pass, role));
+		} catch (FailedInsertException e) {
+			e.printStackTrace();
+		} catch (IdNotFoundException e) {
+			e.printStackTrace();
+		}
+		Stage stage = (Stage) root.getScene().getWindow();
+		stage.close();
 	}
-
 }

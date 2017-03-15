@@ -23,11 +23,13 @@ package edu.wright.cs.jfiles.gui.server;
 
 import edu.wright.cs.jfiles.database.DatabaseController;
 import edu.wright.cs.jfiles.database.FailedInsertException;
+import edu.wright.cs.jfiles.gui.common.Console;
 import edu.wright.cs.jfiles.server.JFilesServer;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.VBox;
 
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
@@ -45,13 +47,15 @@ import java.util.ResourceBundle;
 public class ServerAppViewController implements Initializable {
 
 	@FXML
+	VBox root;
+
+	@FXML
 	UserListViewController userListViewController;
 
 	@FXML
 	TextArea consoleOutput;
 
 	private JFilesServer server;
-	Thread serverThread;
 	private static int PORT = 9786;
 
 
