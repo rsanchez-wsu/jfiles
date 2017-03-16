@@ -61,6 +61,9 @@ public class ServerAppViewController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		server = JFilesServer.getInstance();
+		server.start(PORT);
+
 		Console console = new Console(consoleOutput);
 		PrintStream ps = null;
 		try {
@@ -69,20 +72,6 @@ public class ServerAppViewController implements Initializable {
 			System.setErr(ps);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
-		}
-
-		server = JFilesServer.getInstance();
-		server.start(PORT);
-
-		// TODO: Remove this and replace with server startup operations
-		DatabaseController.dropTables();
-		DatabaseController.createTables();
-
-		try {
-			DatabaseController.createRole("NONE");
-			DatabaseController.createRole("ADMIN");
-		} catch (FailedInsertException e1) {
-			e1.printStackTrace();
 		}
 	}
 
@@ -94,7 +83,6 @@ public class ServerAppViewController implements Initializable {
 		if (server != null) {
 			server.stop();
 		}
-		DatabaseController.shutdown();
 	}
 
 }

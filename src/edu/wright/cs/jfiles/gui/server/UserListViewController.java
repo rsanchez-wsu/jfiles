@@ -54,7 +54,6 @@ public class UserListViewController implements Initializable {
 
 	@FXML
 	VBox root;
-
 	@FXML
 	TableView<UserData> userTable;
 	@FXML
@@ -73,6 +72,7 @@ public class UserListViewController implements Initializable {
 		userTableId.setCellValueFactory(new PropertyValueFactory<UserData, String>("id"));
 		userTableName.setCellValueFactory(new PropertyValueFactory<UserData, String>("name"));
 		userTableRole.setCellValueFactory(new PropertyValueFactory<UserData, String>("role"));
+		loadUsers();
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class UserListViewController implements Initializable {
 	 * @author Matt Gilene
 	 *
 	 */
-	private class UserData {
+	public class UserData {
 		private final SimpleIntegerProperty id;
 		private final SimpleStringProperty name;
 		private final SimpleIntegerProperty role;
