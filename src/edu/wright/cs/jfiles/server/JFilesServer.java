@@ -357,33 +357,33 @@ public class JFilesServer {
 	/**
 	 * Ensures everything that needs to be created has been with the database.
 	 */
-//	private static void ensureDatabase() {
-//		User defaultUser = DatabaseController.getUser("tmp");
-//
-//		if (defaultUser == null) {
-//			try {
-//				int uid = DatabaseController.createUser("tmp", "", 0);
-//				try {
-//					String xml = new String(
-//							Files.readAllBytes(
-//									new File("tests/permissions/tmp.xml").toPath()), "UTF-8");
-//					int permid = DatabaseController.createPermission(xml);
-//					DatabaseController.addPermissionToUser(uid, permid);
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			} catch (FailedInsertException | IdNotFoundException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//	}
+	private static void ensureDatabase() {
+		User defaultUser = DatabaseController.getUser("tmp");
+
+		if (defaultUser == null) {
+			try {
+				int uid = DatabaseController.createUser("tmp", "", 0);
+				try {
+					String xml = new String(
+							Files.readAllBytes(
+									new File("tests/permissions/tmp.xml").toPath()), "UTF-8");
+					int permid = DatabaseController.createPermission(xml);
+					DatabaseController.addPermissionToUser(uid, permid);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} catch (FailedInsertException | IdNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 	/**
 	 * The main entry point to the program.
 	 */
 	public static void main(String[] args) {
-//		ensureDatabase();
+		ensureDatabase();
 		JFilesServer.getInstance().start(9786);
 	}
 }
