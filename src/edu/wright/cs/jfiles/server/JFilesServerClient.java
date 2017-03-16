@@ -72,6 +72,20 @@ public class JFilesServerClient implements Runnable {
 		}
 	}
 
+	/**
+	 * Alert the client the connection has been refused, and close the socket.
+	 */
+	public void refuseConnection() {
+		try {
+			streamOut.writeUTF("Connection refused.");
+			streamOut.flush();
+		} catch (IOException ioe) {
+			JFilesServer.print("Error sending: " + ioe.getMessage());
+		} finally {
+			close();
+		}
+	}
+
 	@Override
 	public void run() {
 		try {
