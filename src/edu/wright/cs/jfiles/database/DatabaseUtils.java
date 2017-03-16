@@ -135,6 +135,7 @@ public class DatabaseUtils {
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 			transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, doctype.getSystemId());
+
 			StringWriter sw = new StringWriter();
 			transformer.transform(new DOMSource(document), new StreamResult(sw));
 			return sw.toString();

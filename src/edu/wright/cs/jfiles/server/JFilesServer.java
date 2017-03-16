@@ -21,7 +21,6 @@
 
 package edu.wright.cs.jfiles.server;
 
-import edu.wright.cs.jfiles.commands.Mkdir;
 import edu.wright.cs.jfiles.database.DatabaseController;
 import edu.wright.cs.jfiles.database.DatabaseUtils;
 import edu.wright.cs.jfiles.database.FailedInsertException;
@@ -36,7 +35,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -59,7 +57,7 @@ public class JFilesServer {
 	DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
 
 	private boolean shouldRun = true;
-	private ExecutorService executorService = Executors.newFixedThreadPool(10);
+	private ExecutorService executorService;
 	private List<JFilesServerClient> clients;
 
 	private static JFilesServer instance = new JFilesServer();
@@ -100,6 +98,11 @@ public class JFilesServer {
 			logger.error("unable to load server.properties file");
 		}
 
+		// Setup the executor service
+		executorService = Executors.newFixedThreadPool(maxthreads);
+
+		// Make sure the database exists and contains all required tables and
+		// default data.
 		ensureDatabase();
 
 		// Ensure folder for user exists. If it doesn't, it'll error.
@@ -282,7 +285,6 @@ public class JFilesServer {
 				int userId = DatabaseController.createUser(defaultUser, "", roleId);
 				String xml = DatabaseUtils.generateUserPermission(defaultCwd + defaultUser);
 				int permId = DatabaseController.createPermission(xml);
-				System.out.println(String.format("userId:%d, permId:%d", userId, permId));
 				DatabaseController.addPermissionToUser(userId, permId);
 			} catch (FailedInsertException | IdNotFoundException e) {
 				e.printStackTrace();
