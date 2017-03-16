@@ -96,11 +96,6 @@ public class JFilesServerClient implements Runnable {
 	 * @param input The input given from client.
 	 */
 	private void handle(String input) {
-
-		JFilesServer.print("Got the input: " + input);
-
-		logger.info("[Server] Recv command: " + input);
-
 		String[] sinput = input.split(" ");
 
 		Command cmd =
@@ -108,8 +103,6 @@ public class JFilesServerClient implements Runnable {
 
 		cmd.setClientProperties(cp);
 		String cont = cmd.execute();
-
-		JFilesServer.print("Sending back: " + cont);
 
 		send(cont);
 
