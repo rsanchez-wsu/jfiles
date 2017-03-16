@@ -22,7 +22,11 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import edu.wright.cs.jfiles.database.DatabaseUtils.PermissionType;
+
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  *  The MKDIR command returns ".mkdir".
@@ -63,9 +67,29 @@ public class Mkdir extends Command {
 	@Override
 	public String execute() {
 		String directory = this.parser.next();
-		return directory != null
-				? makeDirectory(directory)
-				: new Error("Missing directory. Syntax: MKDIR [directoryPath]").execute();
+
+		if (directory == null) {
+			return new Error("Missing directory. Syntax: MKDIR [directoryPath]").execute();
+		}
+
+		if (!directory.startsWith("/")) {
+			directory = this.cp.getCwd() + directory;
+		}
+
+		Path path = Paths.get(directory);
+
+		String dir = "";
+
+		if (path.getNameCount() > 1) {
+			dir = path.subpath(0, path.getNameCount() - 1).toString();
+		}
+
+		if (!this.cp.hasPermission(dir, PermissionType.READWRITE)) {
+			return new Error(
+					"You do not have permission to write to directory: " + dir).execute();
+		} else {
+			return makeDirectory(directory);
+		}
 	}
 
 	/**
