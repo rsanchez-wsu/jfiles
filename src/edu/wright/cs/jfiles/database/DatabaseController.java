@@ -340,7 +340,7 @@ public class DatabaseController {
 	 *             created role can be found.
 	 */
 	public static int createRole(String name) throws FailedInsertException {
-		int id = -1;
+		int id = 0;
 		String sql = "INSERT INTO ROLES (ROLE_NAME) VALUES (?)";
 
 		try (PreparedStatement insertStmt =

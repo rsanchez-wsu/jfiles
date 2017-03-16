@@ -124,8 +124,10 @@ public class JFilesServer {
 		int maxThreads = Integer.parseInt(prop.getProperty("maxThreads", "10"));
 		logger.info("Config set max threads to " + maxThreads);
 
+		ensureDatabase();
+
 		defaultCwd = "serverfiles/";
-		defaultUser = DatabaseController.getUser("tmp");
+		defaultUser = DatabaseController.getUser("default");
 		// Ensure folder for user exists. If it doesn't, it'll error.
 		if (!(new File(defaultCwd + defaultUser.getUsername()).mkdir())) {
 			logger.info("Could not create tmp user directory!");
@@ -231,6 +233,7 @@ public class JFilesServer {
 		 * Shut down the server.
 		 */
 		try {
+			DatabaseController.shutdown();
 			server.close();
 			System.out.println("Server now closed!");
 		} catch (IOException e) {
@@ -283,11 +286,16 @@ public class JFilesServer {
 	 * Ensures everything that needs to be created has been with the database.
 	 */
 	private static void ensureDatabase() {
-		User defaultUser = DatabaseController.getUser("tmp");
+		if (!new File("JFilesDB/").exists()) {
+			DatabaseController.createTables();
+		}
+
+		User defaultUser = DatabaseController.getUser("default");
 
 		if (defaultUser == null) {
 			try {
-				int uid = DatabaseController.createUser("tmp", "", 0);
+				DatabaseController.createRole("none");
+				int uid = DatabaseController.createUser("default", "", 0);
 				try {
 					String xml = new String(
 							Files.readAllBytes(
@@ -308,7 +316,6 @@ public class JFilesServer {
 	 * The main entry point to the program.
 	 */
 	public static void main(String[] args) {
-		ensureDatabase();
 		JFilesServer.getInstance().start(9786);
 	}
 }
