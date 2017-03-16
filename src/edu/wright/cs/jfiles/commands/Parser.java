@@ -84,13 +84,18 @@ public class Parser {
 		} else {
 			if (arg.length() > 0) {
 				if (arg.startsWith("\"")) {
-					part.append(arg.substring(1, arg.length()));
+					if (arg.endsWith("\"")) {
+						part.append(arg.substring(1, arg.length() - 1));
+					} else {
+						part.append(arg.substring(1, arg.length()));
+					}
 				} else if (part.length() > 0 && arg.endsWith("\"")) {
 					part.append(" " + arg.substring(0, arg.length() - 1));
 					this.args.add(part.toString());
 					part.setLength(0);
 				} else if (part.length() > 0) {
 					part.append(" " + arg);
+					System.out.println("arg3: " + arg.substring(0, arg.length() - 1));
 				} else {
 					this.args.add(arg);
 				}

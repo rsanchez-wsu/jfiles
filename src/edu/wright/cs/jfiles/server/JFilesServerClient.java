@@ -54,7 +54,8 @@ public class JFilesServerClient implements Runnable {
 	 */
 	public JFilesServerClient(Socket parmSocket) {
 		socket = parmSocket;
-		cp.setCwd(JFilesServer.getInstance().getCwd());
+		cp.setUser(JFilesServer.getInstance().getDefaultUser());
+		cp.setCwd(JFilesServer.getInstance().getCwd() + cp.getUser().getUsername() + "/");
 		cp.cachePermissionType();
 	}
 
@@ -99,6 +100,8 @@ public class JFilesServerClient implements Runnable {
 
 		Command cmd =
 				Commands.getNewInstance(sinput[0], Arrays.copyOfRange(sinput, 1, sinput.length));
+
+		logger.info(cmd.toString());
 
 		cmd.setClientProperties(cp);
 		String cont = cmd.execute();
