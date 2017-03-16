@@ -33,6 +33,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.nio.file.Files;
@@ -83,17 +84,21 @@ public class JFilesServer {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	private void setup() throws IOException {
-		FileInputStream propIn =
-				new FileInputStream(new File("src/edu/wright/cs/jfiles/server/server.properties"));
-		Properties properties = new Properties();
-		properties.load(propIn);
-		propIn.close();
+	private void setup() {
+		try (FileInputStream propIn = new FileInputStream(
+				new File("src/edu/wright/cs/jfiles/server/server.properties"))) {
+			Properties properties = new Properties();
+			properties.load(propIn);
 
-		port = Integer.parseInt(properties.getProperty("port", "9786"));
-		maxthreads = Integer.parseInt(properties.getProperty("maxThreads", "10"));
-		defaultUser = properties.getProperty("defaultUser", "default");
-		defaultCwd = properties.getProperty("serverDirectory", "serverfiles/");
+			port = Integer.parseInt(properties.getProperty("port", "9786"));
+			maxthreads = Integer.parseInt(properties.getProperty("maxThreads", "10"));
+			defaultUser = properties.getProperty("defaultUser", "default");
+			defaultCwd = properties.getProperty("serverDirectory", "serverfiles/");
+		} catch (FileNotFoundException e) {
+			logger.error("server.properties file not found");
+		} catch (IOException e) {
+			logger.error("unable to load server.properties file");
+		}
 
 		ensureDatabase();
 
@@ -125,12 +130,7 @@ public class JFilesServer {
 	 *             If there is a problem binding to the socket
 	 */
 	private JFilesServer() {
-		try {
-			setup();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		setup();
 	}
 
 	/**

@@ -114,7 +114,6 @@ public class DatabaseUtils {
 	 * @return xml document string
 	 */
 	public static String generateUserPermission(String loc) {
-		String doc = "";
 		try {
 			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = builderFactory.newDocumentBuilder();
@@ -149,6 +148,12 @@ public class DatabaseUtils {
 		return null;
 	}
 
+	/**
+	 * Main for testing purposes.
+	 *
+	 * @param args
+	 *            command line args
+	 */
 	public static void main(String[] args) {
 		generateUserPermission("serverfiles/default");
 	}
