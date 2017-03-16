@@ -23,6 +23,7 @@ package edu.wright.cs.jfiles.server;
 
 import edu.wright.cs.jfiles.commands.Mkdir;
 import edu.wright.cs.jfiles.database.DatabaseController;
+import edu.wright.cs.jfiles.database.DatabaseUtils;
 import edu.wright.cs.jfiles.database.FailedInsertException;
 import edu.wright.cs.jfiles.database.IdNotFoundException;
 import edu.wright.cs.jfiles.database.User;
@@ -63,7 +64,9 @@ public class JFilesServer {
 	private static JFilesServer instance = new JFilesServer();
 
 	private String defaultCwd;
-	private User defaultUser;
+	private String defaultUser;
+	private int port;
+	private int maxthreads;
 
 	/**
 	 * Returns the JFilesServer instance.
@@ -81,56 +84,29 @@ public class JFilesServer {
 	 *             If there is a problem binding to the socket
 	 */
 	private void setup() throws IOException {
-		Properties prop = new Properties();
-		File config = null;
+		FileInputStream propIn =
+				new FileInputStream(new File("src/edu/wright/cs/jfiles/server/server.properties"));
+		Properties properties = new Properties();
+		properties.load(propIn);
+		propIn.close();
 
-		// Array of strings containing possible paths to check for config files
-		String[] configPaths = { "$HOME/.jfiles/serverConfig.xml",
-				"/usr/local/etc/jfiles/serverConfig.xml", "/opt/etc/jfiles/serverConfig.xml",
-				"/etc/jfiles/serverConfig.xml", "%PROGRAMFILES%/jFiles/etc/serverConfig.xml",
-				"%APPDATA%/jFiles/etc/serverConfig.xml" };
-
-		// Checking location(s) for the config file);
-		for (int i = 0; i < configPaths.length; i++) {
-			if (new File(configPaths[i]).exists()) {
-				config = new File(configPaths[i]);
-				break;
-			}
-		}
-
-		// Output location where the config file was found. Otherwise warn and
-		// use defaults.
-		if (config == null) {
-			logger.info("No config file found. Using default values.");
-		} else {
-			logger.info("Config file found in " + config.getPath());
-			// Read file
-			try (FileInputStream fis = new FileInputStream(config)) {
-				// Reads xmlfile into prop object as key value pairs
-				prop.loadFromXML(fis);
-			} catch (IOException e) {
-				logger.error("IOException occured when trying to access the server config", e);
-			}
-		}
-
-		// Add setters here. First value is the key name and second is the
-		// default value.
-		// Default values are require as they are used if the config file cannot
-		// be found OR if
-		// the config file doesn't contain the key.
-		// PORT = Integer.parseInt(prop.getProperty("Port", "9786"));
-		// logger.info("Config set to port " + PORT);
-
-		int maxThreads = Integer.parseInt(prop.getProperty("maxThreads", "10"));
-		logger.info("Config set max threads to " + maxThreads);
+		port = Integer.parseInt(properties.getProperty("port", "9786"));
+		maxthreads = Integer.parseInt(properties.getProperty("maxThreads", "10"));
+		defaultUser = properties.getProperty("defaultUser", "default");
+		defaultCwd = properties.getProperty("serverDirectory", "serverfiles/");
 
 		ensureDatabase();
 
-		defaultCwd = "serverfiles/";
-		defaultUser = DatabaseController.getUser("default");
 		// Ensure folder for user exists. If it doesn't, it'll error.
-		if (!(new File(defaultCwd + defaultUser.getUsername()).mkdir())) {
-			logger.info("Could not create tmp user directory!");
+		File defaultUserDir = new File(defaultCwd + defaultUser);
+		if (!defaultUserDir.exists()) {
+			if (defaultUserDir.mkdirs()) {
+				logger.info("Default user directory created successfully.");
+			} else {
+				logger.info("Could not create default user directory");
+			}
+		} else {
+			logger.info("Default user directory already exists, doing nothing.");
 		}
 	}
 
@@ -139,7 +115,7 @@ public class JFilesServer {
 	 * @return Returns the default user.
 	 */
 	public User getDefaultUser() {
-		return this.defaultUser;
+		return DatabaseController.getUser(defaultUser);
 	}
 
 	/**
@@ -194,12 +170,17 @@ public class JFilesServer {
 						 */
 						JFilesServerClient client = new JFilesServerClient(server.accept());
 
-						// Add client to be tracked
-						clients.add(client);
-						JFilesServer.print(client + " connected");
+						if (clients.size() < maxthreads) {
+							// Add client to be tracked
+							clients.add(client);
+							JFilesServer.print(client + " connected");
 
-						// Run the new client thread.
-						executorService.execute(client);
+							// Run the new client thread.
+							executorService.execute(client);
+						} else {
+							JFilesServer.print("maxthread count reached, client not accepted");
+							client.refuseConnection();
+						}
 					} catch (IOException ioe) {
 						JFilesServer.print("Server accept error: " + ioe);
 					}
@@ -285,27 +266,24 @@ public class JFilesServer {
 	/**
 	 * Ensures everything that needs to be created has been with the database.
 	 */
-	private static void ensureDatabase() {
+	private void ensureDatabase() {
 		if (!new File("JFilesDB/").exists()) {
 			DatabaseController.createTables();
 		}
 
-		User defaultUser = DatabaseController.getUser("default");
+		DatabaseController.dropTables();
+		DatabaseController.createTables();
 
-		if (defaultUser == null) {
+		User defUser = DatabaseController.getUser(defaultUser);
+
+		if (defUser == null) {
 			try {
-				DatabaseController.createRole("none");
-				int uid = DatabaseController.createUser("default", "", 0);
-				try {
-					String xml = new String(
-							Files.readAllBytes(
-									new File("tests/permissions/tmp.xml").toPath()), "UTF-8");
-					int permid = DatabaseController.createPermission(xml);
-					DatabaseController.addPermissionToUser(uid, permid);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				int roleId = DatabaseController.createRole("none");
+				int userId = DatabaseController.createUser(defaultUser, "", roleId);
+				String xml = DatabaseUtils.generateUserPermission(defaultCwd + defaultUser);
+				int permId = DatabaseController.createPermission(xml);
+				System.out.println(String.format("userId:%d, permId:%d", userId, permId));
+				DatabaseController.addPermissionToUser(userId, permId);
 			} catch (FailedInsertException | IdNotFoundException e) {
 				e.printStackTrace();
 			}
