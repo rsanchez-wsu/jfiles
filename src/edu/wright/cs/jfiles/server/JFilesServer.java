@@ -162,6 +162,8 @@ public class JFilesServer {
 	 *             If there is a problem binding to the socket
 	 */
 	private JFilesServer() {
+		ensureDatabase();
+
 		try {
 			createXml();
 		} catch (TransformerFactoryConfigurationError e) {
@@ -357,7 +359,18 @@ public class JFilesServer {
 	/**
 	 * Ensures everything that needs to be created has been with the database.
 	 */
-	private static void ensureDatabase() {
+	private void ensureDatabase() {
+		DatabaseController.dropTables();
+		// Build all the tables
+		DatabaseController.createTables();
+
+		// Create none role
+		try {
+			DatabaseController.createRole("NONE");
+		} catch (FailedInsertException e) {
+			logger.error(e);
+		}
+
 		User defaultUser = DatabaseController.getUser("tmp");
 
 		if (defaultUser == null) {
@@ -383,7 +396,6 @@ public class JFilesServer {
 	 * The main entry point to the program.
 	 */
 	public static void main(String[] args) {
-		ensureDatabase();
 		JFilesServer.getInstance().start(9786);
 	}
 }
