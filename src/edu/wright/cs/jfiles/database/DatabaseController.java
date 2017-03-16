@@ -561,30 +561,30 @@ public class DatabaseController {
 	 */
 	public static User getUser(String username) {
 		User user = null;
-
-		String sql = "SELECT USER_ID, USER_NAME, USER_PASS, USER_ROLE FROM USERS "
-						+ "WHERE USER_NAME = ?";
-		List<User> users = new ArrayList<>();
-		try (Connection conn = openConnection();
-				PreparedStatement selectStmt = conn.prepareStatement(sql)) {
-
-			selectStmt.setString(1, username);
-			try (ResultSet rs = selectStmt.executeQuery()) {
-				while (rs.next()) {
-					int id = rs.getInt(1);
-					String name = rs.getString(2);
-					String pass = rs.getString(3);
-					int role = rs.getInt(4);
-					users.add(new User( id, name, pass, role ));
-				}
-			}
-		} catch (SQLException e) {
-			logger.error(e);
-		}
-
-		if (users.size() > 0) {
-			user = users.get(0);
-		}
+//
+//		String sql = "SELECT USER_ID, USER_NAME, USER_PASS, USER_ROLE FROM USERS "
+//						+ "WHERE USER_NAME = ?";
+//		List<User> users = new ArrayList<>();
+//		try (Connection conn = openConnection();
+//				PreparedStatement selectStmt = conn.prepareStatement(sql)) {
+//
+//			selectStmt.setString(1, username);
+//			try (ResultSet rs = selectStmt.executeQuery()) {
+//				while (rs.next()) {
+//					int id = rs.getInt(1);
+//					String name = rs.getString(2);
+//					String pass = rs.getString(3);
+//					int role = rs.getInt(4);
+//					users.add(new User( id, name, pass, role ));
+//				}
+//			}
+//		} catch (SQLException e) {
+//			logger.error(e);
+//		}
+//
+//		if (users.size() > 0) {
+//			user = users.get(0);
+//		}
 
 		return user;
 	}
