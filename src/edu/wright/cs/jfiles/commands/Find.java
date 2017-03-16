@@ -21,6 +21,8 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import edu.wright.cs.jfiles.database.DatabaseUtils.PermissionType;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,9 +88,20 @@ public class Find extends Command {
 		String filename = this.parser.next();
 		String directory = this.parser.next();
 
-		return filename != null
-				? getFiles(filename, directory)
-				: new Error("Missing filename. " + this.help()).execute();
+		directory = directory != null ? directory : "";
+
+		if (!directory.startsWith("/")) {
+			directory = this.cp.getCwd() + directory;
+		}
+
+		if (this.cp.hasPermission(directory, PermissionType.NONE)) {
+			return new Error(
+					"You do not have permission to view directory: " + directory).execute();
+		} else {
+			return filename != null
+					? getFiles(filename, directory)
+					: new Error("Missing filename. " + this.help()).execute();
+		}
 	}
 
 	/**

@@ -21,6 +21,12 @@
 
 package edu.wright.cs.jfiles.server;
 
+import edu.wright.cs.jfiles.commands.Mkdir;
+import edu.wright.cs.jfiles.database.DatabaseController;
+import edu.wright.cs.jfiles.database.FailedInsertException;
+import edu.wright.cs.jfiles.database.IdNotFoundException;
+import edu.wright.cs.jfiles.database.User;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,6 +34,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,6 +61,9 @@ public class JFilesServer {
 	private List<JFilesServerClient> clients;
 
 	private static JFilesServer instance = new JFilesServer();
+
+	private String defaultCwd;
+	private User defaultUser;
 
 	/**
 	 * Returns the JFilesServer instance.
@@ -113,6 +123,23 @@ public class JFilesServer {
 
 		int maxThreads = Integer.parseInt(prop.getProperty("maxThreads", "10"));
 		logger.info("Config set max threads to " + maxThreads);
+
+		ensureDatabase();
+
+		defaultCwd = "serverfiles/";
+		defaultUser = DatabaseController.getUser("default");
+		// Ensure folder for user exists. If it doesn't, it'll error.
+		if (!(new File(defaultCwd + defaultUser.getUsername()).mkdir())) {
+			logger.info("Could not create tmp user directory!");
+		}
+	}
+
+	/**
+	 * Gets the default user.
+	 * @return Returns the default user.
+	 */
+	public User getDefaultUser() {
+		return this.defaultUser;
 	}
 
 	/**
@@ -206,6 +233,7 @@ public class JFilesServer {
 		 * Shut down the server.
 		 */
 		try {
+			DatabaseController.shutdown();
 			server.close();
 			System.out.println("Server now closed!");
 		} catch (IOException e) {
@@ -244,6 +272,44 @@ public class JFilesServer {
 	 */
 	public synchronized void remove(JFilesServerClient client) {
 		clients.remove(client);
+	}
+
+	/**
+	 * Returns the default Current Working Directory..
+	 * @return The default CWD.
+	 */
+	public String getCwd() {
+		return this.defaultCwd;
+	}
+
+	/**
+	 * Ensures everything that needs to be created has been with the database.
+	 */
+	private static void ensureDatabase() {
+		if (!new File("JFilesDB/").exists()) {
+			DatabaseController.createTables();
+		}
+
+		User defaultUser = DatabaseController.getUser("default");
+
+		if (defaultUser == null) {
+			try {
+				DatabaseController.createRole("none");
+				int uid = DatabaseController.createUser("default", "", 0);
+				try {
+					String xml = new String(
+							Files.readAllBytes(
+									new File("tests/permissions/tmp.xml").toPath()), "UTF-8");
+					int permid = DatabaseController.createPermission(xml);
+					DatabaseController.addPermissionToUser(uid, permid);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} catch (FailedInsertException | IdNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**

@@ -340,7 +340,7 @@ public class DatabaseController {
 	 *             created role can be found.
 	 */
 	public static int createRole(String name) throws FailedInsertException {
-		int id = -1;
+		int id = 0;
 		String sql = "INSERT INTO ROLES (ROLE_NAME) VALUES (?)";
 
 		try (PreparedStatement insertStmt =
@@ -550,24 +550,24 @@ public class DatabaseController {
 	}
 
 	/**
-	 * Gets a single user from the database.
-	 *
-	 * @param userid
-	 *            The Id of the user to get
-	 * @return Id, User name, password, role
+	 * Gets a specific user from database.
+	 * @param username Get user by username.
+	 * @return The User.
 	 */
-	public static Object[] getUser(int userid) {
-		String sql = "SELECT USER_ID, USER_NAME, USER_PASS, USER_ROLE FROM USERS WHERE USER_ID = ?";
-		Object[] user = null;
+	public static User getUser(String username) {
+		User user = null;
+
+		String sql = "SELECT USER_ID, USER_NAME, USER_PASS, USER_ROLE FROM USERS "
+						+ "WHERE USER_NAME = ?";
 		try (PreparedStatement selectStmt = conn.prepareStatement(sql)) {
-			selectStmt.setInt(1, userid);
+			selectStmt.setString(1, username);
 			try (ResultSet rs = selectStmt.executeQuery()) {
-				while (rs.next()) {
+				if (rs.next()) {
 					int id = rs.getInt(1);
 					String name = rs.getString(2);
-					int pass = rs.getInt(3);
+					String pass = rs.getString(3);
 					int role = rs.getInt(4);
-					user = new Object[] { id, name, pass, role };
+					user = new User(id, name, pass, role);
 				}
 			}
 		} catch (SQLException e) {
@@ -581,16 +581,17 @@ public class DatabaseController {
 	 *
 	 * @return List containing user id, name and role.
 	 */
-	public static List<Object[]> getUsers() {
-		String sql = "SELECT USER_ID, USER_NAME, USER_ROLE FROM USERS";
-		List<Object[]> users = new ArrayList<>();
+	public static List<User> getUsers() {
+		String sql = "SELECT USER_ID, USER_NAME, USER_PASS, USER_ROLE FROM USERS";
+		List<User> users = new ArrayList<>();
 		try (PreparedStatement selectStmt = conn.prepareStatement(sql)) {
 			try (ResultSet rs = selectStmt.executeQuery()) {
 				while (rs.next()) {
 					int id = rs.getInt(1);
 					String name = rs.getString(2);
-					int role = rs.getInt(3);
-					users.add(new Object[] { id, name, role });
+					String pass = rs.getString(3);
+					int role = rs.getInt(4);
+					users.add(new User(id, name, pass, role));
 				}
 			}
 		} catch (SQLException e) {
@@ -646,11 +647,25 @@ public class DatabaseController {
 			logger.error(e);
 		}
 
+		int user3id = 0;
+		try {
+			user3id = createUser("tmp", "", noneid);
+		} catch (FailedInsertException | IdNotFoundException e) {
+			logger.error(e);
+		}
+
 		try {
 			String xml = new String(
 					Files.readAllBytes(new File("tests/permissions/admin.xml").toPath()), "UTF-8");
 			int permid = createPermission(xml);
 			addPermissionToRole(adminid, permid);
+			System.out.println(userHasPermission(user2id,
+					"./src/edu/wright/cs/jfiles/client/JFilesClient.java"));
+			System.out.println(userHasPermission(user1id, "./tests/permissions/admin.xml"));
+			System.out.println(userHasPermission(user1id, "./serverfiles"));
+			System.out.println(userHasPermission(user1id, "./serverfiles/"));
+			System.out.println(userHasPermission(user1id, "serverfiles/"));
+
 			System.out.println(userHasPermission(user1id, "src"));
 			System.out.println(userHasPermission(user1id, "src/"));
 			System.out.println(userHasPermission(user1id, "./src/"));
@@ -660,6 +675,7 @@ public class DatabaseController {
 			System.out.println(userHasPermission(user2id, "src/"));
 			System.out.println(userHasPermission(user2id, "./src/"));
 			System.out.println(userHasPermission(user2id, "src/edu"));
+			System.out.println(userHasPermission(user3id, "src/edu"));
 		} catch (IOException e) {
 			logger.error(e);
 		} catch (FailedInsertException e) {

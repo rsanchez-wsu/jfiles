@@ -23,11 +23,13 @@ package edu.wright.cs.jfiles.gui.server;
 
 import edu.wright.cs.jfiles.database.DatabaseController;
 import edu.wright.cs.jfiles.database.FailedInsertException;
+import edu.wright.cs.jfiles.gui.common.Console;
 import edu.wright.cs.jfiles.server.JFilesServer;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.VBox;
 
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
@@ -45,18 +47,23 @@ import java.util.ResourceBundle;
 public class ServerAppViewController implements Initializable {
 
 	@FXML
+	VBox root;
+
+	@FXML
 	UserListViewController userListViewController;
 
 	@FXML
 	TextArea consoleOutput;
 
 	private JFilesServer server;
-	Thread serverThread;
 	private static int PORT = 9786;
 
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		server = JFilesServer.getInstance();
+		server.start(PORT);
+
 		Console console = new Console(consoleOutput);
 		PrintStream ps = null;
 		try {
@@ -65,20 +72,6 @@ public class ServerAppViewController implements Initializable {
 			System.setErr(ps);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
-		}
-
-		server = JFilesServer.getInstance();
-		server.start(PORT);
-
-		// TODO: Remove this and replace with server startup operations
-		DatabaseController.dropTables();
-		DatabaseController.createTables();
-
-		try {
-			DatabaseController.createRole("NONE");
-			DatabaseController.createRole("ADMIN");
-		} catch (FailedInsertException e1) {
-			e1.printStackTrace();
 		}
 	}
 
@@ -90,7 +83,6 @@ public class ServerAppViewController implements Initializable {
 		if (server != null) {
 			server.stop();
 		}
-		DatabaseController.shutdown();
 	}
 
 }

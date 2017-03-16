@@ -47,12 +47,16 @@ public class JFilesServerClient implements Runnable {
 	private Socket socket = null;
 	private DataInputStream streamIn = null;
 	private DataOutputStream streamOut = null;
+	private ClientProperties cp = new ClientProperties();
 
 	/**
 	 * Creates a new socket.
 	 */
 	public JFilesServerClient(Socket parmSocket) {
 		socket = parmSocket;
+		cp.setUser(JFilesServer.getInstance().getDefaultUser());
+		cp.setCwd(JFilesServer.getInstance().getCwd() + cp.getUser().getUsername() + "/");
+		cp.cachePermissionType();
 	}
 
 	/**
@@ -92,19 +96,15 @@ public class JFilesServerClient implements Runnable {
 	 * @param input The input given from client.
 	 */
 	private void handle(String input) {
-
-		JFilesServer.print("Got the input: " + input);
-
-		logger.info("[Server] Recv command: " + input);
-
 		String[] sinput = input.split(" ");
 
 		Command cmd =
 				Commands.getNewInstance(sinput[0], Arrays.copyOfRange(sinput, 1, sinput.length));
 
-		String cont = cmd.execute();
+		logger.info(cmd.toString());
 
-		JFilesServer.print("Sending back: " + cont);
+		cmd.setClientProperties(cp);
+		String cont = cmd.execute();
 
 		send(cont);
 

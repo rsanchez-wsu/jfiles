@@ -4,11 +4,12 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wright.cs.jfiles.gui.server.UserListViewController">
+<VBox fx:id="root" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.wright.cs.jfiles.gui.server.UserListViewController">
    <children>
       <ToolBar prefHeight="40.0" prefWidth="200.0">
          <items>
             <Button fx:id="newUserBtn" mnemonicParsing="false" onAction="#displayNewUserView" text="New" />
+            <Button mnemonicParsing="false" text="Button" />
          </items>
       </ToolBar>
       <TableView fx:id="userTable" layoutX="14.0" layoutY="14.0" prefHeight="316.0" prefWidth="563.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
