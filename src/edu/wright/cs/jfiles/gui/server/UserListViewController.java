@@ -116,7 +116,7 @@ public class UserListViewController implements Initializable {
 	 * @author Matt Gilene
 	 *
 	 */
-	public class UserData {
+	public static class UserData {
 		private final SimpleIntegerProperty id;
 		private final SimpleStringProperty name;
 		private final SimpleIntegerProperty role;
