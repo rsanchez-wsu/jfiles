@@ -77,6 +77,7 @@ public class JFilesServerClient implements Runnable {
 	 */
 	public void refuseConnection() {
 		try {
+			open();
 			streamOut.writeUTF("Connection refused.");
 			streamOut.flush();
 		} catch (IOException ioe) {
@@ -95,8 +96,6 @@ public class JFilesServerClient implements Runnable {
 				handle(streamIn.readUTF());
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-//			e.printStackTrace();
 			JFilesServer.print("Client socket terminated.");
 		} finally {
 			JFilesServer.print("Calling close....");
