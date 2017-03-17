@@ -458,7 +458,6 @@ public class DatabaseController {
 			try (ResultSet rs = rolePermSelectStmt.executeQuery()) {
 				while (rs.next()) {
 					String xml = rs.getString(1);
-					System.out.println(xml);
 					PermissionType result = DatabaseUtils.hasAccess(xml, location);
 					if (result != PermissionType.NONE) {
 						return result;
