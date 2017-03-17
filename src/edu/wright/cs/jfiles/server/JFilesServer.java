@@ -137,12 +137,9 @@ public class JFilesServer {
 	}
 
 	/**
-	 * Starts the server
-	 *
-	 * @param port
-	 *            The port to start on.
+	 * Starts the server.
 	 */
-	public void start(int port) {
+	public void start() {
 		shouldRun = true;
 		clients = Collections.synchronizedList(new ArrayList<>());
 
