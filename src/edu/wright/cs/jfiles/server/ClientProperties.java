@@ -144,7 +144,6 @@ public class ClientProperties {
 					? DatabaseController.userHasPermission(this.user.getId(), dir)
 					: PermissionType.NONE;
 		} catch (IdNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return PermissionType.NONE;
 		}
