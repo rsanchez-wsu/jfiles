@@ -293,6 +293,6 @@ public class JFilesServer {
 	 * The main entry point to the program.
 	 */
 	public static void main(String[] args) {
-		JFilesServer.getInstance().start(9786);
+		JFilesServer.getInstance().start();
 	}
 }

@@ -21,8 +21,6 @@
 
 package edu.wright.cs.jfiles.gui.server;
 
-import edu.wright.cs.jfiles.database.DatabaseController;
-import edu.wright.cs.jfiles.database.FailedInsertException;
 import edu.wright.cs.jfiles.gui.common.Console;
 import edu.wright.cs.jfiles.server.JFilesServer;
 
@@ -56,13 +54,11 @@ public class ServerAppViewController implements Initializable {
 	TextArea consoleOutput;
 
 	private JFilesServer server;
-	private static int PORT = 9786;
-
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		server = JFilesServer.getInstance();
-		server.start(PORT);
+		server.start();
 
 		Console console = new Console(consoleOutput);
 		PrintStream ps = null;
