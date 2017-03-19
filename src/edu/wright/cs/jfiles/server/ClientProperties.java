@@ -56,6 +56,14 @@ public class ClientProperties {
 	}
 
 	/**
+	 * Sets the current user.
+	 * @param user The new user.
+	 */
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	/**
 	 * Gets the Current Working Directory.
 	 * @return The Current Working Directory.
 	 */
