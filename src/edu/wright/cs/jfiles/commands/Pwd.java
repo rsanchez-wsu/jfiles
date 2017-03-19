@@ -58,9 +58,20 @@ public class Pwd extends Command {
 	 */
 	@Override
 	public String execute() {
-		String directory = this.parser.next();
+		return curDir(this.cp.getCwd());
+	}
 
-		return curDir(directory);
+	/**
+	 * Gets the class specific help message and Syntax.
+	 * It's done like this so you can extend this method and not
+	 * have to worry about help working the same in all methods.
+	 * @return [0] is what the command does, [1] is the syntax of command.
+	 */
+	protected String[] helpStrings() {
+		return new String[] {
+				"Gets the current working directory.",
+				"PWD"
+		};
 	}
 
 }

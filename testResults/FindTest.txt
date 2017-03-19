@@ -1,0 +1,29 @@
+Testsuite: edu.wright.cs.jfiles.junit.FindTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.553 sec
+------------- Standard Output ---------------
+hi!
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<fileSystem>
+<directory>
+<file/>
+</directory>
+</fileSystem>
+Binding to port 9786, please wait  ...
+Server started: ServerSocket[addr=0.0.0.0/0.0.0.0,localport=9786]
+Waiting for a client ...
+<permission type="READWRITE">
+	<location path="serverfiles/tmp/"/>
+</permission>
+Waiting for a client ...
+<permission type="READWRITE">
+	<location path="serverfiles/tmp/"/>
+</permission>
+<permission type="READWRITE">
+	<location path="serverfiles/tmp/"/>
+</permission>
+------------- ---------------- ---------------
+------------- Standard Error -----------------
+ERROR StatusLogger No log4j2 configuration file found. Using default configuration: logging only errors to the console.
+------------- ---------------- ---------------
+
+Testcase: testFind took 1.544 sec

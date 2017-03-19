@@ -1,0 +1,25 @@
+Testsuite: edu.wright.cs.jfiles.junit.QuitTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.745 sec
+------------- Standard Output ---------------
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<fileSystem>
+<directory>
+<file/>
+</directory>
+</fileSystem>
+Binding to port 9786, please wait  ...
+Server started: ServerSocket[addr=0.0.0.0/0.0.0.0,localport=9786]
+Waiting for a client ...
+<permission type="READWRITE">
+	<location path="serverfiles/tmp/"/>
+</permission>
+Waiting for a client ...
+Client socket terminated.
+Calling close....
+Server now closed!
+------------- ---------------- ---------------
+------------- Standard Error -----------------
+ERROR StatusLogger No log4j2 configuration file found. Using default configuration: logging only errors to the console.
+------------- ---------------- ---------------
+
+Testcase: quitTest took 2.736 sec

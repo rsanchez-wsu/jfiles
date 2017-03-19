@@ -21,6 +21,10 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import edu.wright.cs.jfiles.database.DatabaseUtils.PermissionType;
+
+import java.io.File;
+
 /**
  * The rmdir command removes a directory.
  * Syntax:
@@ -41,12 +45,41 @@ public class Rmdir extends Command {
 	}
 
 	/**
-	 *  TODO: Program for RMDIR.
-	 *  @return Not much yet
+	 * TODO: Program for RMDIR.
+	 * @return a statement saying either the directory was found and remove or that it was not found
 	 */
 	@Override
 	public String execute() {
-		return "";
+		String dir = parser.next();
+
+		if (dir != null) {
+			if (!dir.startsWith("/")) {
+				dir = this.cp.getCwd() + dir;
+			}
+
+			if (!this.cp.hasPermission(dir, PermissionType.READWRITE)) {
+				return new Error(
+						"You do not have permission to write to directory: " + dir).execute();
+			} else {
+				return (new File(dir)).delete()
+						? new Info("Directory was deleted!").execute()
+						: new Error("Directory not found or not empty!").execute();
+			}
+		} else {
+			return new Error("Missing directory name.").execute();
+		}
 	}
 
+	/**
+	 * Gets the class specific help message and Syntax.
+	 * It's done like this so you can extend this method and not
+	 * have to worry about help working the same in all methods.
+	 * @return [0] is what the command does, [1] is the syntax of command.
+	 */
+	protected String[] helpStrings() {
+		return new String[] {
+				"Removes a directory.",
+				"RMDIR <directory>"
+		};
+	}
 }

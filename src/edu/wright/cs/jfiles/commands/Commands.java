@@ -37,11 +37,17 @@ public enum Commands {
 	TOUCH((String[] args) -> {
 		return new Touch(args);
 	}),
+	HELP((String[] args) -> {
+		return new Help(args);
+	}),
 	PWD((String[] args) -> {
 		return new Pwd(args);
 	}),
 	STOP((String[] args) -> {
 		return new Stop(args);
+	}),
+	START((String[] args) -> {
+		return new Start(args);
 	}),
 	RESTART((String[] args) -> {
 		return new Restart(args);

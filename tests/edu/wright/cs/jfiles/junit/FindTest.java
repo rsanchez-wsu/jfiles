@@ -42,7 +42,7 @@ public class FindTest {
 	public void testFind() throws IOException, InterruptedException {
 		System.out.println("hi!");
 		/*assertTrue(false);*/
-		File testFile = new File("armadillotestFile");
+		File testFile = new File("serverfiles\\tmp\\armadillotestFile");
 		try {
 			ServerTestWidget tw = new ServerTestWidget();
 			if (!testFile.exists()) {

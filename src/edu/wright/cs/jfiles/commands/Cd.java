@@ -21,6 +21,11 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import edu.wright.cs.jfiles.database.DatabaseUtils.PermissionType;
+import edu.wright.cs.jfiles.server.JFilesServer;
+
+import java.util.Arrays;
+
 /**
  *  The Close command closes the connection.
  *  Syntax:
@@ -46,7 +51,38 @@ public class Cd extends Command {
 	 */
 	@Override
 	public String execute() {
-		return "CD: " + "Directory";
+		String directory = this.parser.next();
+		directory = directory != null ? directory : "";
+
+		if (directory.equals("")) {
+			directory = JFilesServer.getInstance().getCwd();
+		} else if (directory.equals("..")) {
+			String[] dir = this.cp.getCwd().split("/");
+			directory = String.join("/", Arrays.copyOf(dir, dir.length - 1)) + "/";
+		} else if (!directory.startsWith("/")) {
+			directory = this.cp.getCwd() + directory;
+		}
+
+		if (this.cp.hasPermission(directory, PermissionType.NONE)) {
+			return new Error(
+					"You do not have permission to view directory: " + directory).execute();
+		} else {
+			this.cp.setCwd(directory);
+			return new Info(this.cp.getCwd()).execute();
+		}
+	}
+
+	/**
+	 * Gets the class specific help message and Syntax.
+	 * It's done like this so you can extend this method and not
+	 * have to worry about help working the same in all methods.
+	 * @return [0] is what the command does, [1] is the syntax of command.
+	 */
+	protected String[] helpStrings() {
+		return new String[] {
+				"Sets the current working directory to <directoryName>.",
+				"CD <directoryName>"
+		};
 	}
 
 }

@@ -38,6 +38,8 @@ public class Parser {
 	private final Map<String, String> flags;
 	private int currentArg = 0;
 
+	private StringBuilder part = new StringBuilder("");
+
 	/**
 	 * Inits a new parser.
 	 * @param args The arguments to parse.
@@ -47,6 +49,12 @@ public class Parser {
 
 		for (String arg : args) {
 			add(arg);
+		}
+
+		// If any part is left over, add rest to args.
+		if (part.length() > 0) {
+			this.args.add(part.toString());
+			part.setLength(0);
 		}
 	}
 
@@ -75,7 +83,22 @@ public class Parser {
 			}
 		} else {
 			if (arg.length() > 0) {
-				this.args.add(arg);
+				if (arg.startsWith("\"")) {
+					if (arg.endsWith("\"")) {
+						part.append(arg.substring(1, arg.length() - 1));
+					} else {
+						part.append(arg.substring(1, arg.length()));
+					}
+				} else if (part.length() > 0 && arg.endsWith("\"")) {
+					part.append(" " + arg.substring(0, arg.length() - 1));
+					this.args.add(part.toString());
+					part.setLength(0);
+				} else if (part.length() > 0) {
+					part.append(" " + arg);
+					System.out.println("arg3: " + arg.substring(0, arg.length() - 1));
+				} else {
+					this.args.add(arg);
+				}
 			}
 		}
 	}
@@ -139,15 +162,6 @@ public class Parser {
 		return this.flags.containsKey(flag);
 	}
 
-	/**
-	 * FindBugs says parser variable is 'unused' in abstract class.
-	 * Can't suppresswarning without something else complaining.
-	 * So the solution is to call a method that does nothing.
-	 */
-	public void shutupFindBugs() {
-
-	}
-
 	@Override
 	public String toString() {
 		StringBuilder end = new StringBuilder();
@@ -166,7 +180,11 @@ public class Parser {
 		}
 
 		for (String arg : args) {
-			end.append(arg + " ");
+			if (arg.contains(" ")) {
+				end.append("\"" + arg + "\" ");
+			} else {
+				end.append(arg + " ");
+			}
 		}
 
 		if (end.length() > 0) {
