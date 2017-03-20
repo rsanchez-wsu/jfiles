@@ -191,4 +191,16 @@ public class FileIconViewController implements Initializable {
 			return size;
 		}
 	}
+	
+	public Image getImage() {
+		switch(fileStruct.getType()) {
+		case FILE: return fileImage;
+
+		case DIRECTORY: return directoryImage;
+			
+			
+		}
+		return null;
+		
+	}
 }

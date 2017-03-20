@@ -40,7 +40,9 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.Image;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -189,7 +191,6 @@ public class ClientAppViewController implements Initializable {
 		MenuItem smallIcons = new MenuItem("Small Icons");
 		MenuItem details = new MenuItem("Details");
 		view.getItems().addAll(largeIcons, mediumIcons, smallIcons, details);
-
 		MenuItem sortName = new MenuItem("Name");
 		MenuItem sortDate = new MenuItem("Date");
 		MenuItem sortType = new MenuItem("Type");
@@ -364,7 +365,9 @@ public class ClientAppViewController implements Initializable {
 
 	/**
 	 * sets the current directory.
-	 * @param name String
+	 * 
+	 * @param name
+	 *            String
 	 */
 	public void setCurrentDirectory(String name) {
 		String[] path = name.split("/");
@@ -377,6 +380,7 @@ public class ClientAppViewController implements Initializable {
 
 	/**
 	 * returns the current directory.
+	 * 
 	 * @return currentDirectory
 	 */
 	public String getCurrentDirectory() {
@@ -392,5 +396,25 @@ public class ClientAppViewController implements Initializable {
 		clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		fileContextMenu = buildFileContextMenu();
 		viewContextMenu = buildViewContextMenu();
+	}
+
+	/*
+	 * This method will load the tree on the client gui
+	 * 
+	 * @param String path
+	 */
+	@SuppressWarnings("unchecked")
+	public void loadTree(String path) {
+
+		TreeItem<String> treeRoot = new TreeItem<String>("Root Node");
+		treeRoot.setExpanded(true);
+		treeRoot.getChildren().addAll(new TreeItem<String>("Under"),
+				new TreeItem<String>("Construction"));
+		// These two lines will be used when icons are implemented in the tree.
+		// Image icon = treeViewController.getImage();
+		// TreeItem<Image> treeIcon = new
+		// TreeItem<Image>(treeViewController.getImage());
+		// TODO implement observable list
+		// TODO implement icons to each line of the tree
 	}
 }
