@@ -39,6 +39,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -94,6 +95,52 @@ public class UserListViewController implements Initializable {
 		}
 	}
 
+	/**
+	 * Displays the EditUser view.
+	 */
+	@FXML
+	public void displayEditUserView(){
+		String id;
+		String[] values;
+		try{
+			id = userTable.getSelectionModel().getSelectedItem().getId();
+			values = new String[4];
+			
+		}catch(Exception e){
+			System.out.println("No user selected!");
+		}
+
+		FXMLLoader loader =
+				new FXMLLoader(CreateEditViewController.class.getResource("CreateEditView.fxml"));
+		try {
+			Parent editUserView = loader.load();
+			CreateEditViewController controller = loader.getController();
+			controller.newIdProperty.addListener(listener -> loadUsers());
+			Scene scene = new Scene(editUserView);
+			Stage stage = new Stage();
+			stage.setScene(scene);
+			stage.setTitle("Edit User");
+			stage.show();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		//use command to get all info from user
+		//Object[] user = DatabaseController.getUser(Integer.parseInt(id)); // gets array that has id, name, password, role
+		//System.out.println(Arrays.toString(user));
+		//change values in array with FXML gui
+		
+		
+		//give new info to change the database with new command
+		
+	}
+	
+	public String[] getUserInfo(){
+		String[] a = new String[4];
+		
+		return a;
+	}
 	/**
 	 * Loads the user list.
 	 */
