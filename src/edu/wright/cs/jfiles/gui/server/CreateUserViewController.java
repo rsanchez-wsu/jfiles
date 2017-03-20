@@ -70,7 +70,14 @@ public class CreateUserViewController {
 		} catch (IdNotFoundException e) {
 			e.printStackTrace();
 		}
-		Stage stage = (Stage) root.getScene().getWindow();
-		stage.close();
+
+		// Even though this cast should never fail, FindBugs doesn't like
+		// unchecked casts, so I'm checking it.
+		try {
+			Stage stage = (Stage) root.getScene().getWindow();
+			stage.close();
+		} catch (ClassCastException e) {
+			e.printStackTrace();
+		}
 	}
 }

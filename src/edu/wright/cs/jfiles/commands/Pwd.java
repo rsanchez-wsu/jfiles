@@ -58,9 +58,7 @@ public class Pwd extends Command {
 	 */
 	@Override
 	public String execute() {
-		String directory = this.parser.next();
-
-		return curDir(directory);
+		return curDir(this.cp.getCwd());
 	}
 
 	/**

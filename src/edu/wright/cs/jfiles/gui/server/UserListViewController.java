@@ -22,8 +22,10 @@
 package edu.wright.cs.jfiles.gui.server;
 
 import edu.wright.cs.jfiles.database.DatabaseController;
-import edu.wright.cs.jfiles.gui.common.User;
+import edu.wright.cs.jfiles.database.User;
 
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -53,25 +55,25 @@ public class UserListViewController implements Initializable {
 
 	@FXML
 	VBox root;
+	@FXML
+	TableView<UserData> userTable;
+	@FXML
+	TableColumn<UserData, String> userTableId;
+	@FXML
+	TableColumn<UserData, String> userTableName;
+	@FXML
+	TableColumn<UserData, String> userTableRole;
+	@FXML
+	TableColumn<UserData, String> userTableStatus;
 
-	@FXML
-	TableView<User> userTable;
-	@FXML
-	TableColumn<User, String> userTableId;
-	@FXML
-	TableColumn<User, String> userTableName;
-	@FXML
-	TableColumn<User, String> userTableRole;
-	@FXML
-	TableColumn<User, String> userTableStatus;
-
-	private ObservableList<User> userlist = FXCollections.observableArrayList();
+	private ObservableList<UserData> userlist = FXCollections.observableArrayList();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		userTableId.setCellValueFactory(new PropertyValueFactory<User, String>("id"));
-		userTableName.setCellValueFactory(new PropertyValueFactory<User, String>("name"));
-		userTableRole.setCellValueFactory(new PropertyValueFactory<User, String>("role"));
+		userTableId.setCellValueFactory(new PropertyValueFactory<UserData, String>("id"));
+		userTableName.setCellValueFactory(new PropertyValueFactory<UserData, String>("name"));
+		userTableRole.setCellValueFactory(new PropertyValueFactory<UserData, String>("role"));
+		loadUsers();
 	}
 
 	/**
@@ -145,13 +147,98 @@ public class UserListViewController implements Initializable {
 	 * Loads the user list.
 	 */
 	public void loadUsers() {
-		List<Object[]> users = DatabaseController.getUsers();
+		List<User> users = DatabaseController.getUsers();
 		userlist.clear();
-		for (Object[] userdata : users) {
-			User user = new User(String.valueOf((int) userdata[0]), (String) userdata[1],
-					String.valueOf((int) userdata[2]));
-			userlist.add(user);
+		for (User user : users) {
+			UserData userdata =
+					new UserData(user.getId(), user.getUsername(), user.getRole());
+			userlist.add(userdata);
 		}
 		userTable.setItems(userlist);
+	}
+
+	/**
+	 * Container class used to store data for use in a table.
+	 *
+	 * @author Matt Gilene
+	 *
+	 */
+	public static class UserData {
+		private final SimpleIntegerProperty id;
+		private final SimpleStringProperty name;
+		private final SimpleIntegerProperty role;
+
+		/**
+		 * Public constructor.
+		 *
+		 * @param id
+		 *            user id
+		 * @param name
+		 *            user name
+		 * @param role
+		 *            user role
+		 */
+		public UserData(int id, String name, int role) {
+			this.id = new SimpleIntegerProperty(id);
+			this.name = new SimpleStringProperty(name);
+			this.role = new SimpleIntegerProperty(role);
+		}
+
+		/**
+		 * Get ID.
+		 *
+		 * @return id
+		 */
+		public int getId() {
+			return id.get();
+		}
+
+		/**
+		 * Sets ID.
+		 *
+		 * @param id
+		 *            user id
+		 */
+		public void setId(int id) {
+			this.id.set(id);
+		}
+
+		/**
+		 * Get name.
+		 *
+		 * @return name
+		 */
+		public String getName() {
+			return name.get();
+		}
+
+		/**
+		 * Sets name.
+		 *
+		 * @param name
+		 *            user name
+		 */
+		public void setName(String name) {
+			this.name.set(name);
+		}
+
+		/**
+		 * Get role.
+		 *
+		 * @return role
+		 */
+		public int getRole() {
+			return role.get();
+		}
+
+		/**
+		 * Sets role.
+		 *
+		 * @param role
+		 *            user role
+		 */
+		public void setRole(int role) {
+			this.role.set(role);
+		}
 	}
 }

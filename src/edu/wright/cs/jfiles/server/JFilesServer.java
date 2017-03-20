@@ -21,11 +21,18 @@
 
 package edu.wright.cs.jfiles.server;
 
+import edu.wright.cs.jfiles.database.DatabaseController;
+import edu.wright.cs.jfiles.database.DatabaseUtils;
+import edu.wright.cs.jfiles.database.FailedInsertException;
+import edu.wright.cs.jfiles.database.IdNotFoundException;
+import edu.wright.cs.jfiles.database.User;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.text.DateFormat;
@@ -50,10 +57,15 @@ public class JFilesServer {
 	DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
 
 	private boolean shouldRun = true;
-	private ExecutorService executorService = Executors.newFixedThreadPool(10);
+	private ExecutorService executorService;
 	private List<JFilesServerClient> clients;
 
 	private static JFilesServer instance = new JFilesServer();
+
+	private String defaultCwd;
+	private String defaultUser;
+	private int port;
+	private int maxthreads;
 
 	/**
 	 * Returns the JFilesServer instance.
@@ -70,49 +82,48 @@ public class JFilesServer {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-	private void setup() throws IOException {
-		Properties prop = new Properties();
-		File config = null;
+	private void setup() {
+		try (FileInputStream propIn = new FileInputStream(
+				new File("src/edu/wright/cs/jfiles/server/server.properties"))) {
+			Properties properties = new Properties();
+			properties.load(propIn);
 
-		// Array of strings containing possible paths to check for config files
-		String[] configPaths = { "$HOME/.jfiles/serverConfig.xml",
-				"/usr/local/etc/jfiles/serverConfig.xml", "/opt/etc/jfiles/serverConfig.xml",
-				"/etc/jfiles/serverConfig.xml", "%PROGRAMFILES%/jFiles/etc/serverConfig.xml",
-				"%APPDATA%/jFiles/etc/serverConfig.xml" };
-
-		// Checking location(s) for the config file);
-		for (int i = 0; i < configPaths.length; i++) {
-			if (new File(configPaths[i]).exists()) {
-				config = new File(configPaths[i]);
-				break;
-			}
+			port = Integer.parseInt(properties.getProperty("port", "9786"));
+			maxthreads = Integer.parseInt(properties.getProperty("maxThreads", "10"));
+			defaultUser = properties.getProperty("defaultUser", "default");
+			defaultCwd = properties.getProperty("serverDirectory", "serverfiles/");
+		} catch (FileNotFoundException e) {
+			logger.error("server.properties file not found");
+		} catch (IOException e) {
+			logger.error("unable to load server.properties file");
 		}
 
-		// Output location where the config file was found. Otherwise warn and
-		// use defaults.
-		if (config == null) {
-			logger.info("No config file found. Using default values.");
+		// Setup the executor service
+		executorService = Executors.newFixedThreadPool(maxthreads);
+
+		// Make sure the database exists and contains all required tables and
+		// default data.
+		ensureDatabase();
+
+		// Ensure folder for user exists. If it doesn't, it'll error.
+		File defaultUserDir = new File(defaultCwd + defaultUser);
+		if (!defaultUserDir.exists()) {
+			if (defaultUserDir.mkdirs()) {
+				logger.info("Default user directory created successfully.");
+			} else {
+				logger.info("Could not create default user directory");
+			}
 		} else {
-			logger.info("Config file found in " + config.getPath());
-			// Read file
-			try (FileInputStream fis = new FileInputStream(config)) {
-				// Reads xmlfile into prop object as key value pairs
-				prop.loadFromXML(fis);
-			} catch (IOException e) {
-				logger.error("IOException occured when trying to access the server config", e);
-			}
+			logger.info("Default user directory already exists, doing nothing.");
 		}
+	}
 
-		// Add setters here. First value is the key name and second is the
-		// default value.
-		// Default values are require as they are used if the config file cannot
-		// be found OR if
-		// the config file doesn't contain the key.
-		// PORT = Integer.parseInt(prop.getProperty("Port", "9786"));
-		// logger.info("Config set to port " + PORT);
-
-		int maxThreads = Integer.parseInt(prop.getProperty("maxThreads", "10"));
-		logger.info("Config set max threads to " + maxThreads);
+	/**
+	 * Gets the default user.
+	 * @return Returns the default user.
+	 */
+	public User getDefaultUser() {
+		return DatabaseController.getUser(defaultUser);
 	}
 
 	/**
@@ -122,21 +133,13 @@ public class JFilesServer {
 	 *             If there is a problem binding to the socket
 	 */
 	private JFilesServer() {
-		try {
-			setup();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		setup();
 	}
 
 	/**
-	 * Starts the server
-	 *
-	 * @param port
-	 *            The port to start on.
+	 * Starts the server.
 	 */
-	public void start(int port) {
+	public void start() {
 		shouldRun = true;
 		clients = Collections.synchronizedList(new ArrayList<>());
 
@@ -167,12 +170,17 @@ public class JFilesServer {
 						 */
 						JFilesServerClient client = new JFilesServerClient(server.accept());
 
-						// Add client to be tracked
-						clients.add(client);
-						JFilesServer.print(client + " connected");
+						if (clients.size() < maxthreads) {
+							// Add client to be tracked
+							clients.add(client);
+							JFilesServer.print(client + " connected");
 
-						// Run the new client thread.
-						executorService.execute(client);
+							// Run the new client thread.
+							executorService.execute(client);
+						} else {
+							JFilesServer.print("maxthread count reached, client not accepted");
+							client.refuseConnection();
+						}
 					} catch (IOException ioe) {
 						JFilesServer.print("Server accept error: " + ioe);
 					}
@@ -206,6 +214,7 @@ public class JFilesServer {
 		 * Shut down the server.
 		 */
 		try {
+			DatabaseController.shutdown();
 			server.close();
 			System.out.println("Server now closed!");
 		} catch (IOException e) {
@@ -247,9 +256,43 @@ public class JFilesServer {
 	}
 
 	/**
+	 * Returns the default Current Working Directory..
+	 * @return The default CWD.
+	 */
+	public String getCwd() {
+		return this.defaultCwd;
+	}
+
+	/**
+	 * Ensures everything that needs to be created has been with the database.
+	 */
+	private void ensureDatabase() {
+		if (!new File("JFilesDB/").exists()) {
+			DatabaseController.createTables();
+		}
+
+		DatabaseController.dropTables();
+		DatabaseController.createTables();
+
+		User defUser = DatabaseController.getUser(defaultUser);
+
+		if (defUser == null) {
+			try {
+				int roleId = DatabaseController.createRole("none");
+				int userId = DatabaseController.createUser(defaultUser, "", roleId);
+				String xml = DatabaseUtils.generateUserPermission(defaultCwd + defaultUser);
+				int permId = DatabaseController.createPermission(xml);
+				DatabaseController.addPermissionToUser(userId, permId);
+			} catch (FailedInsertException | IdNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
 	 * The main entry point to the program.
 	 */
 	public static void main(String[] args) {
-		JFilesServer.getInstance().start(9786);
+		JFilesServer.getInstance().start();
 	}
 }
