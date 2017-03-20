@@ -40,7 +40,7 @@ public class TestArguments {
 	String argumentString2 = "test2";
 	String argumentString3 = "test3";
 
-
+	/**Tests for core.Argument class**/
 	@Test
 	public void testGetArgument() {
 		Argument arg = new Argument(argumentString1);
@@ -61,6 +61,8 @@ public class TestArguments {
 		Argument arg = new Argument(argumentString1);
 		assertEquals(argumentString2, arg.getArgument());
 	}
+
+	/**Tests for core.Arguments class**/
 
 	@Test
 	public void testAddArgumentsAndGetCountArgParameter() {
