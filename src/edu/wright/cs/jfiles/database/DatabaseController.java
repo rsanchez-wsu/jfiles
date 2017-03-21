@@ -550,16 +550,49 @@ public class DatabaseController {
 
 	/**
 	 * Gets a specific user from database.
-	 * @param username Get user by username.
+	 *
+	 * @param username
+	 *            Get user by name.
 	 * @return The User.
 	 */
 	public static User getUser(String username) {
 		User user = null;
 
-		String sql = "SELECT USER_ID, USER_NAME, USER_PASS, USER_ROLE FROM USERS "
+		String sql =
+				"SELECT USER_ID, USER_NAME, USER_PASS, USER_ROLE FROM USERS "
 						+ "WHERE USER_NAME = ?";
 		try (PreparedStatement selectStmt = conn.prepareStatement(sql)) {
 			selectStmt.setString(1, username);
+			try (ResultSet rs = selectStmt.executeQuery()) {
+				if (rs.next()) {
+					int id = rs.getInt(1);
+					String name = rs.getString(2);
+					String pass = rs.getString(3);
+					int role = rs.getInt(4);
+					user = new User(id, name, pass, role);
+				}
+			}
+		} catch (SQLException e) {
+			logger.error(e);
+		}
+		return user;
+	}
+
+	/**
+	 * Gets a specific user from database.
+	 *
+	 * @param userid
+	 *            Get user by id.
+	 * @return The User.
+	 */
+	public static User getUser(int userid) {
+		User user = null;
+
+		String sql =
+				"SELECT USER_ID, USER_NAME, USER_PASS, USER_ROLE FROM USERS "
+				+ "WHERE USER_ID = ?";
+		try (PreparedStatement selectStmt = conn.prepareStatement(sql)) {
+			selectStmt.setInt(1, userid);
 			try (ResultSet rs = selectStmt.executeQuery()) {
 				if (rs.next()) {
 					int id = rs.getInt(1);
@@ -597,6 +630,30 @@ public class DatabaseController {
 			logger.error(e);
 		}
 		return users;
+	}
+
+	/**
+	 * Gets the list of role from the database.
+	 *
+	 * @return list of roles
+	 */
+	public static List<Role> getRoles() {
+		String sql = "SELECT ROLE_ID, ROLE_NAME FROM ROLES";
+		List<Role> roles = new ArrayList<>();
+
+		try (PreparedStatement selectStmt = conn.prepareStatement(sql)) {
+			try (ResultSet rs = selectStmt.executeQuery()) {
+				while (rs.next()) {
+					int id = rs.getInt(1);
+					String name = rs.getString(2);
+					roles.add(new Role(id, name));
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return roles;
 	}
 
 	/**
