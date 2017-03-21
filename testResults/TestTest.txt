@@ -1,4 +1,0 @@
-Testsuite: edu.wright.cs.jfiles.junit.TestTest
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.011 sec
-
-Testcase: testTest took 0.001 sec

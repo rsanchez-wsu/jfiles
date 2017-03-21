@@ -29,3 +29,5 @@ searchHistory.txt
 /JFilesDB/
 
 serverfiles/*
+/testBuild/
+/testResults/
