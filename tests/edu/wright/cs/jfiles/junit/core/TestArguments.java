@@ -56,12 +56,6 @@ public class TestArguments {
 		assertEquals(1, args.size());
 	}
 
-	@Test
-	public void testGetArgumentShouldFail() {
-		Argument arg = new Argument(argumentString1);
-		assertEquals(argumentString2, arg.getArgument());
-	}
-
 	/**Tests for core.Arguments class**/
 
 	@Test

@@ -31,8 +31,6 @@ import edu.wright.cs.jfiles.core.CommandParser;
 
 import org.junit.Test;
 
-import java.util.Stack;
-
 /**Test class for methods in core.CommandLine
  * and coreCommandParser in Core.**/
 public class TestCommands {
