@@ -275,6 +275,15 @@
 				<fileset dir="${lib.dir}" includes="*.jar" />
 			</classpath>
 			<formatter type = "plain"/>
+			<!--
+			These are the tests. To add more tests add:
+			<test name = "testclass"
+				outfile = "${tests.out}/outtxt" 
+				/>
+			where testclass is the name of the test class(not the test method in the class)
+			(include edu.wright.cs etc. part of the class name)
+			outtxt is the name of the text file where the test results will be written
+			-->
 			<test name = "edu.wright.cs.jfiles.junit.TestTest"
 				outfile = "${tests.out}/TestTest" 
 				/>
