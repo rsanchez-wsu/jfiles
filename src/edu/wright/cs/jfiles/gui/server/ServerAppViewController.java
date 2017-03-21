@@ -21,6 +21,8 @@
 
 package edu.wright.cs.jfiles.gui.server;
 
+import edu.wright.cs.jfiles.database.DatabaseController;
+import edu.wright.cs.jfiles.database.FailedInsertException;
 import edu.wright.cs.jfiles.gui.common.Console;
 import edu.wright.cs.jfiles.server.JFilesServer;
 
@@ -67,6 +69,12 @@ public class ServerAppViewController implements Initializable {
 			System.setOut(ps);
 			System.setErr(ps);
 		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+
+		try {
+			DatabaseController.createRole("admin");
+		} catch (FailedInsertException e) {
 			e.printStackTrace();
 		}
 	}
