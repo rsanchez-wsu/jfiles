@@ -24,7 +24,7 @@
             <TextField fx:id="txtName" GridPane.columnIndex="2" GridPane.rowIndex="1" />
             <TextField fx:id="txtPass" GridPane.columnIndex="2" GridPane.rowIndex="2" />
             <Label text="Role" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <TextField fx:id="txtRole" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <ComboBox fx:id="comboRole" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
          </children>
       </GridPane>
       <Button layoutX="134.0" layoutY="97.0" mnemonicParsing="false" onAction="#submitPressed" text="Submit" />
