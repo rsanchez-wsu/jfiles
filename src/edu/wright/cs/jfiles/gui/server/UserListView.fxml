@@ -8,13 +8,8 @@
    <children>
       <ToolBar prefHeight="40.0" prefWidth="200.0">
          <items>
-<<<<<<< HEAD
             <Button fx:id="newUserBtn" mnemonicParsing="false" onAction="#showNewUserView" text="New" />
             <Button fx:id="editUserBtn" mnemonicParsing="false" onAction="#showEditUserView" text="Edit" />
-=======
-            <Button fx:id="newUserBtn" mnemonicParsing="false" onAction="#displayNewUserView" text="New" />
-            <Button fx:id="editUserBtn" mnemonicParsing="false" onAction="#displayEditUserView" text="Edit" />
->>>>>>> branch 'team12-dev' of https://github.com/rsanchez-wsu/jfiles.git
          </items>
       </ToolBar>
       <TableView fx:id="userTable" layoutX="14.0" layoutY="14.0" prefHeight="316.0" prefWidth="563.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

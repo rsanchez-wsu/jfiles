@@ -79,10 +79,10 @@ public class UserListViewController implements Initializable {
 	@FXML
 	public void showNewUserView() {
 		FXMLLoader loader =
-				new FXMLLoader(CreateUserViewController.class.getResource("CreateUserView.fxml"));
+				new FXMLLoader(UserFormController.class.getResource("UserForm.fxml"));
 		try {
 			Parent createUserView = loader.load();
-			CreateUserViewController controller = loader.getController();
+			UserFormController controller = loader.getController();
 			Scene scene = new Scene(createUserView);
 			Stage stage = new Stage();
 			stage.setScene(scene);
@@ -104,10 +104,10 @@ public class UserListViewController implements Initializable {
 			return;
 		}
 		FXMLLoader loader =
-				new FXMLLoader(CreateUserViewController.class.getResource("CreateUserView.fxml"));
+				new FXMLLoader(UserFormController.class.getResource("UserForm.fxml"));
 		try {
 			Parent createUserView = loader.load();
-			CreateUserViewController controller = loader.getController();
+			UserFormController controller = loader.getController();
 			Scene scene = new Scene(createUserView);
 			Stage stage = new Stage();
 			stage.setScene(scene);
