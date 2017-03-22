@@ -609,6 +609,23 @@ public class DatabaseController {
 	}
 
 	/**
+	 * Deletes a user from the database.
+	 *
+	 * @param id
+	 *            User id
+	 */
+	public static void deleteUser(int id) {
+		String sql = "DELETE FROM USERS WHERE USER_ID = ?";
+
+		try (PreparedStatement deleteStmt = conn.prepareStatement(sql)) {
+			deleteStmt.setInt(1, id);
+			deleteStmt.executeUpdate();
+		} catch (SQLException e) {
+			logger.error(e);
+		}
+	}
+
+	/**
 	 * Returns the list of users in the database.
 	 *
 	 * @return List containing user id, name and role.
@@ -732,6 +749,8 @@ public class DatabaseController {
 			System.out.println(userHasPermission(user2id, "./src/"));
 			System.out.println(userHasPermission(user2id, "src/edu"));
 			System.out.println(userHasPermission(user3id, "src/edu"));
+
+			deleteUser(user3id);
 		} catch (IOException e) {
 			logger.error(e);
 		} catch (FailedInsertException e) {
