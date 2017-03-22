@@ -122,6 +122,20 @@ public class UserListViewController implements Initializable {
 	}
 
 	/**
+	 * Deletes the selected user.
+	 */
+	@FXML
+	public void deleteUser() {
+		if (userTable.getSelectionModel().getSelectedItem() == null) {
+			return;
+		} else {
+			//get ID and send to command to delete from database
+			int id = userTable.getSelectionModel().getSelectedItem().getId();
+			DatabaseController.deleteUser(id);
+		}
+	}
+
+	/**
 	 * Loads the user list.
 	 */
 	public void loadUsers() {
