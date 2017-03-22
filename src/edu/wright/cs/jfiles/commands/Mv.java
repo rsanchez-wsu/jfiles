@@ -24,8 +24,6 @@ package edu.wright.cs.jfiles.commands;
 import edu.wright.cs.jfiles.database.DatabaseUtils.PermissionType;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
 
 /**
  * The mv command moves or renames a file.

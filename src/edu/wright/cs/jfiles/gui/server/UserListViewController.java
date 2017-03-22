@@ -78,7 +78,6 @@ public class UserListViewController implements Initializable {
 	 */
 	@FXML
 	public void showNewUserView() {
-		System.out.println("Show new user view");
 		FXMLLoader loader =
 				new FXMLLoader(CreateUserViewController.class.getResource("CreateUserView.fxml"));
 		try {

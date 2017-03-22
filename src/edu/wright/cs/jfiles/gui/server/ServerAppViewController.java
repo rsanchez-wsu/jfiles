@@ -26,6 +26,7 @@ import edu.wright.cs.jfiles.database.FailedInsertException;
 import edu.wright.cs.jfiles.gui.common.Console;
 import edu.wright.cs.jfiles.server.JFilesServer;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
@@ -60,8 +61,6 @@ public class ServerAppViewController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		server = JFilesServer.getInstance();
-		server.start();
-
 		Console console = new Console(consoleOutput);
 		PrintStream ps = null;
 		try {
@@ -77,6 +76,24 @@ public class ServerAppViewController implements Initializable {
 		} catch (FailedInsertException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Called when the "Run" is selected from the File context menu.
+	 */
+	@FXML
+	public void clickRun(ActionEvent arg0) {
+		server.start();
+		System.out.println("Run works");
+	}
+
+	/**
+	 * Called when the "Stop" is selected from the File context menu.
+	 */
+	@FXML
+	public void clickStop(ActionEvent arg0) {
+		server.stop();
+		System.out.println("Stop");
 	}
 
 	/**

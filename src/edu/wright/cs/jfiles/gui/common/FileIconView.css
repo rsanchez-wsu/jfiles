@@ -6,11 +6,11 @@ Label {
 	-fx-font-family: 'Arial' ;
 	-fx-text-fill: black;
 	-fx-base: #85C1E9;
-	-fx-display: inline;
+
 }
 
 BorderPane {
-	-fx-display: inline;
+
 	-fx-padding: 5 0 5 0;
 }
 
