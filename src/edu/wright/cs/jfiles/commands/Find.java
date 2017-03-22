@@ -57,7 +57,7 @@ public class Find extends Command {
 
 		if (folder.isDirectory() && listOfFiles != null) {
 			for (File f : listOfFiles) {
-				if (f.isFile() && f.getName().contains(filename)) {
+				if ((f.isFile() || f.isDirectory()) && f.getName().contains(filename)) {
 					res.add(f.getAbsolutePath());
 				} else if (f.isDirectory() && this.parser.doesFlagExist("R")) {
 					res.addAll(findFiles(filename, f.getAbsolutePath()));
