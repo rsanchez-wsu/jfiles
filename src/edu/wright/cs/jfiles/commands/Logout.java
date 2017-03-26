@@ -23,7 +23,7 @@ package edu.wright.cs.jfiles.commands;
 
 /**
  * The logout command will log a user out.
- * Syntax: 
+ * Syntax:
  *		LOGOUT
  */
 public class Logout {
