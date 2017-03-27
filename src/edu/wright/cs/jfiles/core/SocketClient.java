@@ -49,8 +49,10 @@ public class SocketClient {
 
 	/**
 	 * Create a new connection to server.
-	 * @param serverName hostname.
-	 * @param serverPort port.
+	 * @param serverName
+	 *            hostname.
+	 * @param serverPort
+	 *            port.
 	 */
 	public SocketClient(String serverName, int serverPort) {
 		System.out.println("Establishing connection. Please wait ...");
@@ -68,7 +70,8 @@ public class SocketClient {
 	/**
 	 * Sends the given command to the server.
 	 *
-	 * @param cmd Command to send
+	 * @param cmd
+	 *            Command to send
 	 */
 	public void sendCommand(Command cmd) {
 		send(cmd.toString());
@@ -76,7 +79,8 @@ public class SocketClient {
 
 	/**
 	 * Opens the streams. Don't cross the streams.
-	 * @throws IOException Streams fail to open.
+	 * @throws IOException
+	 *             Streams fail to open.
 	 */
 	private void openStreams() throws IOException {
 		streamIn = new DataInputStream(socket.getInputStream());
@@ -102,7 +106,8 @@ public class SocketClient {
 
 	/**
 	 * Sends a UTF message to server.
-	 * @param output What to send.
+	 * @param output
+	 *            What to send.
 	 */
 	public void send(String output) {
 		try {
@@ -111,6 +116,14 @@ public class SocketClient {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Returns a reference to the output stream to enable sending files.
+	 * @return reference to the output stream.
+	 */
+	public DataOutputStream getOutputStream() {
+		return streamOut;
 	}
 
 }

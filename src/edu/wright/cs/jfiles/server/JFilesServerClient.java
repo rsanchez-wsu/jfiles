@@ -24,6 +24,7 @@ package edu.wright.cs.jfiles.server;
 import edu.wright.cs.jfiles.commands.Command;
 import edu.wright.cs.jfiles.commands.Commands;
 import edu.wright.cs.jfiles.commands.Quit;
+import edu.wright.cs.jfiles.commands.Send;
 import edu.wright.cs.jfiles.commands.Stop;
 
 import org.apache.logging.log4j.LogManager;
@@ -78,7 +79,7 @@ public class JFilesServerClient implements Runnable {
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-//			e.printStackTrace();
+			// e.printStackTrace();
 			JFilesServer.print("Client socket terminated.");
 		} finally {
 			JFilesServer.print("Calling close....");
@@ -111,6 +112,8 @@ public class JFilesServerClient implements Runnable {
 		if (cmd instanceof Quit) {
 			close();
 			remove();
+		} else if (cmd instanceof Send) {
+			// execute file send
 		} else if (cmd instanceof Stop) {
 			JFilesServer.getInstance().stop();
 		}
@@ -161,6 +164,13 @@ public class JFilesServerClient implements Runnable {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	/**
+	 * Transmits the specified file to the client.
+	 */
+	public void sendFile() {
+		//Implement a transfer using IOUtils here.
 	}
 
 }

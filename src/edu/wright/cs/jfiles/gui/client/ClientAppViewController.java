@@ -47,7 +47,6 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 
-
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
@@ -64,8 +63,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
-
-
 /**
  * Controller for main application view.
  *
@@ -80,7 +77,6 @@ public class ClientAppViewController implements Initializable, ClipboardOwner {
 	private enum Operation {
 		CUT, COPY;
 	}
-
 
 	private SocketClient client;
 
@@ -172,17 +168,17 @@ public class ClientAppViewController implements Initializable, ClipboardOwner {
 		MenuItem copy = new MenuItem("Copy");
 		MenuItem paste = new MenuItem("Paste");
 		MenuItem delete = new MenuItem("Delete");
-		
-		MenuItem send =  new MenuItem("Send File");
+		MenuItem send = new MenuItem("Send File");
 		menu.getItems().addAll(cut, copy, paste, delete, send);
 
 		cut.setOnAction(event -> cut());
 		copy.setOnAction(event -> copy());
 		paste.setOnAction(event -> paste());
-		delete.setOnAction(event -> delete()); 
+		delete.setOnAction(event -> delete());
 		send.setOnAction(event -> {
 			try {
 				sendFile();
+				// It may be possible to get the source (and file name) here.
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -292,25 +288,26 @@ public class ClientAppViewController implements Initializable, ClipboardOwner {
 		client.sendCommand(new Rm((String) selectedFile.getValue("path")));
 		loadDirectory(currentDirectory);
 	}
-	
+
 	/**
-	 * 	Send action. sends files to the JFileServer.
-	 * @throws IOException 
+	 * Send action. sends files to the JFileServer.
+	 * @throws IOException the exception
 	 */
-	public void sendFile() throws IOException{	
+	public void sendFile() throws IOException {
 		// How to retrieve file name?
+		// It may be possible to retrieve the file name from the event source.
 		System.out.println((String) selectedFile.getValue("file"));
-		DataOutputStream data = new DataOutputStream(client.streamOut);
+		DataOutputStream data = client.getOutputStream();
 		FileInputStream input = new FileInputStream("Search History.txt");
-		
+
 		byte[] buffer = new byte[4096];
-		
-		while(input.read(buffer) > 0){
-		   data.write(buffer);
+
+		while (input.read(buffer) > 0) {
+			data.write(buffer);
 		}
-		
+
 		input.close();
-		
+
 	}
 
 	/**
