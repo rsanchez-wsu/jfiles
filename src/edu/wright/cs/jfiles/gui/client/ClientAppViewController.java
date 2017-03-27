@@ -392,6 +392,7 @@ public class ClientAppViewController implements Initializable {
 		client = new SocketClient();
 		currentDirectory.root();
 		loadDirectory(currentDirectory.toPath());
+		loadTree(currentDirectory.toPath());
 		clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		fileContextMenu = buildFileContextMenu();
 		viewContextMenu = buildViewContextMenu();
@@ -414,7 +415,7 @@ public class ClientAppViewController implements Initializable {
 						FileIconViewController.class.getResource("FileIconView.fxml"));
 			}
 		}
-
+		TreeItem<String> rootItem = new TreeItem<String>("Directories");
 		
 		ArrayList<TreeItem<String>> directories = new ArrayList<TreeItem<String>>();
 
@@ -424,8 +425,7 @@ public class ClientAppViewController implements Initializable {
 		directories.add(test1);
 		directories.add(test2);
 
-		TreeView<String> treeView = new TreeView<String>();
-		TreeItem<String> rootItem = new TreeItem<String>("Directories");
+
 		rootItem.getChildren().addAll(directories);
 		treeView.setRoot(rootItem);
 		treeView.setShowRoot(true);
