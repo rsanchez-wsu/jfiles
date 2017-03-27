@@ -1,3 +1,5 @@
+
+
 BorderPane {
 }
 
@@ -21,3 +23,35 @@ BorderPane.selected  {
 	-fx-border-color: lightgray;
 	-fx-effect: dropshadow( one-pass-box , black , 8 , 0.0 , 2 , 0 );
 }
+
+
+
+/*  The following icons are included in the jfiles/gui/img location.
+
+Icons made by Rami McMin (http://www.flaticon.com/authors/rami-mcmin).  Licensed by Creative Commons BY 3.0.
+•	Ico_warning
+
+Icons made by Google (http://www.flaticon.com/authors/google).  Licensed by Creative Commons BY 3.0.
+•	Ico_cut
+
+Icons made by Egor Rumyantsev (http://www.flaticon.com/authors/egor-rumyantsev).  Licensed by Creative Commons BY 3.0.
+•	Ico_nav_left
+•	Ico_nav_right
+•	Ico_search
+•	Ico_add
+•	Ico_refresh
+•	Ico_delete
+•	Ico_edit
+•	Ico_download
+•	Ico_menu
+•	Ico_save
+•	Ico_upload
+
+Icons made by Dave Gandy (http://www.flaticon.com/authors/dave-gandy).  Licensed by Creative Commons BY 3.0.
+•	Ico_open
+•	Ico_paste
+
+Icons made by Freepik (http://www.freepik.com).  Licensed by Creative Commons BY 3.0.
+•	Ico_settings
+•	Ico_copy
+ */
