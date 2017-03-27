@@ -41,7 +41,11 @@
                   </ScrollPane>
                </content>
             </Tab>
-          <Tab text="Setup" />
+          <Tab text="Setup">
+          	 <content>
+          	    <fx:include fx:id="setupView" source="SetupView.fxml" />
+          	 </content>
+          </Tab>
           <Tab text="Users">
              <content>
              	<fx:include fx:id="userListView" source="UserListView.fxml" />
