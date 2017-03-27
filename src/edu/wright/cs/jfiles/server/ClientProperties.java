@@ -87,7 +87,7 @@ public class ClientProperties {
 	 */
 	public boolean login(String username, String password) {
 		for (User user : DatabaseController.getUsers()) {
-			if (user.getUsername().equals(username)) {
+			if (user.getName().equals(username)) {
 				if (user.getPassword().equals(password)) {
 					this.user = user;
 					return true;

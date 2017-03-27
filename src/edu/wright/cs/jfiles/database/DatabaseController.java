@@ -155,8 +155,10 @@ public class DatabaseController {
 				createStmt.executeUpdate("CREATE TABLE USER_PERMISSIONS ("
 						+ "USER_ID INT NOT NULL,"
 						+ "PERM_ID INT NOT NULL,"
-						+ "FOREIGN KEY (USER_ID) REFERENCES USERS (USER_ID),"
-						+ "FOREIGN KEY (PERM_ID) REFERENCES PERMISSIONS (PERM_ID))");
+						+ "FOREIGN KEY (USER_ID) REFERENCES USERS (USER_ID) "
+							+ "ON DELETE CASCADE,"
+						+ "FOREIGN KEY (PERM_ID) REFERENCES PERMISSIONS (PERM_ID)"
+							+ "ON DELETE CASCADE)");
 			} catch (SQLException e) {
 				if (!e.getSQLState().equals("X0Y32")) {
 					logger.error(e);
@@ -167,8 +169,10 @@ public class DatabaseController {
 				createStmt.executeUpdate("CREATE TABLE ROLE_PERMISSIONS ("
 						+ "ROLE_ID INT NOT NULL,"
 						+ "PERM_ID INT NOT NULL,"
-						+ "FOREIGN KEY (ROLE_ID) REFERENCES ROLES (ROLE_ID),"
-						+ "FOREIGN KEY (PERM_ID) REFERENCES PERMISSIONS (PERM_ID))");
+						+ "FOREIGN KEY (ROLE_ID) REFERENCES ROLES (ROLE_ID)"
+							+ "ON DELETE CASCADE,"
+						+ "FOREIGN KEY (PERM_ID) REFERENCES PERMISSIONS (PERM_ID)"
+							+ "ON DELETE CASCADE)");
 			} catch (SQLException e) {
 				if (!e.getSQLState().equals("X0Y32")) {
 					logger.error(e);
@@ -444,12 +448,19 @@ public class DatabaseController {
 	 */
 	public static PermissionType userHasPermission(int userId, String location)
 			throws IdNotFoundException {
-		// Gets the permissions
-		String sql1 = "SELECT XMLSERIALIZE(PERM_DOC AS CLOB) FROM PERMISSIONS WHERE PERM_ID = "
-				+ "(SELECT PERM_ID FROM USER_PERMISSIONS WHERE USER_ID = ?)";
-		String sql2 = "SELECT XMLSERIALIZE(PERM_DOC AS CLOB) FROM PERMISSIONS WHERE PERM_ID = "
-				+ "(SELECT PERM_ID FROM ROLE_PERMISSIONS WHERE ROLE_ID = "
-				+ "(SELECT USER_ROLE FROM USERS WHERE USER_ID = ?))";
+//		String sql1 = "SELECT XMLSERIALIZE(PERM_DOC AS CLOB) FROM PERMISSIONS WHERE PERM_ID = "
+//				+ "(SELECT PERM_ID FROM USER_PERMISSIONS WHERE USER_ID = ?)";
+//		String sql2 = "SELECT XMLSERIALIZE(PERM_DOC AS CLOB) FROM PERMISSIONS WHERE PERM_ID = "
+//				+ "(SELECT PERM_ID FROM ROLE_PERMISSIONS WHERE ROLE_ID = "
+//				+ "(SELECT USER_ROLE FROM USERS WHERE USER_ID = ?))";
+		String sql2 = "SELECT XMLSERIALIZE(PERM_DOC AS CLOB) "
+					+ "FROM PERMISSIONS, USERS "
+					+ "JOIN USER_PERMISSIONS ON USERS.USER_ID = USER_PERMISSIONS.USER_ID "
+					+ "WHERE PERMISSIONS.PERM_ID = USER_PERMISSIONS.PERM_ID AND USERS.USER_ID = ?";
+		String sql1 = "SELECT XMLSERIALIZE(PERM_DOC AS CLOB) "
+					+ "FROM PERMISSIONS, USERS "
+					+ "JOIN ROLE_PERMISSIONS ON ROLE_PERMISSIONS.ROLE_ID = USERS.USER_ROLE "
+					+ "WHERE PERMISSIONS.PERM_ID = ROLE_PERMISSIONS.PERM_ID AND USERS.USER_ID = ?";
 
 		try (PreparedStatement rolePermSelectStmt = conn.prepareStatement(sql1);
 				PreparedStatement userPermSelectStmt = conn.prepareStatement(sql2)) {
@@ -550,13 +561,16 @@ public class DatabaseController {
 
 	/**
 	 * Gets a specific user from database.
-	 * @param username Get user by username.
+	 *
+	 * @param username
+	 *            Get user by name.
 	 * @return The User.
 	 */
 	public static User getUser(String username) {
 		User user = null;
 
-		String sql = "SELECT USER_ID, USER_NAME, USER_PASS, USER_ROLE FROM USERS "
+		String sql =
+				"SELECT USER_ID, USER_NAME, USER_PASS, USER_ROLE FROM USERS "
 						+ "WHERE USER_NAME = ?";
 		try (PreparedStatement selectStmt = conn.prepareStatement(sql)) {
 			selectStmt.setString(1, username);
@@ -573,6 +587,53 @@ public class DatabaseController {
 			logger.error(e);
 		}
 		return user;
+	}
+
+	/**
+	 * Gets a specific user from database.
+	 *
+	 * @param userid
+	 *            Get user by id.
+	 * @return The User.
+	 */
+	public static User getUser(int userid) {
+		User user = null;
+
+		String sql =
+				"SELECT USER_ID, USER_NAME, USER_PASS, USER_ROLE FROM USERS "
+				+ "WHERE USER_ID = ?";
+		try (PreparedStatement selectStmt = conn.prepareStatement(sql)) {
+			selectStmt.setInt(1, userid);
+			try (ResultSet rs = selectStmt.executeQuery()) {
+				if (rs.next()) {
+					int id = rs.getInt(1);
+					String name = rs.getString(2);
+					String pass = rs.getString(3);
+					int role = rs.getInt(4);
+					user = new User(id, name, pass, role);
+				}
+			}
+		} catch (SQLException e) {
+			logger.error(e);
+		}
+		return user;
+	}
+
+	/**
+	 * Deletes a user from the database.
+	 *
+	 * @param id
+	 *            User id
+	 */
+	public static void deleteUser(int id) {
+		String sql = "DELETE FROM USERS WHERE USER_ID = ?";
+
+		try (PreparedStatement deleteStmt = conn.prepareStatement(sql)) {
+			deleteStmt.setInt(1, id);
+			deleteStmt.executeUpdate();
+		} catch (SQLException e) {
+			logger.error(e);
+		}
 	}
 
 	/**
@@ -597,6 +658,30 @@ public class DatabaseController {
 			logger.error(e);
 		}
 		return users;
+	}
+
+	/**
+	 * Gets the list of role from the database.
+	 *
+	 * @return list of roles
+	 */
+	public static List<Role> getRoles() {
+		String sql = "SELECT ROLE_ID, ROLE_NAME FROM ROLES";
+		List<Role> roles = new ArrayList<>();
+
+		try (PreparedStatement selectStmt = conn.prepareStatement(sql)) {
+			try (ResultSet rs = selectStmt.executeQuery()) {
+				while (rs.next()) {
+					int id = rs.getInt(1);
+					String name = rs.getString(2);
+					roles.add(new Role(id, name));
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return roles;
 	}
 
 	/**
@@ -656,25 +741,24 @@ public class DatabaseController {
 		try {
 			String xml = new String(
 					Files.readAllBytes(new File("tests/permissions/admin.xml").toPath()), "UTF-8");
-			int permid = createPermission(xml);
-			addPermissionToRole(adminid, permid);
-			System.out.println(userHasPermission(user2id,
-					"./src/edu/wright/cs/jfiles/client/JFilesClient.java"));
-			System.out.println(userHasPermission(user1id, "./tests/permissions/admin.xml"));
-			System.out.println(userHasPermission(user1id, "./serverfiles"));
-			System.out.println(userHasPermission(user1id, "./serverfiles/"));
+			int adminperm = createPermission(xml);
+			addPermissionToRole(adminid, adminperm);
+
+			int defaultperm =
+					createPermission(DatabaseUtils.generateUserPermission("serverfiles/default"));
+			addPermissionToUser(user1id, defaultperm);
+			addPermissionToUser(user3id, defaultperm);
+
 			System.out.println(userHasPermission(user1id, "serverfiles/"));
+			System.out.println(userHasPermission(user1id, "serverfiles/default"));
 
-			System.out.println(userHasPermission(user1id, "src"));
-			System.out.println(userHasPermission(user1id, "src/"));
-			System.out.println(userHasPermission(user1id, "./src/"));
-			System.out.println(userHasPermission(user1id, "src/edu"));
+			System.out.println(userHasPermission(user2id, "serverfiles/"));
+			System.out.println(userHasPermission(user2id, "serverfiles/default"));
 
-			System.out.println(userHasPermission(user2id, "src"));
-			System.out.println(userHasPermission(user2id, "src/"));
-			System.out.println(userHasPermission(user2id, "./src/"));
-			System.out.println(userHasPermission(user2id, "src/edu"));
-			System.out.println(userHasPermission(user3id, "src/edu"));
+			System.out.println(userHasPermission(user3id, "serverfiles/"));
+			System.out.println(userHasPermission(user3id, "serverfiles/default"));
+
+			deleteUser(user3id);
 		} catch (IOException e) {
 			logger.error(e);
 		} catch (FailedInsertException e) {

@@ -271,9 +271,6 @@ public class JFilesServer {
 			DatabaseController.createTables();
 		}
 
-		DatabaseController.dropTables();
-		DatabaseController.createTables();
-
 		User defUser = DatabaseController.getUser(defaultUser);
 
 		if (defUser == null) {

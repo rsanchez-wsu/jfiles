@@ -24,8 +24,6 @@ package edu.wright.cs.jfiles.gui.server;
 import edu.wright.cs.jfiles.database.DatabaseController;
 import edu.wright.cs.jfiles.database.User;
 
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -41,7 +39,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -55,40 +52,42 @@ public class UserListViewController implements Initializable {
 	@FXML
 	VBox root;
 	@FXML
-	TableView<UserData> userTable;
+	TableView<User> userTable;
 	@FXML
-	TableColumn<UserData, String> userTableId;
+	TableColumn<User, String> userTableId;
 	@FXML
-	TableColumn<UserData, String> userTableName;
+	TableColumn<User, String> userTableName;
 	@FXML
-	TableColumn<UserData, String> userTableRole;
+	TableColumn<User, String> userTableRole;
 	@FXML
-	TableColumn<UserData, String> userTableStatus;
+	TableColumn<User, String> userTableStatus;
 
-	private ObservableList<UserData> userlist = FXCollections.observableArrayList();
+	private ObservableList<User> userList = FXCollections.observableArrayList();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		userTableId.setCellValueFactory(new PropertyValueFactory<UserData, String>("id"));
-		userTableName.setCellValueFactory(new PropertyValueFactory<UserData, String>("name"));
-		userTableRole.setCellValueFactory(new PropertyValueFactory<UserData, String>("role"));
+		userTable.setItems(userList);
+		userTableId.setCellValueFactory(new PropertyValueFactory<User, String>("id"));
+		userTableName.setCellValueFactory(new PropertyValueFactory<User, String>("name"));
+		userTableRole.setCellValueFactory(new PropertyValueFactory<User, String>("roleName"));
 		loadUsers();
 	}
 
 	/**
-	 * Displays the CreateNewUser view.
+	 * Displays the view to create a new user.
 	 */
 	@FXML
-	public void displayNewUserView() {
+	public void showNewUserView() {
 		FXMLLoader loader =
-				new FXMLLoader(CreateUserViewController.class.getResource("CreateUserView.fxml"));
+				new FXMLLoader(UserFormController.class.getResource("UserForm.fxml"));
 		try {
 			Parent createUserView = loader.load();
-			CreateUserViewController controller = loader.getController();
-			controller.newIdProperty.addListener(listener -> loadUsers());
+			UserFormController controller = loader.getController();
 			Scene scene = new Scene(createUserView);
 			Stage stage = new Stage();
 			stage.setScene(scene);
+
+			controller.setOnCloseRequest(event -> loadUsers());
 			stage.setTitle("Create User");
 			stage.show();
 		} catch (IOException e) {
@@ -97,101 +96,50 @@ public class UserListViewController implements Initializable {
 	}
 
 	/**
-	 * Loads the user list.
+	 * Displays the view to edit a user.
 	 */
-	public void loadUsers() {
-		List<User> users = DatabaseController.getUsers();
-		userlist.clear();
-		for (User user : users) {
-			UserData userdata =
-					new UserData(user.getId(), user.getUsername(), user.getRole());
-			userlist.add(userdata);
+	@FXML
+	public void showEditUserView() {
+		if (userTable.getSelectionModel().getSelectedItem() == null) {
+			return;
 		}
-		userTable.setItems(userlist);
+		FXMLLoader loader =
+				new FXMLLoader(UserFormController.class.getResource("UserForm.fxml"));
+		try {
+			Parent createUserView = loader.load();
+			UserFormController controller = loader.getController();
+			Scene scene = new Scene(createUserView);
+			Stage stage = new Stage();
+			stage.setScene(scene);
+
+			controller.setOnCloseRequest(event -> loadUsers());
+			controller.loadUserData(userTable.getSelectionModel().getSelectedItem().getId());
+			stage.setTitle("Edit User");
+			stage.show();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
-	 * Container class used to store data for use in a table.
-	 *
-	 * @author Matt Gilene
-	 *
+	 * Deletes the selected user.
 	 */
-	public static class UserData {
-		private final SimpleIntegerProperty id;
-		private final SimpleStringProperty name;
-		private final SimpleIntegerProperty role;
-
-		/**
-		 * Public constructor.
-		 *
-		 * @param id
-		 *            user id
-		 * @param name
-		 *            user name
-		 * @param role
-		 *            user role
-		 */
-		public UserData(int id, String name, int role) {
-			this.id = new SimpleIntegerProperty(id);
-			this.name = new SimpleStringProperty(name);
-			this.role = new SimpleIntegerProperty(role);
+	@FXML
+	public void deleteUser() {
+		if (userTable.getSelectionModel().getSelectedItem() == null) {
+			return;
+		} else {
+			//get ID and send to command to delete from database
+			int id = userTable.getSelectionModel().getSelectedItem().getId();
+			DatabaseController.deleteUser(id);
 		}
+	}
 
-		/**
-		 * Get ID.
-		 *
-		 * @return id
-		 */
-		public int getId() {
-			return id.get();
-		}
-
-		/**
-		 * Sets ID.
-		 *
-		 * @param id
-		 *            user id
-		 */
-		public void setId(int id) {
-			this.id.set(id);
-		}
-
-		/**
-		 * Get name.
-		 *
-		 * @return name
-		 */
-		public String getName() {
-			return name.get();
-		}
-
-		/**
-		 * Sets name.
-		 *
-		 * @param name
-		 *            user name
-		 */
-		public void setName(String name) {
-			this.name.set(name);
-		}
-
-		/**
-		 * Get role.
-		 *
-		 * @return role
-		 */
-		public int getRole() {
-			return role.get();
-		}
-
-		/**
-		 * Sets role.
-		 *
-		 * @param role
-		 *            user role
-		 */
-		public void setRole(int role) {
-			this.role.set(role);
-		}
+	/**
+	 * Loads the user list.
+	 */
+	public void loadUsers() {
+		userList.clear();
+		userList.addAll(DatabaseController.getUsers());
 	}
 }

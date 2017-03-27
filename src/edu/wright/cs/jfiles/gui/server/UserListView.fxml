@@ -8,8 +8,9 @@
    <children>
       <ToolBar prefHeight="40.0" prefWidth="200.0">
          <items>
-            <Button fx:id="newUserBtn" mnemonicParsing="false" onAction="#displayNewUserView" text="New" />
-            <Button mnemonicParsing="false" text="Button" />
+            <Button fx:id="newUserBtn" mnemonicParsing="false" onAction="#showNewUserView" text="New" />
+            <Button fx:id="editUserBtn" mnemonicParsing="false" onAction="#showEditUserView" text="Edit" />
+            <Button fx:id="deleteUserBtn" mnemonicParsing="false" onAction="#deleteUser" text="Delete" />
          </items>
       </ToolBar>
       <TableView fx:id="userTable" layoutX="14.0" layoutY="14.0" prefHeight="316.0" prefWidth="563.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

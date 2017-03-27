@@ -24,13 +24,23 @@ package edu.wright.cs.jfiles.gui.server;
 import edu.wright.cs.jfiles.database.DatabaseController;
 import edu.wright.cs.jfiles.database.FailedInsertException;
 import edu.wright.cs.jfiles.database.IdNotFoundException;
+import edu.wright.cs.jfiles.database.Role;
+import edu.wright.cs.jfiles.database.User;
 
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 /**
  * Controller for view which creates new users.
@@ -38,7 +48,7 @@ import javafx.stage.Stage;
  * @author Matt Gilene
  *
  */
-public class CreateUserViewController {
+public class UserFormController implements Initializable {
 
 	@FXML
 	AnchorPane root;
@@ -48,9 +58,43 @@ public class CreateUserViewController {
 	@FXML
 	private TextField txtPass;
 	@FXML
-	private TextField txtRole;
+	private ComboBox<Role> comboRole;
 
-	public SimpleIntegerProperty newIdProperty = new SimpleIntegerProperty();
+	private ObservableList<Role> roleList = FXCollections.observableArrayList();
+	private boolean editMode = false;
+	private int id;
+
+	/**
+	 * Fills the form with the user data.
+	 *
+	 * @param id
+	 *            user id
+	 */
+	public void loadUserData(int id) {
+		this.id = id;
+		User user = DatabaseController.getUser(id);
+		txtName.setText(user.getName());
+		txtPass.setText(user.getPassword());
+		comboRole.getSelectionModel().select(user.getRole());
+		editMode = true;
+	}
+
+	/**
+	 * Registers the onClose callback.
+	 *
+	 * @param handler
+	 *            EventHandler
+	 */
+	public void setOnCloseRequest(EventHandler<WindowEvent> handler) {
+		// Even though this cast should never fail, FindBugs doesn't like
+		// unchecked casts, so I'm checking it.
+		try {
+			Stage stage = (Stage) root.getScene().getWindow();
+			stage.setOnCloseRequest(handler);
+		} catch (ClassCastException e) {
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * Called when submit button is pressed.
@@ -62,9 +106,13 @@ public class CreateUserViewController {
 	public void submitPressed(ActionEvent event) {
 		String name = txtName.getText();
 		String pass = txtPass.getText();
-		int role = Integer.parseInt(txtRole.getText());
+		int role = comboRole.getSelectionModel().selectedItemProperty().get().getId();
 		try {
-			newIdProperty.set(DatabaseController.createUser(name, pass, role));
+			if (!editMode) {
+				DatabaseController.createUser(name, pass, role);
+			} else {
+				DatabaseController.updateUser(id, name, pass, role);
+			}
 		} catch (FailedInsertException e) {
 			e.printStackTrace();
 		} catch (IdNotFoundException e) {
@@ -75,9 +123,16 @@ public class CreateUserViewController {
 		// unchecked casts, so I'm checking it.
 		try {
 			Stage stage = (Stage) root.getScene().getWindow();
-			stage.close();
+			stage.fireEvent(new WindowEvent(stage.getOwner(), WindowEvent.WINDOW_CLOSE_REQUEST));
 		} catch (ClassCastException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		roleList.addAll(DatabaseController.getRoles());
+		comboRole.setItems(roleList);
+		comboRole.getSelectionModel().selectFirst();
 	}
 }

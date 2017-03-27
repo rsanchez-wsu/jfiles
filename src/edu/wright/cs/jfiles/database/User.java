@@ -26,10 +26,11 @@ package edu.wright.cs.jfiles.database;
  */
 public class User {
 
-	private int id = -1;
-	private String username;
-	private String password;
+	private int id;
+	private String name;
+	private String pass;
 	private int role;
+	private String roleName;
 
 	/**
 	 * Default constructor.
@@ -45,8 +46,8 @@ public class User {
 	 */
 	public User(int id, String username, String password, int role) {
 		this.id = id;
-		this.username = username;
-		this.password = password;
+		this.name = username;
+		this.pass = password;
 		this.role = role;
 	}
 
@@ -68,23 +69,23 @@ public class User {
 	/**
 	 * @return Username.
 	 */
-	public String getUsername() {
-		return username;
+	public String getName() {
+		return name;
 	}
 
 	/**
 	 * Sets username.
 	 * @param username Username of user.
 	 */
-	public void setUsername(String username) {
-		this.username = username;
+	public void setName(String username) {
+		this.name = username;
 	}
 
 	/**
 	 * @return password.
 	 */
 	public String getPassword() {
-		return password;
+		return pass;
 	}
 
 	/**
@@ -92,7 +93,7 @@ public class User {
 	 * @param password Password of user.
 	 */
 	public void setPassword(String password) {
-		this.password = password;
+		this.pass = password;
 	}
 
 	/**
@@ -111,12 +112,29 @@ public class User {
 	}
 
 	/**
+	 * Gets the role name for the user.
+	 *
+	 * @return name of the role
+	 */
+	public String getRoleName() {
+		// Cache the role name if it doesn't exist already
+		if (this.roleName == null) {
+			this.roleName = DatabaseController.getRoles().stream()
+					.filter(role -> role.getId() == this.role)
+					.findFirst()
+					.get()
+					.getName();
+		}
+		return this.roleName;
+	}
+
+	/**
 	 * Gets string format.
 	 * @return The class in String format.
 	 */
 	@Override
 	public String toString() {
-		return String.format("%d\t%s\t%s\t%d", getId(), getUsername(), getPassword(), getRole());
+		return String.format("%d\t%s\t%s\t%d", getId(), getName(), getPassword(), getRole());
 	}
 
 }
