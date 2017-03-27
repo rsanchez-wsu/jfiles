@@ -299,6 +299,9 @@
 			<test name = "edu.wright.cs.jfiles.junit.FindTest"
 				outfile = "${tests.out}/FindTest" 
 				/>
+			<test name = "edu.wright.cs.jfiles.junit.PermissionsTest"
+				outfile = "${tests.out}/PermissinsTest" 
+				/>
 		</junit>
 	</target>
 	

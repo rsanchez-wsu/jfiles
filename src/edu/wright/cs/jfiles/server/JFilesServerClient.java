@@ -169,5 +169,12 @@ public class JFilesServerClient implements Runnable {
 	public boolean isOpen() {
 		return (streamOut != null && streamIn != null);
 	}
+	/**
+	 * Getter for client properties.
+	 */
+
+	public ClientProperties getcp() {
+		return cp;
+	}
 
 }

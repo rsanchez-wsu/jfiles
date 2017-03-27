@@ -75,6 +75,8 @@ public class ServerTestWidget implements Runnable {
 			TimeUnit.MILLISECONDS.sleep(1);
 			assertTrue(delayCounter++ < 1000);
 		}
+		//TODO When clients logged on are not automatically given full permission
+		//communicate with server and get permissions for later tests.
 	}
 	/**
 	 * Start the server listening thread.
