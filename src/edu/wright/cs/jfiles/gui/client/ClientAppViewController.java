@@ -30,7 +30,6 @@ import edu.wright.cs.jfiles.core.SocketClient;
 import edu.wright.cs.jfiles.core.XmlHandler;
 import edu.wright.cs.jfiles.gui.common.FileIconViewController;
 import edu.wright.cs.jfiles.gui.common.FileIconViewController.Size;
-
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -42,7 +41,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.image.Image;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -59,6 +57,7 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -403,18 +402,43 @@ public class ClientAppViewController implements Initializable {
 	 * 
 	 * @param String path
 	 */
-	@SuppressWarnings("unchecked")
+	
 	public void loadTree(String path) {
+		
+		client.sendCommand(new Ls(path));
+		String result = client.read();
+		if (!result.equals("")) {
+			List<FileStruct> files = XmlHandler.readXmlString(result);
+			for (FileStruct file : files) {
+				FXMLLoader loader = new FXMLLoader(
+						FileIconViewController.class.getResource("FileIconView.fxml"));
+			}
+		}
 
-		TreeItem<String> treeRoot = new TreeItem<String>("Root Node");
-		treeRoot.setExpanded(true);
-		treeRoot.getChildren().addAll(new TreeItem<String>("Under"),
-				new TreeItem<String>("Construction"));
-		// These two lines will be used when icons are implemented in the tree.
+		
+		ArrayList<TreeItem<String>> directories = new ArrayList<TreeItem<String>>();
+
+		TreeItem<String> test1 = new TreeItem<String>("Under");
+		TreeItem<String> test2 = new TreeItem<String>("Construction");
+
+		directories.add(test1);
+		directories.add(test2);
+
+		TreeView<String> treeView = new TreeView<String>();
+		TreeItem<String> rootItem = new TreeItem<String>("Directories");
+		rootItem.getChildren().addAll(directories);
+		treeView.setRoot(rootItem);
+		treeView.setShowRoot(true);
+
+		
+
+		// These three lines will be used when icons are implemented in the tree.
 		// Image icon = treeViewController.getImage();
 		// TreeItem<Image> treeIcon = new
 		// TreeItem<Image>(treeViewController.getImage());
-		// TODO implement observable list
+		// TODO display contents
 		// TODO implement icons to each line of the tree
+		// TODO create event handlers once the tree is displayed
+		// TODO clean up code for merge
 	}
 }
