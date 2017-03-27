@@ -142,9 +142,10 @@ public class FileIconViewController implements Initializable {
 		}
 	}
 
-	/*
-	 * Needs to clear the file images from the gui so when we enter a new
-	 * directory the old directory stops getting displayed
+	/**
+	 * TODO: finish method
+	 * Needs to clear the file images from the gui.
+	 * When we enter a new directory the old directory stops getting displayed
 	 */
 	private void clear() {
 
@@ -191,16 +192,18 @@ public class FileIconViewController implements Initializable {
 			return size;
 		}
 	}
-	
+
+	/**
+	 * Grab the image used for related file type.
+	 * @return fileImage directoryImage
+	 */
 	public Image getImage() {
-		switch(fileStruct.getType()) {
+		switch (fileStruct.getType()) {
 		case FILE: return fileImage;
 
 		case DIRECTORY: return directoryImage;
-			
-			
+
+		default: return null;
 		}
-		return null;
-		
 	}
 }

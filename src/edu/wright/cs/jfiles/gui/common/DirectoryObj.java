@@ -21,7 +21,6 @@
 
 package edu.wright.cs.jfiles.gui.common;
 
-import edu.wright.cs.jfiles.core.FileStruct;
 import edu.wright.cs.jfiles.core.PathStack;
 
 import javafx.fxml.FXML;
@@ -38,8 +37,8 @@ public class DirectoryObj {
 	private static Image directoryImage;
 
 	static {
-		directoryImage =
-				new Image("file:src/edu/wright/cs/jfiles/resources/images/folder_icon.png");
+		setDirectoryImage(new
+				Image("file:src/edu/wright/cs/jfiles/resources/images/folder_icon.png"));
 	}
 	/**
 	 * Event handler will call upon the open() method and grab the file path.
@@ -84,5 +83,20 @@ public class DirectoryObj {
 	@Override
 	public String toString() {
 		return filepath;
+	}
+
+	/**
+	 * Get the directoryImage used by object.
+	 * @return directory Image
+	 */
+	public static Image getDirectoryImage() {
+		return directoryImage;
+	}
+
+	/**
+	 * Set the directoryImage used by object.
+	 */
+	public static void setDirectoryImage(Image directoryImage) {
+		DirectoryObj.directoryImage = directoryImage;
 	}
 }

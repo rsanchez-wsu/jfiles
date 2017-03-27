@@ -47,8 +47,11 @@ public class Ls extends Command {
 	}
 
 	/**
+	 * Receives a String input directory.
+	 * It then uses to find the files within specified directory.
 	 * @return The list of files that match filename.
 	 */
+	@SuppressWarnings("unused")
 	private List<String> findFiles(String directory) {
 		List<String> res = new ArrayList<String>();
 

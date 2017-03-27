@@ -363,8 +363,7 @@ public class ClientAppViewController implements Initializable {
 	}
 
 	/**
-	 * sets the current directory.
-	 * 
+	 * Sets the current directory.
 	 * @param name
 	 *            String
 	 */
@@ -378,8 +377,7 @@ public class ClientAppViewController implements Initializable {
 	}
 
 	/**
-	 * returns the current directory.
-	 * 
+	 * Returns the current directory.
 	 * @return currentDirectory
 	 */
 	public String getCurrentDirectory() {
@@ -398,14 +396,13 @@ public class ClientAppViewController implements Initializable {
 		viewContextMenu = buildViewContextMenu();
 	}
 
-	/*
-	 * This method will load the tree on the client gui
-	 * 
-	 * @param String path
+	/**
+	 * This method will load the tree on the client gui.
 	 */
-	
+
+	@SuppressWarnings("unused")
 	public void loadTree(String path) {
-		
+
 		client.sendCommand(new Ls(path));
 		String result = client.read();
 		if (!result.equals("")) {
@@ -416,7 +413,7 @@ public class ClientAppViewController implements Initializable {
 			}
 		}
 		TreeItem<String> rootItem = new TreeItem<String>("Directories");
-		
+
 		ArrayList<TreeItem<String>> directories = new ArrayList<TreeItem<String>>();
 
 		TreeItem<String> test1 = new TreeItem<String>("Under");
@@ -430,7 +427,7 @@ public class ClientAppViewController implements Initializable {
 		treeView.setRoot(rootItem);
 		treeView.setShowRoot(true);
 
-		
+
 
 		// These three lines will be used when icons are implemented in the tree.
 		// Image icon = treeViewController.getImage();
