@@ -23,11 +23,17 @@ package edu.wright.cs.jfiles.junit;
 
 import static org.junit.Assert.assertTrue;
 
+import edu.wright.cs.jfiles.database.DatabaseController;
 import edu.wright.cs.jfiles.database.DatabaseUtils;
+import edu.wright.cs.jfiles.database.FailedInsertException;
+import edu.wright.cs.jfiles.database.IdNotFoundException;
+import edu.wright.cs.jfiles.database.User;
 
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 /**
  * This test the permission functions.
  * As permissions tools continue to be developed this will need to changed
@@ -36,9 +42,21 @@ import java.io.IOException;
 public class PermissionsTest {
 
 	@Test
-	public void permissionsTest() throws IOException, InterruptedException {
+	public void permissionsTest() throws IOException, InterruptedException,
+		FailedInsertException, IdNotFoundException {
 		ServerTestWidget tw = new ServerTestWidget();
 		assertTrue(tw.client.getcp().getPermissionType() == DatabaseUtils.PermissionType.READWRITE);
+		int uid = DatabaseController.createUser("fool", "", 0);
+		String xml = new String(
+				Files.readAllBytes(
+						new File("tests/permissions/fool.xml").toPath()), "UTF-8");
+		int permid = DatabaseController.createPermission(xml);
+		DatabaseController.addPermissionToUser(uid, permid);
+		User fool = new User(uid,"fool","",0);
+		tw.client.getcp().setUser(fool);
+		//TODO Add SQL to see if the data was actually inserted
+		//assertTrue(tw.client.getcp().getPermissionType() == DatabaseUtils.PermissionType.WRITE);
+		//We can't do this yet. Permissions don't actually change.
 	}
 
 }
