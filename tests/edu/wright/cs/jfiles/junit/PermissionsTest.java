@@ -34,16 +34,27 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 /**
  * This test the permission functions.
- * As permissions tools continue to be developed this will need to changed
+ * As permissions tools continue to be developed this will need to changed.
+ * Currently:
+ * -Opens a server and connects
+ * -Checks that the client has READWRITE permission. (
+ * -Adds a "fool" user
+ * -Gives the fool write permission.
+ * -Sets the clients ID to fool.
+ * -Checks this in the databases.
  */
 
 public class PermissionsTest {
 
 	@Test
 	public void permissionsTest() throws IOException, InterruptedException,
-		FailedInsertException, IdNotFoundException {
+		FailedInsertException, IdNotFoundException, SQLException {
 		ServerTestWidget tw = new ServerTestWidget();
 		assertTrue(tw.client.getcp().getPermissionType() == DatabaseUtils.PermissionType.READWRITE);
 		int uid = DatabaseController.createUser("fool", "", 0);
@@ -54,6 +65,35 @@ public class PermissionsTest {
 		DatabaseController.addPermissionToUser(uid, permid);
 		User fool = new User(uid,"fool","",0);
 		tw.client.getcp().setUser(fool);
+		Connection conn = DatabaseController.openConnection();
+		//Check if user was correctly inserted
+		PreparedStatement usercheck
+				= conn.prepareStatement("SELECT user_id from users where user_name = ?");
+		usercheck.setString(1, "fool");
+		ResultSet rs = usercheck.executeQuery();
+		rs.next();
+		assertTrue(rs.getInt(1) == uid);
+		//There should be only one fool
+		assertTrue(!rs.next());
+		//There should be no doofusses
+		usercheck.setString(1, "doofus");
+		rs = usercheck.executeQuery();
+		assertTrue(!rs.next());
+		//Check perm_id table.
+		usercheck = conn.prepareStatement("SELECT perm_id from user_permissions where user_id = ?");
+		usercheck.setInt(1,uid);
+		rs = usercheck.executeQuery();
+		rs.next();
+		assertTrue(rs.getInt(1) == permid);
+		assertTrue(!rs.next());
+		//Check Permissions table
+		usercheck = conn.prepareStatement(
+				"SELECT XMLSERIALIZE(PERM_DOC AS CLOB) FROM PERMISSIONS WHERE perm_id = ?");
+		usercheck.setInt(1, permid);
+		rs = usercheck.executeQuery();
+		rs.next();
+		String xmlout = rs.getString(1);
+		assertTrue(DatabaseUtils.hasAccess(xmlout, "") == DatabaseUtils.PermissionType.WRITE);
 		//TODO Add SQL to see if the data was actually inserted
 		//assertTrue(tw.client.getcp().getPermissionType() == DatabaseUtils.PermissionType.WRITE);
 		//We can't do this yet. Permissions don't actually change.
