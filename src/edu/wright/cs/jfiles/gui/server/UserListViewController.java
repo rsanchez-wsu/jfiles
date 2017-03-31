@@ -70,7 +70,6 @@ public class UserListViewController implements Initializable {
 		userTableId.setCellValueFactory(new PropertyValueFactory<User, String>("id"));
 		userTableName.setCellValueFactory(new PropertyValueFactory<User, String>("name"));
 		userTableRole.setCellValueFactory(new PropertyValueFactory<User, String>("roleName"));
-		loadUsers();
 	}
 
 	/**

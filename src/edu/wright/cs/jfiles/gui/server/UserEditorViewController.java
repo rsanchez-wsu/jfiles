@@ -48,7 +48,7 @@ import java.util.ResourceBundle;
  * @author Matt Gilene
  *
  */
-public class UserFormController implements Initializable {
+public class UserEditorViewController implements Initializable {
 
 	@FXML
 	AnchorPane root;

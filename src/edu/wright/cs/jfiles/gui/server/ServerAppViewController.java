@@ -61,12 +61,13 @@ public class ServerAppViewController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		server = JFilesServer.getInstance();
+		server.start();
+
 		Console console = new Console(consoleOutput);
 		PrintStream ps = null;
 		try {
 			ps = new PrintStream(console, true, Charset.defaultCharset().name());
 			System.setOut(ps);
-			System.setErr(ps);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
@@ -76,6 +77,8 @@ public class ServerAppViewController implements Initializable {
 		} catch (FailedInsertException e) {
 			e.printStackTrace();
 		}
+
+		userListViewController.loadUsers();
 	}
 
 	/**
