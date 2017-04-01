@@ -93,7 +93,8 @@ public class PermissionsTest {
 		rs = usercheck.executeQuery();
 		rs.next();
 		String xmlout = rs.getString(1);
-		assertTrue(DatabaseUtils.hasAccess(xmlout, "") == DatabaseUtils.PermissionType.WRITE);
+		assertTrue(DatabaseUtils.hasAccess(xmlout, "serverfiles/tmp/")
+				== DatabaseUtils.PermissionType.WRITE);
 		//TODO Add SQL to see if the data was actually inserted
 		//assertTrue(tw.client.getcp().getPermissionType() == DatabaseUtils.PermissionType.WRITE);
 		//We can't do this yet. Permissions don't actually change.
