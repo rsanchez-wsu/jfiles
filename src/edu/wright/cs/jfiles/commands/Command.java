@@ -21,6 +21,8 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import edu.wright.cs.jfiles.server.ClientProperties;
+
 import java.lang.StringBuilder;
 import java.util.List;
 import java.util.Locale;
@@ -30,6 +32,7 @@ import java.util.Locale;
  */
 public abstract class Command {
 	protected Parser parser;
+	protected ClientProperties cp = null;
 
 	/**
 	 * Command constructor.
@@ -44,13 +47,6 @@ public abstract class Command {
 	 */
 	public Command(String... args) {
 		this.parser = new Parser(args);
-
-		/*
-		 * FindBugs says parser variable is 'unused' in abstract class.
-		 * Can't suppresswarning without something else complaining.
-		 * So the solution is to call a method that does nothing.
-		 */
-		parser.shutupFindBugs();
 	}
 
 	/**
@@ -59,6 +55,29 @@ public abstract class Command {
 	 */
 	public void add(String arg) {
 		this.parser.add(arg);
+	}
+
+	/**
+	 * Set the clientproperties member variable.
+	 * @param cp ClientProperties to set.
+	 */
+	public void setClientProperties(ClientProperties cp) {
+		this.cp = cp;
+	}
+
+	/**
+	 * @return The User's client properties.
+	 */
+	public ClientProperties getClientProperties() {
+		return this.cp;
+	}
+
+	/**
+	 * Returns the parser.
+	 * @return The parser.
+	 */
+	protected Parser getParser() {
+		return this.parser;
 	}
 
 	/**
@@ -80,6 +99,33 @@ public abstract class Command {
 		}
 
 		return sbr.toString();
+	}
+
+	/**
+	 * Returns a string detailing usage of command.
+	 * IE: FIND: Finds filenames. Syntax: filename [directory]
+	 * @return A string detailing usage of command.
+	 */
+	public String help() {
+		String[] help = this.helpStrings();
+
+		return new Info(
+				this.getClass().getSimpleName().toUpperCase(Locale.getDefault()) + ": "
+				+ help[0] + " Syntax: " + help[1]
+		).execute();
+	}
+
+	/**
+	 * Gets the class specific help message and Syntax.
+	 * It's done like this so you can extend this method and not
+	 * have to worry about help working the same in all methods.
+	 * @return [0] is what the command does, [1] is the syntax of command.
+	 */
+	protected String[] helpStrings() {
+		return new String[] {
+				"Help not implemented.",
+				"None."
+		};
 	}
 
 	/**

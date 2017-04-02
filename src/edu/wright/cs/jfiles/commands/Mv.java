@@ -21,6 +21,12 @@
 
 package edu.wright.cs.jfiles.commands;
 
+import edu.wright.cs.jfiles.database.DatabaseUtils.PermissionType;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+
 /**
  * The mv command moves or renames a file.
  * Syntax:
@@ -44,7 +50,45 @@ public class Mv extends Command {
 	 */
 	@Override
 	public String execute() {
-		return "";
+		String fromName = this.parser.next();
+		String toName = this.parser.next();
+
+		if (fromName == null || toName == null) {
+			return new Error("Invalid from or to name.").execute();
+		}
+
+		if (!fromName.startsWith("/")) {
+			fromName = this.cp.getCwd() + fromName;
+		}
+
+		if (!toName.startsWith("/")) {
+			toName = this.cp.getCwd() + toName;
+		}
+
+		if (!this.cp.hasPermission(fromName, PermissionType.READWRITE)
+				&& !this.cp.hasPermission(toName, PermissionType.READWRITE)) {
+			return new Error(
+					"You do not have permission to edit that directory.").execute();
+		}
+
+		if ((new File(fromName)).renameTo(new File(toName))) {
+			return new Info("Move successful!").execute();
+		} else {
+			return new Error("Move failed!").execute();
+		}
+	}
+
+	/**
+	 * Gets the class specific help message and Syntax.
+	 * It's done like this so you can extend this method and not
+	 * have to worry about help working the same in all methods.
+	 * @return [0] is what the command does, [1] is the syntax of command.
+	 */
+	protected String[] helpStrings() {
+		return new String[] {
+				"Moves or renames a file.",
+				"MV <from> <to>"
+		};
 	}
 
 }

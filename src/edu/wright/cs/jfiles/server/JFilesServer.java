@@ -21,10 +21,11 @@
 
 package edu.wright.cs.jfiles.server;
 
-import edu.wright.cs.jfiles.commands.Command;
-import edu.wright.cs.jfiles.commands.Commands;
-import edu.wright.cs.jfiles.commands.Quit;
-import edu.wright.cs.jfiles.commands.Stop;
+import edu.wright.cs.jfiles.commands.Mkdir;
+import edu.wright.cs.jfiles.database.DatabaseController;
+import edu.wright.cs.jfiles.database.FailedInsertException;
+import edu.wright.cs.jfiles.database.IdNotFoundException;
+import edu.wright.cs.jfiles.database.User;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,11 +37,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -63,14 +68,17 @@ import javax.xml.transform.stream.StreamResult;
 public class JFilesServer {
 
 	static final Logger logger = LogManager.getLogger(JFilesServer.class);
-	// private final ServerSocket serverSocket;
-	private JFilesServerThread[] clients = new JFilesServerThread[50];
 	private ServerSocket server = null;
-	private int clientCount = 0;
 	DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
+
 	private boolean shouldRun = true;
+	private ExecutorService executorService = Executors.newFixedThreadPool(10);
+	private List<JFilesServerClient> clients;
 
 	private static JFilesServer instance = new JFilesServer();
+
+	private String defaultCwd;
+	private User defaultUser;
 
 	/**
 	 * Returns the JFilesServer instance.
@@ -87,7 +95,6 @@ public class JFilesServer {
 	 * @throws IOException
 	 *             If there is a problem binding to the socket
 	 */
-
 	private void setup() throws IOException {
 		Properties prop = new Properties();
 		File config = null;
@@ -131,6 +138,21 @@ public class JFilesServer {
 
 		int maxThreads = Integer.parseInt(prop.getProperty("maxThreads", "10"));
 		logger.info("Config set max threads to " + maxThreads);
+
+		defaultCwd = "serverfiles/";
+		defaultUser = DatabaseController.getUser("tmp");
+		// Ensure folder for user exists. If it doesn't, it'll error.
+		if (!(new File(defaultCwd + defaultUser.getUsername()).mkdir())) {
+			logger.info("Could not create tmp user directory!");
+		}
+	}
+
+	/**
+	 * Gets the default user.
+	 * @return Returns the default user.
+	 */
+	public User getDefaultUser() {
+		return this.defaultUser;
 	}
 
 	/**
@@ -140,6 +162,8 @@ public class JFilesServer {
 	 *             If there is a problem binding to the socket
 	 */
 	private JFilesServer() {
+		ensureDatabase();
+
 		try {
 			createXml();
 		} catch (TransformerFactoryConfigurationError e) {
@@ -166,24 +190,43 @@ public class JFilesServer {
 	 */
 	public void start(int port) {
 		shouldRun = true;
+		clients = Collections.synchronizedList(new ArrayList<>());
 
 		try {
-			System.out.println("Binding to port " + port + ", please wait  ...");
+			JFilesServer.print("Binding to port " + port + ", please wait  ...");
 			server = new ServerSocket(port);
-			System.out.println("Server started: " + server);
+			JFilesServer.print("Server started: " + server);
 		} catch (IOException ioe) {
-			System.out.println("Can not bind to port " + port + ": " + ioe.getMessage());
+			JFilesServer.print("Can not bind to port " + port + ": " + ioe.getMessage());
 		}
 
+		accept();
+	}
+
+	/**
+	 * Constantly waits for new connection.
+	 */
+	public void accept() {
 		while (shouldRun) {
 			try {
 				System.out.println("Waiting for a client ...");
-				addThread(server.accept());
+
+				/*
+				 * Accept a new client
+				 */
+				JFilesServerClient client = new JFilesServerClient(server.accept());
+
+				// Add client to be tracked
+				clients.add(client);
+
+				// Run the new client thread.
+				executorService.execute(client);
 			} catch (IOException ioe) {
-				System.out.println("Server accept error: " + ioe);
-				stop();
+				JFilesServer.print("Server accept error: " + ioe);
 			}
 		}
+
+		stop();
 	}
 
 	/**
@@ -247,12 +290,23 @@ public class JFilesServer {
 	public void stop() {
 		shouldRun = false;
 
-		for (int ind = 0; ind < clientCount; ind++) {
-			if (clients[ind] != null) {
-				remove(clients[ind].getid());
-			}
+		/*
+		 * Go through each client connected and close the IO.
+		 */
+		for (JFilesServerClient client : clients) {
+			client.close();
 		}
 
+		clients.clear();
+
+		/*
+		 * Shut down all client sockets.
+		 */
+		executorService.shutdownNow();
+
+		/*
+		 * Shut down the server.
+		 */
 		try {
 			server.close();
 			System.out.println("Server now closed!");
@@ -263,84 +317,78 @@ public class JFilesServer {
 	}
 
 	/**
-	 * This method searches for the client based on the id number.
+	 * A thread-safe print.
+	 *
+	 * @param toPrint
+	 *            A thread-safe print.
 	 */
-	private int findClient(int id) {
-		for (int i = 0; i < clientCount; i++) {
-			if (clients[i].getid() == id) {
-				return i;
-			}
-		}
-		return -1;
-	}
-
-	/**
-	 * This method handles all the activities the thread will do.
-	 */
-	public synchronized void handle(int id, String input) {
-
-		System.out.println("Got the input: " + input);
-
-		logger.info("[Server] Recv command: " + input);
-
-		String[] sinput = input.split(" ");
-
-		Command cmd =
-				Commands.getNewInstance(sinput[0], Arrays.copyOfRange(sinput, 1, sinput.length));
-
-		String cont = cmd.execute();
-
-		System.out.println("Sending back: " + cont);
-
-		clients[findClient(id)].send(cont);
-
-		if (cmd instanceof Quit) {
-			remove(id);
-		} else if (cmd instanceof Stop) {
-			stop();
+	public static void print(Object toPrint) {
+		synchronized (System.out) {
+			System.out.println(toPrint.toString());
 		}
 	}
 
 	/**
-	 * This method handles removing a thread.
+	 * Adds a new client to be tracked.
+	 *
+	 * @param client
+	 *            The client to be added.
 	 */
-	public synchronized void remove(int id) {
-		int pos = findClient(id);
-		if (pos >= 0) {
-			JFilesServerThread toTerminate = clients[pos];
-			System.out.println("Removing client thread " + id + " at " + pos);
-			if (pos < clientCount - 1) {
-				for (int i = pos + 1; i < clientCount; i++) {
-					clients[i - 1] = clients[i];
+	public synchronized void add(JFilesServerClient client) {
+		clients.add(client);
+	}
+
+	/**
+	 * Removes a client from being tracked.
+	 *
+	 * @param client
+	 *            The client to be removed.
+	 */
+	public synchronized void remove(JFilesServerClient client) {
+		clients.remove(client);
+	}
+
+	/**
+	 * Returns the default Current Working Directory..
+	 * @return The default CWD.
+	 */
+	public String getCwd() {
+		return this.defaultCwd;
+	}
+
+	/**
+	 * Ensures everything that needs to be created has been with the database.
+	 */
+	private void ensureDatabase() {
+		DatabaseController.dropTables();
+		// Build all the tables
+		DatabaseController.createTables();
+
+		// Create none role
+		try {
+			DatabaseController.createRole("NONE");
+		} catch (FailedInsertException e) {
+			logger.error(e);
+		}
+
+		User defaultUser = DatabaseController.getUser("tmp");
+
+		if (defaultUser == null) {
+			try {
+				int uid = DatabaseController.createUser("tmp", "", 0);
+				try {
+					String xml = new String(
+							Files.readAllBytes(
+									new File("tests/permissions/tmp.xml").toPath()), "UTF-8");
+					int permid = DatabaseController.createPermission(xml);
+					DatabaseController.addPermissionToUser(uid, permid);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				clientCount--;
+			} catch (FailedInsertException | IdNotFoundException e) {
+				e.printStackTrace();
 			}
-
-			try {
-				toTerminate.close();
-			} catch (IOException ioe) {
-				System.out.println("Error closing thread: " + ioe);
-			}
-			toTerminate.interrupt();
-		}
-	}
-
-	/**
-	 * This method handles adding a new thread.
-	 */
-	private void addThread(Socket socket) {
-		if (clientCount < clients.length) {
-			System.out.println("Client accepted: " + socket);
-			clients[clientCount] = new JFilesServerThread(this, socket);
-			try {
-				clients[clientCount].open();
-				clients[clientCount].start();
-				clientCount++;
-			} catch (IOException ioe) {
-				System.out.println("Error opening thread: " + ioe);
-			}
-		} else {
-			System.out.println("Client refused: maximum " + clients.length + " reached.");
 		}
 	}
 
