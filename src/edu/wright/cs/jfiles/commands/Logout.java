@@ -26,6 +26,12 @@ package edu.wright.cs.jfiles.commands;
  * Syntax:
  *		LOGOUT
  */
-public class Logout {
+public class Logout extends Command {
+
+	@Override
+	public String execute() {
+		
+		return new Info("Logout Username").execute();
+	}
 
 }

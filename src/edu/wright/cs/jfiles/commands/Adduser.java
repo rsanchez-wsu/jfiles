@@ -26,9 +26,19 @@ package edu.wright.cs.jfiles.commands;
  * Syntax:
  * 		ADDUSER <username> [password]
  * Example:
- *		REIGSTER test test
+ *		REGISTER test test
  */
 
-public class Adduser {
-
+public class Adduser extends Command {
+	/**
+	 *  TODO: Implement inserting a new user to the database.
+	 *  Include checking that the username is not already in the database.
+	 *  If the user is already in the database then send an error.
+	 *  If the username is not in the database insert the new user object to the database.
+	 *  @return Nothing
+	 */
+	@Override
+	public String execute() {
+		return new Info("Username").execute();
+	}
 }

@@ -20,24 +20,17 @@
  */
 
 package edu.wright.cs.jfiles.commands;
-
 /**
- * The Userdel command will delete a user account.
- * Syntax:
- * 		USERDEL <username>
- * Example:
- *		USERDEL test
+ * This command will list the users.
+ * Format:
+ * 		USERS
  */
-public class Userdel extends Command {
-	/**
-	 *  TODO: Implement deleting a user from the database.
-	 *  First check to see if the username exists in the database.
-	 *  If the username does not exist send back an error.
-	 *  If the username is in the database then delete the user from the db and send back confirmation via the Info command
-	 *  @return Nothing
-	 */
+public class Users extends Command {
+
 	@Override
 	public String execute() {
-		return new Info("Username").execute();
+		
+		return new Info("Users").execute();
 	}
+
 }
