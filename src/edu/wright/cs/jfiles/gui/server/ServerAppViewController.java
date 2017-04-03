@@ -21,25 +21,19 @@
 
 package edu.wright.cs.jfiles.gui.server;
 
-import edu.wright.cs.jfiles.database.DatabaseController;
-import edu.wright.cs.jfiles.database.FailedInsertException;
 import edu.wright.cs.jfiles.gui.common.Console;
 import edu.wright.cs.jfiles.server.JFilesServer;
 
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.Properties;
 import java.util.ResourceBundle;
 
 
@@ -111,6 +105,9 @@ public class ServerAppViewController implements Initializable {
 		}
 	}
 
+	/**
+	 * Load the fields in the setup tab.
+	 */
 	@FXML
 	public void setupTabClicked() {
 		setupViewController.setFields();
