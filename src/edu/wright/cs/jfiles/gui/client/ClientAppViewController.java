@@ -25,6 +25,7 @@ import edu.wright.cs.jfiles.commands.Ls;
 import edu.wright.cs.jfiles.commands.Mv;
 import edu.wright.cs.jfiles.commands.Rm;
 import edu.wright.cs.jfiles.core.FileStruct;
+import edu.wright.cs.jfiles.core.FileStruct.Type;
 import edu.wright.cs.jfiles.core.PathStack;
 import edu.wright.cs.jfiles.core.SocketClient;
 import edu.wright.cs.jfiles.core.XmlHandler;
@@ -403,6 +404,9 @@ public class ClientAppViewController implements Initializable {
 	@SuppressWarnings("unused")
 	public void loadTree(String path) {
 
+		TreeItem<String> treeNode;
+		ArrayList<TreeItem<String>> directories = new ArrayList<TreeItem<String>>();
+
 		client.sendCommand(new Ls(path));
 		String result = client.read();
 		if (!result.equals("")) {
@@ -410,18 +414,15 @@ public class ClientAppViewController implements Initializable {
 			for (FileStruct file : files) {
 				FXMLLoader loader = new FXMLLoader(
 						FileIconViewController.class.getResource("FileIconView.fxml"));
+
+				if (file.getType() == Type.DIRECTORY) {
+					String name = (String) file.getValue("name");
+					directories.add(new TreeItem<String>(name));
+				}
 			}
 		}
+
 		TreeItem<String> rootItem = new TreeItem<String>("Directories");
-
-		ArrayList<TreeItem<String>> directories = new ArrayList<TreeItem<String>>();
-
-		TreeItem<String> test1 = new TreeItem<String>("Under");
-		TreeItem<String> test2 = new TreeItem<String>("Construction");
-
-		directories.add(test1);
-		directories.add(test2);
-
 
 		rootItem.getChildren().addAll(directories);
 		treeView.setRoot(rootItem);
