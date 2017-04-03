@@ -27,7 +27,15 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
+import edu.wright.cs.jfiles.client.JFilesClient;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -43,7 +51,8 @@ import java.util.ResourceBundle;
  */
 public class SetupViewController implements Initializable {
 
-
+	static final Logger logger = LogManager.getLogger(JFilesClient.class);
+	
 	@FXML
 	TextField serverDirectory;
 	@FXML
@@ -55,26 +64,6 @@ public class SetupViewController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		Properties prop = new Properties();
-		InputStream is = null;
-		String fileName = "edu/wright/cs/jfiles/server/server.properties";
-
-		try {
-			is = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
-			if (is == null) {
-				//Print error message to logger
-				return;
-			}
-
-			prop.load(is);
-
-			serverDirectory.setText(prop.getProperty("serverDirectory"));
-			numClients.setText(prop.getProperty("numClients"));
-			port.setText(prop.getProperty("port"));
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		
 	}
 	
@@ -87,19 +76,47 @@ public class SetupViewController implements Initializable {
 		try {
 			is = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
 			if (is == null) {
-				//Print error message to logger
+				//Log error
 				return;
 			}
 
 			prop.load(is);
 
 			prop.setProperty("serverDirectory", serverDirectory.getText());
-			prop.setProperty("numClients", numClients.getText());
+			prop.setProperty("maxThreads", numClients.getText());
 			prop.setProperty("port", port.getText());
+			
+			FileWriter fw = new FileWriter(new File("src/edu/wright/cs/jfiles/server/server.properties"));
+			
+			prop.store(fw, null);
+			
+			fw.close();
+			
+			is.close();
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void setFields() {
+		Properties prop = new Properties();
+
+		try {
+			
+			FileInputStream propIn = new FileInputStream(
+					new File("src/edu/wright/cs/jfiles/server/server.properties"));
+			prop.load(propIn);
+
+			serverDirectory.setText(prop.getProperty("serverDirectory"));
+			numClients.setText(prop.getProperty("maxThreads"));
+			port.setText(prop.getProperty("port"));
+
+
+		} catch (IOException e) {
+			logger.error("IOException occured when trying to access the server properties file", e);
+		}
+		
 	}
 
 }
