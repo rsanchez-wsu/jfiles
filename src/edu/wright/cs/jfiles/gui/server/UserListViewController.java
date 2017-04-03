@@ -23,6 +23,7 @@ package edu.wright.cs.jfiles.gui.server;
 
 import edu.wright.cs.jfiles.database.DatabaseController;
 import edu.wright.cs.jfiles.database.User;
+import edu.wright.cs.jfiles.server.JFilesServer;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -78,10 +79,10 @@ public class UserListViewController implements Initializable {
 	@FXML
 	public void showNewUserView() {
 		FXMLLoader loader =
-				new FXMLLoader(UserFormController.class.getResource("UserForm.fxml"));
+				new FXMLLoader(UserEditorViewController.class.getResource("UserEditorView.fxml"));
 		try {
 			Parent createUserView = loader.load();
-			UserFormController controller = loader.getController();
+			UserEditorViewController controller = loader.getController();
 			Scene scene = new Scene(createUserView);
 			Stage stage = new Stage();
 			stage.setScene(scene);
@@ -103,10 +104,10 @@ public class UserListViewController implements Initializable {
 			return;
 		}
 		FXMLLoader loader =
-				new FXMLLoader(UserFormController.class.getResource("UserForm.fxml"));
+				new FXMLLoader(UserEditorViewController.class.getResource("UserEditorView.fxml"));
 		try {
 			Parent createUserView = loader.load();
-			UserFormController controller = loader.getController();
+			UserEditorViewController controller = loader.getController();
 			Scene scene = new Scene(createUserView);
 			Stage stage = new Stage();
 			stage.setScene(scene);
@@ -132,6 +133,16 @@ public class UserListViewController implements Initializable {
 			int id = userTable.getSelectionModel().getSelectedItem().getId();
 			DatabaseController.deleteUser(id);
 		}
+	}
+
+	/**
+	 * Resets the database.
+	 */
+	@FXML
+	public void debug__resetDatabase() {
+		DatabaseController.dropTables();
+		JFilesServer.getInstance().ensureDatabase();
+		loadUsers();
 	}
 
 	/**

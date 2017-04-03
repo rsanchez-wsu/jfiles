@@ -266,10 +266,8 @@ public class JFilesServer {
 	/**
 	 * Ensures everything that needs to be created has been with the database.
 	 */
-	private void ensureDatabase() {
-		if (!new File("JFilesDB/").exists()) {
-			DatabaseController.createTables();
-		}
+	public void ensureDatabase() {
+		DatabaseController.createTables();
 
 		User defUser = DatabaseController.getUser(defaultUser);
 

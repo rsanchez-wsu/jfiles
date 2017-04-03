@@ -21,13 +21,10 @@
 
 package edu.wright.cs.jfiles.gui.server;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-
-import edu.wright.cs.jfiles.client.JFilesClient;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,24 +32,21 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
 /**
- * Java FX controller for SetupView
+ * Java FX controller for SetupView.
  *
  * @author Jeffrey Crace
  *
  */
 public class SetupViewController implements Initializable {
 
-	static final Logger logger = LogManager.getLogger(JFilesClient.class);
-	
+	static final Logger logger = LogManager.getLogger(SetupViewController.class);
+
 	@FXML
 	TextField serverDirectory;
 	@FXML
@@ -62,61 +56,46 @@ public class SetupViewController implements Initializable {
 	@FXML
 	Button saveBtn;
 
+	private static String propFileName = "src/edu/wright/cs/jfiles/server/server.properties";
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		
+
 	}
-	
+
+	/**
+	 * Saves the properties to the property file.
+	 */
 	@FXML
-	public void clickSaveBtn(ActionEvent event) {
+	public void clickSaveBtn() {
 		Properties prop = new Properties();
-		InputStream is = null;
-		String fileName = "edu/wright/cs/jfiles/server/server.properties";
 
-		try {
-			is = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
-			if (is == null) {
-				//Log error
-				return;
-			}
-
-			prop.load(is);
-
+		try (FileOutputStream out = new FileOutputStream(new File(propFileName))) {
 			prop.setProperty("serverDirectory", serverDirectory.getText());
 			prop.setProperty("maxThreads", numClients.getText());
 			prop.setProperty("port", port.getText());
-			
-			FileWriter fw = new FileWriter(new File("src/edu/wright/cs/jfiles/server/server.properties"));
-			
-			prop.store(fw, null);
-			
-			fw.close();
-			
-			is.close();
 
+			prop.store(out, null);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("IOException occured when trying to access the server properties file", e);
 		}
 	}
 
+	/**
+	 * Loads the property file into the fields.
+	 */
 	public void setFields() {
 		Properties prop = new Properties();
 
-		try {
-			
-			FileInputStream propIn = new FileInputStream(
-					new File("src/edu/wright/cs/jfiles/server/server.properties"));
+		try (FileInputStream propIn = new FileInputStream(new File(propFileName))) {
 			prop.load(propIn);
 
 			serverDirectory.setText(prop.getProperty("serverDirectory"));
 			numClients.setText(prop.getProperty("maxThreads"));
 			port.setText(prop.getProperty("port"));
-
-
 		} catch (IOException e) {
 			logger.error("IOException occured when trying to access the server properties file", e);
 		}
-		
 	}
 
 }

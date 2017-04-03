@@ -27,6 +27,7 @@ import edu.wright.cs.jfiles.gui.common.Console;
 import edu.wright.cs.jfiles.server.JFilesServer;
 
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
@@ -55,7 +56,7 @@ public class ServerAppViewController implements Initializable {
 
 	@FXML
 	UserListViewController userListViewController;
-	
+
 	@FXML
 	SetupViewController setupViewController;
 
@@ -67,7 +68,6 @@ public class ServerAppViewController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		server = JFilesServer.getInstance();
-		server.start();
 
 		Console console = new Console(consoleOutput);
 		PrintStream ps = null;
@@ -78,11 +78,7 @@ public class ServerAppViewController implements Initializable {
 			e.printStackTrace();
 		}
 
-		try {
-			DatabaseController.createRole("admin");
-		} catch (FailedInsertException e) {
-			e.printStackTrace();
-		}
+		server.start();
 
 		userListViewController.loadUsers();
 	}
@@ -114,7 +110,7 @@ public class ServerAppViewController implements Initializable {
 			server.stop();
 		}
 	}
-	
+
 	@FXML
 	public void setupTabClicked() {
 		setupViewController.setFields();
