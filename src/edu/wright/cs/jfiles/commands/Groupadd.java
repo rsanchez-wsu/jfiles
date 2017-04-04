@@ -30,6 +30,25 @@ package edu.wright.cs.jfiles.commands;
  */
 public class Groupadd extends Command {
 	/**
+	 * Build the new users array
+	 * @return The array of new users
+	 */
+	private String[] buildUserArr() {
+		// Get each user individually to build the array
+		String[] newUsers = null;
+		// Push users onto the array
+		return newUsers;
+	}
+	/**
+	 * Gets the user to add
+	 * @return The user that needs created
+	 */
+	private String getUser() {
+		// Prompt user to enter a username to add
+		String username = null;
+		return username;
+	}
+	/**
 	 *  TODO: Implement adding multiple usernames to the database.
 	 *  First check to see if each username exists in the database.
 	 *  If a username does exist send back an error.

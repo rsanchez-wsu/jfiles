@@ -31,7 +31,6 @@ package edu.wright.cs.jfiles.commands;
  */
 
 public class Write extends Command {
-	
 	/**
 	 * Calls super.
 	 * @param args Command's args.
@@ -39,7 +38,15 @@ public class Write extends Command {
 	public Write(String... args){
 		super(args);
 	}
-	
+	/**
+	 * Gets the output file identified by the user
+	 * @return The output file
+	 */
+	private String setFile() {
+		// Prompt user to enter the file name
+		String outputFile = "";
+		return outputFile;
+	}
 	/**
 	 * return null.
 	 */
