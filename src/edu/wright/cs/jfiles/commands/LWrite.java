@@ -20,7 +20,40 @@
  */
 
 package edu.wright.cs.jfiles.commands;
+/**
+ * The LWRITE command outputs to a command to a file instead of the console
+ * Format:
+ * 	 	LWRITE <filename> <command...>
+ * Example:
+ * 		LWRITE output.txt ls
+ *
+ *
+ */
 
-public class LWrite {
+public class LWrite extends Command {
+	/**
+	 * Calls super.
+	 * @param args Command's args.
+	 */
+	public LWrite(String... args){
+		super(args);
+	}
+	/**
+	 * Gets the output file identified by the user
+	 * @return The output file
+	 */
+	private String setFile() {
+		// Prompt user to enter the file name
+		String outputFile = "";
+		return outputFile;
+	}
+	/**
+	 * return null.
+	 */
+	@Override
+	public String execute() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
