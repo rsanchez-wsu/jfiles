@@ -89,11 +89,11 @@ public class ServerTestWidget implements Runnable {
 	 * no longer relevant
 	 */
 
-	@SuppressWarnings("deprecation")
+	//@SuppressWarnings("deprecation")
 	public void stop() throws IOException {
 		socket.close();
 		server.stop();
-		thread.stop();
+		//thread.stop();
 	}
 	/**
 	 * @return a line sent to the client.
