@@ -40,7 +40,7 @@ public class LsTest {
 	@Test
 	public void testList() throws IOException, InterruptedException {
 		ServerTestWidget tw = new ServerTestWidget();
-		File folder = new File("serverfiles/tmp");
+		File folder = new File("serverfiles" + File.separator + "tmp");
 		File[] dir = folder.listFiles();
 		assertTrue(folder != null);
 		tw.send("LS");
