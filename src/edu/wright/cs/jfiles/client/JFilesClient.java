@@ -32,6 +32,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -75,19 +76,6 @@ public class JFilesClient implements Runnable {
 	public JFilesClient() {
 		
 	}
-
-	/**
-	 * Handles allocating resources needed for the server.
-	 * @throws IOException
-	 *If there is a problem binding to the socket
-	 * Handles allocating resources needed for the client.
-	 * @throws IOException if there is a problem binding to the socket
-	 */
-	//Needs to be coded
-	public JFilesClient() {
-		
-	}
-
 
 	private static void init() throws IOException {
 		Properties prop = new Properties();
@@ -554,7 +542,6 @@ public class JFilesClient implements Runnable {
 		return same;
 	}
 
-	*/
 	*/
 	
 	public static void main(String[] args) {
