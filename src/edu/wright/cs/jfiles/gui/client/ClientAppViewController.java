@@ -42,12 +42,14 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.control.TreeCell;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.util.Callback;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -417,7 +419,11 @@ public class ClientAppViewController implements Initializable {
 
 				if (file.getType() == Type.DIRECTORY) {
 					String name = (String) file.getValue("name");
+
+					//TODO add event handle
+
 					directories.add(new TreeItem<String>(name));
+					//perhaps create a cell system?
 				}
 			}
 		}
@@ -428,7 +434,13 @@ public class ClientAppViewController implements Initializable {
 		treeView.setRoot(rootItem);
 		treeView.setShowRoot(true);
 
-
+		treeView.setEditable(false);
+		treeView.setCellFactory(new Callback<TreeView<String>, TreeCell<String>>() {
+			@Override
+			public TreeCell<String> call(TreeView<String> p) {
+				return new TextFieldTreeCellImpl();
+			}
+		});
 
 		// These three lines will be used when icons are implemented in the tree.
 		// Image icon = treeViewController.getImage();
@@ -438,5 +450,33 @@ public class ClientAppViewController implements Initializable {
 		// TODO implement icons to each line of the tree
 		// TODO create event handlers once the tree is displayed
 		// TODO clean up code for merge
+	}
+
+	/**
+	 * Alright so I think I can make a TreeCell factory within this class to populate the tree view.
+	 * I just want to make sure this is how event handling works with TreeView.
+	 * After this works we should be able to use loadTree(); to generate the child directories.
+	 * @author kevin
+	 *
+	 */
+	private final class TextFieldTreeCellImpl extends TreeCell<String> {
+
+		/**
+		 * Default Constructor.
+		 */
+		public TextFieldTreeCellImpl() {
+
+		}
+
+		
+		
+		/**
+		 * grab the string of the current Item.
+		 * Might need to change to get Path once it's working.
+		 * @return getItem or toString()
+		 */
+		private String getString() {
+			return getItem() == null ? "" : this.getItem().toString();
+		}
 	}
 }
