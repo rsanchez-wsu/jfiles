@@ -28,9 +28,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-    public static void execExtProc() throws InterruptedException, IOException {
+/**
+ *  Uses the ProcessBuilder library class to open/execute an program external to this Java application.
+ *  For example, launch MS Paint in Microsoft Windows 10.
+ * 
+ * @param  prgPath - Parameter should be fed  a String for a program path such as "c:\\Windows\\System32\\mspaint.exe"
+ * @throws java.lang.InterruptedException
+ * @throws java.io.IOException
+ */
+    public static void execExtProc(String prgPath) throws InterruptedException, IOException {
         List<String> command = new ArrayList<>();
-        command.add("c:\\Windows\\System32\\mspaint.exe");
+        command.add(prgPath);
 
         ProcessBuilder builder = new ProcessBuilder(command);
 
