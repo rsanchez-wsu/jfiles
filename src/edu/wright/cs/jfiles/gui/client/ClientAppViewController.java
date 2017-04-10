@@ -423,24 +423,25 @@ public class ClientAppViewController implements Initializable {
 					//TODO add event handle
 
 					directories.add(new TreeItem<String>(name));
+					
 					//perhaps create a cell system?
 				}
 			}
 		}
 
 		TreeItem<String> rootItem = new TreeItem<String>("Directories");
-
+		
 		rootItem.getChildren().addAll(directories);
 		treeView.setRoot(rootItem);
 		treeView.setShowRoot(true);
 
 		treeView.setEditable(false);
-		treeView.setCellFactory(new Callback<TreeView<String>, TreeCell<String>>() {
-			@Override
-			public TreeCell<String> call(TreeView<String> p) {
-				return new TextFieldTreeCellImpl();
-			}
-		});
+		//treeView.setCellFactory(new Callback<TreeView<String>, TreeCell<String>>() {
+		//	@Override
+		//	public TreeCell<String> call(TreeView<String> p) {
+		//		return new TextFieldTreeCellImpl();
+		//	}
+		//});
 
 		// These three lines will be used when icons are implemented in the tree.
 		// Image icon = treeViewController.getImage();

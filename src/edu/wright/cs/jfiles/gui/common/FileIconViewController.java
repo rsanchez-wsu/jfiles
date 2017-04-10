@@ -135,20 +135,10 @@ public class FileIconViewController implements Initializable {
 		// if it is a directory this will take you inside and display the new
 		// directory
 		if (fileStruct.getType() == Type.DIRECTORY) {
-			clear();
 			String name = appController.getCurrentDirectory() + "/" + label.getText();
 			appController.setCurrentDirectory(name);
 			populate();
 		}
-	}
-
-	/**
-	 * TODO: finish method
-	 * Needs to clear the file images from the gui.
-	 * When we enter a new directory the old directory stops getting displayed
-	 */
-	private void clear() {
-
 	}
 
 	@Override
