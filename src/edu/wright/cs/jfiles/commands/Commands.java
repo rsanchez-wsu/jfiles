@@ -90,6 +90,9 @@ public enum Commands {
 	}),
 	LOGIN((String[] args) -> {
 		return new Login(args);
+	}),
+	ADDUSER((String[] args) -> {
+		return new AddUser(args);
 	});
 
 	private Function<String[], Command> lam;

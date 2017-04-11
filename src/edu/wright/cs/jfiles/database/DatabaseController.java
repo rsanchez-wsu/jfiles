@@ -245,7 +245,7 @@ public class DatabaseController {
 	public static int createUser(String name, String pass, int role)
 			throws FailedInsertException, IdNotFoundException {
 		String sql = "INSERT INTO USERS (USER_NAME, USER_PASS, USER_ROLE) VALUES (?, ?, ?)";
-		int id = 0;
+		int id = -1;
 		try (Connection conn = openConnection();
 				PreparedStatement insertStmt =
 						conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -613,6 +613,28 @@ public class DatabaseController {
 			logger.error(e);
 		}
 		return users;
+	}
+	/**
+	 * Finds the number of a specific role given its name.
+	 * @throws NameNotFoundException if the name is not in the database.
+	 */
+
+	public static int findRole(String role) throws NameNotFoundException {
+		int id = -1;
+		try (Connection conn = openConnection();
+			PreparedStatement st =
+					conn.prepareStatement("SELECT ROLE_ID FROM ROLES WHERE ROLE_NAME = ?");) {
+			st.setString(1, role);
+			ResultSet rs = st.executeQuery();
+			if (rs.next()) {
+				id = rs.getInt(1);
+			} else {
+				throw(new NameNotFoundException());
+			}
+		} catch (SQLException e) {
+			logger.error(e);
+		}
+		return id;
 	}
 
 	/**
