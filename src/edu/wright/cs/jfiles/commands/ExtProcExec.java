@@ -22,28 +22,36 @@
 package edu.wright.cs.jfiles.commands;
 
 
-import java.io.*;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- *  Uses the ProcessBuilder library class to open/execute an program external to this Java application.
- *  For example, launch MS Paint in Microsoft Windows 10.
- * 
- * @param  prgPath - Parameter should be fed  a String for a program path such as "c:\\Windows\\System32\\mspaint.exe"
- * @throws java.lang.InterruptedException
- * @throws java.io.IOException
+ * Header to fix checkstyle. Not my class so don't know what to put here.
  */
-    public static void execExtProc(String prgPath) throws InterruptedException, IOException {
-        List<String> command = new ArrayList<>();
-        command.add(prgPath);
+public class ExtProcExec {
+	/**
+	 * Uses the ProcessBuilder library class to open/execute an program external
+	 * to this Java application. For example, launch MS Paint in Microsoft
+	 * Windows 10.
+	 *
+	 * @param prgPath
+	 *            - Parameter should be fed a String for a program path such as
+	 *            "c:\\Windows\\System32\\mspaint.exe"
+	 * @throws java.lang.InterruptedException
+	 *             throws InterruptedException
+	 * @throws java.io.IOException
+	 *             throws IOException
+	 */
+	public static void execExtProc(String prgPath) throws InterruptedException, IOException {
+		List<String> command = new ArrayList<>();
+		command.add(prgPath);
 
-        ProcessBuilder builder = new ProcessBuilder(command);
+		ProcessBuilder builder = new ProcessBuilder(command);
 
-        final Process process = builder.start();
+		builder.start();
 
-        System.out.println("External program has been executed.");
+		System.out.println("External program has been executed.");
 
-    }
+	}
+}
