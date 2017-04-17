@@ -30,6 +30,7 @@ import edu.wright.cs.jfiles.database.NameNotFoundException;
  *     Command to add a user.
  *     Syntax:
  *     AddUser username password role
+ *     If the password is "NOPASSWORD" (case insensitive) then there is no password.
  *     password is default none and role is default none
  */
 
@@ -50,7 +51,14 @@ public class AddUser extends Command {
 		String password;
 		String role;
 		int roleId;
-		//TODO check permissions.
+		try {
+			if (!DatabaseController.findRoleName(this.cp.getUser().getRole()).equals("ADMIN")) {
+				return ("You must be an Admin to do that.");
+			}
+		} catch (IdNotFoundException e) {
+			//The value of role in the user object should a legitimate role.
+			return ("Unexpected database error.");
+		}
 		//Three arguments max
 		if (this.parser.getArguments().length > 3) {
 			return ("Unexpected symbol " + this.parser.getArguments()[4] + " encountered.");
@@ -62,7 +70,8 @@ public class AddUser extends Command {
 			username = this.parser.getArguments()[0];
 		}
 		//Second argument password has default value ""
-		if (this.parser.getArguments().length < 2) {
+		if (this.parser.getArguments().length < 2
+				|| this.parser.getArguments()[1].toLowerCase().equals("nopassword")) {
 			password = "";
 		} else {
 			password = this.parser.getArguments()[1];

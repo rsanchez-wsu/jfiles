@@ -638,6 +638,29 @@ public class DatabaseController {
 	}
 
 	/**
+	 * Finds the name of a specific role given its number.
+	 * @throws IdNotFoundException if the id is not in the database.
+	 */
+
+	public static String findRoleName(int id) throws IdNotFoundException {
+		String role = "";
+		try (Connection conn = openConnection();
+			PreparedStatement st =
+					conn.prepareStatement("SELECT ROLE_NAME FROM ROLES WHERE ROLE_ID = ?");) {
+			st.setInt(1, id);
+			ResultSet rs = st.executeQuery();
+			if (rs.next()) {
+				role = rs.getString(1);
+			} else {
+				throw(new IdNotFoundException());
+			}
+		} catch (SQLException e) {
+			logger.error(e);
+		}
+		return role;
+	}
+
+	/**
 	 * Main, testing purposes only. This can be used to setup the database as
 	 * well.
 	 *

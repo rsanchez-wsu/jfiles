@@ -370,10 +370,17 @@ public class JFilesServer {
 		DatabaseController.dropTables();
 		// Build all the tables
 		DatabaseController.createTables();
+		int adminId = 1;
 
 		// Create none role
 		try {
 			DatabaseController.createRole("NONE");
+		} catch (FailedInsertException e) {
+			logger.error(e);
+		}
+		// Create Admin role
+		try {
+			adminId = DatabaseController.createRole("ADMIN");
 		} catch (FailedInsertException e) {
 			logger.error(e);
 		}
@@ -382,7 +389,7 @@ public class JFilesServer {
 
 		if (defaultUser == null) {
 			try {
-				int uid = DatabaseController.createUser("tmp", "", 0);
+				int uid = DatabaseController.createUser("tmp", "", adminId);
 				try {
 					String xml = new String(
 							Files.readAllBytes(
