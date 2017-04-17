@@ -26,10 +26,9 @@ package edu.wright.cs.jfiles.commands;
  * 		USERS
  */
 public class Users extends Command {
-
 	@Override
 	public String execute() {
-		
+
 		return new Info("Users").execute();
 	}
 

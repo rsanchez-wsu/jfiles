@@ -21,15 +21,14 @@
 package edu.wright.cs.jfiles.commands;
 
 /**
- * The WRITE command outputs to a command to a file instead of the console
+ * The WRITE command outputs to a file
  * Format:
- * 	 	WRITE <filename> <command...>
+ * 	 	WRITE <filename> <text>
  * Example:
  * 		WRITE output.txt ls
  *
  *
  */
-
 public class Write extends Command {
 	/**
 	 * Calls super.
@@ -46,6 +45,15 @@ public class Write extends Command {
 		// Prompt user to enter the file name
 		String outputFile = "";
 		return outputFile;
+	}
+	/**
+	 * Get the text the user wants to publish to a file
+	 * @return The text
+	 */
+	private String setText() {
+		// Prompt user to enter the text
+		String outText = "";
+		return outText;
 	}
 	/**
 	 * return null.

@@ -27,10 +27,18 @@ package edu.wright.cs.jfiles.commands;
  *		LOGOUT
  */
 public class Logout extends Command {
-
+	/**
+	 * Get the username that needs to be logged out
+	 * @return The output file
+	 */
+	private String getUser() {
+		// Prompt user to enter the username
+		String username = "";
+		return username;
+	}
 	@Override
 	public String execute() {
-		
+
 		return new Info("Logout Username").execute();
 	}
 

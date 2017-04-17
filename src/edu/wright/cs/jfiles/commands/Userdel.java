@@ -30,6 +30,24 @@ package edu.wright.cs.jfiles.commands;
  */
 public class Userdel extends Command {
 	/**
+	 * Get the username that needs to be deleted
+	 * @return The username
+	 */
+	private String getUser() {
+		// Prompt user to enter the username
+		String username = "";
+		return username;
+	}
+	/**
+	 * Get the username and check to see if the user is valid
+	 * @return The output file
+	 */
+	private Boolean validate() {
+		// Prompt user to enter the file name
+		Boolean isValid = true;
+		return outputFile;
+	}
+	/**
 	 *  TODO: Implement deleting a user from the database.
 	 *  First check to see if the username exists in the database.
 	 *  If the username does not exist send back an error.
