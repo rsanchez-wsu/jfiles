@@ -50,15 +50,17 @@ import java.util.ResourceBundle;
  */
 public class UserEditorViewController implements Initializable {
 
+	////////////////////////////////////////////////////////////////////
+	// View elements automatically injected by the JVM upon execution //
 	@FXML
-	AnchorPane root;
-
+	private AnchorPane root;
 	@FXML
 	private TextField txtName;
 	@FXML
 	private TextField txtPass;
 	@FXML
 	private ComboBox<Role> comboRole;
+	////////////////////////////////////////////////////////////////////
 
 	private ObservableList<Role> roleList = FXCollections.observableArrayList();
 	private boolean editMode = false;
@@ -72,10 +74,15 @@ public class UserEditorViewController implements Initializable {
 	 */
 	public void loadUserData(int id) {
 		this.id = id;
+
+		// Get user by ID from database
 		User user = DatabaseController.getUser(id);
+
+		// Populate form with user information
 		txtName.setText(user.getName());
 		txtPass.setText(user.getPassword());
 		comboRole.getSelectionModel().select(user.getRole());
+
 		editMode = true;
 	}
 
@@ -104,13 +111,15 @@ public class UserEditorViewController implements Initializable {
 	 */
 	@FXML
 	public void submitPressed(ActionEvent event) {
+		// Get information from fields.
 		String name = txtName.getText();
 		String pass = txtPass.getText();
 		int role = comboRole.getSelectionModel().selectedItemProperty().get().getId();
+
 		try {
-			if (!editMode) {
+			if (!editMode) { // Create Mode
 				DatabaseController.createUser(name, pass, role);
-			} else {
+			} else { // Edit mode
 				DatabaseController.updateUser(id, name, pass, role);
 			}
 		} catch (FailedInsertException e) {
@@ -131,6 +140,7 @@ public class UserEditorViewController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		// Populate combo box with existing roles
 		roleList.addAll(DatabaseController.getRoles());
 		comboRole.setItems(roleList);
 		comboRole.getSelectionModel().selectFirst();

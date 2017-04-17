@@ -51,6 +51,9 @@ public class Console extends OutputStream {
 
 	@Override
 	public void write(int ch) throws IOException {
+		// Using Platform.runLater to avoid hanging due to writing large amounts
+		// of text to the console. The JVM will run this on the platform thread instead
+		// of our application thread.
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {

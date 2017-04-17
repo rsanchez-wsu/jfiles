@@ -50,6 +50,8 @@ import java.util.ResourceBundle;
  */
 public class UserListViewController implements Initializable {
 
+	////////////////////////////////////////////////////////////////////
+	// View elements automatically injected by the JVM upon execution //
 	@FXML
 	VBox root;
 	@FXML
@@ -62,11 +64,13 @@ public class UserListViewController implements Initializable {
 	TableColumn<User, String> userTableRole;
 	@FXML
 	TableColumn<User, String> userTableStatus;
+	////////////////////////////////////////////////////////////////////
 
 	private ObservableList<User> userList = FXCollections.observableArrayList();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		// Setup table cells
 		userTable.setItems(userList);
 		userTableId.setCellValueFactory(new PropertyValueFactory<User, String>("id"));
 		userTableName.setCellValueFactory(new PropertyValueFactory<User, String>("name"));
@@ -82,12 +86,17 @@ public class UserListViewController implements Initializable {
 				new FXMLLoader(UserEditorViewController.class.getResource("UserEditorView.fxml"));
 		try {
 			Parent createUserView = loader.load();
+
+			// Save reference to the controller
 			UserEditorViewController controller = loader.getController();
+
 			Scene scene = new Scene(createUserView);
 			Stage stage = new Stage();
 			stage.setScene(scene);
 
+			// Override close request event handler
 			controller.setOnCloseRequest(event -> loadUsers());
+
 			stage.setTitle("Create User");
 			stage.show();
 		} catch (IOException e) {
@@ -100,20 +109,29 @@ public class UserListViewController implements Initializable {
 	 */
 	@FXML
 	public void showEditUserView() {
+		// If there is not user selected then return
 		if (userTable.getSelectionModel().getSelectedItem() == null) {
 			return;
 		}
+
 		FXMLLoader loader =
 				new FXMLLoader(UserEditorViewController.class.getResource("UserEditorView.fxml"));
 		try {
 			Parent createUserView = loader.load();
+
+			// Save reference to the controller
 			UserEditorViewController controller = loader.getController();
+
 			Scene scene = new Scene(createUserView);
 			Stage stage = new Stage();
 			stage.setScene(scene);
 
+			// Override close request handler
 			controller.setOnCloseRequest(event -> loadUsers());
+
+			// Populate view with user data
 			controller.loadUserData(userTable.getSelectionModel().getSelectedItem().getId());
+
 			stage.setTitle("Edit User");
 			stage.show();
 		} catch (IOException e) {
@@ -126,15 +144,18 @@ public class UserListViewController implements Initializable {
 	 */
 	@FXML
 	public void deleteUser() {
+		// If no user is selected then return
 		if (userTable.getSelectionModel().getSelectedItem() == null) {
 			return;
-		} else {
-			//get ID and send to command to delete from database
-			int id = userTable.getSelectionModel().getSelectedItem().getId();
-			DatabaseController.deleteUser(id);
 		}
+
+		//Get ID and delete from database
+		int id = userTable.getSelectionModel().getSelectedItem().getId();
+		DatabaseController.deleteUser(id);
 	}
 
+	// NOTE: This should be removed later, but makes testing of various
+	// UI and database operations easier.
 	/**
 	 * Resets the database.
 	 */

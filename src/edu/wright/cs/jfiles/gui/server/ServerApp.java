@@ -41,14 +41,21 @@ public class ServerApp extends Application {
 		FXMLLoader loader =
 				new FXMLLoader(ServerAppViewController.class.getResource("ServerAppView.fxml"));
 		Parent appView = loader.load();
+
+		// Save reference to the main application controller.
 		ServerAppViewController controller = loader.getController();
+
 		Scene scene = new Scene(appView);
 		stage.setScene(scene);
 		stage.setTitle("JFiles Server");
+
+		// Override default close behavior, we need to
+		// tidy some things up before exiting the application.
 		stage.setOnCloseRequest(event -> {
 			controller.exit();
 			stage.close();
 		});
+
 		stage.show();
 	}
 

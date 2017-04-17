@@ -45,6 +45,8 @@ import java.util.ResourceBundle;
  */
 public class ServerAppViewController implements Initializable {
 
+	////////////////////////////////////////////////////////////////////
+	// View elements automatically injected by the JVM upon execution //
 	@FXML
 	VBox root;
 
@@ -56,6 +58,7 @@ public class ServerAppViewController implements Initializable {
 
 	@FXML
 	TextArea consoleOutput;
+	////////////////////////////////////////////////////////////////////
 
 	private JFilesServer server;
 
@@ -63,6 +66,7 @@ public class ServerAppViewController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		server = JFilesServer.getInstance();
 
+		// Redirect standard output to our text field
 		Console console = new Console(consoleOutput);
 		PrintStream ps = null;
 		try {
@@ -78,21 +82,19 @@ public class ServerAppViewController implements Initializable {
 	}
 
 	/**
-	 * Called when the "Run" is selected from the File context menu.
+	 * Called when "Run" is selected from the File context menu.
 	 */
 	@FXML
 	public void clickRun(ActionEvent arg0) {
 		server.start();
-		System.out.println("Run works");
 	}
 
 	/**
-	 * Called when the "Stop" is selected from the File context menu.
+	 * Called when "Stop" is selected from the File context menu.
 	 */
 	@FXML
 	public void clickStop(ActionEvent arg0) {
 		server.stop();
-		System.out.println("Stop");
 	}
 
 	/**
