@@ -26,9 +26,7 @@ import edu.wright.cs.jfiles.core.XmlHandler;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joda.time.DateTime;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -36,10 +34,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Database cache for file metadata.
+ *
+ * @author Matt Gilene
+ *
+ */
 public class MetadataCache {
 
 	private static final String JDBC_DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
