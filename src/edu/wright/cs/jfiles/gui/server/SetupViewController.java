@@ -47,6 +47,8 @@ public class SetupViewController implements Initializable {
 
 	static final Logger logger = LogManager.getLogger(SetupViewController.class);
 
+	////////////////////////////////////////////////////////////////////
+	// View elements automatically injected by the JVM upon execution //
 	@FXML
 	TextField serverDirectory;
 	@FXML
@@ -55,13 +57,13 @@ public class SetupViewController implements Initializable {
 	TextField port;
 	@FXML
 	Button saveBtn;
+	////////////////////////////////////////////////////////////////////
+
 
 	private static String propFileName = "src/edu/wright/cs/jfiles/server/server.properties";
 
 	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-
-	}
+	public void initialize(URL location, ResourceBundle resources) {}
 
 	/**
 	 * Saves the properties to the property file.
@@ -70,6 +72,8 @@ public class SetupViewController implements Initializable {
 	public void clickSaveBtn() {
 		Properties prop = new Properties();
 
+		// Save selections to Properties object and
+		// write properties object to the properties file
 		try (FileOutputStream out = new FileOutputStream(new File(propFileName))) {
 			prop.setProperty("serverDirectory", serverDirectory.getText());
 			prop.setProperty("maxThreads", numClients.getText());
@@ -87,6 +91,7 @@ public class SetupViewController implements Initializable {
 	public void setFields() {
 		Properties prop = new Properties();
 
+		// Load existing properties from properties file and fill in the form
 		try (FileInputStream propIn = new FileInputStream(new File(propFileName))) {
 			prop.load(propIn);
 

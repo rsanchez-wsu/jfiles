@@ -42,7 +42,7 @@ import java.util.ResourceBundle;
 /**
  * Controller for FileIconViews.
  *
- * @author Matt
+ * @author Matt Gilene
  *
  */
 public class FileIconViewController implements Initializable {
@@ -51,6 +51,7 @@ public class FileIconViewController implements Initializable {
 	private static Image defaultFileImage;
 	private static Image defaultFolderImage;
 
+	// Load icon images
 	static {
 		images = new HashMap<>();
 		File[] resources = new File("src/edu/wright/cs/jfiles/resources/images").listFiles();
@@ -82,8 +83,8 @@ public class FileIconViewController implements Initializable {
 	 */
 	private ClientAppViewController appController;
 
-	// These are injected automatically by the FXML loading system when the view
-	// associated with this controller is loaded.
+	////////////////////////////////////////////////////////////////////
+	// View elements automatically injected by the JVM upon execution //
 	@FXML
 	private BorderPane root;
 
@@ -92,6 +93,7 @@ public class FileIconViewController implements Initializable {
 
 	@FXML
 	private ImageView image;
+	////////////////////////////////////////////////////////////////////
 
 	/**
 	 * Sets the FileStruct this icon represents.
@@ -131,9 +133,12 @@ public class FileIconViewController implements Initializable {
 	 * Populates image and label with correct values.
 	 */
 	private void populate() {
+		// Set text
 		String name = (String) fileStruct.getValue("name");
 		label.setText(name);
 		String ext = name.substring(name.lastIndexOf(".") + 1);
+
+		// Set icon
 		switch (fileStruct.getType()) {
 		case FILE:
 			image.setImage(images.getOrDefault(ext, defaultFileImage));
