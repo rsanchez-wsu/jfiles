@@ -21,30 +21,71 @@
 
 package edu.wright.cs.jfiles.gui.client;
 
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.scene.control.TreeItem;
 
-public class FilePathTreeItem extends TreeItem<String> {
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+
+
+
+/**
+ * Used to create TreeItems that expand and allow us to browse the file hierarchy.
+ * @author Ian and Kevin
+ */
+
+public class FilePathTreeItem extends TreeItem<Object> {
 	private String fullPath;
 
+	/**
+	 * Grabs the path of the item.
+	 * @return fullPath
+	 */
 	public String getFullPath() {
 		return this.fullPath;
 	}
 
 	private boolean isExpanded;
 
+	/**
+	 * Grabs whether or not it is expanded.
+	 * @return isExpanded
+	 */
 	public boolean getIsExpanded() {
 		return this.isExpanded;
 	}
 
-	public FilePathTreeItem(String file) {
-		this.fullPath = file;
-		this.addEventHandler(TreeItem.branchExpandedEvent(), new EventHandler() {
-			@Override
-			public void handle(Event e) {
-				FilePathTreeItem source = (FilePathTreeItem) e.getSource();
-
+	/**
+	 * Creates the object and sets up the path which will be expanded.
+	 */
+	public FilePathTreeItem(Path file2) {
+		super(file2.toString());
+		this.fullPath = file2.toString();
+		this.addEventHandler(TreeItem.branchExpandedEvent(), e -> {
+			FilePathTreeItem source = (FilePathTreeItem)e.getSource();
+			try {
+				if (source.getChildren().isEmpty()) {
+					Path path = Paths.get(source.getFullPath());
+					BasicFileAttributes attr =
+							Files.readAttributes(path, BasicFileAttributes.class);
+					if (attr.isDirectory()) {
+						DirectoryStream<Path> dir = Files.newDirectoryStream(path);
+						for (Path file:dir) {
+							FilePathTreeItem treeNode = new FilePathTreeItem(file);
+							source.getChildren().add(treeNode);
+						}
+					}
+				//If you want to rescan a directory go ahead and include an else statement
+				}
+				//I don't know what would cause this to throw exceptions
+				//I'm just gonna have it print out what causes it
+				//It should not have exceptions as far as I understand but just in case
+			} catch (IOException x) {
+				x.printStackTrace();
 			}
 		});
 	}
