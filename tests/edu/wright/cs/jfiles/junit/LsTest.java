@@ -40,12 +40,12 @@ public class LsTest {
 	@Test
 	public void testList() throws IOException, InterruptedException {
 		ServerTestWidget tw = new ServerTestWidget();
-		File folder = new File("serverfiles\\tmp");
+		File folder = new File("serverfiles" + File.separator + "tmp");
 		File[] dir = folder.listFiles();
 		assertTrue(folder != null);
 		tw.send("LS");
 		String res = tw.receive();
-		String[] result = res.split("\r\n");
+		String[] result = res.split("(\r)?\n");
 		try {
 			for (int i = 1;i < dir.length;i++) {
 				String s1 = dir[i].getAbsolutePath();
