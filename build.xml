@@ -302,6 +302,12 @@
 			<test name = "edu.wright.cs.jfiles.junit.PermissionsTest"
 				outfile = "${tests.out}/PermissinsTest" 
 				/>
+			<test name = "edu.wright.cs.jfiles.junit.core.TestArguments"
+				outfile = "${tests.out}/TestArguments"
+				/>
+			<test name = "edu.wright.cs.jfiles.junit.core.TestCommands"
+				outfile = "${tests.out}/TestCommands"
+				/>
 		</junit>
 	</target>
 	
